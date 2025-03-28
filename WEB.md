@@ -32,8 +32,8 @@
   - [Deployed Link](https://github.com)
 
 - **Sprint 8 (ACS 2)**
-  - [Repository Link](https://github.com)
-  - [Deployed Link](https://github.com)
+  - [Repository Link]([https://github.com](https://github.com/decagondev/web-acs-2))
+  - [Deployed Link]([https://github.com](https://decagondev.github.io/web-acs-2/))
  
 ## Unit 3
 
