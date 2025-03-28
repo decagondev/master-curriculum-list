@@ -14,8 +14,8 @@
   - [Deployed Link](https://github.com)
 
 - **Sprint 4 (ACS 1)**
-  - [Repository Link](https://github.com)
-  - [Deployed Link](https://github.com)
+  - [Repository Link]([https://github.com](https://github.com/decagondev/web-acs-1))
+  - [Deployed Link]([https://github.com](https://decagondev.github.io/web-acs-1/))
 
 ## Unit 2
 
