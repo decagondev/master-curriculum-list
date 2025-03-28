@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 4 Project - Introduction to Testing</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .content-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .content-section h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .content-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .content-section li {
+            margin: 10px 0;
+        }
+        .content-section a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .content-section a:hover {
+            text-decoration: underline;
+        }
+        .code-block {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        .requirements {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Module 4 Project - Introduction to Testing</h1>
+
+    <div class="content-section">
+        <h2>Project Overview</h2>
+        <p>In this project, you will build a React application with comprehensive test coverage. You will implement various types of tests and demonstrate your understanding of testing best practices.</p>
+    </div>
+
+    <div class="content-section">
+        <h2>Project Requirements</h2>
+        <div class="requirements">
+            <h3>Unit Testing Requirements</h3>
+            <ul>
+                <li>Write unit tests for all components</li>
+                <li>Test component rendering and props</li>
+                <li>Test component state changes</li>
+                <li>Test component event handlers</li>
+                <li>Mock external dependencies</li>
+            </ul>
+
+            <h3>Integration Testing Requirements</h3>
+            <ul>
+                <li>Test component interactions</li>
+                <li>Test form submissions</li>
+                <li>Test API integrations</li>
+                <li>Test routing functionality</li>
+                <li>Test state management</li>
+            </ul>
+
+            <h3>Testing Best Practices</h3>
+            <ul>
+                <li>Follow Testing Library best practices</li>
+                <li>Use meaningful test descriptions</li>
+                <li>Implement proper test isolation</li>
+                <li>Use appropriate test utilities</li>
+                <li>Maintain test coverage above 80%</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Project Setup</h2>
+        <div class="code-block">
+            <pre>
+# Create a new React project
+npx create-react-app testing-project
+
+# Install testing dependencies
+cd testing-project
+npm install --save-dev @testing-library/react @testing-library/jest-dom @testing-library/user-event jest
+
+# Start the development server
+npm start
+
+# Run tests
+npm test
+            </pre>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Project Structure</h2>
+        <div class="code-block">
+            <pre>
+src/
+  ├── components/
+  │   ├── Form/
+  │   │   └── Form.js
+  │   └── common/
+  │       └── Button.js
+  ├── pages/
+  │   └── Home.js
+  ├── utils/
+  │   └── helpers.js
+  ├── __tests__/
+  │   ├── components/
+  │   │   ├── Form.test.js
+  │   │   └── Button.test.js
+  │   ├── pages/
+  │   │   └── Home.test.js
+  │   └── utils/
+  │       └── helpers.test.js
+  └── App.js
+            </pre>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Example Implementation</h2>
+        <div class="code-block">
+            <pre>
+// Form.test.js
+import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import Form from '../components/Form/Form';
+
+describe('Form Component', () => {
+  test('renders form elements', () => {
+    render(<Form />);
+    expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /submit/i })).toBeInTheDocument();
+  });
+
+  test('handles form submission', async () => {
+    const handleSubmit = jest.fn();
+    render(<Form onSubmit={handleSubmit} />);
+
+    await userEvent.type(screen.getByLabelText(/name/i), 'John Doe');
+    await userEvent.type(screen.getByLabelText(/email/i), 'john@example.com');
+    
+    fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    expect(handleSubmit).toHaveBeenCalledWith({
+      name: 'John Doe',
+      email: 'john@example.com'
+    });
+  });
+
+  test('displays validation errors', async () => {
+    render(<Form />);
+    
+    fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    expect(await screen.findByText(/name is required/i)).toBeInTheDocument();
+    expect(await screen.findByText(/email is required/i)).toBeInTheDocument();
+  });
+});
+            </pre>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Resources</h2>
+        <ul>
+            <li><a href="https://testing-library.com/docs/react-testing-library/intro/" target="_blank">React Testing Library Documentation</a></li>
+            <li><a href="https://jestjs.io/" target="_blank">Jest Documentation</a></li>
+            <li><a href="https://testing-library.com/docs/guiding-principles" target="_blank">Testing Library Guiding Principles</a></li>
+            <li><a href="https://testing-library.com/docs/user-event/intro" target="_blank">User Event Documentation</a></li>
+            <li><a href="https://github.com/bloominstituteoftechnology/intro-to-testing-gp" target="_blank">Project Repository</a></li>
+            <li><a href="https://github.com/bloominstituteoftechnology/intro-to-testing-gp-solution" target="_blank">Project Solution</a></li>
+        </ul>
+    </div>
+
+    <div class="content-section">
+        <h2>Submission Guidelines</h2>
+        <ul>
+            <li>Submit your code to GitHub</li>
+            <li>Include a README.md with setup instructions</li>
+            <li>Document your testing strategy</li>
+            <li>Include test coverage report</li>
+        </ul>
+    </div>
+
+    <div class="content-section">
+        <h2>Grading Rubric</h2>
+        <ul>
+            <li>Unit Testing Implementation (30%)</li>
+            <li>Integration Testing Implementation (30%)</li>
+            <li>Testing Best Practices (20%)</li>
+            <li>Code Quality and Documentation (20%)</li>
+        </ul>
+    </div>
+</body>
+</html> 

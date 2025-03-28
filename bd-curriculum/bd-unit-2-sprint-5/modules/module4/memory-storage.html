@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Storage - Module 4</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <nav>
+                <h1>BD Unit 2 Sprint 5</h1>
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../module1/index.html">Module 1</a></li>
+                    <li><a href="../module2/index.html">Module 2</a></li>
+                    <li><a href="../module3/index.html">Module 3</a></li>
+                    <li><a href="../module4/index.html">Module 4</a></li>
+                    <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                    <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <article>
+            <h1>Memory Storage</h1>
+
+            <section>
+                <h2>Heap Memory Organization</h2>
+                <h3>Memory Generations</h3>
+                <ul>
+                    <li><strong>Young Generation:</strong>
+                        <ul>
+                            <li>Eden Space</li>
+                            <li>Survivor Spaces (S0 and S1)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Old Generation:</strong>
+                        <ul>
+                            <li>Tenured Space</li>
+                        </ul>
+                    </li>
+                    <li><strong>Permanent Generation:</strong>
+                        <ul>
+                            <li>Class metadata</li>
+                            <li>Interned strings</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3>Object Lifecycle</h3>
+                <pre><code>// 1. Object creation in Eden Space
+String str = new String("Hello");
+
+// 2. Object survives minor GC
+// Moved to Survivor Space
+
+// 3. Object survives multiple GCs
+// Moved to Old Generation
+
+// 4. Object becomes unreachable
+str = null;
+
+// 5. Object collected by GC</code></pre>
+            </section>
+
+            <section>
+                <h2>Stack Memory Organization</h2>
+                <h3>Stack Frame Structure</h3>
+                <ul>
+                    <li><strong>Local Variables:</strong> Method parameters and local variables</li>
+                    <li><strong>Operand Stack:</strong> Working memory for computations</li>
+                    <li><strong>Frame Data:</strong> Exception table and method return data</li>
+                    <li><strong>Constant Pool Reference:</strong> Reference to runtime constant pool</li>
+                </ul>
+
+                <h3>Stack Frame Example</h3>
+                <pre><code>public class StackExample {
+    public static void main(String[] args) {
+        // Local variables stored in stack frame
+        int x = 10;
+        int y = 20;
+        
+        // Method call creates new stack frame
+        int result = add(x, y);
+    }
+    
+    public static int add(int a, int b) {
+        // New stack frame created
+        return a + b;
+    }
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Method Area Organization</h2>
+                <h3>Class Data Storage</h3>
+                <ul>
+                    <li><strong>Class Information:</strong>
+                        <ul>
+                            <li>Class name</li>
+                            <li>Superclass</li>
+                            <li>Interfaces</li>
+                            <li>Access modifiers</li>
+                        </ul>
+                    </li>
+                    <li><strong>Method Information:</strong>
+                        <ul>
+                            <li>Method names</li>
+                            <li>Return types</li>
+                            <li>Parameter types</li>
+                            <li>Method bytecode</li>
+                        </ul>
+                    </li>
+                    <li><strong>Static Variables:</strong>
+                        <ul>
+                            <li>Class-level variables</li>
+                            <li>Constants</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Memory Allocation Strategies</h2>
+                <h3>Object Allocation</h3>
+                <pre><code>public class ObjectAllocation {
+    // Static field - stored in method area
+    private static int staticField;
+    
+    // Instance field - stored in heap
+    private int instanceField;
+    
+    public void method() {
+        // Local variable - stored in stack
+        int localVar = 42;
+        
+        // Object - stored in heap
+        String str = new String("Hello");
+        
+        // Array - stored in heap
+        int[] array = new int[10];
+    }
+}</code></pre>
+
+                <h3>Memory Layout</h3>
+                <pre><code>// Object header (16 bytes on 64-bit JVM)
+// Mark word (8 bytes)
+// Class pointer (8 bytes)
+
+// Instance data
+// - Primitive types: their size
+// - References: 4 bytes (32-bit) or 8 bytes (64-bit)
+
+// Padding (to align to 8 bytes)</code></pre>
+            </section>
+
+            <section>
+                <h2>Memory Tuning</h2>
+                <h3>JVM Parameters</h3>
+                <pre><code>// Heap size settings
+-Xms2g -Xmx4g
+
+// Young generation settings
+-XX:NewSize=1g -XX:MaxNewSize=2g
+
+// Survivor ratio
+-XX:SurvivorRatio=8
+
+// Garbage collector settings
+-XX:+UseG1GC
+-XX:MaxGCPauseMillis=200</code></pre>
+
+                <h3>Memory Monitoring</h3>
+                <pre><code>// Enable GC logging
+-verbose:gc
+-XX:+PrintGCDetails
+-XX:+PrintGCDateStamps
+-Xloggc:gc.log
+
+// Enable heap dump on OOM
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=/path/to/dump</code></pre>
+            </section>
+
+            <section>
+                <h2>Video Content</h2>
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Memory Storage Video" src="https://fast.wistia.net/embed/iframe/92wu32swni" width="640" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+            </section>
+        </article>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Bloom Institute of Technology. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Best Practices - Module 3</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <nav>
+                <h1>BD Unit 2 Sprint 5</h1>
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../module1/index.html">Module 1</a></li>
+                    <li><a href="../module2/index.html">Module 2</a></li>
+                    <li><a href="../module3/index.html">Module 3</a></li>
+                    <li><a href="../module4/index.html">Module 4</a></li>
+                    <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                    <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <article>
+            <h1>Testing Best Practices</h1>
+
+            <section>
+                <h2>Test Organization</h2>
+                <h3>Project Structure</h3>
+                <pre><code>src/
+├── main/
+│   └── java/
+│       └── com/example/
+│           ├── controller/
+│           ├── service/
+│           └── repository/
+└── test/
+    └── java/
+        └── com/example/
+            ├── controller/
+            ├── service/
+            └── repository/</code></pre>
+
+                <h3>Test Class Organization</h3>
+                <pre><code>public class UserServiceTest {
+    // 1. Test fixtures and setup
+    @BeforeEach
+    void setup() {
+        // Setup code
+    }
+
+    // 2. Happy path tests
+    @Test
+    void createUser_ValidData_ReturnsUser() {
+        // Test code
+    }
+
+    // 3. Edge cases
+    @Test
+    void createUser_EmptyName_ThrowsException() {
+        // Test code
+    }
+
+    // 4. Error cases
+    @Test
+    void createUser_DuplicateEmail_ThrowsException() {
+        // Test code
+    }
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Test Naming Conventions</h2>
+                <h3>Method Naming</h3>
+                <pre><code>// MethodName_Scenario_ExpectedResult
+@Test
+void calculateTotal_WithValidInputs_ReturnsCorrectSum() {
+    // Test code
+}
+
+@Test
+void processOrder_WithInvalidQuantity_ThrowsIllegalArgumentException() {
+    // Test code
+}</code></pre>
+
+                <h3>Test Class Naming</h3>
+                <pre><code>// ClassNameTest
+public class UserServiceTest {
+    // Test methods
+}
+
+public class OrderControllerTest {
+    // Test methods
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Test Data Management</h2>
+                <h3>Test Fixtures</h3>
+                <pre><code>public class TestFixtures {
+    public static User createTestUser() {
+        return new User(
+            "test@example.com",
+            "password123",
+            "Test User"
+        );
+    }
+
+    public static Order createTestOrder() {
+        return new Order(
+            createTestUser(),
+            Arrays.asList(
+                new OrderItem("Product 1", 2, 10.0),
+                new OrderItem("Product 2", 1, 20.0)
+            )
+        );
+    }
+}</code></pre>
+
+                <h3>Test Data Cleanup</h3>
+                <pre><code>@AfterEach
+void cleanup() {
+    // Clean up test data
+    userRepository.deleteAll();
+    orderRepository.deleteAll();
+}
+
+@AfterAll
+void cleanupAll() {
+    // Clean up any remaining resources
+    testDatabase.close();
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Assertion Best Practices</h2>
+                <h3>Using Assertions Effectively</h3>
+                <pre><code>// Good assertions
+@Test
+void processOrder_ValidOrder_UpdatesInventory() {
+    // Given
+    Order order = createTestOrder();
+    int initialStock = productRepository.getStock(order.getItems().get(0).getProductId());
+
+    // When
+    orderService.processOrder(order);
+
+    // Then
+    int finalStock = productRepository.getStock(order.getItems().get(0).getProductId());
+    assertEquals(initialStock - 2, finalStock, "Stock should be reduced by order quantity");
+    assertTrue(order.getStatus() == OrderStatus.PROCESSED, "Order should be marked as processed");
+}</code></pre>
+
+                <h3>Custom Assertions</h3>
+                <pre><code>public class OrderAssertions {
+    public static void assertValidOrder(Order order) {
+        assertNotNull(order, "Order should not be null");
+        assertNotNull(order.getUser(), "Order should have a user");
+        assertFalse(order.getItems().isEmpty(), "Order should have items");
+        assertTrue(order.getTotalAmount() > 0, "Order should have a positive total");
+    }
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Mocking Best Practices</h2>
+                <h3>Mock Configuration</h3>
+                <pre><code>@ExtendWith(MockitoExtension.class)
+public class OrderServiceTest {
+    @Mock
+    private PaymentGateway paymentGateway;
+
+    @Mock
+    private InventoryService inventoryService;
+
+    @InjectMocks
+    private OrderService orderService;
+
+    @BeforeEach
+    void setup() {
+        when(paymentGateway.processPayment(anyDouble()))
+            .thenReturn(true);
+        when(inventoryService.checkStock(anyString()))
+            .thenReturn(10);
+    }
+}</code></pre>
+
+                <h3>Verifying Mock Interactions</h3>
+                <pre><code>@Test
+void processOrder_ValidOrder_UpdatesInventoryAndProcessesPayment() {
+    // Given
+    Order order = createTestOrder();
+
+    // When
+    orderService.processOrder(order);
+
+    // Then
+    verify(paymentGateway).processPayment(order.getTotalAmount());
+    verify(inventoryService).updateStock(
+        eq(order.getItems().get(0).getProductId()),
+        eq(-2)
+    );
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Performance Testing</h2>
+                <h3>Test Execution Time</h3>
+                <pre><code>@Test
+@Timeout(5) // Test should complete within 5 seconds
+void processLargeOrder_ShouldCompleteWithinTimeLimit() {
+    // Test code
+}
+
+@Test
+@DisabledIf("isSlowEnvironment")
+void performanceTest_ShouldRunOnlyInFastEnvironment() {
+    // Test code
+}</code></pre>
+
+                <h3>Load Testing</h3>
+                <pre><code>@RepeatedTest(100)
+void processOrder_UnderLoad_ShouldHandleRequests() {
+    // Test code
+}
+
+@Test
+void processMultipleOrders_ShouldHandleConcurrentRequests() {
+    // Test code with concurrent execution
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Video Content</h2>
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Testing Best Practices Video" src="https://fast.wistia.net/embed/iframe/92wu32swni" width="640" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+            </section>
+        </article>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Bloom Institute of Technology. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 

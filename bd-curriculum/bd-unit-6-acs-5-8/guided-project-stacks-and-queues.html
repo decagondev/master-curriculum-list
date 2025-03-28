@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guided Project: Stacks and Queues - Java Track</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#93005a',
+                        secondary: '#00808c',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.classList.remove('border-primary', 'text-primary');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            document.querySelector(`[data-tab-content="${tabId}"]`).classList.remove('hidden');
+            element.classList.remove('text-gray-500', 'border-transparent');
+            element.classList.add('border-primary', 'text-primary');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mb-8">
+            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Welcome Page</span>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-primary mb-4">Guided Project: Valid Bracket Sequence</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Learn how to use stacks to validate bracket sequences in Java.
+                Master this essential technique used in code editors, compilers, and syntax validation.
+            </p>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="border-b border-gray-200 mb-8">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button 
+                    data-tab="overview"
+                    onclick="switchTab('overview', this)"
+                    class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-medium"
+                    aria-current="page">
+                    Overview
+                </button>
+                <button 
+                    data-tab="implementation"
+                    onclick="switchTab('implementation', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Implementation
+                </button>
+                <button 
+                    data-tab="practice"
+                    onclick="switchTab('practice', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Practice Challenge
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="space-y-8">
+            <!-- Overview Tab -->
+            <div data-tab-content="overview" class="space-y-8">
+                <!-- Project Overview -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Project Overview</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Learning Goals</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Understand stack data structure</li>
+                                <li>Implement bracket validation</li>
+                                <li>Handle different bracket types</li>
+                                <li>Apply Java best practices</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Prerequisites</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Java fundamentals</li>
+                                <li>Stack operations</li>
+                                <li>Exception handling</li>
+                                <li>Java Collections Framework</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Section -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Project Walkthrough</h2>
+                    <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                        <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                            <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                <iframe src="https://fast.wistia.net/embed/iframe/o5j2xmoinz" title="Guided Project Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div data-tab-content="implementation" class="hidden space-y-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Implementation Guide</h2>
+                    
+                    <!-- Step 1: Setup -->
+                    <div class="space-y-6">
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Step 1: Define the Validator Class</h3>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>public class BracketValidator {
+    private static final Map<Character, Character> bracketPairs = Map.of(
+        '(', ')',
+        '{', '}',
+        '[', ']'
+    );
+    
+    private static final Set<Character> openBrackets = bracketPairs.keySet();
+    private static final Set<Character> closeBrackets = new HashSet<>(bracketPairs.values());
+    
+    public boolean isValid(String input) {
+        if (input == null || input.isEmpty()) {
+            return true;
+        }
+        
+        Stack<Character> stack = new Stack<>();
+        
+        for (char c : input.toCharArray()) {
+            if (openBrackets.contains(c)) {
+                stack.push(c);
+            } else if (closeBrackets.contains(c)) {
+                if (stack.isEmpty()) {
+                    return false;
+                }
+                
+                char lastOpen = stack.pop();
+                if (bracketPairs.get(lastOpen) != c) {
+                    return false;
+                }
+            }
+        }
+        
+        return stack.isEmpty();
+    }
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Test Cases -->
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Step 2: Write Unit Tests</h3>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>@Test
+public class BracketValidatorTest {
+    private BracketValidator validator;
+    
+    @BeforeEach
+    void setUp() {
+        validator = new BracketValidator();
+    }
+    
+    @Test
+    void testValidBrackets() {
+        assertTrue(validator.isValid("()"));
+        assertTrue(validator.isValid("()[]{}"));
+        assertTrue(validator.isValid("{[]}"));
+        assertTrue(validator.isValid(""));
+    }
+    
+    @Test
+    void testInvalidBrackets() {
+        assertFalse(validator.isValid("(]"));
+        assertFalse(validator.isValid("([)]"));
+        assertFalse(validator.isValid("{[}"));
+        assertFalse(validator.isValid("((()"));
+    }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Challenge Tab -->
+            <div data-tab-content="practice" class="hidden space-y-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Extended Challenges</h2>
+                    
+                    <!-- Challenge 1 -->
+                    <div class="space-y-6 mb-8">
+                        <h3 class="text-xl font-medium text-secondary">1. Enhanced Bracket Validator</h3>
+                        <p class="text-gray-600">Extend the bracket validator to handle more complex scenarios:</p>
+                        <ul class="list-disc list-inside text-gray-600 space-y-2">
+                            <li>Support angle brackets &lt;&gt;</li>
+                            <li>Handle escaped brackets in strings</li>
+                            <li>Track and report error positions</li>
+                            <li>Support nested comments</li>
+                        </ul>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="text-lg font-medium text-gray-900 mb-2">Example Implementation:</h4>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>public class EnhancedBracketValidator {
+    private final Map<Character, Character> bracketPairs;
+    private boolean inString;
+    private char stringDelimiter;
+    private int position;
+    
+    public ValidationResult validate(String input) {
+        // Your implementation here
+    }
+    
+    public static class ValidationResult {
+        private final boolean valid;
+        private final String message;
+        private final int errorPosition;
+        
+        // Constructor and getters
+    }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 2 -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-medium text-secondary">2. Code Block Analyzer</h3>
+                        <p class="text-gray-600">Create a tool that analyzes code blocks and their nesting levels:</p>
+                        <ul class="list-disc list-inside text-gray-600 space-y-2">
+                            <li>Track nesting depth of brackets</li>
+                            <li>Identify matching pairs</li>
+                            <li>Generate block structure tree</li>
+                            <li>Format and indent code</li>
+                        </ul>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="text-lg font-medium text-gray-900 mb-2">Example Usage:</h4>
+                            <pre class="bg-gray-100 p-2 rounded"><code>String code = "if (x) { while (y) { doSomething(); } }";
+CodeBlockAnalyzer analyzer = new CodeBlockAnalyzer();
+BlockStructure structure = analyzer.analyze(code);
+
+System.out.println(structure.getMaxDepth());        // 2
+System.out.println(structure.getFormattedCode());   // Pretty-printed code</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

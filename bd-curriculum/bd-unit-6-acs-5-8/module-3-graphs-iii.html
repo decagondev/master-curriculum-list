@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphs III: Shortest Paths - Module 3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#93005a',
+                        secondary: '#00808c',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.classList.remove('border-primary', 'text-primary');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            
+            document.querySelector(`[data-tab-content="${tabId}"]`).classList.remove('hidden');
+            
+            element.classList.remove('text-gray-500', 'border-transparent');
+            element.classList.add('border-primary', 'text-primary');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mb-8">
+            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Welcome Page</span>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-primary mb-4">Graphs III: Shortest Paths</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Master shortest path algorithms in graphs and learn how to efficiently traverse graph structures.
+                Understand the applications of BFS in pathfinding and distance calculations.
+            </p>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="border-b border-gray-200 mb-8">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button 
+                    data-tab="overview"
+                    onclick="switchTab('overview', this)"
+                    class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-medium"
+                    aria-current="page">
+                    Overview
+                </button>
+                <button 
+                    data-tab="lecture"
+                    onclick="switchTab('lecture', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Lecture Content
+                </button>
+                <button 
+                    data-tab="implementation"
+                    onclick="switchTab('implementation', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Implementation
+                </button>
+                <button 
+                    data-tab="exercises"
+                    onclick="switchTab('exercises', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Practice Exercises
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="space-y-8">
+            <!-- Overview Tab -->
+            <div data-tab-content="overview" class="space-y-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Learning Objectives</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Core Concepts</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Understanding shortest path algorithms</li>
+                                <li>Implementing BFS for pathfinding</li>
+                                <li>Analyzing unweighted graph distances</li>
+                                <li>Path reconstruction techniques</li>
+                                <li>Optimizing path finding algorithms</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Skills Development</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Implementing efficient path finding</li>
+                                <li>Handling path reconstruction</li>
+                                <li>Optimizing graph traversal</li>
+                                <li>Solving real-world routing problems</li>
+                                <li>Performance analysis and optimization</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Prerequisites</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Required Knowledge</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Basic graph traversal algorithms</li>
+                                <li>Queue data structure operations</li>
+                                <li>Graph representation methods</li>
+                                <li>Basic path concepts in graphs</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Recommended Preparation</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Review BFS implementation</li>
+                                <li>Practice with adjacency lists</li>
+                                <li>Study queue-based algorithms</li>
+                                <li>Understand graph properties</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div data-tab-content="lecture" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Video Lecture</h2>
+                    
+                    <!-- Breadth-First Search Video Section -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-medium text-secondary mb-4">Breadth-First Search for Shortest Paths</h3>
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                            <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                                <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                    <iframe src="https://fast.wistia.net/embed/iframe/ccgimgxqjv" title="Breadth-First Search for Shortest Paths Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <h4 class="text-lg font-medium text-gray-900">Key Concepts Covered:</h4>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>BFS as a shortest path algorithm</li>
+                                <li>Distance tracking in unweighted graphs</li>
+                                <li>Path reconstruction techniques</li>
+                                <li>Applications in routing problems</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div data-tab-content="implementation" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Code Implementation</h2>
+                    
+                    <!-- Shortest Path Implementation -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-medium text-secondary mb-4">BFS Shortest Path Implementation</h3>
+                        <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                            <pre class="text-gray-100"><code>public class Graph<T> {
+    private Map<T, List<T>> adjacencyList = new HashMap<>();
+    
+    public Map<T, Integer> shortestPaths(T start) {
+        Map<T, Integer> distances = new HashMap<>();
+        Queue<T> queue = new LinkedList<>();
+        Set<T> visited = new HashSet<>();
+        
+        // Initialize distances
+        distances.put(start, 0);
+        queue.offer(start);
+        visited.add(start);
+        
+        while (!queue.isEmpty()) {
+            T current = queue.poll();
+            
+            for (T neighbor : adjacencyList.get(current)) {
+                if (!visited.contains(neighbor)) {
+                    visited.add(neighbor);
+                    distances.put(neighbor, distances.get(current) + 1);
+                    queue.offer(neighbor);
+                }
+            }
+        }
+        
+        return distances;
+    }
+    
+    public List<T> findPath(T start, T end) {
+        Map<T, T> parentMap = new HashMap<>();
+        Queue<T> queue = new LinkedList<>();
+        Set<T> visited = new HashSet<>();
+        
+        queue.offer(start);
+        visited.add(start);
+        
+        while (!queue.isEmpty() && !queue.peek().equals(end)) {
+            T current = queue.poll();
+            
+            for (T neighbor : adjacencyList.get(current)) {
+                if (!visited.contains(neighbor)) {
+                    visited.add(neighbor);
+                    parentMap.put(neighbor, current);
+                    queue.offer(neighbor);
+                }
+            }
+        }
+        
+        if (!visited.contains(end)) {
+            return Collections.emptyList(); // No path exists
+        }
+        
+        // Reconstruct path
+        List<T> path = new ArrayList<>();
+        T current = end;
+        while (current != null) {
+            path.add(0, current);
+            current = parentMap.get(current);
+        }
+        
+        return path;
+    }
+}</code></pre>
+                        </div>
+                        <p class="text-gray-600">Implementation features:</p>
+                        <ul class="list-disc list-inside text-gray-600 mt-2 space-y-1">
+                            <li>Efficient distance calculation</li>
+                            <li>Path reconstruction support</li>
+                            <li>Generic type implementation</li>
+                            <li>Handles disconnected graphs</li>
+                        </ul>
+                    </div>
+
+                    <!-- Path Finding Utilities -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-medium text-secondary mb-4">Path Finding Utilities</h3>
+                        <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                            <pre class="text-gray-100"><code>public class PathUtils<T> {
+    public static <T> boolean hasPath(Graph<T> graph, T start, T end) {
+        return !graph.findPath(start, end).isEmpty();
+    }
+    
+    public static <T> int shortestDistance(Graph<T> graph, T start, T end) {
+        Map<T, Integer> distances = graph.shortestPaths(start);
+        return distances.getOrDefault(end, -1);
+    }
+    
+    public static <T> Set<T> reachableNodes(Graph<T> graph, T start) {
+        return new HashSet<>(graph.shortestPaths(start).keySet());
+    }
+}</code></pre>
+                        </div>
+                        <p class="text-gray-600">Utility features:</p>
+                        <ul class="list-disc list-inside text-gray-600 mt-2 space-y-1">
+                            <li>Path existence checking</li>
+                            <li>Distance calculation</li>
+                            <li>Reachability analysis</li>
+                            <li>Generic type support</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div data-tab-content="exercises" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Practice Exercises</h2>
+                    
+                    <div class="space-y-8">
+                        <!-- Basic Path Finding -->
+                        <div class="border-l-4 border-primary pl-4">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">1. Basic Path Finding</h3>
+                            <p class="text-gray-600 mb-4">Practice fundamental path finding techniques:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Shortest Path in Binary Matrix - <a href="https://leetcode.com/problems/shortest-path-in-binary-matrix/" class="text-primary hover:text-secondary" target="_blank">LeetCode 1091</a></li>
+                                <li>Rotting Oranges - <a href="https://leetcode.com/problems/rotting-oranges/" class="text-primary hover:text-secondary" target="_blank">LeetCode 994</a></li>
+                                <li>01 Matrix - <a href="https://leetcode.com/problems/01-matrix/" class="text-primary hover:text-secondary" target="_blank">LeetCode 542</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Intermediate Path Problems -->
+                        <div class="border-l-4 border-primary pl-4">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">2. Intermediate Path Problems</h3>
+                            <p class="text-gray-600 mb-4">Solve more complex path finding challenges:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Jump Game III - <a href="https://leetcode.com/problems/jump-game-iii/" class="text-primary hover:text-secondary" target="_blank">LeetCode 1306</a></li>
+                                <li>Shortest Bridge - <a href="https://leetcode.com/problems/shortest-bridge/" class="text-primary hover:text-secondary" target="_blank">LeetCode 934</a></li>
+                                <li>Open the Lock - <a href="https://leetcode.com/problems/open-the-lock/" class="text-primary hover:text-secondary" target="_blank">LeetCode 752</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Advanced Applications -->
+                        <div class="border-l-4 border-primary pl-4">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">3. Advanced Path Applications</h3>
+                            <p class="text-gray-600 mb-4">Apply path finding to complex scenarios:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Bus Routes - <a href="https://leetcode.com/problems/bus-routes/" class="text-primary hover:text-secondary" target="_blank">LeetCode 815</a></li>
+                                <li>Shortest Path with Alternating Colors - <a href="https://leetcode.com/problems/shortest-path-with-alternating-colors/" class="text-primary hover:text-secondary" target="_blank">LeetCode 1129</a></li>
+                                <li>Cut Off Trees for Golf Event - <a href="https://leetcode.com/problems/cut-off-trees-for-golf-event/" class="text-primary hover:text-secondary" target="_blank">LeetCode 675</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

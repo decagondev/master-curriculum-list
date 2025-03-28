@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Optimization - Module 4</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <nav>
+                <h1>BD Unit 2 Sprint 5</h1>
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../module1/index.html">Module 1</a></li>
+                    <li><a href="../module2/index.html">Module 2</a></li>
+                    <li><a href="../module3/index.html">Module 3</a></li>
+                    <li><a href="../module4/index.html">Module 4</a></li>
+                    <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                    <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <article>
+            <h1>Memory Optimization</h1>
+
+            <section>
+                <h2>Memory Leak Prevention</h2>
+                <h3>Common Memory Leaks</h3>
+                <pre><code>// 1. Static Collections
+public class MemoryLeakExample {
+    private static List<Object> list = new ArrayList<>();
+    
+    public void addObject(Object obj) {
+        list.add(obj); // Objects never removed
+    }
+}
+
+// 2. Unclosed Resources
+public class ResourceLeak {
+    public void readFile() {
+        FileInputStream fis = new FileInputStream("file.txt");
+        // Resource not closed
+    }
+}
+
+// 3. Event Listener Leaks
+public class EventLeak {
+    private List<EventListener> listeners = new ArrayList<>();
+    
+    public void addListener(EventListener listener) {
+        listeners.add(listener);
+        // Listener never removed
+    }
+}</code></pre>
+
+                <h3>Prevention Techniques</h3>
+                <pre><code>// 1. Use try-with-resources
+public void readFile() {
+    try (FileInputStream fis = new FileInputStream("file.txt")) {
+        // Use the resource
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+// 2. Clear collections when no longer needed
+public void cleanup() {
+    list.clear();
+}
+
+// 3. Remove event listeners
+public void removeListener(EventListener listener) {
+    listeners.remove(listener);
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Memory-Efficient Data Structures</h2>
+                <h3>Collection Types</h3>
+                <pre><code>// 1. ArrayList vs LinkedList
+// ArrayList: Better for random access, less memory overhead
+ArrayList<String> arrayList = new ArrayList<>();
+
+// LinkedList: Better for insertions/deletions, more memory overhead
+LinkedList<String> linkedList = new LinkedList<>();
+
+// 2. HashMap vs TreeMap
+// HashMap: Better performance, unordered
+HashMap<String, Integer> hashMap = new HashMap<>();
+
+// TreeMap: Ordered, more memory overhead
+TreeMap<String, Integer> treeMap = new TreeMap<>();
+
+// 3. HashSet vs TreeSet
+// HashSet: Better performance, unordered
+HashSet<String> hashSet = new HashSet<>();
+
+// TreeSet: Ordered, more memory overhead
+TreeSet<String> treeSet = new TreeSet<>();</code></pre>
+
+                <h3>Primitive vs Wrapper Types</h3>
+                <pre><code>// Use primitive types when possible
+int number = 42; // 4 bytes
+Integer wrappedNumber = 42; // 16 bytes + overhead
+
+// Use primitive arrays for large datasets
+int[] numbers = new int[1000]; // 4000 bytes
+Integer[] wrappedNumbers = new Integer[1000]; // 16000 bytes + overhead</code></pre>
+            </section>
+
+            <section>
+                <h2>String Optimization</h2>
+                <h3>String Creation</h3>
+                <pre><code>// 1. String Literals (String Pool)
+String s1 = "Hello"; // Uses string pool
+String s2 = "Hello"; // Reuses same object
+
+// 2. String Constructor
+String s3 = new String("Hello"); // Creates new object
+String s4 = new String("Hello"); // Creates another object
+
+// 3. StringBuilder for concatenation
+StringBuilder sb = new StringBuilder();
+for (int i = 0; i < 1000; i++) {
+    sb.append("Hello");
+}
+String result = sb.toString();</code></pre>
+
+                <h3>String Memory Management</h3>
+                <pre><code>// 1. Use intern() for frequently used strings
+String s1 = "Hello".intern();
+String s2 = "Hello".intern(); // Same object
+
+// 2. Use String.format() for complex strings
+String formatted = String.format("Hello %s, you are %d years old", name, age);
+
+// 3. Use String.join() for collections
+String joined = String.join(", ", list);</code></pre>
+            </section>
+
+            <section>
+                <h2>Large Object Handling</h2>
+                <h3>Stream Processing</h3>
+                <pre><code>// Process large files without loading into memory
+try (BufferedReader reader = new BufferedReader(new FileReader("large.txt"))) {
+    String line;
+    while ((line = reader.readLine()) != null) {
+        processLine(line);
+    }
+}
+
+// Process large collections using streams
+List<String> result = largeList.stream()
+    .filter(s -> s.length() > 5)
+    .map(String::toUpperCase)
+    .collect(Collectors.toList());</code></pre>
+
+                <h3>Memory-Mapped Files</h3>
+                <pre><code>// Use memory-mapped files for large datasets
+try (FileChannel channel = FileChannel.open(Paths.get("large.dat"))) {
+    MappedByteBuffer buffer = channel.map(
+        FileChannel.MapMode.READ_ONLY, 0, channel.size());
+    // Process buffer
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Memory Profiling</h2>
+                <h3>Profiling Tools</h3>
+                <ul>
+                    <li><strong>JProfiler:</strong> Comprehensive profiling tool</li>
+                    <li><strong>VisualVM:</strong> Built-in Java profiling tool</li>
+                    <li><strong>Eclipse MAT:</strong> Memory analyzer tool</li>
+                    <li><strong>Java Flight Recorder:</strong> Low-overhead profiling</li>
+                </ul>
+
+                <h3>Heap Analysis</h3>
+                <pre><code>// Enable heap dump on OOM
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=/path/to/dump
+
+// Enable detailed GC logging
+-verbose:gc
+-XX:+PrintGCDetails
+-XX:+PrintGCDateStamps
+-Xloggc:gc.log</code></pre>
+            </section>
+
+            <section>
+                <h2>Video Content</h2>
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Memory Optimization Video" src="https://fast.wistia.net/embed/iframe/qwf8ogb8k5" width="640" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+            </section>
+        </article>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Bloom Institute of Technology. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code-Along 2 - Temperature Converter</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .video-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .video-container iframe {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .content-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .content-section h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .content-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .content-section li {
+            margin: 10px 0;
+        }
+        .content-section a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .content-section a:hover {
+            text-decoration: underline;
+        }
+        .code-block {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Code-Along 2 - Temperature Converter</h1>
+
+    <div class="content-section">
+        <h2>Introduction to Temperature Converter</h2>
+        <div class="video-container">
+            <iframe class="wistia_embed" title="Temperature Converter Introduction Video" src="https://fast.wistia.net/embed/iframe/3wntv10mkb" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Temperature Conversion Formulas</h2>
+        <div class="video-container">
+            <iframe class="wistia_embed" title="Temperature Conversion Formulas Video" src="https://fast.wistia.net/embed/iframe/mgn3tnljkr?seo=false" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+        <div class="code-block">
+            <pre>
+// Temperature Conversion Functions
+function celsiusToFahrenheit(celsius) {
+    return (celsius * 9/5) + 32;
+}
+
+function fahrenheitToCelsius(fahrenheit) {
+    return (fahrenheit - 32) * 5/9;
+}
+
+function celsiusToKelvin(celsius) {
+    return celsius + 273.15;
+}
+
+function kelvinToCelsius(kelvin) {
+    return kelvin - 273.15;
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Building the Converter Component</h2>
+        <div class="video-container">
+            <iframe class="wistia_embed" title="Building the Converter Component Video" src="https://fast.wistia.net/embed/iframe/mtas07gsyk?seo=false" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+        <div class="code-block">
+            <pre>
+// Temperature Converter Component
+function TemperatureConverter() {
+    const [temperature, setTemperature] = useState('');
+    const [fromUnit, setFromUnit] = useState('celsius');
+    const [toUnit, setToUnit] = useState('fahrenheit');
+
+    const convert = () => {
+        const num = parseFloat(temperature);
+        if (isNaN(num)) return '';
+
+        let celsius;
+        switch (fromUnit) {
+            case 'celsius':
+                celsius = num;
+                break;
+            case 'fahrenheit':
+                celsius = fahrenheitToCelsius(num);
+                break;
+            case 'kelvin':
+                celsius = kelvinToCelsius(num);
+                break;
+        }
+
+        switch (toUnit) {
+            case 'celsius':
+                return celsius.toFixed(2);
+            case 'fahrenheit':
+                return celsiusToFahrenheit(celsius).toFixed(2);
+            case 'kelvin':
+                return celsiusToKelvin(celsius).toFixed(2);
+        }
+    };
+
+    return (
+        <div>
+            <input
+                type="number"
+                value={temperature}
+                onChange={(e) => setTemperature(e.target.value)}
+            />
+            <select value={fromUnit} onChange={(e) => setFromUnit(e.target.value)}>
+                <option value="celsius">Celsius</option>
+                <option value="fahrenheit">Fahrenheit</option>
+                <option value="kelvin">Kelvin</option>
+            </select>
+            <span>to</span>
+            <select value={toUnit} onChange={(e) => setToUnit(e.target.value)}>
+                <option value="celsius">Celsius</option>
+                <option value="fahrenheit">Fahrenheit</option>
+                <option value="kelvin">Kelvin</option>
+            </select>
+            <div>Result: {convert()}°{toUnit.charAt(0).toUpperCase() + toUnit.slice(1)}</div>
+        </div>
+    );
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Adding Styling and Validation</h2>
+        <div class="video-container">
+            <iframe class="wistia_embed" title="Adding Styling and Validation Video" src="https://fast.wistia.net/embed/iframe/3waibp5a26?seo=false" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Resources</h2>
+        <ul>
+            <li><a href="https://reactjs.org/docs/forms.html" target="_blank">React Forms Documentation</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" target="_blank">JavaScript Number Documentation</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">CSS Documentation</a></li>
+        </ul>
+    </div>
+
+    <div class="content-section">
+        <h2>Code-Along Project</h2>
+        <p>Complete the Temperature Converter code-along to practice building a React component with form handling and unit conversion.</p>
+        <ul>
+            <li><a href="project.html">Project Instructions</a></li>
+            <li><a href="https://github.com/your-org/temperature-converter" target="_blank">Project Repository</a></li>
+        </ul>
+    </div>
+</body>
+</html> 

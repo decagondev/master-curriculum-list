@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphs IV: Depth-First Traversal - Module 4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#93005a',
+                        secondary: '#00808c',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.classList.remove('border-primary', 'text-primary');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            
+            document.querySelector(`[data-tab-content="${tabId}"]`).classList.remove('hidden');
+            
+            element.classList.remove('text-gray-500', 'border-transparent');
+            element.classList.add('border-primary', 'text-primary');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mb-8">
+            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Welcome Page</span>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-primary mb-4">Graphs IV: Depth-First Traversal</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Master depth-first traversal techniques and their applications in graph algorithms.
+                Learn to implement both recursive and iterative approaches to DFS and solve complex graph problems.
+            </p>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="border-b border-gray-200 mb-8">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button 
+                    data-tab="overview"
+                    onclick="switchTab('overview', this)"
+                    class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-medium"
+                    aria-current="page">
+                    Overview
+                </button>
+                <button 
+                    data-tab="lecture"
+                    onclick="switchTab('lecture', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Lecture Content
+                </button>
+                <button 
+                    data-tab="implementation"
+                    onclick="switchTab('implementation', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Implementation
+                </button>
+                <button 
+                    data-tab="exercises"
+                    onclick="switchTab('exercises', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Practice Exercises
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="space-y-8">
+            <!-- Overview Tab -->
+            <div data-tab-content="overview" class="space-y-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Learning Objectives</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Core Concepts</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Understanding depth-first search (DFS)</li>
+                                <li>Recursive vs. iterative implementations</li>
+                                <li>Backtracking in graph traversal</li>
+                                <li>Time and space complexity analysis</li>
+                                <li>DFS applications in problem-solving</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Skills Development</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Implementing recursive DFS</li>
+                                <li>Converting recursive to iterative</li>
+                                <li>Detecting cycles in graphs</li>
+                                <li>Topological sorting</li>
+                                <li>Solving graph-based puzzles</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Prerequisites</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Required Knowledge</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Basic graph theory concepts</li>
+                                <li>Understanding of recursion</li>
+                                <li>Stack data structure</li>
+                                <li>Graph representation methods</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Recommended Preparation</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Review recursive functions</li>
+                                <li>Practice stack operations</li>
+                                <li>Study graph properties</li>
+                                <li>Understand backtracking</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div data-tab-content="lecture" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Video Lecture</h2>
+                    
+                    <!-- Depth-First Traversal Video Section -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-medium text-secondary mb-4">Depth-First Traversal</h3>
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                            <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                                <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                    <iframe src="https://fast.wistia.net/embed/iframe/79o1ig55qk" title="Depth-First Traversal Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <h4 class="text-lg font-medium text-gray-900">Key Concepts Covered:</h4>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>DFS algorithm fundamentals</li>
+                                <li>Recursive implementation strategy</li>
+                                <li>Stack-based iterative approach</li>
+                                <li>Common applications and use cases</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div data-tab-content="implementation" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Code Implementation</h2>
+                    
+                    <!-- Recursive DFS Implementation -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-medium text-secondary mb-4">Recursive DFS Implementation</h3>
+                        <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                            <pre class="text-gray-100"><code>public class Graph<T> {
+    private Map<T, List<T>> adjacencyList = new HashMap<>();
+    
+    public void dfsRecursive(T start) {
+        Set<T> visited = new HashSet<>();
+        dfsRecursiveHelper(start, visited);
+    }
+    
+    private void dfsRecursiveHelper(T vertex, Set<T> visited) {
+        visited.add(vertex);
+        System.out.println(vertex); // Process vertex
+        
+        for (T neighbor : adjacencyList.get(vertex)) {
+            if (!visited.contains(neighbor)) {
+                dfsRecursiveHelper(neighbor, visited);
+            }
+        }
+    }
+    
+    // DFS with result collection
+    public List<T> dfsTraversal(T start) {
+        List<T> result = new ArrayList<>();
+        Set<T> visited = new HashSet<>();
+        dfsCollect(start, visited, result);
+        return result;
+    }
+    
+    private void dfsCollect(T vertex, Set<T> visited, List<T> result) {
+        visited.add(vertex);
+        result.add(vertex);
+        
+        for (T neighbor : adjacencyList.get(vertex)) {
+            if (!visited.contains(neighbor)) {
+                dfsCollect(neighbor, visited, result);
+            }
+        }
+    }
+}</code></pre>
+                        </div>
+                        <p class="text-gray-600">Implementation features:</p>
+                        <ul class="list-disc list-inside text-gray-600 mt-2 space-y-1">
+                            <li>Clean recursive implementation</li>
+                            <li>Visited set tracking</li>
+                            <li>Optional result collection</li>
+                            <li>Generic type support</li>
+                        </ul>
+                    </div>
+
+                    <!-- Advanced DFS Applications -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-medium text-secondary mb-4">Advanced DFS Applications</h3>
+                        <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                            <pre class="text-gray-100"><code>public class GraphAlgorithms<T> {
+    // Cycle detection
+    public boolean hasCycle(Graph<T> graph, T start) {
+        Set<T> visited = new HashSet<>();
+        Set<T> recursionStack = new HashSet<>();
+        return detectCycle(graph, start, visited, recursionStack);
+    }
+    
+    private boolean detectCycle(Graph<T> graph, T vertex, 
+            Set<T> visited, Set<T> recursionStack) {
+        visited.add(vertex);
+        recursionStack.add(vertex);
+        
+        for (T neighbor : graph.getNeighbors(vertex)) {
+            if (!visited.contains(neighbor)) {
+                if (detectCycle(graph, neighbor, visited, recursionStack)) {
+                    return true;
+                }
+            } else if (recursionStack.contains(neighbor)) {
+                return true;
+            }
+        }
+        
+        recursionStack.remove(vertex);
+        return false;
+    }
+    
+    // Topological Sort
+    public List<T> topologicalSort(Graph<T> graph) {
+        Set<T> visited = new HashSet<>();
+        Stack<T> stack = new Stack<>();
+        
+        for (T vertex : graph.getVertices()) {
+            if (!visited.contains(vertex)) {
+                topologicalSortUtil(graph, vertex, visited, stack);
+            }
+        }
+        
+        List<T> result = new ArrayList<>();
+        while (!stack.isEmpty()) {
+            result.add(stack.pop());
+        }
+        return result;
+    }
+    
+    private void topologicalSortUtil(Graph<T> graph, T vertex, 
+            Set<T> visited, Stack<T> stack) {
+        visited.add(vertex);
+        
+        for (T neighbor : graph.getNeighbors(vertex)) {
+            if (!visited.contains(neighbor)) {
+                topologicalSortUtil(graph, neighbor, visited, stack);
+            }
+        }
+        
+        stack.push(vertex);
+    }
+}</code></pre>
+                        </div>
+                        <p class="text-gray-600">Advanced features:</p>
+                        <ul class="list-disc list-inside text-gray-600 mt-2 space-y-1">
+                            <li>Cycle detection in directed graphs</li>
+                            <li>Topological sorting implementation</li>
+                            <li>Recursion stack tracking</li>
+                            <li>Result ordering management</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div data-tab-content="exercises" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Practice Exercises</h2>
+                    
+                    <div class="space-y-8">
+                        <!-- Basic DFS Problems -->
+                        <div class="border-l-4 border-primary pl-4">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">1. Basic DFS Problems</h3>
+                            <p class="text-gray-600 mb-4">Practice fundamental DFS techniques:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Find Path in Graph - <a href="https://leetcode.com/problems/find-if-path-exists-in-graph/" class="text-primary hover:text-secondary" target="_blank">LeetCode 1971</a></li>
+                                <li>Keys and Rooms - <a href="https://leetcode.com/problems/keys-and-rooms/" class="text-primary hover:text-secondary" target="_blank">LeetCode 841</a></li>
+                                <li>Number of Islands - <a href="https://leetcode.com/problems/number-of-islands/" class="text-primary hover:text-secondary" target="_blank">LeetCode 200</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Cycle Detection -->
+                        <div class="border-l-4 border-primary pl-4">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">2. Cycle Detection Problems</h3>
+                            <p class="text-gray-600 mb-4">Practice finding cycles in graphs:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Course Schedule - <a href="https://leetcode.com/problems/course-schedule/" class="text-primary hover:text-secondary" target="_blank">LeetCode 207</a></li>
+                                <li>Find Eventual Safe States - <a href="https://leetcode.com/problems/find-eventual-safe-states/" class="text-primary hover:text-secondary" target="_blank">LeetCode 802</a></li>
+                                <li>Detect Cycle in Directed Graph - <a href="https://leetcode.com/problems/course-schedule-ii/" class="text-primary hover:text-secondary" target="_blank">LeetCode 210</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Advanced Applications -->
+                        <div class="border-l-4 border-primary pl-4">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">3. Advanced DFS Applications</h3>
+                            <p class="text-gray-600 mb-4">Apply DFS to complex problems:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Critical Connections - <a href="https://leetcode.com/problems/critical-connections-in-a-network/" class="text-primary hover:text-secondary" target="_blank">LeetCode 1192</a></li>
+                                <li>Reconstruct Itinerary - <a href="https://leetcode.com/problems/reconstruct-itinerary/" class="text-primary hover:text-secondary" target="_blank">LeetCode 332</a></li>
+                                <li>Remove Invalid Parentheses - <a href="https://leetcode.com/problems/remove-invalid-parentheses/" class="text-primary hover:text-secondary" target="_blank">LeetCode 301</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

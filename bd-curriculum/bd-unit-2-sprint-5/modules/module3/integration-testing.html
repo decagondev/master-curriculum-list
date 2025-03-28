@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integration Testing - Module 3</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <nav>
+                <h1>BD Unit 2 Sprint 5</h1>
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../module1/index.html">Module 1</a></li>
+                    <li><a href="../module2/index.html">Module 2</a></li>
+                    <li><a href="../module3/index.html">Module 3</a></li>
+                    <li><a href="../module4/index.html">Module 4</a></li>
+                    <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                    <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <article>
+            <h1>Integration Testing</h1>
+
+            <section>
+                <h2>What is Integration Testing?</h2>
+                <p>Integration testing is a level of software testing where individual components are combined and tested as a group. The purpose is to expose faults in the interaction between integrated components. This type of testing focuses on verifying that different parts of the application work together correctly.</p>
+            </section>
+
+            <section>
+                <h2>Types of Integration Testing</h2>
+                <h3>Big Bang Integration</h3>
+                <p>All components are integrated at once and tested as a whole.</p>
+                <ul>
+                    <li>Pros: Simple to implement</li>
+                    <li>Cons: Difficult to identify issues</li>
+                </ul>
+
+                <h3>Incremental Integration</h3>
+                <p>Components are integrated and tested one at a time.</p>
+                <ul>
+                    <li><strong>Top-down:</strong> Testing from top to bottom</li>
+                    <li><strong>Bottom-up:</strong> Testing from bottom to top</li>
+                    <li><strong>Sandwich:</strong> Combination of top-down and bottom-up</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Spring Boot Integration Testing</h2>
+                <h3>Test Configuration</h3>
+                <pre><code>@SpringBootTest
+@AutoConfigureMockMvc
+public class UserControllerIntegrationTest {
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Test
+    void createUser_ValidData_ReturnsCreatedUser() throws Exception {
+        // Given
+        UserDTO userDTO = new UserDTO("john@example.com", "password123");
+
+        // When/Then
+        mockMvc.perform(post("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userDTO)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.email").value("john@example.com"));
+    }
+}</code></pre>
+
+                <h3>Database Integration Testing</h3>
+                <pre><code>@DataJpaTest
+public class UserRepositoryIntegrationTest {
+    @Autowired
+    private UserRepository userRepository;
+
+    @Test
+    void findByEmail_ExistingUser_ReturnsUser() {
+        // Given
+        User user = new User("john@example.com", "password123");
+        userRepository.save(user);
+
+        // When
+        Optional<User> found = userRepository.findByEmail("john@example.com");
+
+        // Then
+        assertTrue(found.isPresent());
+        assertEquals("john@example.com", found.get().getEmail());
+    }
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>API Integration Testing</h2>
+                <h3>REST Assured Example</h3>
+                <pre><code>import io.restassured.RestAssured;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class UserApiIntegrationTest {
+    @BeforeEach
+    void setup() {
+        RestAssured.baseURI = "http://localhost:8080";
+    }
+
+    @Test
+    void getUser_ExistingUser_ReturnsUser() {
+        given()
+            .when()
+                .get("/api/users/1")
+            .then()
+                .statusCode(200)
+                .body("email", equalTo("john@example.com"))
+                .body("name", equalTo("John Doe"));
+    }
+}</code></pre>
+
+                <h3>Testing Error Scenarios</h3>
+                <pre><code>@Test
+void createUser_InvalidData_ReturnsBadRequest() throws Exception {
+    // Given
+    UserDTO invalidUser = new UserDTO("invalid-email", "");
+
+    // When/Then
+    mockMvc.perform(post("/api/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(invalidUser)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.errors").isArray())
+        .andExpect(jsonPath("$.errors[0].field").value("email"));
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Test Data Management</h2>
+                <h3>Test Containers</h3>
+                <pre><code>@SpringBootTest
+@Testcontainers
+public class DatabaseIntegrationTest {
+    @Container
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13");
+
+    @DynamicPropertySource
+    static void postgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
+
+    @Test
+    void testDatabaseConnection() {
+        assertTrue(postgres.isRunning());
+    }
+}</code></pre>
+
+                <h3>Test Data Setup</h3>
+                <pre><code>@BeforeEach
+void setupTestData() {
+    // Clear existing data
+    userRepository.deleteAll();
+    
+    // Create test data
+    User user1 = new User("user1@example.com", "password123");
+    User user2 = new User("user2@example.com", "password456");
+    userRepository.saveAll(Arrays.asList(user1, user2));
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Video Content</h2>
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Integration Testing Video" src="https://fast.wistia.net/embed/iframe/92wu32swni" width="640" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+            </section>
+        </article>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Bloom Institute of Technology. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 

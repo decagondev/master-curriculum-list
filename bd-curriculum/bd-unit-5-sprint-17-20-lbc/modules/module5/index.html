@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 5: DynamoDB Index Design and Usage - BD Learn and Be Curious</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="../../index.html">BD Learn and Be Curious</a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="../module1/index.html">Module 1</a></li>
+                    <li><a href="../module2/index.html">Module 2</a></li>
+                    <li><a href="../module3/index.html">Module 3</a></li>
+                    <li><a href="../module4/index.html">Module 4</a></li>
+                    <li><a href="../module5/index.html">Module 5</a></li>
+                    <li><a href="../module6/index.html">Module 6</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <section class="section">
+                <h1>Module 5: DynamoDB Index Design and Usage</h1>
+                
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="DynamoDB Index Design Video" src="https://fast.wistia.net/embed/iframe/fx3cz0cdkg" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+                
+                <div class="learning-objectives">
+                    <h3>Learning Objectives</h3>
+                    <ul>
+                        <li>Understand the purpose and benefits of secondary indexes in DynamoDB</li>
+                        <li>Design effective Global Secondary Indexes (GSIs) for various access patterns</li>
+                        <li>Create and query GSIs efficiently</li>
+                        <li>Understand the tradeoffs between different indexing strategies</li>
+                    </ul>
+                </div>
+                
+                <h2 class="section-title">Introduction to DynamoDB Indexes</h2>
+                <p>In Module 3, you learned about DynamoDB's primary keys and table design. In this module, we'll explore how to create and use secondary indexes to support additional access patterns.</p>
+                
+                <p>DynamoDB tables must have a primary key, which can be simple (partition key only) or composite (partition key and sort key). The primary key determines how data is distributed across partitions and how you can access items. However, sometimes you need to access your data in ways that the primary key doesn't support efficiently.</p>
+                
+                <p>For example, if your primary key is a user ID, you can quickly find items for a specific user. But what if you want to find all items created on a certain date, regardless of which user created them? This is where secondary indexes come in.</p>
+                
+                <h3>Types of Secondary Indexes</h3>
+                <p>DynamoDB supports two types of secondary indexes:</p>
+                <ul>
+                    <li><strong>Global Secondary Indexes (GSIs)</strong>: These can have a different partition key and sort key than the base table. They're "global" because queries on the index can span all data in the base table, across all partitions.</li>
+                    <li><strong>Local Secondary Indexes (LSIs)</strong>: These must have the same partition key as the base table but can have a different sort key. They're "local" because each index partition is scoped to a base table partition with the same partition key value.</li>
+                </ul>
+                <p>In this module, we'll focus primarily on Global Secondary Indexes, as they're more commonly used and provide more flexibility.</p>
+                
+                <h2 class="section-title">Global Secondary Indexes (GSIs)</h2>
+                
+                <h3>Key Characteristics of GSIs</h3>
+                <ul>
+                    <li>A table can have up to 20 GSIs (default limit)</li>
+                    <li>GSIs can have different partition and sort keys than the base table</li>
+                    <li>You can project (include) any attributes from the base table in the index</li>
+                    <li>GSIs are eventually consistent (not strongly consistent)</li>
+                    <li>GSIs have their own provisioned throughput settings, separate from the base table</li>
+                </ul>
+                
+                <h3>When to Use GSIs</h3>
+                <p>Use GSIs when you need to:</p>
+                <ul>
+                    <li>Query data using attributes other than the primary key</li>
+                    <li>Create multiple access patterns for your data</li>
+                    <li>Support complex queries that the base table's primary key doesn't allow</li>
+                    <li>Implement one-to-many or many-to-many relationships</li>
+                </ul>
+                
+                <h2 class="section-title">Designing Effective GSIs</h2>
+                
+                <h3>Access Pattern Analysis</h3>
+                <p>The first step in designing effective GSIs is to understand your access patterns:</p>
+                <ul>
+                    <li>What queries will your application need to perform?</li>
+                    <li>Which attributes will you need to search by?</li>
+                    <li>Will you need to filter results based on certain criteria?</li>
+                    <li>Do you need to retrieve data in a specific order?</li>
+                </ul>
+                
+                <h3>GSI Design Principles</h3>
+                <p>When designing GSIs, follow these principles:</p>
+                <ul>
+                    <li><strong>Design for specific access patterns</strong>: Each GSI should serve one or more specific query patterns</li>
+                    <li><strong>Avoid hot partitions</strong>: Choose a partition key that distributes data evenly</li>
+                    <li><strong>Project only necessary attributes</strong>: Include only the attributes you need to minimize storage costs</li>
+                    <li><strong>Use composite sort keys</strong>: Combine multiple attributes in the sort key to enable more flexible queries</li>
+                    <li><strong>Consider overloading GSIs</strong>: Use the same GSI for multiple access patterns by using different attribute prefixes</li>
+                </ul>
+                
+                <h2 class="section-title">Key Topics</h2>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Intro to Global Secondary Indexes</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Learn about the fundamentals of Global Secondary Indexes in DynamoDB.</p>
+                            <ul>
+                                <li>What are GSIs and why do we need them?</li>
+                                <li>GSI structure and characteristics</li>
+                                <li>Comparing GSIs with primary keys</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Designing and Querying a GSI</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Learn how to design effective GSIs and query them efficiently.</p>
+                            <ul>
+                                <li>Access pattern analysis</li>
+                                <li>GSI design patterns</li>
+                                <li>Writing queries against GSIs</li>
+                                <li>Performance considerations</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Advanced GSI Techniques</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Learn advanced techniques for making the most of GSIs.</p>
+                            <ul>
+                                <li>Sparse indexes</li>
+                                <li>Overloading GSIs</li>
+                                <li>Composite sort keys</li>
+                                <li>GSI optimization</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 class="section-title">Guided Project</h2>
+                <p>In the guided project for this module, you'll apply what you've learned about GSIs to enhance the database design for your Learn and Be Curious project.</p>
+                
+                <h3>Project: Enhancing Your DynamoDB Tables with GSIs</h3>
+                <p>This project will guide you through adding GSIs to your existing DynamoDB tables to support additional access patterns.</p>
+                
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Design Document - GSI Design</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Update the tables section of your design document to include GSIs for additional access patterns.</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="../../sprint-challenge/design-document-dynamodb-gsi.html" class="btn">View Activity</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title">Additional Resources</h2>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>DynamoDB Secondary Indexes Documentation</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Official AWS documentation for DynamoDB secondary indexes.</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SecondaryIndexes.html" class="btn" target="_blank">View Resource</a>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Best Practices for GSIs</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>AWS guide for Global Secondary Index best practices.</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-gsi.html" class="btn" target="_blank">View Resource</a>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Advanced DynamoDB Design Patterns</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Advanced patterns for DynamoDB data modeling with GSIs.</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="https://aws.amazon.com/blogs/database/amazon-dynamodb-single-table-design-for-microservices/" class="btn" target="_blank">View Resource</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-section">
+                    <h3>Course Modules</h3>
+                    <ul>
+                        <li><a href="../module1/index.html">Module 1: Learn and Be Curious Kickoff!</a></li>
+                        <li><a href="../module2/index.html">Module 2: API Design</a></li>
+                        <li><a href="../module3/index.html">Module 3: DynamoDB Table Design</a></li>
+                        <li><a href="../module4/index.html">Module 4: Scrum</a></li>
+                        <li><a href="../module5/index.html">Module 5: DynamoDB Index Design</a></li>
+                        <li><a href="../module6/index.html">Module 6: HTML, CSS, and JavaScript</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="../../resources/tech-requirements.html">Tech Requirements</a></li>
+                        <li><a href="../../resources/aws-cli-setup.html">AWS CLI Setup</a></li>
+                        <li><a href="../../resources/aws-iam-account-setup.html">AWS IAM Account Setup</a></li>
+                        <li><a href="../../resources/how-to-pass-the-sprints.html">How to Pass The Sprints</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="../../resources/academic-support.html">Academic Support</a></li>
+                        <li><a href="../../resources/live-class-offerings.html">Live Class Offerings</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 BloomTech. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

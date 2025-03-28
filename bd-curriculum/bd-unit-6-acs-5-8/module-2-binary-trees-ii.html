@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Binary Trees II</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#93005a',
+                        secondary: '#00808c',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.classList.remove('border-primary', 'text-primary');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            document.querySelector(`[data-tab-content="${tabId}"]`).classList.remove('hidden');
+            element.classList.remove('text-gray-500', 'border-transparent');
+            element.classList.add('border-primary', 'text-primary');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mb-8">
+            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Welcome Page</span>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-primary mb-4">Module 2: Binary Trees II</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Master advanced binary tree operations in Java including recursive search, level-first traversal,
+                and depth-first traversal techniques.
+            </p>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="border-b border-gray-200 mb-8">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button 
+                    data-tab="overview"
+                    onclick="switchTab('overview', this)"
+                    class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-medium"
+                    aria-current="page">
+                    Overview
+                </button>
+                <button 
+                    data-tab="lecture-content"
+                    onclick="switchTab('lecture-content', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Lecture Content
+                </button>
+                <button 
+                    data-tab="implementation"
+                    onclick="switchTab('implementation', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Implementation
+                </button>
+                <button 
+                    data-tab="practice"
+                    onclick="switchTab('practice', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Practice Exercises
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="space-y-8">
+            <!-- Overview Tab -->
+            <div data-tab-content="overview" class="space-y-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Learning Objectives</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Core Concepts</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Recursive search implementation</li>
+                                <li>Level-first traversal using Java Queue interface</li>
+                                <li>Depth-first traversal strategies</li>
+                                <li>Tree traversal applications</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Skills Development</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Recursive problem-solving in Java</li>
+                                <li>Using Java Collections Framework</li>
+                                <li>Tree navigation techniques</li>
+                                <li>Algorithm optimization</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Prerequisites</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Required Knowledge</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Basic binary tree concepts</li>
+                                <li>Java fundamentals</li>
+                                <li>Basic recursion</li>
+                                <li>Java Collections Framework basics</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Technical Requirements</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Java Development Kit (JDK) 11+</li>
+                                <li>Java IDE (Eclipse, IntelliJ, etc.)</li>
+                                <li>JUnit for testing (optional)</li>
+                                <li>Git for version control</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div data-tab-content="lecture-content" class="hidden space-y-8">
+                <!-- Video Section 1: Binary Tree Recursive Search -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">1. Binary Tree Recursive Search</h2>
+                    <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                        <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                            <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                <iframe src="https://fast.wistia.net/embed/iframe/bevlpt9x62?videoFoam=true" title="Binary Tree Recursive Search Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-lg font-medium text-secondary mb-2">Key Topics</h3>
+                        <ul class="list-disc list-inside text-gray-600 space-y-2">
+                            <li>Understanding recursive search patterns</li>
+                            <li>Implementing efficient search algorithms in Java</li>
+                            <li>Handling null cases and exceptions</li>
+                            <li>Time complexity analysis</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Video Section 2: Binary Tree Level-First Traversal -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">2. Binary Tree Level-First Traversal</h2>
+                    <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                        <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                            <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                <iframe src="https://fast.wistia.net/embed/iframe/7tepgf889t?videoFoam=true" title="Binary Tree Level-first Traversal Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-lg font-medium text-secondary mb-2">Key Topics</h3>
+                        <ul class="list-disc list-inside text-gray-600 space-y-2">
+                            <li>Using Java Queue interface</li>
+                            <li>Breadth-first search principles</li>
+                            <li>Level order processing</li>
+                            <li>Space complexity considerations</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Video Section 3: Binary Tree Depth-First Traversal -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">3. Binary Tree Depth-First Traversal</h2>
+                    <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                        <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                            <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                <iframe src="https://fast.wistia.net/embed/iframe/0ciln0daey?videoFoam=true" title="Binary Tree Depth-first Traversal Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-lg font-medium text-secondary mb-2">Key Topics</h3>
+                        <ul class="list-disc list-inside text-gray-600 space-y-2">
+                            <li>Pre-order, in-order, and post-order traversal</li>
+                            <li>Recursive implementation strategies</li>
+                            <li>Using Java Stack for iterative approaches</li>
+                            <li>Common applications and use cases</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div data-tab-content="implementation" class="hidden space-y-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Implementation Examples</h2>
+                    
+                    <!-- Recursive Search Implementation -->
+                    <div class="space-y-6 mb-8">
+                        <h3 class="text-xl font-medium text-secondary">Recursive Search</h3>
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <pre class="text-gray-100"><code>public class BinaryTree<T> {
+    private BinaryTreeNode<T> root;
+
+    public BinaryTreeNode<T> search(T value) {
+        return searchRecursive(root, value);
+    }
+
+    private BinaryTreeNode<T> searchRecursive(BinaryTreeNode<T> node, T value) {
+        // Base cases
+        if (node == null) return null;
+        if (node.getValue().equals(value)) return node;
+
+        // Recursive cases
+        BinaryTreeNode<T> left = searchRecursive(node.getLeft(), value);
+        if (left != null) return left;
+
+        return searchRecursive(node.getRight(), value);
+    }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Level-First Traversal Implementation -->
+                    <div class="space-y-6 mb-8">
+                        <h3 class="text-xl font-medium text-secondary">Level-First Traversal</h3>
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <pre class="text-gray-100"><code>public List<T> levelOrderTraversal() {
+    if (root == null) return new ArrayList<>();
+    
+    List<T> result = new ArrayList<>();
+    Queue<BinaryTreeNode<T>> queue = new LinkedList<>();
+    queue.offer(root);
+    
+    while (!queue.isEmpty()) {
+        BinaryTreeNode<T> node = queue.poll();
+        result.add(node.getValue());
+        
+        if (node.getLeft() != null) queue.offer(node.getLeft());
+        if (node.getRight() != null) queue.offer(node.getRight());
+    }
+    
+    return result;
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Depth-First Traversal Implementation -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-medium text-secondary">Depth-First Traversal</h3>
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <pre class="text-gray-100"><code>public class DepthFirstTraversal<T> {
+    // Recursive implementation
+    public List<T> inorderTraversal(BinaryTreeNode<T> root) {
+        List<T> result = new ArrayList<>();
+        inorderHelper(root, result);
+        return result;
+    }
+
+    private void inorderHelper(BinaryTreeNode<T> node, List<T> result) {
+        if (node != null) {
+            inorderHelper(node.getLeft(), result);
+            result.add(node.getValue());
+            inorderHelper(node.getRight(), result);
+        }
+    }
+
+    // Iterative implementation using Stack
+    public List<T> inorderTraversalIterative(BinaryTreeNode<T> root) {
+        List<T> result = new ArrayList<>();
+        Stack<BinaryTreeNode<T>> stack = new Stack<>();
+        BinaryTreeNode<T> current = root;
+
+        while (current != null || !stack.isEmpty()) {
+            while (current != null) {
+                stack.push(current);
+                current = current.getLeft();
+            }
+            current = stack.pop();
+            result.add(current.getValue());
+            current = current.getRight();
+        }
+        return result;
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div data-tab-content="practice" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Practice Exercises</h2>
+                    
+                    <div class="space-y-8">
+                        <!-- Tree Traversal Problems -->
+                        <div class="border-l-4 border-primary pl-4 mb-8">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Exercise 1: Tree Traversal Problems</h3>
+                            <p class="text-gray-600 mb-4">Practice these fundamental tree traversal problems:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Binary Tree Level Order Traversal - <a href="https://leetcode.com/problems/binary-tree-level-order-traversal/" class="text-primary hover:text-secondary" target="_blank">LeetCode 102</a></li>
+                                <li>Binary Tree Zigzag Level Order Traversal - <a href="https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/" class="text-primary hover:text-secondary" target="_blank">LeetCode 103</a></li>
+                                <li>Binary Tree Right Side View - <a href="https://leetcode.com/problems/binary-tree-right-side-view/" class="text-primary hover:text-secondary" target="_blank">LeetCode 199</a></li>
+                                <li>Average of Levels in Binary Tree - <a href="https://leetcode.com/problems/average-of-levels-in-binary-tree/" class="text-primary hover:text-secondary" target="_blank">LeetCode 637</a></li>
+                            </ul>
+                            <p class="text-gray-600 mt-4">Additional traversal problems:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li><a href="https://leetcode.com/problems/binary-tree-vertical-order-traversal/" class="text-primary hover:text-secondary" target="_blank">LeetCode 314</a> - Binary Tree Vertical Order Traversal</li>
+                                <li><a href="https://leetcode.com/problems/n-ary-tree-level-order-traversal/" class="text-primary hover:text-secondary" target="_blank">LeetCode 429</a> - N-ary Tree Level Order Traversal</li>
+                                <li><a href="https://leetcode.com/problems/binary-tree-level-order-traversal-ii/" class="text-primary hover:text-secondary" target="_blank">LeetCode 107</a> - Binary Tree Level Order Traversal II</li>
+                            </ul>
+                        </div>
+
+                        <!-- Tree Path and Properties Problems -->
+                        <div class="border-l-4 border-primary pl-4 mb-8">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Exercise 2: Tree Path and Properties</h3>
+                            <p class="text-gray-600 mb-4">Practice these tree path and property problems:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Binary Tree Paths - <a href="https://leetcode.com/problems/binary-tree-paths/" class="text-primary hover:text-secondary" target="_blank">LeetCode 257</a></li>
+                                <li>Path Sum - <a href="https://leetcode.com/problems/path-sum/" class="text-primary hover:text-secondary" target="_blank">LeetCode 112</a></li>
+                                <li>Path Sum II - <a href="https://leetcode.com/problems/path-sum-ii/" class="text-primary hover:text-secondary" target="_blank">LeetCode 113</a></li>
+                                <li>Diameter of Binary Tree - <a href="https://leetcode.com/problems/diameter-of-binary-tree/" class="text-primary hover:text-secondary" target="_blank">LeetCode 543</a></li>
+                            </ul>
+                            <p class="text-gray-600 mt-4">Additional path problems:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li><a href="https://leetcode.com/problems/binary-tree-maximum-path-sum/" class="text-primary hover:text-secondary" target="_blank">LeetCode 124</a> - Binary Tree Maximum Path Sum</li>
+                                <li><a href="https://leetcode.com/problems/sum-root-to-leaf-numbers/" class="text-primary hover:text-secondary" target="_blank">LeetCode 129</a> - Sum Root to Leaf Numbers</li>
+                                <li><a href="https://leetcode.com/problems/longest-univalue-path/" class="text-primary hover:text-secondary" target="_blank">LeetCode 687</a> - Longest Univalue Path</li>
+                            </ul>
+                        </div>
+
+                        <!-- Advanced Tree Problems -->
+                        <div class="border-l-4 border-primary pl-4">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Exercise 3: Advanced Tree Problems</h3>
+                            <p class="text-gray-600 mb-4">Challenge yourself with these advanced tree problems:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Serialize and Deserialize Binary Tree - <a href="https://leetcode.com/problems/serialize-and-deserialize-binary-tree/" class="text-primary hover:text-secondary" target="_blank">LeetCode 297</a></li>
+                                <li>Binary Tree Maximum Path Sum - <a href="https://leetcode.com/problems/binary-tree-maximum-path-sum/" class="text-primary hover:text-secondary" target="_blank">LeetCode 124</a></li>
+                                <li>Lowest Common Ancestor of a Binary Tree - <a href="https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/" class="text-primary hover:text-secondary" target="_blank">LeetCode 236</a></li>
+                                <li>All Nodes Distance K in Binary Tree - <a href="https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/" class="text-primary hover:text-secondary" target="_blank">LeetCode 863</a></li>
+                            </ul>
+                            <p class="text-gray-600 mt-4">Additional advanced problems:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li><a href="https://leetcode.com/problems/recover-binary-search-tree/" class="text-primary hover:text-secondary" target="_blank">LeetCode 99</a> - Recover Binary Search Tree</li>
+                                <li><a href="https://leetcode.com/problems/binary-tree-cameras/" class="text-primary hover:text-secondary" target="_blank">LeetCode 968</a> - Binary Tree Cameras</li>
+                                <li><a href="https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/" class="text-primary hover:text-secondary" target="_blank">LeetCode 105</a> - Construct Binary Tree from Traversals</li>
+                            </ul>
+                        </div>
+
+                        <!-- Study Resources -->
+                        <div class="mt-8 p-6 bg-gray-50 rounded-lg">
+                            <h3 class="text-lg font-medium text-primary mb-4">Study Tips</h3>
+                            <div class="space-y-4">
+                                <p class="text-gray-600">To master advanced binary tree concepts:</p>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                    <li>Practice both recursive and iterative solutions</li>
+                                    <li>Understand different traversal patterns and their applications</li>
+                                    <li>Focus on space and time complexity optimization</li>
+                                    <li>Learn to identify subproblems in complex tree operations</li>
+                                    <li>Master tree property validation techniques</li>
+                                </ul>
+                                <div class="mt-4">
+                                    <p class="text-gray-600">Common patterns to look for:</p>
+                                    <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                        <li>DFS vs BFS approach selection</li>
+                                        <li>Path finding and summation patterns</li>
+                                        <li>Tree property validation techniques</li>
+                                        <li>Tree construction and modification patterns</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

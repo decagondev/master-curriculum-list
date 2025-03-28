@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Driven Development - Module 3</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <nav>
+                <h1>BD Unit 2 Sprint 5</h1>
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../module1/index.html">Module 1</a></li>
+                    <li><a href="../module2/index.html">Module 2</a></li>
+                    <li><a href="../module3/index.html">Module 3</a></li>
+                    <li><a href="../module4/index.html">Module 4</a></li>
+                    <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                    <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <article>
+            <h1>Test-Driven Development (TDD)</h1>
+
+            <section>
+                <h2>What is TDD?</h2>
+                <p>Test-Driven Development is a software development approach where you write tests before writing the actual code. The TDD cycle follows these steps:</p>
+                <ol>
+                    <li><strong>Red:</strong> Write a failing test</li>
+                    <li><strong>Green:</strong> Write the minimum code to make the test pass</li>
+                    <li><strong>Refactor:</strong> Improve the code while keeping tests green</li>
+                </ol>
+            </section>
+
+            <section>
+                <h2>TDD Example</h2>
+                <h3>Step 1: Write a Failing Test</h3>
+                <pre><code>import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class StringCalculatorTest {
+    @Test
+    void add_EmptyString_ReturnsZero() {
+        StringCalculator calculator = new StringCalculator();
+        assertEquals(0, calculator.add(""));
+    }
+}</code></pre>
+
+                <h3>Step 2: Write Minimum Code to Pass</h3>
+                <pre><code>public class StringCalculator {
+    public int add(String numbers) {
+        return 0;
+    }
+}</code></pre>
+
+                <h3>Step 3: Add More Tests</h3>
+                <pre><code>@Test
+void add_SingleNumber_ReturnsThatNumber() {
+    StringCalculator calculator = new StringCalculator();
+    assertEquals(1, calculator.add("1"));
+}
+
+@Test
+void add_TwoNumbers_ReturnsSum() {
+    StringCalculator calculator = new StringCalculator();
+    assertEquals(3, calculator.add("1,2"));
+}</code></pre>
+
+                <h3>Step 4: Implement the Feature</h3>
+                <pre><code>public class StringCalculator {
+    public int add(String numbers) {
+        if (numbers.isEmpty()) {
+            return 0;
+        }
+        String[] nums = numbers.split(",");
+        int sum = 0;
+        for (String num : nums) {
+            sum += Integer.parseInt(num.trim());
+        }
+        return sum;
+    }
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>TDD Benefits</h2>
+                <ul>
+                    <li><strong>Better Design:</strong> Tests drive the design of the code</li>
+                    <li><strong>Documentation:</strong> Tests serve as living documentation</li>
+                    <li><strong>Confidence:</strong> High test coverage provides confidence in changes</li>
+                    <li><strong>Maintainability:</strong> Easier to maintain and refactor code</li>
+                    <li><strong>Bug Prevention:</strong> Catches issues early in development</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>TDD Best Practices</h2>
+                <h3>Test First</h3>
+                <ul>
+                    <li>Write tests before implementing features</li>
+                    <li>Start with the simplest test case</li>
+                    <li>Focus on behavior, not implementation</li>
+                    <li>Use descriptive test names</li>
+                </ul>
+
+                <h3>Test Independence</h3>
+                <ul>
+                    <li>Each test should be independent</li>
+                    <li>Tests should not depend on each other</li>
+                    <li>Clean up after each test</li>
+                    <li>Use appropriate test fixtures</li>
+                </ul>
+
+                <h3>Refactoring</h3>
+                <ul>
+                    <li>Refactor only when tests are green</li>
+                    <li>Keep refactoring small and focused</li>
+                    <li>Run tests after each refactoring</li>
+                    <li>Maintain test readability</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Common TDD Patterns</h2>
+                <h3>Test Doubles</h3>
+                <pre><code>import org.mockito.Mock;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.*;
+
+public class OrderServiceTest {
+    @Mock
+    private PaymentGateway paymentGateway;
+
+    @Test
+    void processOrder_ValidPayment_ReturnsSuccess() {
+        when(paymentGateway.processPayment(anyDouble()))
+            .thenReturn(true);
+
+        OrderService service = new OrderService(paymentGateway);
+        assertTrue(service.processOrder(new Order(100.0)));
+    }
+}</code></pre>
+
+                <h3>Behavior-Driven Development (BDD)</h3>
+                <pre><code>@DisplayName("User Registration")
+class UserRegistrationTest {
+    @Test
+    @DisplayName("Should create new user with valid data")
+    void shouldCreateNewUserWithValidData() {
+        // Given
+        UserRegistration registration = new UserRegistration();
+        UserData userData = new UserData("john@example.com", "password123");
+
+        // When
+        User user = registration.register(userData);
+
+        // Then
+        assertNotNull(user);
+        assertEquals("john@example.com", user.getEmail());
+    }
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Video Content</h2>
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Test-Driven Development Video" src="https://fast.wistia.net/embed/iframe/92wu32swni" width="640" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+            </section>
+        </article>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Bloom Institute of Technology. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 

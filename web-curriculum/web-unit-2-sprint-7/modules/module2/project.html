@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2 Project - Form Management</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .content-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .content-section h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .content-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .content-section li {
+            margin: 10px 0;
+        }
+        .content-section a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .content-section a:hover {
+            text-decoration: underline;
+        }
+        .code-block {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        .requirements {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Module 2 Project - Form Management</h1>
+
+    <div class="content-section">
+        <h2>Project Overview</h2>
+        <p>In this project, you will build a React application that demonstrates your understanding of form management. You will create a complex form with validation, error handling, and proper state management.</p>
+    </div>
+
+    <div class="content-section">
+        <h2>Project Requirements</h2>
+        <div class="requirements">
+            <h3>Form Requirements</h3>
+            <ul>
+                <li>Create a multi-step form with at least 3 steps</li>
+                <li>Implement form validation for all fields</li>
+                <li>Display validation errors in real-time</li>
+                <li>Handle form submission with proper error handling</li>
+                <li>Implement form state persistence between steps</li>
+            </ul>
+
+            <h3>Component Requirements</h3>
+            <ul>
+                <li>Create reusable form components</li>
+                <li>Implement controlled components for all form inputs</li>
+                <li>Create custom form validation hooks</li>
+                <li>Build a progress indicator for multi-step form</li>
+            </ul>
+
+            <h3>Functionality Requirements</h3>
+            <ul>
+                <li>Handle different input types (text, email, password, select, etc.)</li>
+                <li>Implement form data persistence using localStorage</li>
+                <li>Add form submission success/error feedback</li>
+                <li>Include form reset functionality</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Project Setup</h2>
+        <div class="code-block">
+            <pre>
+# Create a new React project
+npx create-react-app form-management-project
+
+# Install dependencies
+cd form-management-project
+npm install formik yup
+
+# Start the development server
+npm start
+            </pre>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Project Structure</h2>
+        <div class="code-block">
+            <pre>
+src/
+  ├── components/
+  │   ├── Form/
+  │   │   ├── FormStep.js
+  │   │   ├── FormInput.js
+  │   │   ├── FormSelect.js
+  │   │   └── FormError.js
+  │   └── common/
+  │       ├── ProgressBar.js
+  │       └── Button.js
+  ├── hooks/
+  │   └── useFormValidation.js
+  ├── utils/
+  │   └── validation.js
+  ├── pages/
+  │   └── MultiStepForm.js
+  └── App.js
+            </pre>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Example Implementation</h2>
+        <div class="code-block">
+            <pre>
+// FormStep.js
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
+const validationSchema = Yup.object({
+  firstName: Yup.string()
+    .required('First name is required')
+    .min(2, 'First name must be at least 2 characters'),
+  lastName: Yup.string()
+    .required('Last name is required')
+    .min(2, 'Last name must be at least 2 characters'),
+  email: Yup.string()
+    .email('Invalid email address')
+    .required('Email is required'),
+});
+
+function FormStep({ initialValues, onSubmit, children }) {
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit,
+  });
+
+  return (
+    <form onSubmit={formik.handleSubmit}>
+      {children(formik)}
+    </form>
+  );
+}
+
+export default FormStep;
+            </pre>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Resources</h2>
+        <ul>
+            <li><a href="https://formik.org/" target="_blank">Formik Documentation</a></li>
+            <li><a href="https://github.com/jquense/yup" target="_blank">Yup Validation Documentation</a></li>
+            <li><a href="https://reactjs.org/docs/forms.html" target="_blank">React Forms Documentation</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form" target="_blank">HTML Form Documentation</a></li>
+            <li><a href="https://github.com/bloominstituteoftechnology/web-guided-project-form-management" target="_blank">Project Repository</a></li>
+            <li><a href="https://github.com/bloominstituteoftechnology/web-guided-project-form-management-solution" target="_blank">Project Solution</a></li>
+        </ul>
+    </div>
+
+    <div class="content-section">
+        <h2>Submission Guidelines</h2>
+        <ul>
+            <li>Submit your code to GitHub</li>
+            <li>Include a README.md with setup instructions</li>
+            <li>Document your form validation rules</li>
+            <li>Include comments explaining complex form logic</li>
+        </ul>
+    </div>
+
+    <div class="content-section">
+        <h2>Grading Rubric</h2>
+        <ul>
+            <li>Form Implementation (40%)</li>
+            <li>Validation and Error Handling (30%)</li>
+            <li>User Experience (20%)</li>
+            <li>Code Quality and Documentation (10%)</li>
+        </ul>
+    </div>
+</body>
+</html> 

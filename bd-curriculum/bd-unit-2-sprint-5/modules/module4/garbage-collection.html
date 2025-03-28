@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garbage Collection - Module 4</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <nav>
+                <h1>BD Unit 2 Sprint 5</h1>
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../module1/index.html">Module 1</a></li>
+                    <li><a href="../module2/index.html">Module 2</a></li>
+                    <li><a href="../module3/index.html">Module 3</a></li>
+                    <li><a href="../module4/index.html">Module 4</a></li>
+                    <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                    <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <article>
+            <h1>Garbage Collection</h1>
+
+            <section>
+                <h2>Garbage Collection Basics</h2>
+                <h3>What is Garbage Collection?</h3>
+                <p>Garbage Collection (GC) is the process of automatically managing memory by identifying and removing objects that are no longer needed by the program. The garbage collector:</p>
+                <ul>
+                    <li>Identifies unreachable objects</li>
+                    <li>Reclaims memory from unreachable objects</li>
+                    <li>Compacts memory to prevent fragmentation</li>
+                    <li>Manages different memory generations</li>
+                </ul>
+
+                <h3>Object Reachability</h3>
+                <pre><code>public class ReachabilityExample {
+    public static void main(String[] args) {
+        // Strong reference
+        String str = new String("Hello");
+        
+        // Weak reference
+        WeakReference<String> weakRef = new WeakReference<>(str);
+        
+        // Soft reference
+        SoftReference<String> softRef = new SoftReference<>(str);
+        
+        // Phantom reference
+        PhantomReference<String> phantomRef = new PhantomReference<>(str, new ReferenceQueue<>());
+        
+        // Make object unreachable
+        str = null;
+    }
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Garbage Collection Algorithms</h2>
+                <h3>Mark and Sweep</h3>
+                <ul>
+                    <li><strong>Mark Phase:</strong> Identifies all reachable objects</li>
+                    <li><strong>Sweep Phase:</strong> Removes unreachable objects</li>
+                    <li><strong>Pros:</strong> Simple and effective</li>
+                    <li><strong>Cons:</strong> Can cause memory fragmentation</li>
+                </ul>
+
+                <h3>Copying</h3>
+                <ul>
+                    <li><strong>Process:</strong> Copies live objects to new space</li>
+                    <li><strong>Pros:</strong> No fragmentation</li>
+                    <li><strong>Cons:</strong> Requires extra memory</li>
+                </ul>
+
+                <h3>Mark and Compact</h3>
+                <ul>
+                    <li><strong>Process:</strong> Marks live objects and compacts memory</li>
+                    <li><strong>Pros:</strong> No fragmentation, efficient memory usage</li>
+                    <li><strong>Cons:</strong> More complex than mark and sweep</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Garbage Collectors in Java</h2>
+                <h3>Serial GC</h3>
+                <pre><code>// Enable Serial GC
+-XX:+UseSerialGC
+
+// Single-threaded collector
+// Good for small applications
+// Stop-the-world collection</code></pre>
+
+                <h3>Parallel GC</h3>
+                <pre><code>// Enable Parallel GC
+-XX:+UseParallelGC
+
+// Multi-threaded collector
+// Good for medium-sized applications
+// Stop-the-world collection</code></pre>
+
+                <h3>CMS (Concurrent Mark Sweep)</h3>
+                <pre><code>// Enable CMS GC
+-XX:+UseConcMarkSweepGC
+
+// Concurrent collector
+// Good for large applications
+// Minimizes application pauses</code></pre>
+
+                <h3>G1 (Garbage First)</h3>
+                <pre><code>// Enable G1 GC
+-XX:+UseG1GC
+
+// Modern collector
+// Good for large heap sizes
+// Predictable pause times</code></pre>
+            </section>
+
+            <section>
+                <h2>GC Tuning</h2>
+                <h3>GC Parameters</h3>
+                <pre><code>// Heap size settings
+-Xms2g -Xmx4g
+
+// GC pause time target
+-XX:MaxGCPauseMillis=200
+
+// GC logging
+-verbose:gc
+-XX:+PrintGCDetails
+-XX:+PrintGCDateStamps
+-Xloggc:gc.log
+
+// GC statistics
+-XX:+PrintGCStatistics</code></pre>
+
+                <h3>GC Monitoring</h3>
+                <pre><code>// Enable GC monitoring
+-XX:+PrintGCApplicationStoppedTime
+-XX:+PrintGCApplicationConcurrentTime
+-XX:+PrintGCTimeStamps
+
+// Enable GC cause logging
+-XX:+PrintGCCause</code></pre>
+            </section>
+
+            <section>
+                <h2>GC Best Practices</h2>
+                <h3>Memory Management</h3>
+                <ul>
+                    <li>Use appropriate data structures</li>
+                    <li>Implement proper resource cleanup</li>
+                    <li>Monitor memory usage</li>
+                    <li>Use profiling tools</li>
+                </ul>
+
+                <h3>GC Optimization</h3>
+                <ul>
+                    <li>Choose appropriate GC algorithm</li>
+                    <li>Tune GC parameters</li>
+                    <li>Monitor GC performance</li>
+                    <li>Analyze GC logs</li>
+                </ul>
+
+                <h3>Common Issues</h3>
+                <ul>
+                    <li>Memory leaks</li>
+                    <li>GC thrashing</li>
+                    <li>Long GC pauses</li>
+                    <li>Heap fragmentation</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Video Content</h2>
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Garbage Collection Video" src="https://fast.wistia.net/embed/iframe/92wu32swni" width="640" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+            </section>
+        </article>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Bloom Institute of Technology. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 

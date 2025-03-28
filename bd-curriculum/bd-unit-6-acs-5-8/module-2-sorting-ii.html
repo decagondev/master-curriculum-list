@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting II - Module 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#93005a',
+                        secondary: '#00808c',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.classList.remove('border-primary', 'text-primary');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            
+            document.querySelector(`[data-tab-content="${tabId}"]`).classList.remove('hidden');
+            
+            element.classList.remove('text-gray-500', 'border-transparent');
+            element.classList.add('border-primary', 'text-primary');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mb-8">
+            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Welcome Page</span>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-primary mb-4">Advanced Sorting Algorithms</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Master efficient divide-and-conquer sorting algorithms and their implementations in Java.
+                Learn advanced techniques for sorting large datasets with optimal time complexity.
+            </p>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="border-b border-gray-200 mb-8">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button 
+                    data-tab="overview"
+                    onclick="switchTab('overview', this)"
+                    class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-medium"
+                    aria-current="page">
+                    Overview
+                </button>
+                <button 
+                    data-tab="lecture"
+                    onclick="switchTab('lecture', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Lecture Content
+                </button>
+                <button 
+                    data-tab="implementation"
+                    onclick="switchTab('implementation', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Implementation
+                </button>
+                <button 
+                    data-tab="exercises"
+                    onclick="switchTab('exercises', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Practice Exercises
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="space-y-8">
+            <!-- Overview Tab -->
+            <div data-tab-content="overview" class="space-y-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Learning Objectives</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Core Concepts</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Understanding divide and conquer strategy</li>
+                                <li>Mastering QuickSort implementation</li>
+                                <li>Learning MergeSort technique</li>
+                                <li>Analyzing time complexity of O(n log n) sorts</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Skills Development</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Implementing recursive algorithms</li>
+                                <li>Optimizing sorting performance</li>
+                                <li>Handling large datasets efficiently</li>
+                                <li>Choosing optimal pivot strategies</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Prerequisites</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Required Knowledge</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Basic sorting algorithms</li>
+                                <li>Recursion fundamentals</li>
+                                <li>Array manipulation</li>
+                                <li>Time complexity analysis</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Recommended Preparation</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Review recursive functions</li>
+                                <li>Study divide and conquer</li>
+                                <li>Practice array partitioning</li>
+                                <li>Understand space complexity</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div data-tab-content="lecture" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Video Lectures</h2>
+                    
+                    <!-- QuickSort Video Section -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-medium text-secondary mb-4">1. QuickSort Algorithm</h3>
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                            <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                                <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                    <iframe src="https://fast.wistia.net/embed/iframe/r2gomtdqxh" title="QuickSort Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <h4 class="text-lg font-medium text-gray-900">Key Concepts Covered:</h4>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Partition strategy and pivot selection</li>
+                                <li>Time and space complexity analysis</li>
+                                <li>Best and worst case scenarios</li>
+                                <li>Optimization techniques</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- MergeSort Video Section -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-medium text-secondary mb-4">2. MergeSort Algorithm</h3>
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                            <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                                <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                    <iframe src="https://fast.wistia.net/embed/iframe/bqeh3w3sww" title="MergeSort Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <h4 class="text-lg font-medium text-gray-900">Key Concepts Covered:</h4>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Divide and merge strategy</li>
+                                <li>Stable sorting property</li>
+                                <li>Memory usage considerations</li>
+                                <li>Practical applications</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div data-tab-content="implementation" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Code Implementation</h2>
+                    
+                    <!-- QuickSort Implementation -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-medium text-secondary mb-4">QuickSort Implementation</h3>
+                        <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                            <pre class="text-gray-100"><code>public class QuickSort {
+    public static <T extends Comparable<T>> void quickSort(T[] array) {
+        quickSort(array, 0, array.length - 1);
+    }
+
+    private static <T extends Comparable<T>> void quickSort(T[] array, int low, int high) {
+        if (low < high) {
+            int pivotIndex = partition(array, low, high);
+            quickSort(array, low, pivotIndex - 1);
+            quickSort(array, pivotIndex + 1, high);
+        }
+    }
+
+    private static <T extends Comparable<T>> int partition(T[] array, int low, int high) {
+        T pivot = array[high];    // Choose rightmost element as pivot
+        int i = (low - 1);        // Index of smaller element
+
+        for (int j = low; j < high; j++) {
+            // If current element is smaller than or equal to pivot
+            if (array[j].compareTo(pivot) <= 0) {
+                i++;    // Increment index of smaller element
+                swap(array, i, j);
+            }
+        }
+        swap(array, i + 1, high);
+        return i + 1;
+    }
+
+    private static <T> void swap(T[] array, int i, int j) {
+        T temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+
+    // Version with custom comparator
+    public static <T> void quickSort(T[] array, Comparator<? super T> comparator) {
+        quickSort(array, 0, array.length - 1, comparator);
+    }
+
+    private static <T> void quickSort(T[] array, int low, int high, 
+            Comparator<? super T> comparator) {
+        if (low < high) {
+            int pivotIndex = partition(array, low, high, comparator);
+            quickSort(array, low, pivotIndex - 1, comparator);
+            quickSort(array, pivotIndex + 1, high, comparator);
+        }
+    }
+
+    private static <T> int partition(T[] array, int low, int high,
+            Comparator<? super T> comparator) {
+        T pivot = array[high];
+        int i = (low - 1);
+
+        for (int j = low; j < high; j++) {
+            if (comparator.compare(array[j], pivot) <= 0) {
+                i++;
+                swap(array, i, j);
+            }
+        }
+        swap(array, i + 1, high);
+        return i + 1;
+    }
+}</code></pre>
+                        </div>
+                        <p class="text-gray-600">Implementation features:</p>
+                        <ul class="list-disc list-inside text-gray-600 mt-2 space-y-1">
+                            <li>Generic type support</li>
+                            <li>In-place sorting</li>
+                            <li>Efficient partitioning</li>
+                            <li>Custom comparator support</li>
+                        </ul>
+                    </div>
+
+                    <!-- MergeSort Implementation -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-medium text-secondary mb-4">MergeSort Implementation</h3>
+                        <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                            <pre class="text-gray-100"><code>public class MergeSort {
+    public static <T extends Comparable<T>> void mergeSort(T[] array) {
+        if (array.length < 2) return;
+        
+        int mid = array.length / 2;
+        @SuppressWarnings("unchecked")
+        T[] left = (T[]) new Comparable[mid];
+        @SuppressWarnings("unchecked")
+        T[] right = (T[]) new Comparable[array.length - mid];
+
+        // Populate left and right subarrays
+        System.arraycopy(array, 0, left, 0, mid);
+        System.arraycopy(array, mid, right, 0, array.length - mid);
+
+        // Recursive calls
+        mergeSort(left);
+        mergeSort(right);
+
+        // Merge sorted halves
+        merge(array, left, right);
+    }
+
+    private static <T extends Comparable<T>> void merge(T[] array, T[] left, T[] right) {
+        int i = 0, j = 0, k = 0;
+        
+        while (i < left.length && j < right.length) {
+            if (left[i].compareTo(right[j]) <= 0) {
+                array[k++] = left[i++];
+            } else {
+                array[k++] = right[j++];
+            }
+        }
+        
+        // Copy remaining elements
+        while (i < left.length) {
+            array[k++] = left[i++];
+        }
+        while (j < right.length) {
+            array[k++] = right[j++];
+        }
+    }
+
+    // Version with custom comparator
+    public static <T> void mergeSort(T[] array, Comparator<? super T> comparator) {
+        if (array.length < 2) return;
+        
+        int mid = array.length / 2;
+        @SuppressWarnings("unchecked")
+        T[] left = (T[]) new Object[mid];
+        @SuppressWarnings("unchecked")
+        T[] right = (T[]) new Object[array.length - mid];
+
+        System.arraycopy(array, 0, left, 0, mid);
+        System.arraycopy(array, mid, right, 0, array.length - mid);
+
+        mergeSort(left, comparator);
+        mergeSort(right, comparator);
+        merge(array, left, right, comparator);
+    }
+
+    private static <T> void merge(T[] array, T[] left, T[] right,
+            Comparator<? super T> comparator) {
+        int i = 0, j = 0, k = 0;
+        
+        while (i < left.length && j < right.length) {
+            if (comparator.compare(left[i], right[j]) <= 0) {
+                array[k++] = left[i++];
+            } else {
+                array[k++] = right[j++];
+            }
+        }
+        
+        while (i < left.length) {
+            array[k++] = left[i++];
+        }
+        while (j < right.length) {
+            array[k++] = right[j++];
+        }
+    }
+}</code></pre>
+                        </div>
+                        <p class="text-gray-600">Key features:</p>
+                        <ul class="list-disc list-inside text-gray-600 mt-2 space-y-1">
+                            <li>Stable sorting algorithm</li>
+                            <li>Predictable performance</li>
+                            <li>Efficient for large datasets</li>
+                            <li>Custom comparator support</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div data-tab-content="exercises" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Practice Exercises</h2>
+                    
+                    <div class="space-y-8">
+                        <!-- QuickSort Exercises -->
+                        <div class="border-l-4 border-primary pl-4">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">1. QuickSort Practice</h3>
+                            <p class="text-gray-600 mb-4">Master QuickSort implementation and variations:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Kth Largest Element - <a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" class="text-primary hover:text-secondary" target="_blank">LeetCode 215</a></li>
+                                <li>Sort an Array - <a href="https://leetcode.com/problems/sort-an-array/" class="text-primary hover:text-secondary" target="_blank">LeetCode 912</a></li>
+                                <li>Sort Characters By Frequency - <a href="https://leetcode.com/problems/sort-characters-by-frequency/" class="text-primary hover:text-secondary" target="_blank">LeetCode 451</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- MergeSort Exercises -->
+                        <div class="border-l-4 border-primary pl-4">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">2. MergeSort Applications</h3>
+                            <p class="text-gray-600 mb-4">Practice MergeSort and its variations:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Merge k Sorted Lists - <a href="https://leetcode.com/problems/merge-k-sorted-lists/" class="text-primary hover:text-secondary" target="_blank">LeetCode 23</a></li>
+                                <li>Count of Smaller Numbers After Self - <a href="https://leetcode.com/problems/count-of-smaller-numbers-after-self/" class="text-primary hover:text-secondary" target="_blank">LeetCode 315</a></li>
+                                <li>Reverse Pairs - <a href="https://leetcode.com/problems/reverse-pairs/" class="text-primary hover:text-secondary" target="_blank">LeetCode 493</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Advanced Applications -->
+                        <div class="border-l-4 border-primary pl-4">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">3. Advanced Sorting Applications</h3>
+                            <p class="text-gray-600 mb-4">Apply sorting concepts to complex problems:</p>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Largest Number - <a href="https://leetcode.com/problems/largest-number/" class="text-primary hover:text-secondary" target="_blank">LeetCode 179</a></li>
+                                <li>Sort List - <a href="https://leetcode.com/problems/sort-list/" class="text-primary hover:text-secondary" target="_blank">LeetCode 148</a></li>
+                                <li>Maximum Gap - <a href="https://leetcode.com/problems/maximum-gap/" class="text-primary hover:text-secondary" target="_blank">LeetCode 164</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
