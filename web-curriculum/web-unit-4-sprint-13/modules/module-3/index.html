@@ -4,134 +4,335 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3 - Express Middleware - Web Unit 4 Sprint 13</title>
-    <link rel="stylesheet" href="../../assets/styles.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1d23; /* Dark background color */
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #222831; /* Darker container background */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff5722; /* Orange accent color */
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #ffffff;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #ff5722; /* Orange accent color */
+            margin-top: 0;
+        }
+        h4 {
+            color: #ffffff;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .section {
+            margin-bottom: 40px;
+            background-color: #2a303c;
+            border-radius: 4px;
+            padding: 20px;
+            border: 1px solid #333a47;
+        }
+        .section p, .section li {
+            color: #b3b3b3;
+        }
+        ul, ol {
+            color: #b3b3b3;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .button {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #ff5722; /* Orange accent color */
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .button:hover {
+            background-color: #ff7043; /* Lighter orange on hover */
+            box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
+        }
+        
+        /* Navigation styling */
+        nav {
+            margin-bottom: 30px;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0;
+            margin-top: 20px;
+        }
+        nav a {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #333a47;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #ff5722;
+            box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
+        }
+        
+        /* Video container */
+        .video-container {
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            padding-top: 56.25%; /* 16:9 aspect ratio */
+            border-radius: 8px;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+        
+        /* Info boxes */
+        .info-box {
+            background-color: #333a47;
+            border-radius: 6px;
+            padding: 20px;
+            border: 1px solid #444c5c;
+            margin: 20px 0;
+        }
+        
+        .info-box h3 {
+            margin-top: 0;
+            color: #ff5722;
+        }
+        
+        .info-box p, .info-box li {
+            color: #b3b3b3;
+        }
+        
+        /* Code styling */
+        pre {
+            background-color: #161b22;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            color: #e6e6e6;
+            background-color: #161b22;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        pre code {
+            padding: 0;
+            background-color: transparent;
+        }
+        
+        /* Resources section */
+        .resource-section {
+            margin: 20px 0;
+        }
+        
+        .resource-links {
+            background-color: #333a47;
+            border-radius: 6px;
+            padding: 20px;
+            border: 1px solid #444c5c;
+        }
+        
+        .resource-links h4 {
+            color: #e6e6e6;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .resource-links a {
+            color: #ff5722;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .resource-links a:hover {
+            text-decoration: underline;
+            color: #ff7043;
+        }
+        
+        /* Challenge section */
+        .challenge {
+            background-color: #2d3648;
+            border-radius: 6px;
+            padding: 20px;
+            border-left: 4px solid #ff5722;
+            margin: 20px 0;
+        }
+        
+        .challenge h3 {
+            margin-top: 0;
+            color: #ff5722;
+        }
+        
+        /* Follow-along section */
+        .follow-along {
+            background-color: #2d3648;
+            border-radius: 6px;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+        }
+        
+        .follow-along h3 {
+            margin-top: 0;
+            color: #4caf50;
+        }
+        
+        /* Media queries */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="course-container">
-        <header>
-            <h1>Module 3 - Express Middleware</h1>
-            <p>Web Unit 4 Sprint 13</p>
-        </header>
+    <div class="container">
+        <h1>Module 3 - Express Middleware</h1>
 
-        <nav class="course-nav">
-            <div class="module-section">
-                <h2>Module Contents</h2>
-                <ul>
-                    <li><a href="#objectives">Objectives</a></li>
-                    <li><a href="#guided-project">Guided Project</a></li>
-                    <li><a href="#assignment">Assignment</a></li>
-                </ul>
+        <div class="section" id="objectives">
+            <h2>Objectives</h2>
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Express Middleware Video" src="https://fast.wistia.net/embed/iframe/67gj9hua12" width="640" height="360" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
-        </nav>
 
-        <main class="content-container">
-            <section id="objectives">
-                <h2>Objectives</h2>
-                <div class="video-container">
-                    <iframe class="wistia_embed" title="Express Middleware Video" src="https://fast.wistia.net/embed/iframe/67gj9hua12" width="640" height="360" allow="autoplay; fullscreen" loading="lazy"></iframe>
-                </div>
+            <div class="info-box">
+                <h3>Types of Middleware</h3>
+                <p>There are different types of middleware; for our purposes, we'll group them into three different categories:</p>
+                <ol>
+                    <li>Built-in middleware</li>
+                    <li>Third-party middleware</li>
+                    <li>Custom middleware</li>
+                </ol>
 
-                <div class="info-box">
-                    <h3>Types of Middleware</h3>
-                    <p>There are different types of middleware; for our purposes, we'll group them into three different categories:</p>
-                    <ol>
-                        <li>Built-in middleware</li>
-                        <li>Third-party middleware</li>
-                        <li>Custom middleware</li>
-                    </ol>
+                <h4>Built-in Middleware</h4>
+                <p><strong>Built-in middleware</strong> is included with Express but not added to the application automatically. Like the other types, we need to opt-in to using it in our application.</p>
+                <p>We saw an example of built-in middleware when we added support for parsing JSON content out of the request body using <code>server.use(express.json());</code>.</p>
+                <p>Every type of middleware works in the same way. We tell Express about the middleware we want to <em>turn on</em> for our application by making a call to <code>.use()</code> on our server and passing <code>.use()</code> the piece of middleware we want to apply. This line must come after the server has been created by calling <code>express()</code>.</p>
 
-                    <h4>Built-in Middleware</h4>
-                    <p><strong>Built-in middleware</strong> is included with Express but not added to the application automatically. Like the other types, we need to opt-in to using it in our application.</p>
-                    <p>We saw an example of built-in middleware when we added support for parsing JSON content out of the request body using <code>server.use(express.json());</code>.</p>
-                    <p>Every type of middleware works in the same way. We tell Express about the middleware we want to <em>turn on</em> for our application by making a call to <code>.use()</code> on our server and passing <code>.use()</code> the piece of middleware we want to apply. This line must come after the server has been created by calling <code>express()</code>.</p>
+                <h4>Third-party Middleware</h4>
+                <p><strong>Third-party middleware</strong> are npm modules that we can install and then import into our applications using <code>require()</code>. There are thousands of middleware modules we can use. There is no need to write our own in most cases.</p>
+                <p>Some popular middleware modules are:</p>
+                <ul>
+                    <li><a href="https://www.npmjs.com/package/morgan">morgan</a></li>
+                    <li><a href="https://www.npmjs.com/package/cors">cors</a></li>
+                    <li><a href="https://www.npmjs.com/package/helmet">helmet</a></li>
+                </ul>
 
-                    <h4>Third-party Middleware</h4>
-                    <p><strong>Third-party middleware</strong> are npm modules that we can install and then import into our applications using <code>require()</code>. There are thousands of middleware modules we can use. There is no need to write our own in most cases.</p>
-                    <p>Some popular middleware modules are:</p>
-                    <ul>
-                        <li><a href="https://www.npmjs.com/package/morgan">morgan</a></li>
-                        <li><a href="https://www.npmjs.com/package/cors">cors</a></li>
-                        <li><a href="https://www.npmjs.com/package/helmet">helmet</a></li>
-                    </ul>
+                <h4>Custom Middleware</h4>
+                <p><strong>Custom middleware</strong> is functions we write to perform specific tasks. We'll learn more about how to write and use them in the next section.</p>
+            </div>
 
-                    <h4>Custom Middleware</h4>
-                    <p><strong>Custom middleware</strong> is functions we write to perform specific tasks. We'll learn more about how to write and use them in the next section.</p>
-                </div>
+            <div class="follow-along">
+                <h3>Follow Along</h3>
+                <p>One thing that is not immediately obvious is that <strong>route handlers are middleware</strong>. Let's see this in action.</p>
+                <p>Suppose a client visits a non-existent endpoint in our current implementation. In that case, they will get a default message when a resource is not found on the server. In the case of a browser, it's "Cannot Get /urlWeTriedToAccess". This default message makes for a poor user experience. So please code along as we write a request handler that responds with a custom message for invalid URLs.</p>
 
-                <div class="follow-along">
-                    <h3>Follow Along</h3>
-                    <p>One thing that is not immediately obvious is that <strong>route handlers are middleware</strong>. Let's see this in action.</p>
-                    <p>Suppose a client visits a non-existent endpoint in our current implementation. In that case, they will get a default message when a resource is not found on the server. In the case of a browser, it's "Cannot Get /urlWeTriedToAccess". This default message makes for a poor user experience. So please code along as we write a request handler that responds with a custom message for invalid URLs.</p>
-
-                    <pre><code>function(req, res) {
+                <pre><code>function(req, res) {
     res.status(404).send("Ain't nobody got time for that!");
 };</code></pre>
 
-                    <p>This code is not complete yet, but you can see that it is, in fact, a request handler function. We know because <em>the homies</em> (req and res) are there.</p>
-                    <p>Now let's just <em>use</em> it as if it was middleware:</p>
+                <p>This code is not complete yet, but you can see that it is, in fact, a request handler function. We know because <em>the homies</em> (req and res) are there.</p>
+                <p>Now let's just <em>use</em> it as if it was middleware:</p>
 
-                    <pre><code>server.use(function(req, res) {
+                <pre><code>server.use(function(req, res) {
     res.status(404).send("Ain't nobody got time for that!");
 });</code></pre>
 
-                    <p>Almost there! The last step is adding this status <strong>after each route handler</strong>. That way, if the preceding middleware or route handlers do not respond to the request, this will become our <em>catch-all</em> and respond with the correct HTTP status code and a helpful message.</p>
-                    <p>Now, requests to non-existent endpoints will result in a better experience for our clients.</p>
+                <p>Almost there! The last step is adding this status <strong>after each route handler</strong>. That way, if the preceding middleware or route handlers do not respond to the request, this will become our <em>catch-all</em> and respond with the correct HTTP status code and a helpful message.</p>
+                <p>Now, requests to non-existent endpoints will result in a better experience for our clients.</p>
+            </div>
+
+            <div class="challenge">
+                <h3>Challenge</h3>
+                <p>Write a paragraph (or two) explaining Express middleware and how you would use it when writing Web APIs.</p>
+            </div>
+        </div>
+
+        <div class="section" id="guided-project">
+            <h2>Guided Project</h2>
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Express Middleware Guided Project Video" src="https://fast.wistia.net/embed/iframe/67gj9hua12" width="640" height="360" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+
+            <div class="resource-section">
+                <h3>Project Resources</h3>
+                <div class="resource-links">
+                    <h4>Starter Repository</h4>
+                    <p><a href="https://github.com/bloominstituteoftechnology/node-api3-guided" target="_blank" rel="noopener noreferrer">Express Middleware</a></p>
+
+                    <h4>Solution Repository</h4>
+                    <p><a href="https://github.com/bloominstituteoftechnology/node-api3-guided-solution" target="_blank" rel="noopener noreferrer">Express Middleware Solution</a></p>
+
+                    <h4>Optional Tools</h4>
+                    <ul>
+                        <li><a href="https://httpie.io/" target="_blank" rel="noopener noreferrer">HTTPie</a></li>
+                        <li><a href="https://sqlitestudio.pl/" target="_blank" rel="noopener noreferrer">SQLite Studio</a></li>
+                    </ul>
                 </div>
+            </div>
 
-                <div class="challenge">
-                    <h3>Challenge</h3>
-                    <p>Write a paragraph (or two) explaining Express middleware and how you would use it when writing Web APIs.</p>
+            <div class="info-box">
+                <h3>Important Notes</h3>
+                <p>The versions of project dependencies used in the recording are slightly different from the ones used in the starter and solution repositories, but this should not affect the relevant code of the Guided Project.</p>
+                <p>The versions used in the repositories are more recent, and thus more similar to the versions you will install if you create a project from scratch.</p>
+            </div>
+        </div>
+
+        <div class="section" id="assignment">
+            <h2>Assignment</h2>
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Module 3 Project Solution Video" src="https://fast.wistia.net/embed/iframe/ppql0uuoxi" width="640" height="360" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+
+            <div class="resource-section">
+                <h3>Project Resources</h3>
+                <div class="resource-links">
+                    <h4>Starter Repository</h4>
+                    <p><a href="https://github.com/bloominstituteoftechnology/node-api3-guided" target="_blank" rel="noopener noreferrer">Express Middleware</a></p>
+
+                    <h4>Solution Repository</h4>
+                    <p><a href="https://github.com/bloominstituteoftechnology/node-api3-guided-solution" target="_blank" rel="noopener noreferrer">Express Middleware Solution</a></p>
                 </div>
-            </section>
-
-            <section id="guided-project">
-                <h2>Guided Project</h2>
-                <div class="video-container">
-                    <iframe class="wistia_embed" title="Express Middleware Guided Project Video" src="https://fast.wistia.net/embed/iframe/67gj9hua12" width="640" height="360" allow="autoplay; fullscreen" loading="lazy"></iframe>
-                </div>
-
-                <div class="resource-section">
-                    <h3>Project Resources</h3>
-                    <div class="resource-links">
-                        <h4>Starter Repository</h4>
-                        <p><a href="https://github.com/bloominstituteoftechnology/node-api3-guided" target="_blank">Express Middleware</a></p>
-
-                        <h4>Solution Repository</h4>
-                        <p><a href="https://github.com/bloominstituteoftechnology/node-api3-guided-solution" target="_blank">Express Middleware Solution</a></p>
-
-                        <h4>Optional Tools</h4>
-                        <ul>
-                            <li><a href="https://httpie.io/" target="_blank">HTTPie</a></li>
-                            <li><a href="https://sqlitestudio.pl/" target="_blank">SQLite Studio</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="info-box">
-                    <h3>Important Notes</h3>
-                    <p>The versions of project dependencies used in the recording are slightly different from the ones used in the starter and solution repositories, but this should not affect the relevant code of the Guided Project.</p>
-                    <p>The versions used in the repositories are more recent, and thus more similar to the versions you will install if you create a project from scratch.</p>
-                </div>
-            </section>
-
-            <section id="assignment">
-                <h2>Assignment</h2>
-                <div class="video-container">
-                    <iframe class="wistia_embed" title="Module 3 Project Solution Video" src="https://fast.wistia.net/embed/iframe/ppql0uuoxi" width="640" height="360" allow="autoplay; fullscreen" loading="lazy"></iframe>
-                </div>
-
-                <div class="resource-section">
-                    <h3>Project Resources</h3>
-                    <div class="resource-links">
-                        <h4>Starter Repository</h4>
-                        <p><a href="https://github.com/bloominstituteoftechnology/node-api3-guided" target="_blank">Express Middleware</a></p>
-
-                        <h4>Solution Repository</h4>
-                        <p><a href="https://github.com/bloominstituteoftechnology/node-api3-guided-solution" target="_blank">Express Middleware Solution</a></p>
-                    </div>
-                </div>
-            </section>
-        </main>
+            </div>
+        </div>
     </div>
 </body>
 </html> 
