@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting I - Module 1</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1d23;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #222831;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            margin-top: 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff5722;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-size: 1.3rem;
+            color: #ff5722;
+            margin-bottom: 15px;
+        }
+        h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #b3b3b3;
+            margin-bottom: 16px;
+        }
+        .intro-text {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #b3b3b3;
+            font-size: 1.1rem;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background-color: #2a303c;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            width: fit-content;
+        }
+        .back-button:hover {
+            background-color: #333a47;
+        }
+        .back-button svg {
+            margin-right: 5px;
+            width: 16px;
+            height: 16px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #333a47;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #b3b3b3;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-size: 0.9rem;
+        }
+        .tab:hover {
+            color: #ffffff;
+        }
+        .tab.active {
+            color: #ff5722;
+            border-bottom: 2px solid #ff5722;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card {
+            background-color: #2a303c;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        ul {
+            padding-left: 20px;
+            color: #b3b3b3;
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #ff7043;
+            text-decoration: underline;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #333a47;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #f5f5f5;
+        }
+        pre {
+            background-color: #333a47;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            color: #f5f5f5;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background-color: #333a47;
+            border-radius: 8px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .complexity-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .complexity-table th, .complexity-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333a47;
+        }
+        .complexity-table th {
+            background-color: #2a303c;
+            color: #ff5722;
+            font-weight: 600;
+        }
+        .complexity-table tr:hover {
+            background-color: #333a47;
+        }
+    </style>
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <a href="../welcome.html" class="back-button">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Welcome Page
+        </a>
+
+        <!-- Header Section -->
+        <h1>Sorting Algorithms I: Fundamentals</h1>
+        <p class="intro-text">
+            Master the basic sorting algorithms, understand their implementation, and learn how to analyze 
+            their time and space complexity.
+        </p>
+
+        <!-- Main Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="overview-tab" onclick="switchTab('overview-tab')">Overview</button>
+            <button class="tab" data-tab="lecture-tab" onclick="switchTab('lecture-tab')">Lecture Content</button>
+            <button class="tab" data-tab="implementation-tab" onclick="switchTab('implementation-tab')">Implementation</button>
+            <button class="tab" data-tab="exercises-tab" onclick="switchTab('exercises-tab')">Practice Exercises</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-contents">
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-content active">
+                <div class="card">
+                    <h2>Learning Objectives</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Core Concepts</h3>
+                            <ul>
+                                <li>Understand common sorting algorithms</li>
+                                <li>Compare algorithm efficiency</li>
+                                <li>Analyze time and space complexity</li>
+                                <li>Identify appropriate use cases</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Skills Development</h3>
+                            <ul>
+                                <li>Implementing sorting algorithms</li>
+                                <li>Debugging sorting-related issues</li>
+                                <li>Optimizing algorithm performance</li>
+                                <li>Choosing the right algorithm for specific scenarios</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Prerequisites</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Required Knowledge</h3>
+                            <ul>
+                                <li>Basic programming concepts</li>
+                                <li>Arrays and loops</li>
+                                <li>Function calls and return values</li>
+                                <li>Basic understanding of Big O notation</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Recommended Preparation</h3>
+                            <ul>
+                                <li>Review array operations</li>
+                                <li>Practice algorithm analysis</li>
+                                <li>Study recursion fundamentals</li>
+                                <li>Refresh knowledge of time complexity</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Algorithm Comparison</h2>
+                    <table class="complexity-table">
+                        <thead>
+                            <tr>
+                                <th>Algorithm</th>
+                                <th>Time Complexity (Average)</th>
+                                <th>Time Complexity (Worst)</th>
+                                <th>Space Complexity</th>
+                                <th>Stability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Bubble Sort</td>
+                                <td>O(n²)</td>
+                                <td>O(n²)</td>
+                                <td>O(1)</td>
+                                <td>Stable</td>
+                            </tr>
+                            <tr>
+                                <td>Selection Sort</td>
+                                <td>O(n²)</td>
+                                <td>O(n²)</td>
+                                <td>O(1)</td>
+                                <td>Unstable</td>
+                            </tr>
+                            <tr>
+                                <td>Insertion Sort</td>
+                                <td>O(n²)</td>
+                                <td>O(n²)</td>
+                                <td>O(1)</td>
+                                <td>Stable</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div id="lecture-tab" class="tab-content">
+                <div class="card">
+                    <h2>Video Lectures</h2>
+                    
+                    <!-- Bubble Sort Video -->
+                    <div>
+                        <h3>Bubble Sort Algorithm</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/qz8h6f9s0j" title="Bubble Sort Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Concepts Covered:</h4>
+                            <ul>
+                                <li>Basic bubble sort implementation</li>
+                                <li>Algorithm visualization</li>
+                                <li>Time and space complexity analysis</li>
+                                <li>Optimization techniques</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Selection Sort Video -->
+                    <div>
+                        <h3>Selection Sort Algorithm</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/hj9wfr7t2b" title="Selection Sort Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Concepts Covered:</h4>
+                            <ul>
+                                <li>Selection sort implementation</li>
+                                <li>Finding minimum values in arrays</li>
+                                <li>In-place sorting techniques</li>
+                                <li>Comparison with other algorithms</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Insertion Sort Video -->
+                    <div>
+                        <h3>Insertion Sort Algorithm</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/pj94xa7b5d" title="Insertion Sort Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Concepts Covered:</h4>
+                            <ul>
+                                <li>Insertion sort implementation</li>
+                                <li>Partial sorting of arrays</li>
+                                <li>Real-world applications</li>
+                                <li>Performance characteristics</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div id="implementation-tab" class="tab-content">
+                <div class="card">
+                    <h2>Bubble Sort Implementation</h2>
+                    
+                    <div>
+                        <h3>Java Implementation</h3>
+                        <pre><code>public class BubbleSort {
+    public static void bubbleSort(int[] arr) {
+        int n = arr.length;
+        boolean swapped;
+        
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    // Swap arr[j] and arr[j+1]
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                    swapped = true;
+                }
+            }
+            
+            // If no swapping occurred in this pass, array is sorted
+            if (!swapped) {
+                break;
+            }
+        }
+    }
+    
+    public static void main(String[] args) {
+        int[] arr = {64, 34, 25, 12, 22, 11, 90};
+        
+        System.out.println("Original array:");
+        printArray(arr);
+        
+        bubbleSort(arr);
+        
+        System.out.println("Sorted array:");
+        printArray(arr);
+    }
+    
+    public static void printArray(int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            System.out.print(arr[i] + " ");
+        }
+        System.out.println();
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Selection Sort Implementation</h2>
+                    
+                    <div>
+                        <h3>Java Implementation</h3>
+                        <pre><code>public class SelectionSort {
+    public static void selectionSort(int[] arr) {
+        int n = arr.length;
+        
+        for (int i = 0; i < n - 1; i++) {
+            // Find the minimum element in unsorted array
+            int minIndex = i;
+            for (int j = i + 1; j < n; j++) {
+                if (arr[j] < arr[minIndex]) {
+                    minIndex = j;
+                }
+            }
+            
+            // Swap the found minimum element with the first element
+            int temp = arr[minIndex];
+            arr[minIndex] = arr[i];
+            arr[i] = temp;
+        }
+    }
+    
+    public static void main(String[] args) {
+        int[] arr = {64, 25, 12, 22, 11};
+        
+        System.out.println("Original array:");
+        printArray(arr);
+        
+        selectionSort(arr);
+        
+        System.out.println("Sorted array:");
+        printArray(arr);
+    }
+    
+    public static void printArray(int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            System.out.print(arr[i] + " ");
+        }
+        System.out.println();
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Insertion Sort Implementation</h2>
+                    
+                    <div>
+                        <h3>Java Implementation</h3>
+                        <pre><code>public class InsertionSort {
+    public static void insertionSort(int[] arr) {
+        int n = arr.length;
+        
+        for (int i = 1; i < n; i++) {
+            int key = arr[i];
+            int j = i - 1;
+            
+            /* Move elements of arr[0..i-1] that are greater than key
+               to one position ahead of their current position */
+            while (j >= 0 && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j = j - 1;
+            }
+            arr[j + 1] = key;
+        }
+    }
+    
+    public static void main(String[] args) {
+        int[] arr = {12, 11, 13, 5, 6};
+        
+        System.out.println("Original array:");
+        printArray(arr);
+        
+        insertionSort(arr);
+        
+        System.out.println("Sorted array:");
+        printArray(arr);
+    }
+    
+    public static void printArray(int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            System.out.print(arr[i] + " ");
+        }
+        System.out.println();
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div id="exercises-tab" class="tab-content">
+                <div class="card">
+                    <h2>Practice Exercises</h2>
+                    
+                    <div>
+                        <!-- Implementation Exercises -->
+                        <div>
+                            <h3>Implementation Exercises</h3>
+                            <p>Practice implementing these basic sorting algorithms:</p>
+                            <ol>
+                                <li>Implement Bubble Sort with a counter to track the number of swaps performed</li>
+                                <li>Modify Selection Sort to sort in descending order instead of ascending</li>
+                                <li>Implement Insertion Sort for sorting strings alphabetically</li>
+                                <li>Create a function that identifies if an array is already sorted in O(n) time</li>
+                            </ol>
+                        </div>
+
+                        <!-- Algorithm Analysis Exercises -->
+                        <div>
+                            <h3>Algorithm Analysis Exercises</h3>
+                            <p>Analyze the performance of sorting algorithms:</p>
+                            <ol>
+                                <li>Compare the performance of the three algorithms on arrays of different sizes</li>
+                                <li>Measure the impact of initial array order (sorted, reverse sorted, random) on performance</li>
+                                <li>Analyze the best and worst-case scenarios for each algorithm</li>
+                                <li>Calculate the exact number of comparisons and swaps for a given input</li>
+                            </ol>
+                        </div>
+
+                        <!-- Coding Challenges -->
+                        <div>
+                            <h3>Coding Challenges</h3>
+                            <p>Solve these sorting-related problems:</p>
+                            <ul>
+                                <li><a href="https://leetcode.com/problems/sort-an-array/" target="_blank" rel="noopener">LeetCode 912</a> - Sort an Array</li>
+                                <li><a href="https://leetcode.com/problems/sort-colors/" target="_blank" rel="noopener">LeetCode 75</a> - Sort Colors (Dutch National Flag problem)</li>
+                                <li><a href="https://leetcode.com/problems/merge-sorted-array/" target="_blank" rel="noopener">LeetCode 88</a> - Merge Sorted Array</li>
+                                <li><a href="https://leetcode.com/problems/largest-number/" target="_blank" rel="noopener">LeetCode 179</a> - Largest Number</li>
+                            </ul>
+                        </div>
+
+                        <!-- Advanced Problems -->
+                        <div>
+                            <h3>Advanced Problems</h3>
+                            <p>Challenge yourself with these advanced sorting problems:</p>
+                            <ul>
+                                <li>Implement a hybrid sorting algorithm that uses Insertion Sort for small subarrays and another algorithm for larger arrays</li>
+                                <li>Create a visualization tool that shows the sorting process step by step</li>
+                                <li>Implement a custom comparator to sort objects based on multiple properties</li>
+                                <li>Develop an algorithm to identify the k smallest/largest elements in an array without fully sorting it</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stacks and Queues - Module 2</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1d23;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #222831;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            margin-top: 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff5722;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-size: 1.3rem;
+            color: #ff5722;
+            margin-bottom: 15px;
+        }
+        h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #b3b3b3;
+            margin-bottom: 16px;
+        }
+        .intro-text {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #b3b3b3;
+            font-size: 1.1rem;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background-color: #2a303c;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            width: fit-content;
+        }
+        .back-button:hover {
+            background-color: #333a47;
+        }
+        .back-button svg {
+            margin-right: 5px;
+            width: 16px;
+            height: 16px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #333a47;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #b3b3b3;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-size: 0.9rem;
+        }
+        .tab:hover {
+            color: #ffffff;
+        }
+        .tab.active {
+            color: #ff5722;
+            border-bottom: 2px solid #ff5722;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card {
+            background-color: #2a303c;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        ul {
+            padding-left: 20px;
+            color: #b3b3b3;
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #ff7043;
+            text-decoration: underline;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #333a47;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #f5f5f5;
+        }
+        pre {
+            background-color: #333a47;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            color: #f5f5f5;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background-color: #333a47;
+            border-radius: 8px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <a href="../welcome.html" class="back-button">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Welcome Page
+        </a>
+
+        <!-- Header Section -->
+        <h1>Stacks and Queues</h1>
+        <p class="intro-text">
+            Master the fundamental data structures of stacks and queues. Learn their implementations, use cases,
+            and how they're applied in solving common programming problems.
+        </p>
+
+        <!-- Main Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="overview-tab" onclick="switchTab('overview-tab')">Overview</button>
+            <button class="tab" data-tab="lecture-tab" onclick="switchTab('lecture-tab')">Lecture Content</button>
+            <button class="tab" data-tab="implementation-tab" onclick="switchTab('implementation-tab')">Implementation</button>
+            <button class="tab" data-tab="exercises-tab" onclick="switchTab('exercises-tab')">Practice Exercises</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-contents">
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-content active">
+                <div class="card">
+                    <h2>Learning Objectives</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Stack Fundamentals</h3>
+                            <ul>
+                                <li>Understanding LIFO principle</li>
+                                <li>Stack operations (push, pop, peek)</li>
+                                <li>Implementation approaches</li>
+                                <li>Real-world applications</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Queue Fundamentals</h3>
+                            <ul>
+                                <li>Understanding FIFO principle</li>
+                                <li>Queue operations (enqueue, dequeue)</li>
+                                <li>Different queue implementations</li>
+                                <li>Common queue applications</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Prerequisites</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Required Knowledge</h3>
+                            <ul>
+                                <li>Basic Java programming</li>
+                                <li>Understanding of arrays</li>
+                                <li>Familiarity with linked lists</li>
+                                <li>Object-oriented concepts</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Recommended Preparation</h3>
+                            <ul>
+                                <li>Review linked list implementations</li>
+                                <li>Practice designing simple classes</li>
+                                <li>Understand basic algorithmic complexity</li>
+                                <li>Study Java generics</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div id="lecture-tab" class="tab-content">
+                <div class="card">
+                    <h2>Video Lectures</h2>
+                    
+                    <!-- Video Section 1 -->
+                    <div>
+                        <h3>1. Stack Introduction</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/m7lvhzn5xx?videoFoam=true" title="Stack Introduction Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Topics Covered:</h4>
+                            <ul>
+                                <li>What is a stack?</li>
+                                <li>Core stack operations</li>
+                                <li>Stack applications</li>
+                                <li>Basic implementation concepts</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Video Section 2 -->
+                    <div>
+                        <h3>2. Queue Introduction</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/w4rn8tkmpu?videoFoam=true" title="Queue Introduction Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Topics Covered:</h4>
+                            <ul>
+                                <li>Queue concepts and FIFO principle</li>
+                                <li>Essential queue operations</li>
+                                <li>Queue use cases</li>
+                                <li>Different implementations</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Video Section 3 -->
+                    <div>
+                        <h3>3. Advanced Applications</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/qlmbjyv3ga?videoFoam=true" title="Advanced Applications Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Topics Covered:</h4>
+                            <ul>
+                                <li>Solving problems with stacks</li>
+                                <li>Queue-based algorithms</li>
+                                <li>Priority queues</li>
+                                <li>Specialized variants</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div id="implementation-tab" class="tab-content">
+                <div class="card">
+                    <h2>Stack Implementation</h2>
+                    
+                    <!-- Array-based Stack -->
+                    <div>
+                        <h3>Array-based Stack</h3>
+                        <pre><code>public class ArrayStack<T> {
+    private T[] array;
+    private int top;
+    private static final int DEFAULT_CAPACITY = 10;
+    
+    @SuppressWarnings("unchecked")
+    public ArrayStack() {
+        array = (T[]) new Object[DEFAULT_CAPACITY];
+        top = -1;
+    }
+    
+    public void push(T item) {
+        if (top == array.length - 1) {
+            resize();
+        }
+        array[++top] = item;
+    }
+    
+    public T pop() {
+        if (isEmpty()) {
+            throw new EmptyStackException();
+        }
+        T item = array[top];
+        array[top--] = null; // Help with garbage collection
+        return item;
+    }
+    
+    public T peek() {
+        if (isEmpty()) {
+            throw new EmptyStackException();
+        }
+        return array[top];
+    }
+    
+    public boolean isEmpty() {
+        return top == -1;
+    }
+    
+    public int size() {
+        return top + 1;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void resize() {
+        T[] newArray = (T[]) new Object[array.length * 2];
+        System.arraycopy(array, 0, newArray, 0, array.length);
+        array = newArray;
+    }
+}</code></pre>
+                    </div>
+                    
+                    <!-- Linked List Stack -->
+                    <div>
+                        <h3>Linked List Stack</h3>
+                        <pre><code>public class LinkedStack<T> {
+    private static class Node<T> {
+        private T data;
+        private Node<T> next;
+        
+        public Node(T data) {
+            this.data = data;
+        }
+    }
+    
+    private Node<T> top;
+    private int size;
+    
+    public LinkedStack() {
+        top = null;
+        size = 0;
+    }
+    
+    public void push(T item) {
+        Node<T> newNode = new Node<>(item);
+        newNode.next = top;
+        top = newNode;
+        size++;
+    }
+    
+    public T pop() {
+        if (isEmpty()) {
+            throw new EmptyStackException();
+        }
+        T item = top.data;
+        top = top.next;
+        size--;
+        return item;
+    }
+    
+    public T peek() {
+        if (isEmpty()) {
+            throw new EmptyStackException();
+        }
+        return top.data;
+    }
+    
+    public boolean isEmpty() {
+        return top == null;
+    }
+    
+    public int size() {
+        return size;
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Queue Implementation</h2>
+                    
+                    <!-- Array-based Queue -->
+                    <div>
+                        <h3>Array-based Queue</h3>
+                        <pre><code>public class ArrayQueue<T> {
+    private T[] array;
+    private int front;
+    private int rear;
+    private int size;
+    private static final int DEFAULT_CAPACITY = 10;
+    
+    @SuppressWarnings("unchecked")
+    public ArrayQueue() {
+        array = (T[]) new Object[DEFAULT_CAPACITY];
+        front = 0;
+        rear = -1;
+        size = 0;
+    }
+    
+    public void enqueue(T item) {
+        if (size == array.length) {
+            resize();
+        }
+        rear = (rear + 1) % array.length;
+        array[rear] = item;
+        size++;
+    }
+    
+    public T dequeue() {
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        T item = array[front];
+        array[front] = null; // Help with garbage collection
+        front = (front + 1) % array.length;
+        size--;
+        return item;
+    }
+    
+    public T peek() {
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return array[front];
+    }
+    
+    public boolean isEmpty() {
+        return size == 0;
+    }
+    
+    public int size() {
+        return size;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void resize() {
+        T[] newArray = (T[]) new Object[array.length * 2];
+        for (int i = 0; i < size; i++) {
+            newArray[i] = array[(front + i) % array.length];
+        }
+        array = newArray;
+        front = 0;
+        rear = size - 1;
+    }
+}</code></pre>
+                    </div>
+                    
+                    <!-- Linked List Queue -->
+                    <div>
+                        <h3>Linked List Queue</h3>
+                        <pre><code>public class LinkedQueue<T> {
+    private static class Node<T> {
+        private T data;
+        private Node<T> next;
+        
+        public Node(T data) {
+            this.data = data;
+        }
+    }
+    
+    private Node<T> front;
+    private Node<T> rear;
+    private int size;
+    
+    public LinkedQueue() {
+        front = null;
+        rear = null;
+        size = 0;
+    }
+    
+    public void enqueue(T item) {
+        Node<T> newNode = new Node<>(item);
+        if (isEmpty()) {
+            front = newNode;
+        } else {
+            rear.next = newNode;
+        }
+        rear = newNode;
+        size++;
+    }
+    
+    public T dequeue() {
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        T item = front.data;
+        front = front.next;
+        if (front == null) {
+            rear = null; // Queue is now empty
+        }
+        size--;
+        return item;
+    }
+    
+    public T peek() {
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return front.data;
+    }
+    
+    public boolean isEmpty() {
+        return front == null;
+    }
+    
+    public int size() {
+        return size;
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div id="exercises-tab" class="tab-content">
+                <div class="card">
+                    <h2>Practice Exercises</h2>
+                    <div>
+                        <h3>Stack Exercises</h3>
+                        <p>Implement solutions to these classic stack problems:</p>
+                        <ul>
+                            <li>Balanced parentheses check</li>
+                            <li>Evaluate postfix expressions</li>
+                            <li>Implement a min stack (a stack that can retrieve its minimum element in O(1) time)</li>
+                            <li>Stack-based implementation of queue</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3>Queue Exercises</h3>
+                        <p>Practice queue implementation with these problems:</p>
+                        <ul>
+                            <li>Implement a circular buffer</li>
+                            <li>Implement a priority queue</li>
+                            <li>Queue-based implementation of stack</li>
+                            <li>Level-order traversal of a binary tree</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3>Advanced Problems</h3>
+                        <p>Challenge yourself with these more complex problems:</p>
+                        <ul>
+                            <li>Implement a sliding window maximum algorithm</li>
+                            <li>Solve the stock span problem</li>
+                            <li>Design a LRU (Least Recently Used) cache</li>
+                        </ul>
+                        <p>Online Practice Resources:</p>
+                        <ul>
+                            <li>LeetCode Stack Problems - <a href="https://leetcode.com/tag/stack/" target="_blank" rel="noopener">Practice Here</a></li>
+                            <li>LeetCode Queue Problems - <a href="https://leetcode.com/tag/queue/" target="_blank" rel="noopener">Practice Here</a></li>
+                            <li>HackerRank Challenges - <a href="https://www.hackerrank.com/domains/data-structures?filters%5Bsubdomains%5D%5B%5D=stacks" target="_blank" rel="noopener">Practice Here</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

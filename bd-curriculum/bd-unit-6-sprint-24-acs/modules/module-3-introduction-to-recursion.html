@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Recursion - Module 3</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1d23;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #222831;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            margin-top: 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff5722;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-size: 1.3rem;
+            color: #ff5722;
+            margin-bottom: 15px;
+        }
+        h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #b3b3b3;
+            margin-bottom: 16px;
+        }
+        .intro-text {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #b3b3b3;
+            font-size: 1.1rem;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background-color: #2a303c;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            width: fit-content;
+        }
+        .back-button:hover {
+            background-color: #333a47;
+        }
+        .back-button svg {
+            margin-right: 5px;
+            width: 16px;
+            height: 16px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #333a47;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #b3b3b3;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-size: 0.9rem;
+        }
+        .tab:hover {
+            color: #ffffff;
+        }
+        .tab.active {
+            color: #ff5722;
+            border-bottom: 2px solid #ff5722;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card {
+            background-color: #2a303c;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        ul {
+            padding-left: 20px;
+            color: #b3b3b3;
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #ff7043;
+            text-decoration: underline;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #333a47;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #f5f5f5;
+        }
+        pre {
+            background-color: #333a47;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            color: #f5f5f5;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background-color: #333a47;
+            border-radius: 8px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <a href="../welcome.html" class="back-button">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Welcome Page
+        </a>
+
+        <!-- Header Section -->
+        <h1>Introduction to Recursion</h1>
+        <p class="intro-text">
+            Master the recursive problem-solving approach and learn how to implement elegant solutions 
+            for complex problems using recursion.
+        </p>
+
+        <!-- Main Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="overview-tab" onclick="switchTab('overview-tab')">Overview</button>
+            <button class="tab" data-tab="lecture-tab" onclick="switchTab('lecture-tab')">Lecture Content</button>
+            <button class="tab" data-tab="implementation-tab" onclick="switchTab('implementation-tab')">Implementation</button>
+            <button class="tab" data-tab="exercises-tab" onclick="switchTab('exercises-tab')">Practice Exercises</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-contents">
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-content active">
+                <div class="card">
+                    <h2>Learning Objectives</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Core Concepts</h3>
+                            <ul>
+                                <li>Understand recursion fundamentals</li>
+                                <li>Identify base cases and recursive cases</li>
+                                <li>Analyze recursive function call stacks</li>
+                                <li>Trace recursion execution flow</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Skills Development</h3>
+                            <ul>
+                                <li>Implement recursive solutions</li>
+                                <li>Convert iterative solutions to recursive ones</li>
+                                <li>Optimize recursive algorithms</li>
+                                <li>Apply recursion to solve real-world problems</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Prerequisites</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Required Knowledge</h3>
+                            <ul>
+                                <li>Basic programming concepts</li>
+                                <li>Function call mechanism</li>
+                                <li>Stack data structure</li>
+                                <li>Control flow statements</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Recommended Preparation</h3>
+                            <ul>
+                                <li>Review function parameters and return values</li>
+                                <li>Study stack-based execution model</li>
+                                <li>Practice tracking variable changes</li>
+                                <li>Understand time and space complexity</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div id="lecture-tab" class="tab-content">
+                <div class="card">
+                    <h2>Video Lectures</h2>
+                    
+                    <!-- Recursion Basics Video -->
+                    <div>
+                        <h3>Recursion Fundamentals</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/tyz8p3tig7" title="Recursion Fundamentals Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Concepts Covered:</h4>
+                            <ul>
+                                <li>What is recursion?</li>
+                                <li>Recursive function components</li>
+                                <li>Base case importance</li>
+                                <li>Call stack visualization</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Classic Recursion Problems Video -->
+                    <div>
+                        <h3>Classic Recursion Problems</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/abp7ntoxjy" title="Classic Recursion Problems Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Concepts Covered:</h4>
+                            <ul>
+                                <li>Factorial computation</li>
+                                <li>Fibonacci sequence</li>
+                                <li>Towers of Hanoi</li>
+                                <li>Binary search recursive implementation</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Recursion vs Iteration Video -->
+                    <div>
+                        <h3>Recursion vs Iteration</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/kj63p4fmgy" title="Recursion vs Iteration Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Concepts Covered:</h4>
+                            <ul>
+                                <li>Pros and cons of recursion</li>
+                                <li>Performance considerations</li>
+                                <li>Converting between approaches</li>
+                                <li>Tail recursion optimization</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div id="implementation-tab" class="tab-content">
+                <div class="card">
+                    <h2>Basic Recursion Examples</h2>
+                    
+                    <div>
+                        <h3>Factorial Implementation</h3>
+                        <pre><code>public class Factorial {
+    public static int factorial(int n) {
+        // Base case: factorial of 0 or 1 is 1
+        if (n == 0 || n == 1) {
+            return 1;
+        }
+        
+        // Recursive case: n! = n * (n-1)!
+        return n * factorial(n - 1);
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("Factorial of 5: " + factorial(5)); // Output: 120
+        System.out.println("Factorial of 10: " + factorial(10)); // Output: 3628800
+    }
+}</code></pre>
+                    </div>
+
+                    <div>
+                        <h3>Fibonacci Sequence</h3>
+                        <pre><code>public class Fibonacci {
+    public static int fibonacci(int n) {
+        // Base cases: first two Fibonacci numbers
+        if (n <= 0) {
+            return 0;
+        }
+        if (n == 1) {
+            return 1;
+        }
+        
+        // Recursive case: F(n) = F(n-1) + F(n-2)
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    }
+    
+    // Optimized version with memoization
+    public static int fibonacciOptimized(int n, int[] memo) {
+        if (n <= 0) {
+            return 0;
+        }
+        if (n == 1) {
+            return 1;
+        }
+        
+        // If we've already calculated this value, return it
+        if (memo[n] != 0) {
+            return memo[n];
+        }
+        
+        // Calculate and store the result
+        memo[n] = fibonacciOptimized(n - 1, memo) + fibonacciOptimized(n - 2, memo);
+        return memo[n];
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("Fibonacci(7): " + fibonacci(7)); // Output: 13
+        
+        // Using optimized version
+        int n = 10;
+        int[] memo = new int[n + 1];
+        System.out.println("Optimized Fibonacci(10): " + fibonacciOptimized(n, memo)); // Output: 55
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Advanced Recursion Examples</h2>
+                    
+                    <div>
+                        <h3>Binary Search - Recursive Implementation</h3>
+                        <pre><code>public class RecursiveBinarySearch {
+    public static int binarySearch(int[] arr, int target, int left, int right) {
+        // Base case: element not found
+        if (left > right) {
+            return -1;
+        }
+        
+        // Calculate middle index
+        int mid = left + (right - left) / 2;
+        
+        // Base case: element found
+        if (arr[mid] == target) {
+            return mid;
+        }
+        
+        // Recursive cases
+        if (arr[mid] > target) {
+            // Search in left half
+            return binarySearch(arr, target, left, mid - 1);
+        } else {
+            // Search in right half
+            return binarySearch(arr, target, mid + 1, right);
+        }
+    }
+    
+    public static int search(int[] arr, int target) {
+        return binarySearch(arr, target, 0, arr.length - 1);
+    }
+    
+    public static void main(String[] args) {
+        int[] sortedArray = {1, 3, 5, 7, 9, 11, 13, 15, 17};
+        int target = 7;
+        
+        int result = search(sortedArray, target);
+        if (result != -1) {
+            System.out.println("Element found at index: " + result);
+        } else {
+            System.out.println("Element not found in the array");
+        }
+    }
+}</code></pre>
+                    </div>
+
+                    <div>
+                        <h3>Towers of Hanoi</h3>
+                        <pre><code>public class TowersOfHanoi {
+    public static void solveTowers(int n, char source, char auxiliary, char destination) {
+        // Base case: only one disk to move
+        if (n == 1) {
+            System.out.println("Move disk 1 from " + source + " to " + destination);
+            return;
+        }
+        
+        // Recursive case 1: Move n-1 disks from source to auxiliary using destination as auxiliary
+        solveTowers(n - 1, source, destination, auxiliary);
+        
+        // Move the largest disk from source to destination
+        System.out.println("Move disk " + n + " from " + source + " to " + destination);
+        
+        // Recursive case 2: Move n-1 disks from auxiliary to destination using source as auxiliary
+        solveTowers(n - 1, auxiliary, source, destination);
+    }
+    
+    public static void main(String[] args) {
+        int n = 3; // Number of disks
+        solveTowers(n, 'A', 'B', 'C');
+        /*
+         * Output:
+         * Move disk 1 from A to C
+         * Move disk 2 from A to B
+         * Move disk 1 from C to B
+         * Move disk 3 from A to C
+         * Move disk 1 from B to A
+         * Move disk 2 from B to C
+         * Move disk 1 from A to C
+         */
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div id="exercises-tab" class="tab-content">
+                <div class="card">
+                    <h2>Practice Exercises</h2>
+                    
+                    <div>
+                        <!-- Beginner Exercises -->
+                        <div>
+                            <h3>Beginner Recursion Exercises</h3>
+                            <p>Start with these foundational recursion problems:</p>
+                            <ul>
+                                <li>Sum of Array Elements - Create a recursive function to calculate the sum of all elements in an array</li>
+                                <li>Power Function - Implement a recursive function to calculate x^n</li>
+                                <li>Palindrome Check - Write a recursive function to check if a string is a palindrome</li>
+                                <li>Count Digits - Create a recursive function to count the number of digits in an integer</li>
+                            </ul>
+                            <p>Online practice resources:</p>
+                            <ul>
+                                <li><a href="https://leetcode.com/problems/fibonacci-number/" target="_blank" rel="noopener">LeetCode 509</a> - Fibonacci Number</li>
+                                <li><a href="https://leetcode.com/problems/power-of-three/" target="_blank" rel="noopener">LeetCode 326</a> - Power of Three</li>
+                                <li><a href="https://leetcode.com/problems/reverse-string/" target="_blank" rel="noopener">LeetCode 344</a> - Reverse String (try with recursion)</li>
+                            </ul>
+                        </div>
+
+                        <!-- Intermediate Exercises -->
+                        <div>
+                            <h3>Intermediate Recursion Exercises</h3>
+                            <p>Practice these more challenging recursion problems:</p>
+                            <ul>
+                                <li>Merge Sort - Implement the merge sort algorithm using recursion</li>
+                                <li>Depth of Binary Tree - Calculate the maximum depth of a binary tree</li>
+                                <li>Generate Permutations - Generate all permutations of a string</li>
+                                <li>Flood Fill - Implement a recursive flood fill algorithm</li>
+                            </ul>
+                            <p>Online practice resources:</p>
+                            <ul>
+                                <li><a href="https://leetcode.com/problems/sort-an-array/" target="_blank" rel="noopener">LeetCode 912</a> - Sort an Array (using merge sort)</li>
+                                <li><a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" target="_blank" rel="noopener">LeetCode 104</a> - Maximum Depth of Binary Tree</li>
+                                <li><a href="https://leetcode.com/problems/permutations/" target="_blank" rel="noopener">LeetCode 46</a> - Permutations</li>
+                                <li><a href="https://leetcode.com/problems/flood-fill/" target="_blank" rel="noopener">LeetCode 733</a> - Flood Fill</li>
+                            </ul>
+                        </div>
+
+                        <!-- Advanced Exercises -->
+                        <div>
+                            <h3>Advanced Recursion Exercises</h3>
+                            <p>Challenge yourself with these advanced recursion problems:</p>
+                            <ul>
+                                <li>N-Queens Problem - Place N queens on an N×N chessboard so that no two queens attack each other</li>
+                                <li>Sudoku Solver - Implement a recursive Sudoku solver</li>
+                                <li>Word Search - Find if a word exists in a 2D board of characters</li>
+                                <li>Combination Sum - Find all unique combinations of candidates that sum to a target</li>
+                            </ul>
+                            <p>Online practice resources:</p>
+                            <ul>
+                                <li><a href="https://leetcode.com/problems/n-queens/" target="_blank" rel="noopener">LeetCode 51</a> - N-Queens</li>
+                                <li><a href="https://leetcode.com/problems/sudoku-solver/" target="_blank" rel="noopener">LeetCode 37</a> - Sudoku Solver</li>
+                                <li><a href="https://leetcode.com/problems/word-search/" target="_blank" rel="noopener">LeetCode 79</a> - Word Search</li>
+                                <li><a href="https://leetcode.com/problems/combination-sum/" target="_blank" rel="noopener">LeetCode 39</a> - Combination Sum</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
