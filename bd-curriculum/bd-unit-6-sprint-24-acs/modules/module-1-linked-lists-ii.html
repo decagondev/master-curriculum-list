@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 1: Linked Lists II</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1d23;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #222831;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            margin-top: 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff5722;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-size: 1.3rem;
+            color: #ff5722;
+            margin-bottom: 15px;
+        }
+        h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #b3b3b3;
+            margin-bottom: 16px;
+        }
+        .intro-text {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #b3b3b3;
+            font-size: 1.1rem;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background-color: #2a303c;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            width: fit-content;
+        }
+        .back-button:hover {
+            background-color: #333a47;
+        }
+        .back-button svg {
+            margin-right: 5px;
+            width: 16px;
+            height: 16px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #333a47;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #b3b3b3;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-size: 0.9rem;
+        }
+        .tab:hover {
+            color: #ffffff;
+        }
+        .tab.active {
+            color: #ff5722;
+            border-bottom: 2px solid #ff5722;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card {
+            background-color: #2a303c;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        ul {
+            padding-left: 20px;
+            color: #b3b3b3;
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background-color: #333a47;
+            border-radius: 8px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <a href="../welcome.html" class="back-button">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Welcome Page
+        </a>
+
+        <!-- Header Section -->
+        <h1>Module 1: Linked Lists II</h1>
+        <p class="intro-text">
+            Master advanced linked list operations including searching, insertion, and deletion in Java.
+            Learn efficient techniques for manipulating linked data structures.
+        </p>
+
+        <!-- Main Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="overview-tab" onclick="switchTab('overview-tab')">Overview</button>
+            <button class="tab" data-tab="lecture-content-tab" onclick="switchTab('lecture-content-tab')">Lecture Content</button>
+            <button class="tab" data-tab="implementation-tab" onclick="switchTab('implementation-tab')">Implementation</button>
+            <button class="tab" data-tab="practice-tab" onclick="switchTab('practice-tab')">Practice Exercises</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-contents">
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-content active">
+                <div class="card">
+                    <h2>Learning Objectives</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Core Concepts</h3>
+                            <ul>
+                                <li>Advanced linked list operations</li>
+                                <li>Efficient searching techniques</li>
+                                <li>Node insertion strategies</li>
+                                <li>Safe node deletion</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Skills Development</h3>
+                            <ul>
+                                <li>Implementing search algorithms</li>
+                                <li>Managing memory efficiently</li>
+                                <li>Handling edge cases</li>
+                                <li>Performance optimization</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Prerequisites</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Required Knowledge</h3>
+                            <ul>
+                                <li>Basic linked list concepts</li>
+                                <li>Java classes and objects</li>
+                                <li>Reference types in Java</li>
+                                <li>Basic algorithm analysis</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Technical Requirements</h3>
+                            <ul>
+                                <li>Java Development Kit (JDK)</li>
+                                <li>Understanding of references</li>
+                                <li>Basic debugging skills</li>
+                                <li>Java IDE of choice</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div id="lecture-content-tab" class="tab-content">
+                <!-- Video Section 1: Search -->
+                <div class="card">
+                    <h2>1. Linked List Search</h2>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/tygskfx3bq?videoFoam=true" title="s17M1 JavaScript CC1 Linked List Search Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                    </div>
+                    <div>
+                        <h3>Key Topics</h3>
+                        <ul>
+                            <li>Linear search implementation in Java</li>
+                            <li>Optimizing search operations</li>
+                            <li>Handling edge cases</li>
+                            <li>Time complexity analysis</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Video Section 2: Insert -->
+                <div class="card">
+                    <h2>2. Linked List Insert</h2>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/67m6157lfv?videoFoam=true" title="s17M1 JavaScript CC2 Linked List Insert Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                    </div>
+                    <div>
+                        <h3>Key Topics</h3>
+                        <ul>
+                            <li>Insertion at beginning, middle, and end</li>
+                            <li>Maintaining list integrity</li>
+                            <li>Updating references properly</li>
+                            <li>Memory management in Java</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Video Section 3: Delete -->
+                <div class="card">
+                    <h2>3. Linked List Delete</h2>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/h4tepvxupq?videoFoam=true" title="s17M1 JavaScript - Linked List Delete Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                    </div>
+                    <div>
+                        <h3>Key Topics</h3>
+                        <ul>
+                            <li>Safe node deletion strategies</li>
+                            <li>Handling special cases</li>
+                            <li>Garbage collection in Java</li>
+                            <li>Maintaining list connections</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div id="implementation-tab" class="tab-content">
+                <div class="card">
+                    <h2>Implementation Examples</h2>
+                    
+                    <!-- Node Class Implementation -->
+                    <div class="space-y-6">
+                        <div class="space-y-4">
+                            <h3>Node Class</h3>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>public class Node<T> {
+    private T value;
+    private Node<T> next;
+
+    public Node(T value) {
+        this.value = value;
+        this.next = null;
+    }
+
+    public T getValue() {
+        return value;
+    }
+
+    public Node<T> getNext() {
+        return next;
+    }
+
+    public void setNext(Node<T> next) {
+        this.next = next;
+    }
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- LinkedList Class Implementation -->
+                        <div class="space-y-4">
+                            <h3>LinkedList Class with Operations</h3>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>public class LinkedList<T> {
+    private Node<T> head;
+    private int length;
+
+    public LinkedList() {
+        this.head = null;
+        this.length = 0;
+    }
+
+    public Node<T> search(T value) {
+        Node<T> current = head;
+        while (current != null) {
+            if (current.getValue().equals(value)) {
+                return current;
+            }
+            current = current.getNext();
+        }
+        return null;
+    }
+
+    public boolean insert(T value, int index) {
+        if (index < 0 || index > length) {
+            return false;
+        }
+
+        Node<T> newNode = new Node<>(value);
+        if (index == 0) {
+            newNode.setNext(head);
+            head = newNode;
+        } else {
+            Node<T> current = head;
+            for (int i = 0; i < index - 1; i++) {
+                current = current.getNext();
+            }
+            newNode.setNext(current.getNext());
+            current.setNext(newNode);
+        }
+        length++;
+        return true;
+    }
+
+    public boolean delete(int index) {
+        if (index < 0 || index >= length || head == null) {
+            return false;
+        }
+
+        if (index == 0) {
+            head = head.getNext();
+        } else {
+            Node<T> current = head;
+            for (int i = 0; i < index - 1; i++) {
+                current = current.getNext();
+            }
+            current.setNext(current.getNext().getNext());
+        }
+        length--;
+        return true;
+    }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div id="practice-tab" class="tab-content">
+                <div class="card">
+                    <h2>Practice Exercises</h2>
+                    <div class="space-y-6">
+                        <div class="space-y-4">
+                            <h3>Exercise 1: Implement Search</h3>
+                            <p>Implement a search method that finds the first occurrence of a value in the linked list and returns its index.</p>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>public int findIndex(T value) {
+    // Your implementation here
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3>Exercise 2: Insert at Position</h3>
+                            <p>Implement a method to insert a node at a specific position while handling all edge cases.</p>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>public boolean insertAt(T value, int position) {
+    // Your implementation here
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3>Exercise 3: Delete by Value</h3>
+                            <p>Implement a method to delete the first occurrence of a specific value in the linked list.</p>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>public boolean deleteValue(T value) {
+    // Your implementation here
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

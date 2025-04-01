@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write Code to Insert and Delete Items from a Linked List</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1d23;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #222831;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            margin: 0;
+        }
+        h1 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff5722;
+            padding-bottom: 10px;
+        }
+        p {
+            color: #b3b3b3;
+        }
+        a {
+            color: #ff5722;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        a:hover {
+            color: #ff7043;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .back-link svg {
+            margin-right: 8px;
+        }
+        .card {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #333a47;
+            background-color: #2a303c;
+            border-radius: 4px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .card h3 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333a47;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        ul {
+            color: #b3b3b3;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .note {
+            background-color: rgba(255, 87, 34, 0.1);
+            border-left: 4px solid #ff5722;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .code-block {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .code-comment {
+            color: #6a9955;
+        }
+        .code-keyword {
+            color: #569cd6;
+        }
+        .code-type {
+            color: #4ec9b0;
+        }
+        .code-string {
+            color: #ce9178;
+        }
+        .tab-navigation {
+            display: flex;
+            border-bottom: 1px solid #333a47;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            padding: 10px 15px;
+            background-color: transparent;
+            border: none;
+            color: #b3b3b3;
+            cursor: pointer;
+            font-size: 16px;
+            position: relative;
+            margin-right: 10px;
+            transition: color 0.3s;
+            outline: none;
+        }
+        .tab-button:hover {
+            color: #ffffff;
+        }
+        .tab-button.active {
+            color: #ff5722;
+        }
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #ff5722;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelector(`#${tabId}`).classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial active tab
+            switchTab('overview');
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <a href="welcome.html" class="back-link">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Welcome Page
+        </a>
+
+        <!-- Header Section -->
+        <h1>Write Code to Insert and Delete Items from a Linked List</h1>
+        <p>
+            Understanding how to implement insertion and deletion operations in linked lists is a fundamental skill in data structures. This guide will walk you through the code and concepts for these operations.
+        </p>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-button active" data-tab="overview" onclick="switchTab('overview')">
+                Overview
+            </button>
+            <button class="tab-button" data-tab="insertion" onclick="switchTab('insertion')">
+                Insertion Operations
+            </button>
+            <button class="tab-button" data-tab="deletion" onclick="switchTab('deletion')">
+                Deletion Operations
+            </button>
+            <button class="tab-button" data-tab="practice" onclick="switchTab('practice')">
+                Practice Problems
+            </button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div>
+            <!-- Overview Tab -->
+            <div id="overview" class="tab-content active">
+                <div class="card">
+                    <h3>What is a Linked List?</h3>
+                    <p>A linked list is a linear data structure where elements are stored in nodes. Each node contains a data value and a reference (or pointer) to the next node in the sequence.</p>
+                    
+                    <div class="code-block">
+                        <span class="code-keyword">class</span> <span class="code-type">Node</span> {<br>
+                        &nbsp;&nbsp;<span class="code-keyword">int</span> data;<br>
+                        &nbsp;&nbsp;<span class="code-type">Node</span> next;<br>
+                        <br>
+                        &nbsp;&nbsp;<span class="code-keyword">public</span> <span class="code-type">Node</span>(<span class="code-keyword">int</span> data) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">this</span>.data = data;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">this</span>.next = <span class="code-keyword">null</span>;<br>
+                        &nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    
+                    <h4>Types of Linked Lists</h4>
+                    <ul>
+                        <li><strong>Singly Linked List:</strong> Each node points to the next node in the sequence</li>
+                        <li><strong>Doubly Linked List:</strong> Each node points to both the next and previous nodes</li>
+                        <li><strong>Circular Linked List:</strong> The last node points back to the first node, forming a circle</li>
+                    </ul>
+                    
+                    <div class="note">
+                        <p><strong>Key Advantages of Linked Lists:</strong> Dynamic size, efficient insertions and deletions compared to arrays (especially when not at the ends).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insertion Tab -->
+            <div id="insertion" class="tab-content">
+                <div class="card">
+                    <h3>Insertion Operations</h3>
+                    <p>There are three key places to insert a node in a linked list:</p>
+                    
+                    <div class="card">
+                        <h4>1. Insert at Beginning</h4>
+                        <p>Time Complexity: O(1)</p>
+                        <div class="code-block">
+                            <span class="code-keyword">public void</span> insertAtBeginning(<span class="code-keyword">int</span> data) {<br>
+                            &nbsp;&nbsp;<span class="code-comment">// Create a new node with the given data</span><br>
+                            &nbsp;&nbsp;<span class="code-type">Node</span> newNode = <span class="code-keyword">new</span> <span class="code-type">Node</span>(data);<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// Point the new node to the current head</span><br>
+                            &nbsp;&nbsp;newNode.next = head;<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// Update the head to point to the new node</span><br>
+                            &nbsp;&nbsp;head = newNode;<br>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>2. Insert at End</h4>
+                        <p>Time Complexity: O(n) or O(1) if we maintain a tail pointer</p>
+                        <div class="code-block">
+                            <span class="code-keyword">public void</span> insertAtEnd(<span class="code-keyword">int</span> data) {<br>
+                            &nbsp;&nbsp;<span class="code-comment">// Create a new node with the given data</span><br>
+                            &nbsp;&nbsp;<span class="code-type">Node</span> newNode = <span class="code-keyword">new</span> <span class="code-type">Node</span>(data);<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// If the list is empty, make the new node the head</span><br>
+                            &nbsp;&nbsp;<span class="code-keyword">if</span> (head == <span class="code-keyword">null</span>) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;head = newNode;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">return</span>;<br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// Find the last node</span><br>
+                            &nbsp;&nbsp;<span class="code-type">Node</span> current = head;<br>
+                            &nbsp;&nbsp;<span class="code-keyword">while</span> (current.next != <span class="code-keyword">null</span>) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;current = current.next;<br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// Attach the new node to the last node</span><br>
+                            &nbsp;&nbsp;current.next = newNode;<br>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>3. Insert After a Given Node</h4>
+                        <p>Time Complexity: O(1) if we have a reference to the node, O(n) if we need to search for it</p>
+                        <div class="code-block">
+                            <span class="code-keyword">public void</span> insertAfter(<span class="code-type">Node</span> prevNode, <span class="code-keyword">int</span> data) {<br>
+                            &nbsp;&nbsp;<span class="code-comment">// Check if the given previous node is null</span><br>
+                            &nbsp;&nbsp;<span class="code-keyword">if</span> (prevNode == <span class="code-keyword">null</span>) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="code-string">"The given previous node cannot be null"</span>);<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">return</span>;<br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// Create a new node with the given data</span><br>
+                            &nbsp;&nbsp;<span class="code-type">Node</span> newNode = <span class="code-keyword">new</span> <span class="code-type">Node</span>(data);<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// Make the new node's next as previous node's next</span><br>
+                            &nbsp;&nbsp;newNode.next = prevNode.next;<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// Make previous node's next point to the new node</span><br>
+                            &nbsp;&nbsp;prevNode.next = newNode;<br>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deletion Tab -->
+            <div id="deletion" class="tab-content">
+                <div class="card">
+                    <h3>Deletion Operations</h3>
+                    <p>There are several key ways to delete a node from a linked list:</p>
+                    
+                    <div class="card">
+                        <h4>1. Delete the First Node</h4>
+                        <p>Time Complexity: O(1)</p>
+                        <div class="code-block">
+                            <span class="code-keyword">public void</span> deleteFirst() {<br>
+                            &nbsp;&nbsp;<span class="code-comment">// Check if the list is empty</span><br>
+                            &nbsp;&nbsp;<span class="code-keyword">if</span> (head == <span class="code-keyword">null</span>) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="code-string">"The list is empty"</span>);<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">return</span>;<br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// Move the head to point to the next node</span><br>
+                            &nbsp;&nbsp;head = head.next;<br>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>2. Delete the Last Node</h4>
+                        <p>Time Complexity: O(n)</p>
+                        <div class="code-block">
+                            <span class="code-keyword">public void</span> deleteLast() {<br>
+                            &nbsp;&nbsp;<span class="code-comment">// Check if the list is empty</span><br>
+                            &nbsp;&nbsp;<span class="code-keyword">if</span> (head == <span class="code-keyword">null</span>) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="code-string">"The list is empty"</span>);<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">return</span>;<br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// If there is only one node</span><br>
+                            &nbsp;&nbsp;<span class="code-keyword">if</span> (head.next == <span class="code-keyword">null</span>) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;head = <span class="code-keyword">null</span>;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">return</span>;<br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// Find the second last node</span><br>
+                            &nbsp;&nbsp;<span class="code-type">Node</span> secondLast = head;<br>
+                            &nbsp;&nbsp;<span class="code-keyword">while</span> (secondLast.next.next != <span class="code-keyword">null</span>) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;secondLast = secondLast.next;<br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// Set the second last node's next to null</span><br>
+                            &nbsp;&nbsp;secondLast.next = <span class="code-keyword">null</span>;<br>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>3. Delete a Node at a Given Position</h4>
+                        <p>Time Complexity: O(n)</p>
+                        <div class="code-block">
+                            <span class="code-keyword">public void</span> deleteAtPosition(<span class="code-keyword">int</span> position) {<br>
+                            &nbsp;&nbsp;<span class="code-comment">// Check if the list is empty</span><br>
+                            &nbsp;&nbsp;<span class="code-keyword">if</span> (head == <span class="code-keyword">null</span>) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="code-string">"The list is empty"</span>);<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">return</span>;<br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// If position is 0, delete the first node</span><br>
+                            &nbsp;&nbsp;<span class="code-keyword">if</span> (position == 0) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;head = head.next;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">return</span>;<br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// Find the previous node of the node to be deleted</span><br>
+                            &nbsp;&nbsp;<span class="code-type">Node</span> current = head;<br>
+                            &nbsp;&nbsp;<span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 0; i < position - 1 && current != <span class="code-keyword">null</span>; i++) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;current = current.next;<br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// If position is more than the number of nodes</span><br>
+                            &nbsp;&nbsp;<span class="code-keyword">if</span> (current == <span class="code-keyword">null</span> || current.next == <span class="code-keyword">null</span>) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="code-string">"Position is out of range"</span>);<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">return</span>;<br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// Unlink the node to be deleted</span><br>
+                            &nbsp;&nbsp;current.next = current.next.next;<br>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Problems Tab -->
+            <div id="practice" class="tab-content">
+                <div class="card">
+                    <h3>Practice Problems</h3>
+                    <p>Test your understanding with these practice problems:</p>
+                    
+                    <div class="card">
+                        <h4>Problem 1: Implement a Singly Linked List</h4>
+                        <p>Implement a complete singly linked list class with the following methods:</p>
+                        <ul>
+                            <li>insertAtBeginning(data)</li>
+                            <li>insertAtEnd(data)</li>
+                            <li>insertAtPosition(position, data)</li>
+                            <li>deleteFirst()</li>
+                            <li>deleteLast()</li>
+                            <li>deleteAtPosition(position)</li>
+                            <li>display()</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>Problem 2: Remove Duplicates</h4>
+                        <p>Write a method to remove duplicates from an unsorted linked list.</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>Problem 3: Find the Middle</h4>
+                        <p>Implement a method to find the middle element of a linked list. If the list has an even number of elements, return the second middle element.</p>
+                    </div>
+                    
+                    <div class="note">
+                        <p><strong>Tip:</strong> Use the two-pointer technique (slow and fast pointers) for many linked list problems. The fast pointer moves twice as fast as the slow pointer, allowing you to find the middle, detect cycles, etc.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

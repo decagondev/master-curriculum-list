@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphs I - Module 1</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1d23;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #222831;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            margin-top: 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff5722;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-size: 1.3rem;
+            color: #ff5722;
+            margin-bottom: 15px;
+        }
+        h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #b3b3b3;
+            margin-bottom: 16px;
+        }
+        .intro-text {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #b3b3b3;
+            font-size: 1.1rem;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background-color: #2a303c;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            width: fit-content;
+        }
+        .back-button:hover {
+            background-color: #333a47;
+        }
+        .back-button svg {
+            margin-right: 5px;
+            width: 16px;
+            height: 16px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #333a47;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #b3b3b3;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-size: 0.9rem;
+        }
+        .tab:hover {
+            color: #ffffff;
+        }
+        .tab.active {
+            color: #ff5722;
+            border-bottom: 2px solid #ff5722;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card {
+            background-color: #2a303c;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        ul {
+            padding-left: 20px;
+            color: #b3b3b3;
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #ff7043;
+            text-decoration: underline;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #333a47;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #f5f5f5;
+        }
+        pre {
+            background-color: #333a47;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            color: #f5f5f5;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background-color: #333a47;
+            border-radius: 8px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .image-container img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <a href="../welcome.html" class="back-button">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Welcome Page
+        </a>
+
+        <!-- Header Section -->
+        <h1>Graphs I: Introduction to Graph Theory</h1>
+        <p class="intro-text">
+            Learn the fundamentals of graph theory and explore graph representations.
+            Understand how graphs can model complex relationships across various domains.
+        </p>
+
+        <!-- Main Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="overview-tab" onclick="switchTab('overview-tab')">Overview</button>
+            <button class="tab" data-tab="lecture-tab" onclick="switchTab('lecture-tab')">Lecture Content</button>
+            <button class="tab" data-tab="implementation-tab" onclick="switchTab('implementation-tab')">Implementation</button>
+            <button class="tab" data-tab="exercises-tab" onclick="switchTab('exercises-tab')">Practice Exercises</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-contents">
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-content active">
+                <div class="card">
+                    <h2>Learning Objectives</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Core Concepts</h3>
+                            <ul>
+                                <li>Understanding graph terminology</li>
+                                <li>Exploring types of graphs: directed, undirected, weighted</li>
+                                <li>Analyzing graph properties</li>
+                                <li>Learning graph representation techniques</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Skills Development</h3>
+                            <ul>
+                                <li>Implementing adjacency lists and matrices</li>
+                                <li>Building simple graph applications</li>
+                                <li>Modeling real-world problems as graphs</li>
+                                <li>Understanding graph use cases</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Prerequisites</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Required Knowledge</h3>
+                            <ul>
+                                <li>Basic data structures (arrays, lists)</li>
+                                <li>Object-oriented programming concepts</li>
+                                <li>Java Collection Framework basics</li>
+                                <li>Understanding of time complexity</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Recommended Preparation</h3>
+                            <ul>
+                                <li>Review of HashMap implementation</li>
+                                <li>Refresh on ArrayList operations</li>
+                                <li>Understanding of classes and objects</li>
+                                <li>Familiarity with iterative algorithms</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div id="lecture-tab" class="tab-content">
+                <div class="card">
+                    <h2>Video Lectures</h2>
+                    
+                    <!-- Graph Introduction Video -->
+                    <div>
+                        <h3>Introduction to Graph Theory</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/p2tn9x6kb8" title="Introduction to Graph Theory Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Concepts Covered:</h4>
+                            <ul>
+                                <li>Vertices and edges</li>
+                                <li>Directed vs. undirected graphs</li>
+                                <li>Weighted vs. unweighted graphs</li>
+                                <li>Applications of graph theory</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Graph Representation Video -->
+                    <div>
+                        <h3>Graph Representation Techniques</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/m3h6j8kp9s" title="Graph Representation Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Concepts Covered:</h4>
+                            <ul>
+                                <li>Adjacency matrix representation</li>
+                                <li>Adjacency list representation</li>
+                                <li>Edge list representation</li>
+                                <li>Time and space complexity comparison</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Graph Terminology and Examples</h2>
+                    
+                    <div>
+                        <h3>Key Graph Terms</h3>
+                        <ul>
+                            <li><strong>Vertex (Node)</strong>: A fundamental unit in a graph that represents an entity</li>
+                            <li><strong>Edge</strong>: A connection between two vertices representing a relationship</li>
+                            <li><strong>Degree</strong>: The number of edges connected to a vertex</li>
+                            <li><strong>Path</strong>: A sequence of vertices connected by edges</li>
+                            <li><strong>Cycle</strong>: A path that starts and ends at the same vertex</li>
+                            <li><strong>Connected Graph</strong>: A graph where there is a path between every pair of vertices</li>
+                            <li><strong>Tree</strong>: A connected graph with no cycles</li>
+                            <li><strong>Bipartite Graph</strong>: A graph whose vertices can be divided into two sets with no edges within each set</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="image-container">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/6n-graf.svg" alt="Example of an undirected graph" width="400">
+                        <p>Example of an undirected graph with 6 vertices and 7 edges</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div id="implementation-tab" class="tab-content">
+                <div class="card">
+                    <h2>Adjacency List Implementation</h2>
+                    
+                    <div>
+                        <h3>Java Implementation</h3>
+                        <pre><code>import java.util.*;
+
+public class Graph {
+    private int V; // Number of vertices
+    private List<List<Integer>> adjList; // Adjacency list
+    
+    // Constructor
+    public Graph(int vertices) {
+        this.V = vertices;
+        
+        // Initialize adjacency list
+        adjList = new ArrayList<>();
+        for (int i = 0; i < V; i++) {
+            adjList.add(new ArrayList<>());
+        }
+    }
+    
+    // Add an edge to the graph
+    public void addEdge(int source, int destination) {
+        // For an undirected graph, add edges in both directions
+        adjList.get(source).add(destination);
+        adjList.get(destination).add(source);
+    }
+    
+    // Add directed edge to the graph
+    public void addDirectedEdge(int source, int destination) {
+        adjList.get(source).add(destination);
+    }
+    
+    // Get the adjacency list for a specific vertex
+    public List<Integer> getNeighbors(int vertex) {
+        return adjList.get(vertex);
+    }
+    
+    // Print the graph representation
+    public void printGraph() {
+        for (int i = 0; i < V; i++) {
+            System.out.print("Vertex " + i + " is connected to: ");
+            for (Integer neighbor : adjList.get(i)) {
+                System.out.print(neighbor + " ");
+            }
+            System.out.println();
+        }
+    }
+    
+    // Get the number of vertices
+    public int getVertexCount() {
+        return V;
+    }
+    
+    // Example usage
+    public static void main(String[] args) {
+        // Create a graph with 5 vertices
+        Graph graph = new Graph(5);
+        
+        // Add edges
+        graph.addEdge(0, 1);
+        graph.addEdge(0, 4);
+        graph.addEdge(1, 2);
+        graph.addEdge(1, 3);
+        graph.addEdge(1, 4);
+        graph.addEdge(2, 3);
+        graph.addEdge(3, 4);
+        
+        // Print the graph
+        graph.printGraph();
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Adjacency Matrix Implementation</h2>
+                    
+                    <div>
+                        <h3>Java Implementation</h3>
+                        <pre><code>public class GraphMatrix {
+    private int V; // Number of vertices
+    private boolean[][] adjMatrix; // Adjacency matrix
+    
+    // Constructor
+    public GraphMatrix(int vertices) {
+        this.V = vertices;
+        adjMatrix = new boolean[V][V];
+    }
+    
+    // Add an edge to the graph
+    public void addEdge(int source, int destination) {
+        // For an undirected graph, add edges in both directions
+        adjMatrix[source][destination] = true;
+        adjMatrix[destination][source] = true;
+    }
+    
+    // Add directed edge to the graph
+    public void addDirectedEdge(int source, int destination) {
+        adjMatrix[source][destination] = true;
+    }
+    
+    // Check if two vertices are connected
+    public boolean isEdge(int source, int destination) {
+        return adjMatrix[source][destination];
+    }
+    
+    // Print the graph representation
+    public void printGraph() {
+        System.out.println("Graph representation using Adjacency Matrix:");
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                System.out.print(adjMatrix[i][j] ? "1 " : "0 ");
+            }
+            System.out.println();
+        }
+    }
+    
+    // Get the number of vertices
+    public int getVertexCount() {
+        return V;
+    }
+    
+    // Example usage
+    public static void main(String[] args) {
+        // Create a graph with 5 vertices
+        GraphMatrix graph = new GraphMatrix(5);
+        
+        // Add edges
+        graph.addEdge(0, 1);
+        graph.addEdge(0, 4);
+        graph.addEdge(1, 2);
+        graph.addEdge(1, 3);
+        graph.addEdge(1, 4);
+        graph.addEdge(2, 3);
+        graph.addEdge(3, 4);
+        
+        // Print the graph
+        graph.printGraph();
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div id="exercises-tab" class="tab-content">
+                <div class="card">
+                    <h2>Practice Exercises</h2>
+                    
+                    <div>
+                        <!-- Basic Graph Exercises -->
+                        <div>
+                            <h3>Basic Graph Implementation</h3>
+                            <p>Implement a weighted graph class that supports the following operations:</p>
+                            <ul>
+                                <li>Add a weighted edge between two vertices</li>
+                                <li>Remove an edge between two vertices</li>
+                                <li>Check if there is an edge between two vertices</li>
+                                <li>Get all neighbors of a vertex with their weights</li>
+                                <li>Print the graph representation</li>
+                            </ul>
+                            <p>Implement both adjacency list and adjacency matrix versions.</p>
+                        </div>
+
+                        <!-- Graph Property Exercises -->
+                        <div>
+                            <h3>Graph Property Analysis</h3>
+                            <p>Implement the following methods for your graph class:</p>
+                            <ul>
+                                <li>Check if a graph is connected</li>
+                                <li>Find the degree of each vertex</li>
+                                <li>Determine if the graph has a cycle</li>
+                                <li>Count the number of components in the graph</li>
+                            </ul>
+                        </div>
+
+                        <!-- Real-World Applications -->
+                        <div>
+                            <h3>Real-World Application Challenges</h3>
+                            <p>Solve the following graph problems:</p>
+                            <ul>
+                                <li>Find Towns Judge - <a href="https://leetcode.com/problems/find-the-town-judge/" target="_blank" rel="noopener">LeetCode 997</a></li>
+                                <li>Course Schedule - <a href="https://leetcode.com/problems/course-schedule/" target="_blank" rel="noopener">LeetCode 207</a></li>
+                                <li>Number of Islands - <a href="https://leetcode.com/problems/number-of-islands/" target="_blank" rel="noopener">LeetCode 200</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Additional Resources</h2>
+                    <ul>
+                        <li><a href="https://visualgo.net/en/graphds" target="_blank" rel="noopener">Graph Visualization</a> - Interactive tool to visualize graph algorithms</li>
+                        <li><a href="https://www.coursera.org/learn/algorithms-on-graphs" target="_blank" rel="noopener">Algorithms on Graphs</a> - Coursera course on graph algorithms</li>
+                        <li><a href="https://algs4.cs.princeton.edu/41graph/" target="_blank" rel="noopener">Princeton Algorithms, Part II</a> - Comprehensive material on graph algorithms</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

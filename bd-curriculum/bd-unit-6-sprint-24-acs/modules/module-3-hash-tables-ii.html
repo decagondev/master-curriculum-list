@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Tables II - Module 3</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1d23;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #222831;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            margin-top: 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff5722;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-size: 1.3rem;
+            color: #ff5722;
+            margin-bottom: 15px;
+        }
+        h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #b3b3b3;
+            margin-bottom: 16px;
+        }
+        .intro-text {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #b3b3b3;
+            font-size: 1.1rem;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background-color: #2a303c;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            width: fit-content;
+        }
+        .back-button:hover {
+            background-color: #333a47;
+        }
+        .back-button svg {
+            margin-right: 5px;
+            width: 16px;
+            height: 16px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #333a47;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #b3b3b3;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-size: 0.9rem;
+        }
+        .tab:hover {
+            color: #ffffff;
+        }
+        .tab.active {
+            color: #ff5722;
+            border-bottom: 2px solid #ff5722;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card {
+            background-color: #2a303c;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        ul {
+            padding-left: 20px;
+            color: #b3b3b3;
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #ff7043;
+            text-decoration: underline;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #333a47;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #f5f5f5;
+        }
+        pre {
+            background-color: #333a47;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            color: #f5f5f5;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background-color: #333a47;
+            border-radius: 8px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <a href="../welcome.html" class="back-button">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Welcome Page
+        </a>
+
+        <!-- Header Section -->
+        <h1>Hash Tables II</h1>
+        <p class="intro-text">
+            Dive deeper into advanced hash table concepts and applications.
+            Master collision resolution techniques and learn how to build efficient hash-based data structures.
+        </p>
+
+        <!-- Main Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="overview-tab" onclick="switchTab('overview-tab')">Overview</button>
+            <button class="tab" data-tab="lecture-tab" onclick="switchTab('lecture-tab')">Lecture Content</button>
+            <button class="tab" data-tab="implementation-tab" onclick="switchTab('implementation-tab')">Implementation</button>
+            <button class="tab" data-tab="exercises-tab" onclick="switchTab('exercises-tab')">Practice Exercises</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-contents">
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-content active">
+                <div class="card">
+                    <h2>Learning Objectives</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Core Concepts</h3>
+                            <ul>
+                                <li>Advanced collision resolution strategies</li>
+                                <li>Hash table performance optimization</li>
+                                <li>Open addressing vs. chaining trade-offs</li>
+                                <li>Custom hash function design</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Skills Development</h3>
+                            <ul>
+                                <li>Implementing efficient hash maps</li>
+                                <li>Solving complex problems with hash tables</li>
+                                <li>Analyzing amortized time complexity</li>
+                                <li>Optimizing space usage</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Prerequisites</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Required Knowledge</h3>
+                            <ul>
+                                <li>Basic hash table concepts</li>
+                                <li>Understanding of hash functions</li>
+                                <li>Java Collections Framework</li>
+                                <li>Data structure fundamentals</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Recommended Preparation</h3>
+                            <ul>
+                                <li>Review Java HashMap implementation</li>
+                                <li>Study of collision resolution</li>
+                                <li>Practice with Java hash methods</li>
+                                <li>Understand load factor and rehashing</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div id="lecture-tab" class="tab-content">
+                <div class="card">
+                    <h2>Video Lectures</h2>
+                    
+                    <!-- Advanced Collision Resolution Video -->
+                    <div>
+                        <h3>Advanced Collision Resolution Techniques</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/5c9l3qn8bj" title="Advanced Collision Resolution Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Concepts Covered:</h4>
+                            <ul>
+                                <li>Linear probing implementation</li>
+                                <li>Quadratic probing optimization</li>
+                                <li>Double hashing strategy</li>
+                                <li>Performance comparison</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Hash Table Optimization -->
+                    <div>
+                        <h3>Hash Table Performance Optimization</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/gj1b2kp9xq" title="Hash Table Optimization Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Concepts Covered:</h4>
+                            <ul>
+                                <li>Load factor management</li>
+                                <li>Efficient rehashing</li>
+                                <li>Thread-safety considerations</li>
+                                <li>Memory usage optimization</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div id="implementation-tab" class="tab-content">
+                <div class="card">
+                    <h2>Custom HashMap Implementation</h2>
+                    
+                    <!-- Open Addressing Implementation -->
+                    <div>
+                        <h3>Open Addressing HashMap</h3>
+                        <pre><code>public class OpenAddressingHashMap<K, V> {
+    private static class Entry<K, V> {
+        K key;
+        V value;
+        boolean isDeleted;
+        
+        Entry(K key, V value) {
+            this.key = key;
+            this.value = value;
+            this.isDeleted = false;
+        }
+    }
+    
+    private Entry<K, V>[] table;
+    private int size;
+    private final double loadFactor;
+    private static final int DEFAULT_CAPACITY = 16;
+    
+    @SuppressWarnings("unchecked")
+    public OpenAddressingHashMap() {
+        this.table = new Entry[DEFAULT_CAPACITY];
+        this.size = 0;
+        this.loadFactor = 0.75;
+    }
+    
+    public void put(K key, V value) {
+        if (key == null) {
+            throw new IllegalArgumentException("Key cannot be null");
+        }
+        
+        if ((double) size / table.length >= loadFactor) {
+            resize();
+        }
+        
+        int index = findPosition(key);
+        
+        if (table[index] == null || table[index].isDeleted) {
+            table[index] = new Entry<>(key, value);
+            size++;
+        } else {
+            table[index].value = value;
+        }
+    }
+    
+    public V get(K key) {
+        if (key == null) {
+            throw new IllegalArgumentException("Key cannot be null");
+        }
+        
+        int index = findPosition(key);
+        
+        if (table[index] != null && !table[index].isDeleted) {
+            return table[index].value;
+        }
+        
+        return null;
+    }
+    
+    public boolean remove(K key) {
+        if (key == null) {
+            throw new IllegalArgumentException("Key cannot be null");
+        }
+        
+        int index = findPosition(key);
+        
+        if (table[index] != null && !table[index].isDeleted) {
+            table[index].isDeleted = true;
+            size--;
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private int findPosition(K key) {
+        int hash = key.hashCode();
+        int index = (hash & 0x7FFFFFFF) % table.length;
+        int probe = 1;
+        
+        while (table[index] != null && 
+               !table[index].isDeleted && 
+               !table[index].key.equals(key)) {
+            index = (index + probe) % table.length;
+            probe += 2; // Quadratic probing
+        }
+        
+        return index;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void resize() {
+        Entry<K, V>[] oldTable = table;
+        table = new Entry[oldTable.length * 2];
+        size = 0;
+        
+        for (Entry<K, V> entry : oldTable) {
+            if (entry != null && !entry.isDeleted) {
+                put(entry.key, entry.value);
+            }
+        }
+    }
+    
+    public int size() {
+        return size;
+    }
+    
+    public boolean isEmpty() {
+        return size == 0;
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Specialized Hash Table Applications</h2>
+                    
+                    <!-- LRU Cache Implementation -->
+                    <div>
+                        <h3>LRU Cache Implementation</h3>
+                        <pre><code>public class LRUCache<K, V> {
+    private static class Node<K, V> {
+        K key;
+        V value;
+        Node<K, V> prev;
+        Node<K, V> next;
+        
+        Node(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+    
+    private final int capacity;
+    private final Map<K, Node<K, V>> cache;
+    private Node<K, V> head;
+    private Node<K, V> tail;
+    
+    public LRUCache(int capacity) {
+        this.capacity = capacity;
+        this.cache = new HashMap<>();
+        this.head = new Node<>(null, null);
+        this.tail = new Node<>(null, null);
+        head.next = tail;
+        tail.prev = head;
+    }
+    
+    public V get(K key) {
+        Node<K, V> node = cache.get(key);
+        if (node == null) {
+            return null;
+        }
+        
+        // Move to front (most recently used)
+        moveToHead(node);
+        return node.value;
+    }
+    
+    public void put(K key, V value) {
+        Node<K, V> node = cache.get(key);
+        
+        if (node != null) {
+            // Update existing
+            node.value = value;
+            moveToHead(node);
+        } else {
+            // Add new
+            Node<K, V> newNode = new Node<>(key, value);
+            cache.put(key, newNode);
+            addToFront(newNode);
+            
+            // Handle capacity
+            if (cache.size() > capacity) {
+                // Remove least recently used
+                Node<K, V> lru = tail.prev;
+                removeNode(lru);
+                cache.remove(lru.key);
+            }
+        }
+    }
+    
+    private void moveToHead(Node<K, V> node) {
+        removeNode(node);
+        addToFront(node);
+    }
+    
+    private void removeNode(Node<K, V> node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+    
+    private void addToFront(Node<K, V> node) {
+        node.next = head.next;
+        node.prev = head;
+        head.next.prev = node;
+        head.next = node;
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div id="exercises-tab" class="tab-content">
+                <div class="card">
+                    <h2>Practice Exercises</h2>
+                    
+                    <div>
+                        <!-- Basic Hash Table Exercises -->
+                        <div>
+                            <h3>Basic Hash Table Operations</h3>
+                            <p>Practice fundamental hash table operations:</p>
+                            <ul>
+                                <li>Two Sum - <a href="https://leetcode.com/problems/two-sum/" class="text-primary hover:text-secondary" target="_blank" rel="noopener">LeetCode 1</a></li>
+                                <li>First Unique Character - <a href="https://leetcode.com/problems/first-unique-character-in-a-string/" class="text-primary hover:text-secondary" target="_blank" rel="noopener">LeetCode 387</a></li>
+                                <li>Valid Anagram - <a href="https://leetcode.com/problems/valid-anagram/" class="text-primary hover:text-secondary" target="_blank" rel="noopener">LeetCode 242</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Intermediate Hash Table Problems -->
+                        <div>
+                            <h3>Intermediate Hash Table Problems</h3>
+                            <p>Solve more complex hash table problems:</p>
+                            <ul>
+                                <li>Group Anagrams - <a href="https://leetcode.com/problems/group-anagrams/" class="text-primary hover:text-secondary" target="_blank" rel="noopener">LeetCode 49</a></li>
+                                <li>Longest Consecutive Sequence - <a href="https://leetcode.com/problems/longest-consecutive-sequence/" class="text-primary hover:text-secondary" target="_blank" rel="noopener">LeetCode 128</a></li>
+                                <li>Copy List with Random Pointer - <a href="https://leetcode.com/problems/copy-list-with-random-pointer/" class="text-primary hover:text-secondary" target="_blank" rel="noopener">LeetCode 138</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Advanced Applications -->
+                        <div>
+                            <h3>Advanced Hash-Based Data Structures</h3>
+                            <p>Challenge yourself with complex applications:</p>
+                            <ul>
+                                <li>LRU Cache - <a href="https://leetcode.com/problems/lru-cache/" class="text-primary hover:text-secondary" target="_blank" rel="noopener">LeetCode 146</a></li>
+                                <li>All O`one Data Structure - <a href="https://leetcode.com/problems/all-oone-data-structure/" class="text-primary hover:text-secondary" target="_blank" rel="noopener">LeetCode 432</a></li>
+                                <li>Design Twitter - <a href="https://leetcode.com/problems/design-twitter/" class="text-primary hover:text-secondary" target="_blank" rel="noopener">LeetCode 355</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

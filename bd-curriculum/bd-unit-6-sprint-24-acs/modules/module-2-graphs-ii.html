@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphs II - Module 2</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1d23;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #222831;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            margin-top: 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff5722;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-size: 1.3rem;
+            color: #ff5722;
+            margin-bottom: 15px;
+        }
+        h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #b3b3b3;
+            margin-bottom: 16px;
+        }
+        .intro-text {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #b3b3b3;
+            font-size: 1.1rem;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background-color: #2a303c;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            width: fit-content;
+        }
+        .back-button:hover {
+            background-color: #333a47;
+        }
+        .back-button svg {
+            margin-right: 5px;
+            width: 16px;
+            height: 16px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #333a47;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #b3b3b3;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-size: 0.9rem;
+        }
+        .tab:hover {
+            color: #ffffff;
+        }
+        .tab.active {
+            color: #ff5722;
+            border-bottom: 2px solid #ff5722;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card {
+            background-color: #2a303c;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        ul {
+            padding-left: 20px;
+            color: #b3b3b3;
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #ff7043;
+            text-decoration: underline;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #333a47;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #f5f5f5;
+        }
+        pre {
+            background-color: #333a47;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            color: #f5f5f5;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background-color: #333a47;
+            border-radius: 8px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .image-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .image-container img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+    </style>
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <a href="../welcome.html" class="back-button">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Welcome Page
+        </a>
+
+        <!-- Header Section -->
+        <h1>Graphs II: Directed Graphs & Advanced Algorithms</h1>
+        <p class="intro-text">
+            This module explores directed graphs, weighted graphs, and advanced graph algorithms including Dijkstra's shortest path
+            algorithm and topological sorting.
+        </p>
+
+        <!-- Main Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="overview-tab" onclick="switchTab('overview-tab')">Overview</button>
+            <button class="tab" data-tab="lecture-tab" onclick="switchTab('lecture-tab')">Lecture Content</button>
+            <button class="tab" data-tab="implementation-tab" onclick="switchTab('implementation-tab')">Implementation</button>
+            <button class="tab" data-tab="exercises-tab" onclick="switchTab('exercises-tab')">Practice Exercises</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-contents">
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-content active">
+                <div class="card">
+                    <h2>Learning Objectives</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Core Concepts</h3>
+                            <ul>
+                                <li>Understand directed and weighted graphs</li>
+                                <li>Implement Dijkstra's shortest path algorithm</li>
+                                <li>Learn topological sorting and its applications</li>
+                                <li>Understand cycle detection in directed graphs</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Skills Development</h3>
+                            <ul>
+                                <li>Graph algorithm optimization techniques</li>
+                                <li>Path-finding strategies</li>
+                                <li>Graph representation for directed networks</li>
+                                <li>Real-world problem-solving with graph algorithms</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Prerequisites</h2>
+                    <div class="grid">
+                        <div>
+                            <h3>Required Knowledge</h3>
+                            <ul>
+                                <li>Basic graph theory concepts</li>
+                                <li>BFS and DFS traversal techniques</li>
+                                <li>Priority queues and heaps</li>
+                                <li>Graphs I module content</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Recommended Preparation</h3>
+                            <ul>
+                                <li>Review adjacency list and matrix representations</li>
+                                <li>Practice with queue and priority queue implementations</li>
+                                <li>Refresh knowledge of time and space complexity</li>
+                                <li>Explore network flow problems</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div id="lecture-tab" class="tab-content">
+                <div class="card">
+                    <h2>Video Lectures</h2>
+                    
+                    <!-- Directed Graphs Video -->
+                    <div>
+                        <h3>Directed Graphs & Representations</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/hn45bxt1ve" title="Directed Graphs Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Concepts Covered:</h4>
+                            <ul>
+                                <li>Directed graph properties</li>
+                                <li>Representing directed edges</li>
+                                <li>In-degree and out-degree</li>
+                                <li>Applications of directed graphs</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Dijkstra's Algorithm Video -->
+                    <div>
+                        <h3>Dijkstra's Shortest Path Algorithm</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/gmwn6rjvz1" title="Dijkstra's Algorithm Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Concepts Covered:</h4>
+                            <ul>
+                                <li>Weighted graph fundamentals</li>
+                                <li>Step-by-step Dijkstra's algorithm</li>
+                                <li>Priority queue optimization</li>
+                                <li>Time and space complexity analysis</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Topological Sort Video -->
+                    <div>
+                        <h3>Topological Sorting</h3>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/lnrxz9fhw8" title="Topological Sort Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed"></iframe>
+                        </div>
+                        <div>
+                            <h4>Key Concepts Covered:</h4>
+                            <ul>
+                                <li>Directed acyclic graphs (DAGs)</li>
+                                <li>Topological sort algorithms</li>
+                                <li>DFS-based implementation</li>
+                                <li>Applications in scheduling and dependency resolution</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div id="implementation-tab" class="tab-content">
+                <div class="card">
+                    <h2>Dijkstra's Algorithm Implementation</h2>
+                    
+                    <div>
+                        <h3>Java Implementation</h3>
+                        <pre><code>import java.util.*;
+
+public class DijkstraAlgorithm {
+    static class Edge {
+        int destination;
+        int weight;
+        
+        Edge(int destination, int weight) {
+            this.destination = destination;
+            this.weight = weight;
+        }
+    }
+    
+    static class Graph {
+        private int V; // Number of vertices
+        private List<List<Edge>> adjList;
+        
+        public Graph(int V) {
+            this.V = V;
+            adjList = new ArrayList<>(V);
+            for (int i = 0; i < V; i++) {
+                adjList.add(new ArrayList<>());
+            }
+        }
+        
+        public void addEdge(int source, int destination, int weight) {
+            adjList.get(source).add(new Edge(destination, weight));
+        }
+        
+        public int[] dijkstra(int source) {
+            // Create a min heap to store vertices and their distances
+            PriorityQueue<int[]> minHeap = new PriorityQueue<>((a, b) -> a[1] - b[1]);
+            
+            // Initialize distances array
+            int[] distance = new int[V];
+            Arrays.fill(distance, Integer.MAX_VALUE);
+            distance[source] = 0;
+            
+            // Add source to min heap
+            minHeap.add(new int[]{source, 0});
+            
+            while (!minHeap.isEmpty()) {
+                int[] current = minHeap.poll();
+                int u = current[0]; // Current vertex
+                int dist = current[1]; // Distance from source to u
+                
+                // If current distance is greater than the calculated one, skip
+                if (dist > distance[u]) continue;
+                
+                // Check all neighbors of u
+                for (Edge edge : adjList.get(u)) {
+                    int v = edge.destination;
+                    int weight = edge.weight;
+                    
+                    // If there is a shorter path to v through u
+                    if (distance[u] != Integer.MAX_VALUE && 
+                        distance[u] + weight < distance[v]) {
+                        // Update distance of v
+                        distance[v] = distance[u] + weight;
+                        minHeap.add(new int[]{v, distance[v]});
+                    }
+                }
+            }
+            
+            return distance;
+        }
+    }
+    
+    // Driver code to test the implementation
+    public static void main(String[] args) {
+        int V = 5;
+        Graph graph = new Graph(V);
+        
+        // Add edges (source, destination, weight)
+        graph.addEdge(0, 1, 4);
+        graph.addEdge(0, 2, 1);
+        graph.addEdge(1, 3, 1);
+        graph.addEdge(2, 1, 2);
+        graph.addEdge(2, 3, 5);
+        graph.addEdge(3, 4, 3);
+        
+        // Calculate shortest paths from source 0
+        int[] distances = graph.dijkstra(0);
+        
+        // Print the result
+        System.out.println("Shortest distances from source 0:");
+        for (int i = 0; i < V; i++) {
+            System.out.println("To vertex " + i + ": " + distances[i]);
+        }
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="image-container">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/Dijkstra_Animation.gif" alt="Dijkstra's Algorithm Animation" width="600">
+                        <p>Visual representation of Dijkstra's algorithm finding the shortest path</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Topological Sort Implementation</h2>
+                    
+                    <div>
+                        <h3>Java Implementation</h3>
+                        <pre><code>import java.util.*;
+
+public class TopologicalSort {
+    static class Graph {
+        private int V; // Number of vertices
+        private List<List<Integer>> adjList;
+        
+        public Graph(int V) {
+            this.V = V;
+            adjList = new ArrayList<>(V);
+            for (int i = 0; i < V; i++) {
+                adjList.add(new ArrayList<>());
+            }
+        }
+        
+        public void addEdge(int source, int destination) {
+            adjList.get(source).add(destination);
+        }
+        
+        // Topological Sort using DFS
+        public List<Integer> topologicalSort() {
+            Stack<Integer> stack = new Stack<>();
+            boolean[] visited = new boolean[V];
+            
+            // Call recursive helper function for all vertices
+            for (int i = 0; i < V; i++) {
+                if (!visited[i]) {
+                    topologicalSortUtil(i, visited, stack);
+                }
+            }
+            
+            // Create result list from stack
+            List<Integer> result = new ArrayList<>();
+            while (!stack.isEmpty()) {
+                result.add(stack.pop());
+            }
+            
+            return result;
+        }
+        
+        private void topologicalSortUtil(int v, boolean[] visited, Stack<Integer> stack) {
+            // Mark the current node as visited
+            visited[v] = true;
+            
+            // Recur for all adjacent vertices
+            for (Integer neighbor : adjList.get(v)) {
+                if (!visited[neighbor]) {
+                    topologicalSortUtil(neighbor, visited, stack);
+                }
+            }
+            
+            // Push current vertex to stack after all neighbors are visited
+            stack.push(v);
+        }
+    }
+    
+    // Driver code to test the implementation
+    public static void main(String[] args) {
+        int V = 6;
+        Graph graph = new Graph(V);
+        
+        // Add edges for a DAG representing course prerequisites
+        graph.addEdge(5, 2);
+        graph.addEdge(5, 0);
+        graph.addEdge(4, 0);
+        graph.addEdge(4, 1);
+        graph.addEdge(2, 3);
+        graph.addEdge(3, 1);
+        
+        // Perform topological sort
+        List<Integer> result = graph.topologicalSort();
+        
+        // Print the result
+        System.out.println("Topological Sort Order:");
+        for (Integer vertex : result) {
+            System.out.print(vertex + " ");
+        }
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="image-container">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Directed_acyclic_graph_2.svg/600px-Directed_acyclic_graph_2.svg.png" alt="Directed Acyclic Graph" width="500">
+                        <p>Example of a directed acyclic graph (DAG) suitable for topological sorting</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div id="exercises-tab" class="tab-content">
+                <div class="card">
+                    <h2>Practice Exercises</h2>
+                    
+                    <div>
+                        <!-- Directed Graph Exercises -->
+                        <div>
+                            <h3>Directed Graph Exercises</h3>
+                            <p>Practice these directed graph problems:</p>
+                            <ul>
+                                <li>Course Schedule - <a href="https://leetcode.com/problems/course-schedule/" target="_blank" rel="noopener">LeetCode 207</a></li>
+                                <li>Course Schedule II - <a href="https://leetcode.com/problems/course-schedule-ii/" target="_blank" rel="noopener">LeetCode 210</a></li>
+                                <li>Find Eventual Safe States - <a href="https://leetcode.com/problems/find-eventual-safe-states/" target="_blank" rel="noopener">LeetCode 802</a></li>
+                                <li>Keys and Rooms - <a href="https://leetcode.com/problems/keys-and-rooms/" target="_blank" rel="noopener">LeetCode 841</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Shortest Path Exercises -->
+                        <div>
+                            <h3>Shortest Path Exercises</h3>
+                            <p>Practice these shortest path problems:</p>
+                            <ul>
+                                <li>Network Delay Time - <a href="https://leetcode.com/problems/network-delay-time/" target="_blank" rel="noopener">LeetCode 743</a></li>
+                                <li>Cheapest Flights Within K Stops - <a href="https://leetcode.com/problems/cheapest-flights-within-k-stops/" target="_blank" rel="noopener">LeetCode 787</a></li>
+                                <li>Path With Minimum Effort - <a href="https://leetcode.com/problems/path-with-minimum-effort/" target="_blank" rel="noopener">LeetCode 1631</a></li>
+                                <li>Path With Maximum Probability - <a href="https://leetcode.com/problems/path-with-maximum-probability/" target="_blank" rel="noopener">LeetCode 1514</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Topological Sort Exercises -->
+                        <div>
+                            <h3>Topological Sort Exercises</h3>
+                            <p>Practice these topological sorting problems:</p>
+                            <ul>
+                                <li>Alien Dictionary - <a href="https://leetcode.com/problems/alien-dictionary/" target="_blank" rel="noopener">LeetCode 269</a></li>
+                                <li>Sequence Reconstruction - <a href="https://leetcode.com/problems/sequence-reconstruction/" target="_blank" rel="noopener">LeetCode 444</a></li>
+                                <li>Minimum Height Trees - <a href="https://leetcode.com/problems/minimum-height-trees/" target="_blank" rel="noopener">LeetCode 310</a></li>
+                                <li>Sort Items by Groups Respecting Dependencies - <a href="https://leetcode.com/problems/sort-items-by-groups-respecting-dependencies/" target="_blank" rel="noopener">LeetCode 1203</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Advanced Graph Exercises -->
+                        <div>
+                            <h3>Advanced Graph Exercises</h3>
+                            <p>Challenge yourself with these advanced graph problems:</p>
+                            <ul>
+                                <li>Critical Connections in a Network - <a href="https://leetcode.com/problems/critical-connections-in-a-network/" target="_blank" rel="noopener">LeetCode 1192</a></li>
+                                <li>Reconstruct Itinerary - <a href="https://leetcode.com/problems/reconstruct-itinerary/" target="_blank" rel="noopener">LeetCode 332</a></li>
+                                <li>Evaluate Division - <a href="https://leetcode.com/problems/evaluate-division/" target="_blank" rel="noopener">LeetCode 399</a></li>
+                                <li>Parallel Courses - <a href="https://leetcode.com/problems/parallel-courses/" target="_blank" rel="noopener">LeetCode 1136</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
