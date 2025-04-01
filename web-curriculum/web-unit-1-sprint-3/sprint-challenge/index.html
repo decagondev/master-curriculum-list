@@ -130,6 +130,39 @@
             font-weight: bold;
             color: #ffffff;
         }
+        
+        .code-example {
+            background-color: #1e222a;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            color: #b3b3b3;
+            border-left: 2px solid #ff5722;
+        }
+        
+        .task {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #333a47;
+            border-radius: 4px;
+            border-left: 2px solid #ff5722;
+        }
+        
+        .task h3 {
+            color: #ff5722;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        .sprint-intro {
+            padding: 15px;
+            background-color: #2c3440;
+            border-radius: 4px;
+            margin: 0 0 30px 0;
+            border-left: 3px solid #ff5722;
+        }
     </style>
 </head>
 <body>
@@ -137,6 +170,11 @@
         
         <a href="../index.html" class="back-link">← Back to Course Overview</a>
         <h1>Sprint Challenge</h1>
+        
+        <div class="sprint-intro">
+            <p>This sprint challenge allows you to demonstrate your understanding of the concepts covered in Sprint 3. You'll work with advanced JavaScript objects, functions, real-world patterns, and create responsive layouts using modern CSS techniques.</p>
+            <p>The challenge is designed to be completed in 3 hours. You are expected to use the resources and documentation provided throughout the sprint to help solve the problems.</p>
+        </div>
 
         <div class="section">
             <h2>Overview</h2>
@@ -144,68 +182,220 @@
             <ul>
                 <li>Advanced JavaScript Objects and Classes</li>
                 <li>Advanced Functions and Closures</li>
-                <li>Real-world JavaScript Patterns</li>
-                <li>HTML & CSS III Concepts</li>
+                <li>Real-world JavaScript Patterns (Destructuring, Ternary Operators, Arrow Functions)</li>
+                <li>HTML & CSS III Concepts (Box Model, Flexbox, CSS Specificity)</li>
             </ul>
+            <p>The challenge consists of multiple tasks that will exercise your knowledge of these concepts, requiring you to apply them in real-world scenarios similar to what you would encounter in a professional development environment.</p>
         </div>
 
         <div class="section">
             <h2>Challenge Requirements</h2>
-            <div class="requirements">
-                <p>Complete the following tasks:</p>
+            
+            <div class="task">
+                <h3>Task 1: Object-Oriented Programming</h3>
+                <p>You will build a class hierarchy for an e-commerce application. This task requires you to:</p>
                 <ul>
-                    <li>Implement object-oriented programming principles</li>
-                    <li>Use advanced function concepts</li>
-                    <li>Apply real-world JavaScript patterns</li>
-                    <li>Create responsive layouts using modern CSS</li>
+                    <li>Create a base Product class with common properties and methods</li>
+                    <li>Create derived classes for specific product types (PhysicalProduct, DigitalProduct)</li>
+                    <li>Implement inheritance to share functionality across classes</li>
+                    <li>Override methods where appropriate for specialized behavior</li>
+                    <li>Create an inventory management system using these classes</li>
                 </ul>
+                <div class="code-example">
+// Example of expected class implementation:
+class Product {
+  constructor(id, name, price) {
+    this.id = id;
+    this.name = name;
+    this.price = price;
+  }
+  
+  getDisplayPrice() {
+    return `$${this.price.toFixed(2)}`;
+  }
+}
+
+class DigitalProduct extends Product {
+  constructor(id, name, price, downloadSize) {
+    super(id, name, price);
+    this.downloadSize = downloadSize;
+  }
+  
+  // Override parent method with specialized behavior
+  getDisplayPrice() {
+    return `${super.getDisplayPrice()} (Digital Download)`;
+  }
+}
+</div>
+            </div>
+            
+            <div class="task">
+                <h3>Task 2: Advanced Functions</h3>
+                <p>You will implement a series of functions that process data for a dashboard. This task requires you to:</p>
+                <ul>
+                    <li>Create arrow functions where appropriate</li>
+                    <li>Implement higher-order functions that accept callbacks</li>
+                    <li>Use closures to maintain state between function calls</li>
+                    <li>Use destructuring for function parameters and returns</li>
+                    <li>Implement function composition for data transformation</li>
+                </ul>
+                <div class="code-example">
+// Example of expected implementation:
+const createCounter = (initialValue = 0) => {
+  let count = initialValue;
+  
+  return {
+    increment: () => ++count,
+    decrement: () => --count,
+    getCount: () => count,
+    reset: () => { count = initialValue; return count; }
+  };
+};
+
+const processData = (data, ...transformers) => {
+  return transformers.reduce((result, transformer) => transformer(result), data);
+};
+</div>
+            </div>
+            
+            <div class="task">
+                <h3>Task 3: JavaScript in the Wild</h3>
+                <p>You will apply real-world JavaScript patterns to refactor a legacy codebase. This task requires you to:</p>
+                <ul>
+                    <li>Use destructuring to simplify object and array manipulation</li>
+                    <li>Apply the ternary operator for more concise conditionals</li>
+                    <li>Convert callback-based functions to use arrow functions</li>
+                    <li>Create shallow copies of objects and arrays</li>
+                    <li>Implement modern error handling patterns</li>
+                </ul>
+                <div class="code-example">
+// Example of expected refactoring:
+
+// Before:
+function getUser(id, callback) {
+  fetch('/api/users/' + id)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(data) {
+      var name = data.name;
+      var email = data.email;
+      var role = data.role;
+      callback(null, {name: name, email: email, role: role});
+    })
+    .catch(function(error) {
+      callback(error, null);
+    });
+}
+
+// After:
+const getUser = (id) => {
+  return fetch(`/api/users/${id}`)
+    .then(response => response.json())
+    .then(({ name, email, role }) => ({ name, email, role }))
+    .catch(error => { throw error; });
+};
+</div>
+            </div>
+            
+            <div class="task">
+                <h3>Task 4: Responsive Layout with CSS</h3>
+                <p>You will create a responsive layout for a product showcase page. This task requires you to:</p>
+                <ul>
+                    <li>Implement a Flexbox-based layout that adapts to different screen sizes</li>
+                    <li>Apply appropriate box-sizing to all elements</li>
+                    <li>Create a responsive navigation using Flexbox</li>
+                    <li>Use CSS specificity principles to organize your styles</li>
+                    <li>Create a card layout for product items that changes based on screen width</li>
+                </ul>
+                <div class="code-example">
+/* Example of expected CSS implementation */
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.product-card {
+  flex: 1 1 300px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+}
+
+@media (max-width: 768px) {
+  .product-grid {
+    flex-direction: column;
+  }
+}
+</div>
             </div>
         </div>
 
         <div class="section">
             <h2>Project Setup</h2>
             <ol>
-                <li>Fork and clone the sprint challenge repository</li>
-                <li>Install dependencies using npm</li>
-                <li>Start the development server</li>
-                <li>Complete the required tasks</li>
-                <li>Submit your work through CodeGrade</li>
+                <li>Fork the repository from <a href="https://github.com/bloominstituteoftechnology/web-sprint-challenge-advanced-javascript-and-css" target="_blank">https://github.com/bloominstituteoftechnology/web-sprint-challenge-advanced-javascript-and-css</a></li>
+                <li>Clone your forked repository to your local machine</li>
+                <li>Install dependencies by running <code>npm install</code> in the project directory</li>
+                <li>Start the development server using <code>npm start</code></li>
+                <li>Work through each task in the challenge, following the instructions in the README</li>
+                <li>Run tests using <code>npm test</code> to ensure your solutions meet the requirements</li>
+                <li>Submit your completed repository to CodeGrade</li>
             </ol>
         </div>
 
         <div class="section">
             <h2>Submission Guidelines</h2>
             <ul>
-                <li>Push your code to your fork of the repository</li>
-                <li>Submit the pull request URL to CodeGrade</li>
-                <li>Ensure all tests are passing</li>
-                <li>Include a README with setup instructions</li>
+                <li>Push your completed code to your forked repository on GitHub</li>
+                <li>Submit the URL of your repository to CodeGrade before the deadline</li>
+                <li>Ensure all tests are passing by running <code>npm test</code> before submission</li>
+                <li>Include a completed README that documents your approach and any challenges you faced</li>
+                <li>Make sure your code follows best practices for formatting, variable naming, and code organization</li>
+                <li>If you're unable to complete the entire challenge, submit what you have completed with comments explaining your approach and what you would do next</li>
             </ul>
         </div>
 
         <div class="section">
             <h2>Grading Rubric</h2>
             <ul>
-                <li>Code Quality (30%)</li>
-                <li>Functionality (40%)</li>
-                <li>Documentation (15%)</li>
-                <li>Testing (15%)</li>
+                <li><strong>Code Quality (30%)</strong> - Clean, maintainable code with appropriate comments</li>
+                <li><strong>Functionality (40%)</strong> - Correct implementation of required features, passing tests</li>
+                <li><strong>Documentation (15%)</strong> - Clear and thorough documentation in README and code comments</li>
+                <li><strong>Testing (15%)</strong> - All provided tests passing, plus any additional tests you create</li>
             </ul>
+            <p>A minimum score of 70% is required to pass this sprint challenge.</p>
         </div>
 
         <div class="section">
             <h2>CodeGrade Setup</h2>
+            <p>Watch this video for instructions on how to submit your challenge to CodeGrade:</p>
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/mpf3xru99v" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
         </div>
-
+        
         <div class="resources">
             <h2>Additional Resources</h2>
             <ul>
-                <li><a href="https://github.com/bloominstituteoftechnology/web-sprint-challenge-advanced-javascript" target="_blank" rel="noopener">Sprint Challenge Repository</a></li>
-                <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide" target="_blank" rel="noopener">MDN Web Docs - JavaScript Guide</a></li>
-                <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference" target="_blank" rel="noopener">MDN Web Docs - JavaScript Reference</a></li>
+                <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes" target="_blank" rel="noopener">MDN Web Docs - JavaScript Classes</a></li>
+                <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures" target="_blank" rel="noopener">MDN Web Docs - Closures</a></li>
+                <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment" target="_blank" rel="noopener">MDN Web Docs - Destructuring Assignment</a></li>
+                <li><a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/" target="_blank" rel="noopener">CSS-Tricks - A Complete Guide to Flexbox</a></li>
+                <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Model/Introduction_to_the_CSS_box_model" target="_blank" rel="noopener">MDN Web Docs - CSS Box Model</a></li>
+                <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity" target="_blank" rel="noopener">MDN Web Docs - CSS Specificity</a></li>
+                <li><a href="https://jestjs.io/docs/getting-started" target="_blank" rel="noopener">Jest Documentation - For understanding the tests</a></li>
             </ul>
         </div>
     </div>
