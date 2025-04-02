@@ -127,6 +127,17 @@
             <div class="video-container">
                 <iframe class="wistia_embed" title="API Error Handling Introduction Video" src="https://fast.wistia.net/embed/iframe/3wntv10mkb" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
+            <div class="key-points">
+                <h3>Why Error Handling Matters</h3>
+                <p>Error handling is a critical part of any application that interacts with external APIs. Well-implemented error handling:</p>
+                <ul>
+                    <li>Improves user experience by providing meaningful feedback</li>
+                    <li>Prevents application crashes</li>
+                    <li>Makes debugging easier</li>
+                    <li>Increases application reliability</li>
+                </ul>
+                <p>When working with APIs, a number of things can go wrong: network issues, server problems, invalid requests, authentication failures, etc. Properly handling these errors ensures your application remains functional and user-friendly even when things don't go as expected.</p>
+            </div>
         </div>
 
         <div class="content-section">
@@ -134,16 +145,27 @@
             <div class="video-container">
                 <iframe class="wistia_embed" title="HTTP Status Codes Video" src="https://fast.wistia.net/embed/iframe/mgn3tnljkr?seo=false" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
+            <div class="key-points">
+                <h3>Understanding HTTP Status Codes</h3>
+                <p>HTTP status codes are standardized responses from servers that indicate the outcome of an HTTP request. They are grouped into five classes:</p>
+                <ul>
+                    <li><strong>1xx (Informational)</strong>: Request received, continuing process</li>
+                    <li><strong>2xx (Success)</strong>: Request successfully received, understood, and accepted</li>
+                    <li><strong>3xx (Redirection)</strong>: Further action needs to be taken to complete the request</li>
+                    <li><strong>4xx (Client Error)</strong>: Request contains bad syntax or cannot be fulfilled</li>
+                    <li><strong>5xx (Server Error)</strong>: Server failed to fulfill a valid request</li>
+                </ul>
+            </div>
             <div class="code-block">
                 <pre>
 // Common HTTP Status Codes
-200 - OK
-201 - Created
-400 - Bad Request
-401 - Unauthorized
-403 - Forbidden
-404 - Not Found
-500 - Internal Server Error
+200 - OK                   // Request succeeded
+201 - Created              // Resource created successfully
+400 - Bad Request          // Server couldn't understand the request
+401 - Unauthorized         // Authentication required
+403 - Forbidden            // Server understood but refuses to authorize
+404 - Not Found            // Resource not found
+500 - Internal Server Error // Server encountered an unexpected condition
                 </pre>
             </div>
         </div>
@@ -153,20 +175,68 @@
             <div class="video-container">
                 <iframe class="wistia_embed" title="Error Handling in React Video" src="https://fast.wistia.net/embed/iframe/mtas07gsyk?seo=false" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
+            <div class="key-points">
+                <h3>Implementing Error Handling with Fetch API</h3>
+                <p>When working with the Fetch API in React, it's important to understand that fetch doesn't automatically reject on HTTP error statuses. You need to check if the response is ok (status in 200-299 range) and throw an error manually if needed.</p>
+                <p>Best practices for error handling with fetch:</p>
+                <ul>
+                    <li>Use try/catch blocks to capture both network errors and your thrown HTTP errors</li>
+                    <li>Track loading states to provide feedback to users</li>
+                    <li>Store error information in state to display to users</li>
+                    <li>Consider different types of errors and handle them appropriately</li>
+                </ul>
+            </div>
             <div class="code-block">
                 <pre>
-// Example of Error Handling in React
-const [error, setError] = useState(null);
+// Complete Error Handling Example
+import { useState, useEffect } from 'react';
 
-try {
-    const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    setData(data);
-} catch (err) {
-    setError(err.message);
+function DataFetcher() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const response = await fetch('https://api.example.com/data');
+        
+        // Check if the response is ok (status in the range 200-299)
+        if (!response.ok) {
+          // Get more details about the error
+          const errorData = await response.json().catch(() => null);
+          throw new Error(
+            errorData?.message || `HTTP error! status: ${response.status}`
+          );
+        }
+        
+        const data = await response.json();
+        setData(data);
+      } catch (err) {
+        setError(err.message || 'Something went wrong');
+        // You might also want to log the error for debugging
+        console.error('Fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!data) return <p>No data available</p>;
+
+  return (
+    <div>
+      {/* Render your data here */}
+      <pre>{JSON.stringify(data, null, 2)}</pre>
+    </div>
+  );
 }
                 </pre>
             </div>
@@ -177,24 +247,88 @@ try {
             <div class="video-container">
                 <iframe class="wistia_embed" title="Error Boundaries Video" src="https://fast.wistia.net/embed/iframe/3waibp5a26?seo=false" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
+            <div class="key-points">
+                <h3>React Error Boundaries</h3>
+                <p>Error boundaries are React components that catch JavaScript errors anywhere in their child component tree, log those errors, and display a fallback UI instead of crashing the component tree.</p>
+                <p>Key points about error boundaries:</p>
+                <ul>
+                    <li>They catch errors during rendering, in lifecycle methods, and in constructors</li>
+                    <li>They do NOT catch errors in event handlers, asynchronous code, or server-side rendering</li>
+                    <li>They help isolate errors to specific parts of your UI</li>
+                    <li>They require class components (cannot be implemented with hooks)</li>
+                </ul>
+            </div>
             <div class="code-block">
                 <pre>
 // Example of Error Boundary Component
+import React from 'react';
+
 class ErrorBoundary extends React.Component {
-    state = { hasError: false };
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null, errorInfo: null };
+  }
 
-    static getDerivedStateFromError(error) {
-        return { hasError: true };
+  static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    // You can log the error to an error reporting service
+    console.error('Error caught by ErrorBoundary:', error, errorInfo);
+    this.setState({
+      error: error,
+      errorInfo: errorInfo
+    });
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return (
+        <div className="error-container">
+          <h2>Something went wrong.</h2>
+          {this.props.fallback || <p>Please try again later.</p>}
+          {process.env.NODE_ENV === 'development' && (
+            <details style={{ whiteSpace: 'pre-wrap' }}>
+              {this.state.error && this.state.error.toString()}
+              <br />
+              {this.state.errorInfo && this.state.errorInfo.componentStack}
+            </details>
+          )}
+        </div>
+      );
     }
 
-    render() {
-        if (this.state.hasError) {
-            return <h1>Something went wrong.</h1>;
-        }
-        return this.props.children;
-    }
+    return this.props.children;
+  }
+}
+
+// Usage
+function App() {
+  return (
+    <ErrorBoundary>
+      <MyComponent />
+    </ErrorBoundary>
+  );
 }
                 </pre>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Best Practices for API Error Handling</h2>
+            <div class="key-points">
+                <h3>Implementing Robust Error Handling</h3>
+                <ul>
+                    <li><strong>Centralize error handling</strong> - Create utility functions for common error handling patterns</li>
+                    <li><strong>Provide meaningful error messages</strong> - Help users understand what went wrong</li>
+                    <li><strong>Include retry mechanisms</strong> - For transient errors, consider adding retry functionality</li>
+                    <li><strong>Log errors</strong> - Maintain logs for debugging purposes</li>
+                    <li><strong>Different UI for different errors</strong> - Show appropriate UI based on error type (e.g., network error vs. validation error)</li>
+                    <li><strong>Graceful degradation</strong> - Ensure your app still functions when parts of it can't fetch data</li>
+                </ul>
             </div>
         </div>
 
@@ -204,14 +338,17 @@ class ErrorBoundary extends React.Component {
                 <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status" target="_blank" rel="noopener noreferrer">HTTP Status Codes Documentation</a></li>
                 <li><a href="https://reactjs.org/docs/error-boundaries.html" target="_blank" rel="noopener noreferrer">React Error Boundaries Documentation</a></li>
                 <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...catch" target="_blank" rel="noopener noreferrer">JavaScript try...catch Documentation</a></li>
+                <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch" target="_blank" rel="noopener noreferrer">Using the Fetch API</a></li>
+                <li><a href="https://axios-http.com/docs/handling_errors" target="_blank" rel="noopener noreferrer">Handling Errors with Axios</a></li>
+                <li><a href="https://kentcdodds.com/blog/use-react-error-boundary-to-handle-errors-in-react" target="_blank" rel="noopener noreferrer">Using React Error Boundaries to Handle Errors in React</a></li>
             </ul>
         </div>
 
         <div class="content-section">
             <h2>Code-Along Project</h2>
             <p>Complete the API Error Handling code-along to practice implementing error handling in a React application.</p>
-            <a href="project.html" class="button">Project Instructions</a>
-            <a href="https://github.com/your-org/api-error-handling" target="_blank" rel="noopener noreferrer" class="button">Project Repository</a>
+            <a href="https://github.com/bloominstituteoftechnology/web_code_along_7.1_react_starter" target="_blank" rel="noopener noreferrer" class="button">Starter Code</a>
+            <a href="https://github.com/bloominstituteoftechnology/web_code_along_7.1_react_solution" target="_blank" rel="noopener noreferrer" class="button">Solution Code</a>
         </div>
     </div>
 </body>
