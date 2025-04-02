@@ -124,6 +124,45 @@
         </div>
 
         <div class="content-section">
+            <h2>Sprint Topics</h2>
+            <p>This sprint focused on three key areas of modern React development:</p>
+            
+            <div class="requirements">
+                <h3>React Router</h3>
+                <p>Client-side routing allows your application to update the URL and render different components without making a request to the server for a new page. Key concepts include:</p>
+                <ul>
+                    <li>Difference between server-side and client-side routing</li>
+                    <li>Setting up routes and links in a React application</li>
+                    <li>Using URL parameters to create dynamic routes</li>
+                    <li>Programmatic navigation with useNavigate</li>
+                </ul>
+            </div>
+
+            <div class="requirements">
+                <h3>Form Management</h3>
+                <p>Forms are a fundamental part of web applications. React offers controlled components to manage form data effectively. Key concepts include:</p>
+                <ul>
+                    <li>Building forms with basic HTML form elements</li>
+                    <li>Using the onChange handler to capture input values</li>
+                    <li>Utilizing a form's submit event to work with form data</li>
+                    <li>Handling multiple inputs in a form</li>
+                    <li>Form validation techniques</li>
+                </ul>
+            </div>
+
+            <div class="requirements">
+                <h3>End-to-End Testing with Cypress</h3>
+                <p>End-to-end testing verifies the entire user experience from start to finish. Cypress makes it easy to write and run E2E tests. Key concepts include:</p>
+                <ul>
+                    <li>Importance of end-to-end testing in the development process</li>
+                    <li>Using the Cypress GUI to write tests and interact with elements</li>
+                    <li>Performing actions like clicking, typing, and submitting forms</li>
+                    <li>Running tests without the UI for CI/CD pipelines</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
             <h2>Project Requirements</h2>
             <div class="requirements">
                 <h3>React Router Requirements</h3>
@@ -149,6 +188,117 @@
                     <li>Test routing functionality</li>
                     <li>Achieve at least 80% test coverage</li>
                 </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Implementation Guidelines</h2>
+            
+            <div class="requirements">
+                <h3>React Router Implementation</h3>
+                <p>Set up your routing structure with the following components:</p>
+                <pre><code>
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+
+function App() {
+  return (
+    &lt;BrowserRouter&gt;
+      &lt;nav&gt;
+        {/* Navigation links go here */}
+      &lt;/nav&gt;
+      &lt;Routes&gt;
+        &lt;Route path="/" element={&lt;Home /&gt;} /&gt;
+        &lt;Route path="form" element={&lt;FormPage /&gt;} /&gt;
+        &lt;Route path="results/:id" element={&lt;Results /&gt;} /&gt;
+        {/* Add other routes as needed */}
+      &lt;/Routes&gt;
+    &lt;/BrowserRouter&gt;
+  )
+}
+                </code></pre>
+            </div>
+            
+            <div class="requirements">
+                <h3>Form Implementation</h3>
+                <p>Create a controlled form component with validation:</p>
+                <pre><code>
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+function FormPage() {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    // Other form fields
+  })
+  const [errors, setErrors] = useState({})
+  const navigate = useNavigate()
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData({
+      ...formData,
+      [name]: value
+    })
+  }
+
+  const validate = () => {
+    // Add validation logic here
+    // Return true if valid, false otherwise
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (validate()) {
+      // Process form data
+      // Then navigate programmatically
+      navigate(`/results/${formData.username}`)
+    }
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      {/* Form fields and validation error messages */}
+      &lt;button type="submit"&gt;Submit&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}
+                </code></pre>
+            </div>
+            
+            <div class="requirements">
+                <h3>Testing Implementation</h3>
+                <p>Write tests using Cypress following the "arrange, act, assert" pattern:</p>
+                <pre><code>
+// Example E2E test
+describe('Form submission', () => {
+  it('should successfully submit the form with valid data', () => {
+    // Arrange - Visit the form page
+    cy.visit('/form')
+    
+    // Act - Fill in form fields and submit
+    cy.get('input[name="username"]').type('testuser')
+    cy.get('input[name="email"]').type('test@example.com')
+    cy.get('form').submit()
+    
+    // Assert - Check we navigated to the results page
+    cy.url().should('include', '/results/testuser')
+    cy.contains('Successfully submitted!').should('be.visible')
+  })
+
+  it('should show validation errors for invalid input', () => {
+    // Arrange
+    cy.visit('/form')
+    
+    // Act - Submit with empty form
+    cy.get('form').submit()
+    
+    // Assert - Check validation errors appear
+    cy.contains('Username is required').should('be.visible')
+    cy.contains('Email is required').should('be.visible')
+  })
+})
+                </code></pre>
             </div>
         </div>
 
@@ -201,6 +351,10 @@ src/
                 <li><a href="https://reactjs.org/docs/forms.html" target="_blank" rel="noopener noreferrer">React Forms Documentation</a></li>
                 <li><a href="https://testing-library.com/docs/react-testing-library/intro/" target="_blank" rel="noopener noreferrer">React Testing Library Documentation</a></li>
                 <li><a href="https://jestjs.io/" target="_blank" rel="noopener noreferrer">Jest Documentation</a></li>
+                <li><a href="https://www.cypress.io/" target="_blank" rel="noopener noreferrer">Cypress Documentation</a></li>
+                <li><a href="https://medium.com/@wilbo/server-side-vs-client-side-routing-71d710e9227f" target="_blank" rel="noopener noreferrer">Server-side vs Client-side Routing (Medium)</a></li>
+                <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation" target="_blank" rel="noopener noreferrer">Client-side Form Validation - MDN</a></li>
+                <li><a href="https://kentcdodds.com/blog/use-react-error-boundary-to-handle-errors-in-react" target="_blank" rel="noopener noreferrer">Using React Error Boundaries</a></li>
             </ul>
         </div>
 
@@ -221,6 +375,17 @@ src/
                 <li>Form Management (25%)</li>
                 <li>Testing Coverage (25%)</li>
                 <li>Code Quality and Documentation (25%)</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>Tips for Success</h2>
+            <ul>
+                <li>Review the learning objectives from each module before starting</li>
+                <li>Break down the problem into smaller, manageable tasks</li>
+                <li>Test your application regularly as you build features</li>
+                <li>Look at the example code from the guided projects for reference</li>
+                <li>Don't hesitate to consult the documentation for React Router, form handling, and Cypress</li>
             </ul>
         </div>
     </div>
