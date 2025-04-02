@@ -240,6 +240,58 @@
             <div class="session-card">
                 <h3>Code-Along 1: APIs</h3>
                 <p>Learn how to build and interact with APIs using Node.js and Express.</p>
+                
+                <div class="info-box">
+                    <h3>Core Objectives</h3>
+                    <ul>
+                        <li><strong>Understanding Express</strong> - Learn how Express simplifies building web servers compared to using Node.js alone</li>
+                        <li><strong>RESTful API Design</strong> - Apply REST principles to create intuitive and predictable API endpoints</li>
+                        <li><strong>Route Creation</strong> - Implement routes for handling various HTTP methods (GET, POST, PUT, DELETE)</li>
+                        <li><strong>Data Validation</strong> - Validate incoming request data before processing</li>
+                        <li><strong>API Testing</strong> - Use Postman or similar tools to test your API endpoints</li>
+                    </ul>
+                </div>
+                
+                <div class="info-box">
+                    <h3>Code Example - Basic Express API</h3>
+                    <pre><code>const express = require('express');
+const server = express();
+server.use(express.json());
+
+// Mock database
+let users = [
+  { id: 1, name: 'Alice', email: 'alice@example.com' },
+  { id: 2, name: 'Bob', email: 'bob@example.com' }
+];
+
+// GET all users
+server.get('/api/users', (req, res) => {
+  res.status(200).json(users);
+});
+
+// GET user by ID
+server.get('/api/users/:id', (req, res) => {
+  const user = users.find(u => u.id === parseInt(req.params.id));
+  if (!user) return res.status(404).json({ message: 'User not found' });
+  res.status(200).json(user);
+});
+
+// POST new user
+server.post('/api/users', (req, res) => {
+  const newUser = {
+    id: users.length + 1,
+    name: req.body.name,
+    email: req.body.email
+  };
+  users.push(newUser);
+  res.status(201).json(newUser);
+});
+
+server.listen(5000, () => {
+  console.log('Server running on port 5000');
+});</code></pre>
+                </div>
+                
                 <div class="resource-links">
                     <h4>Starter Repository</h4>
                     <p><a href="https://github.com/bloominstituteoftechnology/web_code_along_13.1_apis_starter" target="_blank" rel="noopener noreferrer">APIs Code-Along Starter</a></p>
@@ -255,6 +307,57 @@
             <div class="session-card">
                 <h3>Code-Along 2: Middleware</h3>
                 <p>Explore middleware concepts and implementation in Express applications.</p>
+                
+                <div class="info-box">
+                    <h3>Core Objectives</h3>
+                    <ul>
+                        <li><strong>Middleware Fundamentals</strong> - Understand what middleware is and its role in the request-response cycle</li>
+                        <li><strong>Built-in Middleware</strong> - Use Express's built-in middleware for common tasks</li>
+                        <li><strong>Custom Middleware</strong> - Create your own middleware functions for specific application needs</li>
+                        <li><strong>Error Handling</strong> - Implement middleware for consistent error handling</li>
+                        <li><strong>Authentication</strong> - Create middleware to validate user authentication</li>
+                    </ul>
+                </div>
+                
+                <div class="info-box">
+                    <h3>Code Example - Custom Middleware</h3>
+                    <pre><code>const express = require('express');
+const server = express();
+server.use(express.json());
+
+// Logging middleware
+const logger = (req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+};
+
+// Authentication middleware
+const authenticate = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || authHeader !== 'Bearer valid-token') {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  next();
+};
+
+// Apply logger middleware to all routes
+server.use(logger);
+
+// Public route
+server.get('/api/public', (req, res) => {
+  res.json({ message: 'This is public data' });
+});
+
+// Protected route with authentication middleware
+server.get('/api/protected', authenticate, (req, res) => {
+  res.json({ message: 'This is protected data' });
+});
+
+server.listen(5000, () => {
+  console.log('Server running on port 5000');
+});</code></pre>
+                </div>
+                
                 <div class="resource-links">
                     <h4>Starter Repository</h4>
                     <p><a href="https://github.com/bloominstituteoftechnology/web_code_along_13.2_middleware_starter" target="_blank" rel="noopener noreferrer">Middleware Code-Along Starter</a></p>
