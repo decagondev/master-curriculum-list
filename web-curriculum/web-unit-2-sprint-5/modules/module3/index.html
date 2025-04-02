@@ -122,37 +122,189 @@
         
         <a href="../../index.html" class="back-link">← Back to Course Overview</a>
         <h1>Module 3: Building Components</h1>
-        <p>In this module, you'll learn how to create reusable components using JavaScript. You'll understand component composition, state management, and best practices for building maintainable components.</p>
+        <p>In this module, you'll learn how to create reusable components using JavaScript. Components are self-contained, reusable pieces of code that represent a part of the user interface. You'll understand component composition, state management, and best practices for building maintainable components that can be combined to create complex UIs while keeping code organized and DRY (Don't Repeat Yourself).</p>
 
         <div class="content-section">
             <h2>Component Functions</h2>
-            <p>Learn about creating component functions that return DOM elements and how to compose them.</p>
+            <p>Learn about creating component functions that return DOM elements and how to compose them. Component functions encapsulate the logic for creating and configuring elements, making your code more modular and easier to maintain. You'll learn how to structure these functions to create consistent, reusable interface elements.</p>
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/v9t4bu7ber" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+            <div class="concept-details">
+                <h3>What Is a Component?</h3>
+                <p>A component comprises several parts: HTML, CSS, or JavaScript brought together for reuse in a website or application. Components help you organize your code, make it reusable, and simplify maintenance.</p>
+                <h4>Components - HTML</h4>
+                <p>When building HTML with a component mentality, you need to ask the question: "What am I trying to display from my data?"</p>
+                <p>Because we are focused on user interface concepts, we don't need to access a database at this point. For us, static HTML is data since it is, after all, what we're trying to display.</p>
+                <p>Example of repeating elements that could become a component:</p>
+                <pre><code>&lt;div class="custom-buttons"&gt;
+  &lt;button&gt;Button 1&lt;/button&gt;
+  &lt;button&gt;Button 2&lt;/button&gt;
+  &lt;button&gt;Button 3&lt;/button&gt;
+  &lt;button&gt;Button 4&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+                <p>This is an opportunity to think about using our CSS and JavaScript to create multiple buttons regardless of how many buttons we have to work with. The HTML gives us a great starting point for a button component, but we need to style it for reuse.</p>
             </div>
         </div>
 
         <div class="content-section">
             <h2>Returning a Hierarchy of Elements</h2>
-            <p>Learn how to create components that return complex DOM hierarchies.</p>
+            <p>Learn how to create components that return complex DOM hierarchies. This technique allows you to build sophisticated UI components with proper parent-child relationships, nested elements, and organized structure. You'll see how a single component function can create an entire section of your interface with proper structure.</p>
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/py9ocxdg77" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+            <div class="concept-details">
+                <h3>Building Component Structures</h3>
+                <p>Components often need to create a nested hierarchy of elements. A component function can return a parent element that contains multiple children, creating a complete UI structure with a single function call.</p>
+                <p>Example of a function that creates a card component:</p>
+                <pre><code>function createCard(title, content, imageUrl) {
+  // Create the container
+  const card = document.createElement('div');
+  card.classList.add('card');
+  
+  // Create the image (if provided)
+  if (imageUrl) {
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.alt = title;
+    img.classList.add('card-image');
+    card.appendChild(img);
+  }
+  
+  // Create the title
+  const titleElement = document.createElement('h2');
+  titleElement.textContent = title;
+  titleElement.classList.add('card-title');
+  card.appendChild(titleElement);
+  
+  // Create the content
+  const contentElement = document.createElement('p');
+  contentElement.textContent = content;
+  contentElement.classList.add('card-content');
+  card.appendChild(contentElement);
+  
+  return card;
+}</code></pre>
+                <p>This function can then be used to create multiple card instances with different content:</p>
+                <pre><code>const card1 = createCard('First Card', 'This is the content for card 1', 'image1.jpg');
+const card2 = createCard('Second Card', 'This is the content for card 2', 'image2.jpg');
+
+document.querySelector('.cards-container').appendChild(card1);
+document.querySelector('.cards-container').appendChild(card2);</code></pre>
             </div>
         </div>
 
         <div class="content-section">
             <h2>Adding Interactivity and Attaching to the DOM</h2>
-            <p>Learn how to add event listeners and interactivity to your components.</p>
+            <p>Learn how to add event listeners and interactivity to your components. This crucial step transforms static DOM elements into interactive components that respond to user actions. You'll explore techniques for adding event handlers within component creation functions, making your components self-contained with both structure and behavior.</p>
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/hmk0r39o07" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+            <div class="concept-details">
+                <h3>Components - JavaScript</h3>
+                <p>JavaScript is used to consume the data and output the content into the DOM. JavaScript's involvement in components is the glue that ties everything together. We can use Javascript to consume the HTML and return a component version of it!</p>
+                <p>When creating interactive components, you need to:</p>
+                <ol>
+                    <li>Create the DOM structure</li>
+                    <li>Add event listeners for interactivity</li>
+                    <li>Attach the component to the DOM</li>
+                </ol>
+                <p>Example of an interactive button component:</p>
+                <pre><code>function createInteractiveButton(text, clickHandler) {
+  // Create the button
+  const button = document.createElement('button');
+  button.textContent = text;
+  button.classList.add('custom-btn');
+  
+  // Add event listener for interactivity
+  button.addEventListener('click', clickHandler);
+  
+  return button;
+}
+
+// Usage
+const button = createInteractiveButton('Click Me', function() {
+  console.log('Button was clicked!');
+  // Additional functionality
+});
+
+// Attach to the DOM
+document.querySelector('.button-container').appendChild(button);</code></pre>
+                <p>Components can also maintain internal state and update themselves when that state changes, which is a more advanced pattern often seen in component libraries and frameworks.</p>
             </div>
         </div>
 
         <div class="content-section">
             <h2>Iterating Over Data to Build DOM</h2>
-            <p>Learn how to use data to dynamically generate DOM elements in your components.</p>
+            <p>Learn how to use data to dynamically generate DOM elements in your components. This powerful technique allows components to adapt based on the data they receive, enabling you to create dynamic lists, tables, galleries, and other data-driven UI elements. You'll practice using array methods like map and forEach to transform data into DOM structures.</p>
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/xs7dzg59t2" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+            <div class="concept-details">
+                <h3>Components - CSS</h3>
+                <p>Writing CSS for components is more about rationale than syntax. Components should be modular or stand-alone. With that in mind, you should try to think of your component CSS in a way that could be moved around at any moment and not reliant on any other styles being in place.</p>
+                <p>One way that can help you control your styles is to use a specificity chain that only matches up with your component. You could use a specific class name to accomplish this:</p>
+                <pre><code>&lt;div class="custom-buttons"&gt;
+  &lt;button class="custom-btn"&gt;Button 1&lt;/button&gt;
+  &lt;button class="custom-btn"&gt;Button 2&lt;/button&gt;
+  &lt;button class="custom-btn"&gt;Button 3&lt;/button&gt;
+  &lt;button class="custom-btn"&gt;Button 4&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+                <h3>Data-Driven Components</h3>
+                <p>Real-world applications often need to render lists of items based on data from an API or other source. We can use array methods to transform data into DOM elements:</p>
+                <pre><code>// Sample data
+const products = [
+  { id: 1, name: 'Product 1', price: 19.99, inStock: true },
+  { id: 2, name: 'Product 2', price: 29.99, inStock: false },
+  { id: 3, name: 'Product 3', price: 39.99, inStock: true }
+];
+
+// Component function for a single product
+function createProductItem(product) {
+  const item = document.createElement('div');
+  item.classList.add('product-item');
+  item.dataset.id = product.id;
+  
+  const name = document.createElement('h3');
+  name.textContent = product.name;
+  
+  const price = document.createElement('p');
+  price.textContent = `$${product.price}`;
+  
+  const stockStatus = document.createElement('span');
+  stockStatus.textContent = product.inStock ? 'In Stock' : 'Out of Stock';
+  stockStatus.classList.add(product.inStock ? 'in-stock' : 'out-of-stock');
+  
+  item.appendChild(name);
+  item.appendChild(price);
+  item.appendChild(stockStatus);
+  
+  return item;
+}
+
+// Render the product list
+function renderProductList(products, containerSelector) {
+  const container = document.querySelector(containerSelector);
+  
+  // Clear previous content
+  container.innerHTML = '';
+  
+  // Create a document fragment for better performance
+  const fragment = document.createDocumentFragment();
+  
+  // Add each product to the fragment
+  products.forEach(product => {
+    const productElement = createProductItem(product);
+    fragment.appendChild(productElement);
+  });
+  
+  // Add all products to the DOM in a single operation
+  container.appendChild(fragment);
+}
+
+// Usage
+renderProductList(products, '.products-container');</code></pre>
+                <p>This approach allows you to update the UI whenever the data changes, simply by calling the render function again with the updated data.</p>
             </div>
         </div>
 
@@ -166,6 +318,9 @@
                 <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map" target="_blank" rel="noopener">MDN Web Docs - Array.map</a></li>
                 <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach" target="_blank" rel="noopener">MDN Web Docs - Array.forEach</a></li>
                 <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries" target="_blank" rel="noopener">MDN Web Docs - Object.entries</a></li>
+                <li><a href="https://linuxhint.com/link-javascript-to-html/" target="_blank" rel="noopener">How to Link JavaScript to HTML</a></li>
+                <li><a href="https://www.freecodecamp.org/news/how-to-link-css-to-html/" target="_blank" rel="noopener">How to Link CSS to HTML</a></li>
+                <li><a href="https://www.freecodecamp.org/news/what-is-json-a-json-file-example/" target="_blank" rel="noopener">JSON for Beginners</a></li>
             </ul>
         </div>
     </div>
