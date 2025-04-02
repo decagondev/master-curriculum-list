@@ -118,6 +118,28 @@
         section {
             margin-bottom: 30px;
         }
+        code {
+            background-color: #333a47;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #ff5722;
+        }
+        .content-section {
+            background-color: #2a303c;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            border-left: 3px solid #ff5722;
+        }
+        pre {
+            background-color: #333a47;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            color: #b3b3b3;
+            font-family: 'Courier New', Courier, monospace;
+        }
     </style>
 </head>
 <body>
@@ -155,14 +177,389 @@
                 <iframe class="wistia_embed" src="//bloomtech-1.wistia.com/embed/iframe/bsblin1x0j" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" loading="lazy"></iframe>
             </div>
 
+            <div class="content-section">
+                <h3>Working with Strings in Java</h3>
+                <p>Strings are sequences of characters and are one of the most commonly used data types in Java. The <code>String</code> class provides many useful methods for manipulating text.</p>
+                
+                <h4>Creating Strings</h4>
+                <pre><code>// String literal - most common way
+String greeting = "Hello, World!";
+
+// Using the String constructor
+String message = new String("Welcome to Java");
+
+// Empty string
+String empty = "";</code></pre>
+                
+                <h4>String Immutability</h4>
+                <p>Strings in Java are immutable, which means once a String object is created, it cannot be changed. When you perform operations on a String, a new String object is created.</p>
+                <pre><code>String name = "John";
+name = name + " Smith";  // Creates a new String object "John Smith"
+                         // The original "John" string remains unchanged in memory</code></pre>
+                
+                <h4>Common String Methods</h4>
+                <ul>
+                    <li><code>length()</code> - Returns the number of characters in the string</li>
+                    <li><code>charAt(int index)</code> - Returns the character at the specified index (0-based)</li>
+                    <li><code>substring(int beginIndex)</code> - Returns a new string starting from the specified index to the end</li>
+                    <li><code>substring(int beginIndex, int endIndex)</code> - Returns a new string from beginIndex (inclusive) to endIndex (exclusive)</li>
+                    <li><code>indexOf(String str)</code> - Returns the index of the first occurrence of the specified substring</li>
+                    <li><code>lastIndexOf(String str)</code> - Returns the index of the last occurrence of the specified substring</li>
+                    <li><code>toLowerCase()</code> - Returns a new string with all characters converted to lowercase</li>
+                    <li><code>toUpperCase()</code> - Returns a new string with all characters converted to uppercase</li>
+                    <li><code>trim()</code> - Returns a new string with leading and trailing whitespace removed</li>
+                    <li><code>replace(char oldChar, char newChar)</code> - Returns a new string with all occurrences of oldChar replaced with newChar</li>
+                    <li><code>contains(CharSequence s)</code> - Returns true if the string contains the specified sequence</li>
+                    <li><code>startsWith(String prefix)</code> - Checks if the string starts with the specified prefix</li>
+                    <li><code>endsWith(String suffix)</code> - Checks if the string ends with the specified suffix</li>
+                    <li><code>equals(Object obj)</code> - Compares this string to another object</li>
+                    <li><code>equalsIgnoreCase(String anotherString)</code> - Compares strings, ignoring case differences</li>
+                </ul>
+                
+                <h4>Example: Using String Methods</h4>
+                <pre><code>String text = "Java Programming";
+
+// Basic information
+int length = text.length();  // 16
+char firstChar = text.charAt(0);  // 'J'
+boolean containsJava = text.contains("Java");  // true
+
+// Extracting substrings
+String sub1 = text.substring(5);  // "Programming"
+String sub2 = text.substring(0, 4);  // "Java"
+
+// Finding positions
+int indexOfP = text.indexOf("P");  // 5
+int indexOfr = text.indexOf("r");  // 7
+int lastIndexOfr = text.lastIndexOf("r");  // 9
+
+// Transforming
+String upper = text.toUpperCase();  // "JAVA PROGRAMMING"
+String lower = text.toLowerCase();  // "java programming"
+String replaced = text.replace('a', 'A');  // "JAvA ProgrAmming"</code></pre>
+                
+                <h4>String Concatenation</h4>
+                <p>There are multiple ways to concatenate (join) strings in Java:</p>
+                <pre><code>// Using the + operator
+String firstName = "John";
+String lastName = "Smith";
+String fullName = firstName + " " + lastName;  // "John Smith"
+
+// Using concat() method
+String greeting = "Hello, ";
+String message = greeting.concat(firstName);  // "Hello, John"
+
+// When concatenating with non-String values, Java automatically converts them to strings
+int age = 30;
+String info = "Age: " + age;  // "Age: 30"
+double price = 19.99;
+String priceTag = "Price: $" + price;  // "Price: $19.99"</code></pre>
+                
+                <h4>StringBuilder for Efficient Concatenation</h4>
+                <p>When you need to concatenate many strings (especially in a loop), using the <code>+</code> operator can be inefficient. <code>StringBuilder</code> provides a more efficient way:</p>
+                <pre><code>// Inefficient way for many concatenations
+String result = "";
+for (int i = 0; i < 10; i++) {
+    result = result + i;  // Creates a new String object each time
+}
+
+// Efficient way using StringBuilder
+StringBuilder builder = new StringBuilder();
+for (int i = 0; i < 10; i++) {
+    builder.append(i);  // Modifies the same StringBuilder object
+}
+String result = builder.toString();  // Convert to String when finished</code></pre>
+                
+                <h4>String Formatting</h4>
+                <p>Java provides powerful string formatting capabilities:</p>
+                <pre><code>// Using String.format()
+String name = "Alice";
+int age = 25;
+double height = 5.75;
+String formatted = String.format("Name: %s, Age: %d, Height: %.2f feet", name, age, height);
+// Result: "Name: Alice, Age: 25, Height: 5.75 feet"
+
+// Common format specifiers
+// %s - String
+// %d - Decimal integer
+// %f - Floating point
+// %.2f - Floating point with 2 decimal places
+// %n - Platform-specific line separator
+
+// You can also use printf for direct output
+System.out.printf("Name: %s, Age: %d%n", name, age);</code></pre>
+            </div>
+
             <div class="video-container">
                 <h3>User Input</h3>
                 <iframe class="wistia_embed" src="//bloomtech-1.wistia.com/embed/iframe/ji1ttunwjv" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" loading="lazy"></iframe>
             </div>
 
+            <div class="content-section">
+                <h3>Gathering User Input in Java</h3>
+                <p>The <code>Scanner</code> class is the most common way to read user input from the console in Java.</p>
+                
+                <h4>Setting Up Scanner</h4>
+                <pre><code>// Import the Scanner class
+import java.util.Scanner;
+
+// Create a Scanner object to read from System.in (keyboard)
+Scanner scanner = new Scanner(System.in);</code></pre>
+                
+                <h4>Reading Different Types of Input</h4>
+                <pre><code>// Reading a string (whole line)
+System.out.print("Enter your name: ");
+String name = scanner.nextLine();  // Reads the entire line
+
+// Reading a word (reads until whitespace)
+System.out.print("Enter a word: ");
+String word = scanner.next();
+
+// Reading numbers
+System.out.print("Enter your age: ");
+int age = scanner.nextInt();  // Reads an integer
+
+System.out.print("Enter your height: ");
+double height = scanner.nextDouble();  // Reads a double
+
+// Reading a boolean
+System.out.print("Are you a student? (true/false): ");
+boolean isStudent = scanner.nextBoolean();  // Reads a boolean</code></pre>
+                
+                <h4>Important Considerations</h4>
+                <p>When mixing calls to <code>nextLine()</code> with other methods like <code>nextInt()</code>, be aware of this common issue:</p>
+                <pre><code>// This can cause problems
+System.out.print("Enter your age: ");
+int age = scanner.nextInt();  // Reads the number but leaves the newline character
+
+System.out.print("Enter your name: ");
+String name = scanner.nextLine();  // This immediately reads the leftover newline character!
+
+// The solution: add an extra nextLine() call after nextInt()
+System.out.print("Enter your age: ");
+int age = scanner.nextInt();
+scanner.nextLine();  // Consume the leftover newline
+
+System.out.print("Enter your name: ");
+String name = scanner.nextLine();  // Now this works as expected</code></pre>
+                
+                <h4>Handling Input Errors</h4>
+                <p>When reading user input, it's important to handle potential errors. For example, if the user enters text when you're expecting a number:</p>
+                <pre><code>// Basic error handling with try-catch
+Scanner scanner = new Scanner(System.in);
+int number = 0;
+
+try {
+    System.out.print("Enter a number: ");
+    number = scanner.nextInt();
+    System.out.println("You entered: " + number);
+} catch (Exception e) {
+    System.out.println("That's not a valid number!");
+}</code></pre>
+                
+                <h4>Reading from a File</h4>
+                <p>Scanner can also be used to read from files:</p>
+                <pre><code>import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+try {
+    File file = new File("data.txt");
+    Scanner fileScanner = new Scanner(file);
+    
+    while (fileScanner.hasNextLine()) {
+        String line = fileScanner.nextLine();
+        System.out.println(line);
+    }
+    
+    fileScanner.close();
+} catch (FileNotFoundException e) {
+    System.out.println("File not found!");
+}</code></pre>
+                
+                <h4>Closing the Scanner</h4>
+                <p>It's good practice to close the Scanner when you're done with it to free up resources:</p>
+                <pre><code>scanner.close();</code></pre>
+                
+                <h4>Complete Example: Basic Calculator</h4>
+                <pre><code>import java.util.Scanner;
+
+public class Calculator {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter first number: ");
+        double num1 = scanner.nextDouble();
+        
+        System.out.print("Enter an operator (+, -, *, /): ");
+        scanner.nextLine();  // Consume newline
+        char operator = scanner.nextLine().charAt(0);
+        
+        System.out.print("Enter second number: ");
+        double num2 = scanner.nextDouble();
+        
+        double result = 0;
+        
+        switch (operator) {
+            case '+':
+                result = num1 + num2;
+                break;
+            case '-':
+                result = num1 - num2;
+                break;
+            case '*':
+                result = num1 * num2;
+                break;
+            case '/':
+                if (num2 != 0) {
+                    result = num1 / num2;
+                } else {
+                    System.out.println("Error: Division by zero");
+                    scanner.close();
+                    return;
+                }
+                break;
+            default:
+                System.out.println("Error: Invalid operator");
+                scanner.close();
+                return;
+        }
+        
+        System.out.println(num1 + " " + operator + " " + num2 + " = " + result);
+        scanner.close();
+    }
+}</code></pre>
+            </div>
+
             <div class="video-container">
                 <h3>Comments</h3>
                 <iframe class="wistia_embed" src="//bloomtech-1.wistia.com/embed/iframe/ox1sozm55o" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" loading="lazy"></iframe>
+            </div>
+            
+            <div class="content-section">
+                <h3>Code Comments in Java</h3>
+                <p>Comments are used to explain code, make it more readable, and provide additional information that might not be immediately evident from the code itself. They are ignored by the compiler.</p>
+                
+                <h4>Types of Comments in Java</h4>
+                <p>Java supports three types of comments:</p>
+                
+                <h5>1. Single-line Comments</h5>
+                <p>Used for brief explanations. Everything after <code>//</code> to the end of the line is a comment.</p>
+                <pre><code>// This is a single-line comment
+int count = 10;  // Initialize count to 10</code></pre>
+                
+                <h5>2. Multi-line Comments</h5>
+                <p>Used for longer explanations that span multiple lines. Everything between <code>/*</code> and <code>*/</code> is a comment.</p>
+                <pre><code>/* This is a multi-line comment
+   that spans multiple lines
+   and can provide detailed explanations */
+int result = calculateTotal();</code></pre>
+                
+                <h5>3. JavaDoc Comments</h5>
+                <p>Special documentation comments that can be used to generate API documentation. They start with <code>/**</code> and end with <code>*/</code>.</p>
+                <pre><code>/**
+ * Calculates the sum of two integers.
+ *
+ * @param a The first integer
+ * @param b The second integer
+ * @return The sum of a and b
+ */
+public int add(int a, int b) {
+    return a + b;
+}</code></pre>
+                
+                <h4>Best Practices for Comments</h4>
+                <ul>
+                    <li><strong>Be Clear and Concise</strong>: Write comments that clearly explain what the code is doing without being overly verbose.</li>
+                    <li><strong>Comment Why, Not What</strong>: Focus on explaining why something is done a certain way, rather than what the code is doing (which should be clear from the code itself).</li>
+                    <li><strong>Update Comments</strong>: Keep comments up-to-date when you change the code.</li>
+                    <li><strong>Use JavaDoc for Public APIs</strong>: Use JavaDoc comments for classes, methods, and fields that are part of your public API.</li>
+                    <li><strong>Don't Over-Comment</strong>: Too many comments can clutter the code and make it harder to read.</li>
+                </ul>
+                
+                <h4>Common JavaDoc Tags</h4>
+                <ul>
+                    <li><code>@param</code> - Describes a method parameter</li>
+                    <li><code>@return</code> - Describes what a method returns</li>
+                    <li><code>@throws</code> or <code>@exception</code> - Describes exceptions that might be thrown</li>
+                    <li><code>@see</code> - Provides a reference to another class or method</li>
+                    <li><code>@since</code> - Specifies when this feature was added</li>
+                    <li><code>@deprecated</code> - Indicates that a method is deprecated and should no longer be used</li>
+                </ul>
+                
+                <h4>Using Comments to Temporarily Disable Code</h4>
+                <p>Comments can be used to "comment out" code, temporarily disabling it without deleting it:</p>
+                <pre><code>// This code is currently disabled
+// System.out.println("This won't be executed");
+
+/* Multiple lines of code can be disabled this way
+int a = 5;
+int b = 10;
+System.out.println(a + b);
+*/</code></pre>
+                
+                <h4>Example: Well-Commented Code</h4>
+                <pre><code>/**
+ * A simple Student class to represent student information.
+ * 
+ * @author Your Name
+ * @version 1.0
+ * @since 2023-04-15
+ */
+public class Student {
+    // Student's name
+    private String name;
+    
+    // Student's ID (unique identifier)
+    private int id;
+    
+    // GPA on a 4.0 scale
+    private double gpa;
+    
+    /**
+     * Constructs a new Student with the specified name, ID, and GPA.
+     * 
+     * @param name The name of the student
+     * @param id The unique ID of the student
+     * @param gpa The GPA of the student on a 4.0 scale
+     */
+    public Student(String name, int id, double gpa) {
+        this.name = name;
+        this.id = id;
+        
+        // Ensure GPA is within valid range
+        if (gpa < 0.0 || gpa > 4.0) {
+            throw new IllegalArgumentException("GPA must be between 0.0 and 4.0");
+        }
+        this.gpa = gpa;
+    }
+    
+    /**
+     * Returns whether the student is on the honor roll.
+     * A student is on the honor roll if their GPA is 3.5 or higher.
+     * 
+     * @return true if the student is on the honor roll, false otherwise
+     */
+    public boolean isOnHonorRoll() {
+        return gpa >= 3.5;  // Honor roll threshold is 3.5
+    }
+    
+    /* This method was replaced with a more efficient implementation
+    public String getFullInfo() {
+        return "Name: " + name + ", ID: " + id + ", GPA: " + gpa;
+    }
+    */
+    
+    /**
+     * Returns a string representation of the student.
+     * 
+     * @return A string containing the student's name, ID, and GPA
+     */
+    @Override
+    public String toString() {
+        return String.format("Student[name=%s, id=%d, gpa=%.2f]", name, id, gpa);
+    }
+}</code></pre>
             </div>
         </section>
 
@@ -215,6 +612,32 @@
             <h2>Guided Project</h2>
             <div class="video-container">
                 <iframe class="wistia_embed" title="Sprint 1 Strings, User Input, and Comments Video" src="https://fast.wistia.net/embed/iframe/saw6fc62c9" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+            
+            <div class="content-section">
+                <h3>Project Overview</h3>
+                <p>In this guided project, you'll apply your knowledge of strings, user input, and comments to create interactive programs:</p>
+                
+                <h4>Secret Strings</h4>
+                <p>This project focuses on string manipulation and involves:</p>
+                <ul>
+                    <li>Encrypting and decrypting messages using string operations</li>
+                    <li>Working with substring extraction and concatenation</li>
+                    <li>Using string methods to analyze and modify text</li>
+                    <li>Implementing proper code documentation with comments</li>
+                </ul>
+                
+                <h4>Chess Strings</h4>
+                <p>This project demonstrates practical applications of strings in a chess game context:</p>
+                <ul>
+                    <li>Representing chess positions using string notation</li>
+                    <li>Parsing user input to make chess moves</li>
+                    <li>Validating input strings against expected patterns</li>
+                    <li>Using StringBuilder for efficient string operations</li>
+                    <li>Adding comprehensive documentation using JavaDoc comments</li>
+                </ul>
+                
+                <p>By completing these projects, you'll gain practical experience with the core concepts of this module and see how they can be applied to solve real problems.</p>
             </div>
 
             <div class="resources">
