@@ -237,6 +237,147 @@
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" title="Schema Design Introduction"></iframe>
             </div>
+            
+            <div class="content-section" style="margin-top: 30px;">
+                <h3>Using SQLite Studio</h3>
+                <p>SQLite Studio is a powerful GUI tool for working with SQLite databases, allowing you to explore, query, and modify database structure and content.</p>
+                
+                <h4>Key Features of SQLite Studio</h4>
+                <ul>
+                    <li><strong>Database Connection:</strong> Connect to existing SQLite database files with a few clicks.</li>
+                    <li><strong>SQL Editor:</strong> Write and execute SQL queries with syntax highlighting and query history.</li>
+                    <li><strong>Schema Browser:</strong> Easily navigate tables, views, indexes, and triggers in your database.</li>
+                    <li><strong>Data Export/Import:</strong> Transfer data between various formats, including CSV, JSON, and SQL.</li>
+                </ul>
+                
+                <p>Working with SQLite Studio is straightforward:</p>
+                <ol>
+                    <li>Install SQLite Studio from <a href="https://sqlitestudio.pl/" style="color: #ff5722;">sqlitestudio.pl</a></li>
+                    <li>Open the application and click "Add a database" in the Database menu</li>
+                    <li>Browse to your SQLite database file (e.g., dev.sqlite3)</li>
+                    <li>Connect to the database by double-clicking on it in the database list</li>
+                </ol>
+            </div>
+            
+            <div class="content-section">
+                <h3>Database Schema Design</h3>
+                <p>A database schema is the blueprint that defines the structure, organization, and relationships of data in a database system.</p>
+                
+                <h4>Key Elements of Schema Design</h4>
+                <ul>
+                    <li><strong>Tables:</strong> Define the entities in your system (e.g., users, products, orders).</li>
+                    <li><strong>Columns:</strong> Specify the attributes of each entity with appropriate data types.</li>
+                    <li><strong>Constraints:</strong> Rules that maintain data integrity (e.g., NOT NULL, UNIQUE, CHECK).</li>
+                    <li><strong>Relationships:</strong> Connections between tables using primary and foreign keys.</li>
+                    <li><strong>Indexes:</strong> Structures that improve query performance on specific columns.</li>
+                </ul>
+                
+                <p>Example of a well-designed schema:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+-- Users table
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  username TEXT NOT NULL UNIQUE,
+  email TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Posts table with relationship to users
+CREATE TABLE posts (
+  id INTEGER PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Create an index for faster lookups
+CREATE INDEX idx_posts_user_id ON posts(user_id);
+                </pre>
+            </div>
+            
+            <div class="content-section">
+                <h3>Knex.js Migrations</h3>
+                <p>Migrations are like version control for your database schema, allowing you to evolve your database structure over time.</p>
+                
+                <h4>Migration Workflow</h4>
+                <ol>
+                    <li>Create a migration file using the Knex CLI</li>
+                    <li>Define the schema changes in the up/down functions</li>
+                    <li>Run the migration to apply changes</li>
+                    <li>Roll back if necessary</li>
+                </ol>
+                
+                <p>Example of a Knex.js migration:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+// Creating a migration
+$ npx knex migrate:make create_users_table
+
+// Migration file: 20230510123456_create_users_table.js
+exports.up = function(knex) {
+  return knex.schema.createTable('users', function(table) {
+    table.increments('id'); // creates auto-incrementing id column
+    table.string('username').notNullable().unique();
+    table.string('email').notNullable().unique();
+    table.timestamp('created_at').defaultTo(knex.fn.now());
+  });
+};
+
+exports.down = function(knex) {
+  return knex.schema.dropTable('users');
+};
+
+// Running migrations
+$ npx knex migrate:latest
+
+// Rolling back migrations
+$ npx knex migrate:rollback
+                </pre>
+            </div>
+            
+            <div class="content-section">
+                <h3>Database Seeding with Knex</h3>
+                <p>Seeds allow you to populate your database with initial or test data, making development and testing easier.</p>
+                
+                <h4>Seeding Best Practices</h4>
+                <ul>
+                    <li>Create separate seed files for different tables</li>
+                    <li>Seed in the correct order to respect foreign key constraints</li>
+                    <li>Use unique, predictable data for testing</li>
+                    <li>Clean up existing data before seeding to prevent duplicates</li>
+                </ul>
+                
+                <p>Example of Knex.js seeds:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+// Creating a seed file
+$ npx knex seed:make 01_users
+
+// Seed file: 01_users.js
+exports.seed = function(knex) {
+  // Truncate all existing tables
+  return knex.raw('PRAGMA foreign_keys = OFF;')
+    .then(() => knex('users').truncate())
+    .then(() => knex.raw('PRAGMA foreign_keys = ON;'))
+    .then(() => {
+      // Insert seed data
+      return knex('users').insert([
+        { 
+          username: 'admin', 
+          email: 'admin@example.com' 
+        },
+        { 
+          username: 'test_user', 
+          email: 'test@example.com' 
+        }
+      ]);
+    });
+};
+
+// Running seeds
+$ npx knex seed:run
+                </pre>
+            </div>
         </div>
 
         <div class="section">

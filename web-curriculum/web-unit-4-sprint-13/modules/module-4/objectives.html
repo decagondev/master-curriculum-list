@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 4 - Deployment and Best Practices</title>
+    <link rel="stylesheet" href="../../styles/main.css">
 </head>
 <body>
     <div class="course-container">
@@ -42,10 +43,16 @@
 
                     <h3>Using dotenv</h3>
                     <p>The <code>dotenv</code> package is commonly used to load environment variables from a <code>.env</code> file:</p>
-                    <pre><code>require('dotenv').config(); // add this line as the first thing to run
+                    <pre><code>// it's recommended to load configuration for .env as early as possible
+require('dotenv').config(); // add this line as the first thing to run
 
+// server code...
+
+// we'll read the port from the server environment if it is there
+// Heroku for example will have the PORT environment variable set already
 const port = process.env.PORT || 9000;
 
+// we can now use that port, use 9000 as a default if not set
 server.listen(port, () => {
   console.log(`\n*** Server Running on http://localhost:${port} ***\n`);
 });</code></pre>
@@ -56,7 +63,17 @@ server.listen(port, () => {
                         <li>Provide a <code>.env.example</code> file with dummy values for documentation</li>
                         <li>Use sensible defaults for development</li>
                         <li>Validate required environment variables at startup</li>
+                        <li>Never hardcode configuration values directly in your code</li>
                     </ul>
+
+                    <h3>Steps to Implement</h3>
+                    <ol>
+                        <li>Install the dotenv package: <code>npm install dotenv</code></li>
+                        <li>Add the require statement at the top of your entry file</li>
+                        <li>Create a <code>.env</code> file in your project root</li>
+                        <li>Add your environment variables in KEY=VALUE format</li>
+                        <li>Access variables in your code using <code>process.env.VARIABLE_NAME</code></li>
+                    </ol>
 
                     <h3>Challenge</h3>
                     <p>Extract all secrets and values that need to change between <code>development</code> and <code>production</code> environments.</p>
@@ -70,9 +87,10 @@ server.listen(port, () => {
                 </div>
                 <div class="content">
                     <h3>Overview</h3>
-                    <p>Heroku is a popular platform for deploying web applications. While it no longer provides a free tier, understanding how to deploy to Heroku helps you understand deployment concepts that apply to other platforms.</p>
+                    <p>In this lesson, we'll deploy an Express API to Heroku. Heroku is a popular platform for deploying web applications. While it no longer provides a free tier, understanding how to deploy to Heroku helps you understand deployment concepts that apply to other platforms.</p>
+                    <p><strong>Note:</strong> As of November 2022, Heroku no longer provides a totally free tier like they used to. For learning purposes, we only need you to understand how to make an API deployable to Heroku or similar providers.</p>
 
-                    <h3>Key Requirements</h3>
+                    <h3>Key Requirements for Deployment</h3>
                     <ul>
                         <li>A "start" script in package.json that uses Node (not Nodemon)</li>
                         <li>Dynamic port configuration using environment variables</li>
@@ -80,14 +98,14 @@ server.listen(port, () => {
                         <li>No hardcoded configuration values</li>
                     </ul>
 
-                    <h3>Deployment Steps</h3>
+                    <h3>Continuous Deployment from GitHub</h3>
                     <ol>
-                        <li>Create a Heroku account and install the Heroku CLI</li>
-                        <li>Create a new Heroku app</li>
-                        <li>Connect your GitHub repository</li>
-                        <li>Enable automatic deployments</li>
-                        <li>Configure environment variables</li>
-                        <li>Deploy your application</li>
+                        <li>Login to Heroku and create an app</li>
+                        <li>In the "Deploy" tab, select <em>GitHub</em> in the "Deployment Method" section</li>
+                        <li>Authorize Heroku to access your GitHub account if prompted</li>
+                        <li>Search for and connect the repository you wish to deploy</li>
+                        <li>In the "Automatic deploys" section, enable automatic deploys from your main branch</li>
+                        <li>Use "Manual deploy" to trigger your first deployment</li>
                     </ol>
 
                     <h3>Environment Variables on Heroku</h3>
@@ -95,14 +113,26 @@ server.listen(port, () => {
                     <ol>
                         <li>Go to the "Settings" tab</li>
                         <li>Click "Reveal Config Vars"</li>
-                        <li>Add your environment variables</li>
+                        <li>Add your environment variables as key-value pairs</li>
                     </ol>
+                    <p>These environment variables override any default values in your code and are not visible in your GitHub repository, making them ideal for storing sensitive information.</p>
+
+                    <h3>Deployment Verification</h3>
+                    <ul>
+                        <li>Once deployed, test your API endpoints using Postman or a browser</li>
+                        <li>Check application logs if you encounter any issues</li>
+                        <li>Make sure your application correctly uses environment variables provided by Heroku</li>
+                    </ul>
 
                     <h3>Challenge</h3>
                     <p>Using the information you've obtained from the guided project, create an application on Heroku to set up continuous deployment from one of your GitHub repositories.</p>
                 </div>
             </section>
         </main>
+
+        <footer>
+            <p>&copy; 2023 Web Development Curriculum</p>
+        </footer>
     </div>
 </body>
 </html> 

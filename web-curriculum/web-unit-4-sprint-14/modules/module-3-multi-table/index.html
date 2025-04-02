@@ -225,6 +225,201 @@
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" title="Multi-Table Queries Introduction"></iframe>
             </div>
+            
+            <div class="content-section" style="margin-top: 30px;">
+                <h3>Foreign Keys in Database Design</h3>
+                <p>Foreign keys are a fundamental concept in relational databases that establish connections between tables, enforcing referential integrity and defining relationships.</p>
+                
+                <h4>Role and Importance of Foreign Keys</h4>
+                <ul>
+                    <li><strong>Relationship Definition:</strong> Foreign keys formally establish connections between related data across tables.</li>
+                    <li><strong>Referential Integrity:</strong> Prevent orphaned records by ensuring that referenced data exists.</li>
+                    <li><strong>Cascading Actions:</strong> Configure automatic behaviors when referenced records are updated or deleted.</li>
+                    <li><strong>Data Organization:</strong> Enable normalization by allowing data to be split across multiple tables.</li>
+                </ul>
+                
+                <p>Example of creating foreign key relationships:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+-- Creating tables with foreign key relationships
+CREATE TABLE departments (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  department_id INTEGER,
+  FOREIGN KEY (department_id) REFERENCES departments(id)
+    ON DELETE SET NULL  -- If department is deleted, set to NULL
+    ON UPDATE CASCADE   -- If department ID changes, update automatically
+);
+                </pre>
+                
+                <p>With Knex.js, you can create foreign key relationships in migrations:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+exports.up = function(knex) {
+  return knex.schema
+    .createTable('departments', table => {
+      table.increments('id');
+      table.string('name').notNullable().unique();
+    })
+    .createTable('employees', table => {
+      table.increments('id');
+      table.string('first_name').notNullable();
+      table.string('last_name').notNullable();
+      table.integer('department_id')
+        .references('id')
+        .inTable('departments')
+        .onDelete('SET NULL')
+        .onUpdate('CASCADE');
+    });
+};
+                </pre>
+            </div>
+            
+            <div class="content-section">
+                <h3>Multi-Table Queries</h3>
+                <p>Querying data from multiple tables is a core capability of relational databases, allowing you to combine and analyze related information across your database.</p>
+                
+                <h4>JOIN Operations</h4>
+                <ul>
+                    <li><strong>INNER JOIN:</strong> Returns records with matching values in both tables.</li>
+                    <li><strong>LEFT JOIN:</strong> Returns all records from the left table and matching records from the right table.</li>
+                    <li><strong>RIGHT JOIN:</strong> Returns all records from the right table and matching records from the left table.</li>
+                    <li><strong>FULL JOIN:</strong> Returns all records when there's a match in either table.</li>
+                </ul>
+                
+                <p>Example SQL JOIN queries:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+-- INNER JOIN: Get employees with their department names
+SELECT 
+  employees.id, 
+  employees.first_name,
+  employees.last_name,
+  departments.name AS department_name
+FROM 
+  employees
+INNER JOIN 
+  departments ON employees.department_id = departments.id;
+
+-- LEFT JOIN: Get all employees, even those without departments
+SELECT 
+  employees.id, 
+  employees.first_name,
+  employees.last_name,
+  departments.name AS department_name
+FROM 
+  employees
+LEFT JOIN 
+  departments ON employees.department_id = departments.id;
+                </pre>
+                
+                <p>Using Knex.js for joins:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+// INNER JOIN with Knex
+knex('employees')
+  .select(
+    'employees.id',
+    'employees.first_name',
+    'employees.last_name',
+    'departments.name as department_name'
+  )
+  .join('departments', 'employees.department_id', 'departments.id')
+  .then(employees => {
+    console.log(employees);
+  });
+
+// LEFT JOIN with Knex
+knex('employees')
+  .select(
+    'employees.id',
+    'employees.first_name',
+    'employees.last_name',
+    'departments.name as department_name'
+  )
+  .leftJoin('departments', 'employees.department_id', 'departments.id')
+  .then(employees => {
+    console.log(employees);
+  });
+                </pre>
+            </div>
+            
+            <div class="content-section">
+                <h3>Database Access Methods</h3>
+                <p>Well-designed database access methods encapsulate your database interactions, making your code more maintainable, testable, and reusable.</p>
+                
+                <h4>Best Practices for Database Access</h4>
+                <ul>
+                    <li><strong>Modularization:</strong> Organize database operations by entity or domain.</li>
+                    <li><strong>Abstraction:</strong> Hide query implementation details behind a clean API.</li>
+                    <li><strong>Error Handling:</strong> Implement consistent error management for database operations.</li>
+                    <li><strong>Transaction Support:</strong> Group related operations to ensure data consistency.</li>
+                </ul>
+                
+                <p>Example of database access methods with Knex.js:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+// employees-model.js
+const db = require('../data/db-config');
+
+module.exports = {
+  findAll,
+  findById,
+  findByDepartment,
+  create,
+  update,
+  remove
+};
+
+function findAll() {
+  return db('employees')
+    .select(
+      'employees.id',
+      'employees.first_name',
+      'employees.last_name',
+      'departments.name as department_name'
+    )
+    .leftJoin('departments', 'employees.department_id', 'departments.id');
+}
+
+function findById(id) {
+  return db('employees')
+    .select(
+      'employees.id',
+      'employees.first_name',
+      'employees.last_name',
+      'departments.name as department_name'
+    )
+    .leftJoin('departments', 'employees.department_id', 'departments.id')
+    .where('employees.id', id)
+    .first();
+}
+
+function findByDepartment(departmentId) {
+  return db('employees')
+    .where('department_id', departmentId);
+}
+
+async function create(employee) {
+  const [id] = await db('employees').insert(employee);
+  return findById(id);
+}
+
+function update(id, changes) {
+  return db('employees')
+    .where('id', id)
+    .update(changes)
+    .then(() => findById(id));
+}
+
+function remove(id) {
+  return db('employees')
+    .where('id', id)
+    .del();
+}
+                </pre>
+            </div>
         </div>
 
         <div class="section">
