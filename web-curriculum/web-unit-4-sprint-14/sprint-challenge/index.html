@@ -190,6 +190,51 @@
                     <li>Include necessary indexes and constraints</li>
                     <li>Document your schema design</li>
                 </ul>
+                
+                <p style="margin-top: 15px;">Your schema should apply normalization principles to avoid data redundancy while maintaining data integrity. Your tables should use appropriate data types and include essential constraints like primary and foreign keys.</p>
+                
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto; margin-top: 15px;">
+// Example migration for a normalized project schema
+exports.up = function(knex) {
+  return knex.schema
+    .createTable('projects', table => {
+      table.increments('id');
+      table.string('name').notNullable();
+      table.text('description');
+      table.boolean('completed').defaultTo(false);
+      table.timestamps(true, true);
+    })
+    .createTable('resources', table => {
+      table.increments('id');
+      table.string('name').notNullable().unique();
+      table.text('description');
+    })
+    .createTable('tasks', table => {
+      table.increments('id');
+      table.integer('project_id')
+        .notNullable()
+        .references('id')
+        .inTable('projects')
+        .onDelete('CASCADE');
+      table.string('description').notNullable();
+      table.boolean('completed').defaultTo(false);
+      table.timestamps(true, true);
+    })
+    .createTable('project_resources', table => {
+      table.integer('project_id')
+        .notNullable()
+        .references('id')
+        .inTable('projects')
+        .onDelete('CASCADE');
+      table.integer('resource_id')
+        .notNullable()
+        .references('id')
+        .inTable('resources')
+        .onDelete('CASCADE');
+      table.primary(['project_id', 'resource_id']);
+    });
+};
+                </pre>
             </div>
 
             <div class="requirement-section">
@@ -198,18 +243,196 @@
                     <li>Implement CRUD operations for all tables</li>
                     <li>Create complex queries using joins</li>
                     <li>Write efficient database access methods</li>
-                    <li>Include proper error handling</li>
                 </ul>
+                
+                <p style="margin-top: 15px;">Your data access layer should abstract database operations and provide a clean API for your application. Implement helper functions for common operations and use joins to retrieve related data efficiently.</p>
+                
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto; margin-top: 15px;">
+// Example data access methods
+const db = require('../data/db-config');
+
+async function getAllProjects() {
+  return db('projects')
+    .select('*');
+}
+
+async function getProjectById(id) {
+  // Get project with related tasks and resources
+  const project = await db('projects')
+    .where('projects.id', id)
+    .first();
+    
+  if (project) {
+    // Get project tasks
+    const tasks = await db('tasks')
+      .where('project_id', id);
+      
+    // Get project resources
+    const resources = await db('resources')
+      .join('project_resources', 'resources.id', 'project_resources.resource_id')
+      .where('project_resources.project_id', id)
+      .select('resources.*');
+      
+    return {
+      ...project,
+      tasks,
+      resources
+    };
+  }
+  
+  return null;
+}
+
+async function addProject(project) {
+  // Transaction to handle related resources
+  return db.transaction(async trx => {
+    const [projectId] = await trx('projects').insert(project);
+    
+    if (project.resources && project.resources.length > 0) {
+      const resourceRecords = project.resources.map(resourceId => ({
+        project_id: projectId,
+        resource_id: resourceId
+      }));
+      
+      await trx('project_resources').insert(resourceRecords);
+    }
+    
+    return getProjectById(projectId);
+  });
+}
+                </pre>
+            </div>
+
+            <div class="requirement-section">
+                <h3>API Endpoints</h3>
+                <ul>
+                    <li>Create RESTful endpoints for all entities</li>
+                    <li>Implement proper error handling</li>
+                    <li>Validate incoming data</li>
+                    <li>Return appropriate status codes and responses</li>
+                </ul>
+                
+                <p style="margin-top: 15px;">Your API should follow RESTful conventions with endpoints for all necessary operations. Implement validation to ensure data integrity and use appropriate status codes and error messages.</p>
+                
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto; margin-top: 15px;">
+// Example API endpoints
+const router = require('express').Router();
+const Projects = require('../models/project-model');
+
+// Get all projects
+router.get('/', async (req, res, next) => {
+  try {
+    const projects = await Projects.getAllProjects();
+    res.status(200).json(projects);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Get project by ID
+router.get('/:id', async (req, res, next) => {
+  try {
+    const project = await Projects.getProjectById(req.params.id);
+    
+    if (project) {
+      res.status(200).json(project);
+    } else {
+      res.status(404).json({ message: 'Project not found' });
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Create a new project
+router.post('/', validateProject, async (req, res, next) => {
+  try {
+    const newProject = await Projects.addProject(req.body);
+    res.status(201).json(newProject);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Middleware for validation
+function validateProject(req, res, next) {
+  const { name } = req.body;
+  
+  if (!name || name.trim() === '') {
+    return res.status(400).json({ message: 'Project name is required' });
+  }
+  
+  next();
+}
+                </pre>
             </div>
 
             <div class="requirement-section">
                 <h3>Testing</h3>
                 <ul>
-                    <li>Write unit tests for database operations</li>
-                    <li>Include integration tests</li>
-                    <li>Test edge cases and error conditions</li>
-                    <li>Ensure test coverage meets requirements</li>
+                    <li>Write tests for database operations</li>
+                    <li>Test API endpoints</li>
+                    <li>Ensure proper error handling</li>
                 </ul>
+                
+                <p style="margin-top: 15px;">Implement comprehensive tests to verify that your database operations and API endpoints work correctly. Use a testing database to avoid affecting production data.</p>
+                
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto; margin-top: 15px;">
+// Example test for project endpoint
+const request = require('supertest');
+const server = require('../api/server');
+const db = require('../data/db-config');
+
+describe('projects endpoints', () => {
+  beforeEach(async () => {
+    await db.migrate.rollback();
+    await db.migrate.latest();
+    await db.seed.run();
+  });
+  
+  describe('GET /api/projects', () => {
+    it('returns all projects', async () => {
+      const res = await request(server).get('/api/projects');
+      
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(3); // Assuming 3 seed projects
+      expect(res.body[0]).toHaveProperty('id');
+      expect(res.body[0]).toHaveProperty('name');
+    });
+  });
+  
+  describe('POST /api/projects', () => {
+    it('creates a new project', async () => {
+      const newProject = {
+        name: 'Test Project',
+        description: 'A test project',
+        completed: false
+      };
+      
+      const res = await request(server)
+        .post('/api/projects')
+        .send(newProject);
+        
+      expect(res.status).toBe(201);
+      expect(res.body).toHaveProperty('id');
+      expect(res.body.name).toBe(newProject.name);
+    });
+    
+    it('returns 400 if name is missing', async () => {
+      const invalidProject = {
+        description: 'Missing name field'
+      };
+      
+      const res = await request(server)
+        .post('/api/projects')
+        .send(invalidProject);
+        
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty('message');
+    });
+  });
+});
+                </pre>
             </div>
         </div>
 

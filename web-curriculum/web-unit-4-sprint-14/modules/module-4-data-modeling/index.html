@@ -225,6 +225,262 @@
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" title="Data Modeling Introduction"></iframe>
             </div>
+            
+            <div class="content-section" style="margin-top: 30px;">
+                <h3>Data Normalization Principles</h3>
+                <p>Data normalization is the process of organizing a database to reduce redundancy and improve data integrity through a series of rules called normal forms.</p>
+                
+                <h4>The Three Main Normal Forms</h4>
+                <ul>
+                    <li><strong>First Normal Form (1NF):</strong> 
+                        <ul>
+                            <li>Each table has a primary key</li>
+                            <li>Each column contains atomic (indivisible) values</li>
+                            <li>No repeating groups of columns</li>
+                        </ul>
+                    </li>
+                    <li><strong>Second Normal Form (2NF):</strong> 
+                        <ul>
+                            <li>Must be in 1NF</li>
+                            <li>All non-key attributes fully depend on the primary key</li>
+                            <li>No partial dependencies (relevant for composite keys)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Third Normal Form (3NF):</strong> 
+                        <ul>
+                            <li>Must be in 2NF</li>
+                            <li>No transitive dependencies (non-key columns depend only on the primary key)</li>
+                            <li>Eliminates fields that do not depend directly on the primary key</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <p>Example of normalizing data:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+-- Unnormalized data (violations of normal forms)
+CREATE TABLE orders_unnormalized (
+  order_id INTEGER,
+  customer_name TEXT,
+  customer_email TEXT,
+  customer_address TEXT,
+  product_id INTEGER,
+  product_name TEXT,
+  product_category TEXT,
+  product_price REAL,
+  quantity INTEGER,
+  order_date DATE
+);
+
+-- Normalized to 3NF (multiple related tables)
+CREATE TABLE customers (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  address TEXT
+);
+
+CREATE TABLE products (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  category TEXT,
+  price REAL NOT NULL
+);
+
+CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  customer_id INTEGER NOT NULL,
+  order_date DATE NOT NULL,
+  FOREIGN KEY (customer_id) REFERENCES customers(id)
+);
+
+CREATE TABLE order_items (
+  order_id INTEGER,
+  product_id INTEGER,
+  quantity INTEGER NOT NULL,
+  PRIMARY KEY (order_id, product_id),
+  FOREIGN KEY (order_id) REFERENCES orders(id),
+  FOREIGN KEY (product_id) REFERENCES products(id)
+);
+                </pre>
+            </div>
+            
+            <div class="content-section">
+                <h3>Database Relationship Types</h3>
+                <p>Understanding different types of table relationships is crucial for effective data modeling. Each relationship type serves specific purposes in representing real-world connections between entities.</p>
+                
+                <h4>Primary Relationship Types</h4>
+                <ul>
+                    <li><strong>One-to-One (1:1):</strong> 
+                        <ul>
+                            <li>Each record in Table A relates to exactly one record in Table B and vice versa</li>
+                            <li>Example: User and User Profile</li>
+                            <li>Implementation: Foreign key with unique constraint</li>
+                        </ul>
+                    </li>
+                    <li><strong>One-to-Many (1:N):</strong> 
+                        <ul>
+                            <li>Each record in Table A can relate to multiple records in Table B, but each record in Table B relates to only one record in Table A</li>
+                            <li>Example: Department and Employees</li>
+                            <li>Implementation: Foreign key in the "many" table</li>
+                        </ul>
+                    </li>
+                    <li><strong>Many-to-Many (N:M):</strong> 
+                        <ul>
+                            <li>Each record in Table A can relate to multiple records in Table B, and vice versa</li>
+                            <li>Example: Students and Courses</li>
+                            <li>Implementation: Junction table with foreign keys to both tables</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <p>Examples of relationship implementations:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+-- One-to-One: User and User Profile
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  username TEXT UNIQUE NOT NULL,
+  email TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE user_profiles (
+  user_id INTEGER PRIMARY KEY,
+  bio TEXT,
+  avatar_url TEXT,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- One-to-Many: Department and Employees
+CREATE TABLE departments (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL
+);
+
+CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  department_id INTEGER,
+  FOREIGN KEY (department_id) REFERENCES departments(id)
+);
+
+-- Many-to-Many: Students and Courses
+CREATE TABLE students (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL
+);
+
+CREATE TABLE courses (
+  id INTEGER PRIMARY KEY,
+  title TEXT NOT NULL
+);
+
+CREATE TABLE enrollments (
+  student_id INTEGER,
+  course_id INTEGER,
+  enrollment_date DATE NOT NULL,
+  PRIMARY KEY (student_id, course_id),
+  FOREIGN KEY (student_id) REFERENCES students(id),
+  FOREIGN KEY (course_id) REFERENCES courses(id)
+);
+                </pre>
+            </div>
+            
+            <div class="content-section">
+                <h3>Creating Table Relationships with Knex</h3>
+                <p>Knex.js provides a powerful and expressive API for creating and managing table relationships in your migrations.</p>
+                
+                <h4>Implementing Different Relationship Types</h4>
+                <ul>
+                    <li><strong>Foreign Key Methods:</strong> 
+                        <ul>
+                            <li><code>table.foreign()</code> - Creates a foreign key constraint</li>
+                            <li><code>table.references()</code> - Specifies the referenced column</li>
+                            <li><code>table.inTable()</code> - Specifies the referenced table</li>
+                        </ul>
+                    </li>
+                    <li><strong>Constraint Actions:</strong> 
+                        <ul>
+                            <li><code>onDelete()</code> - Action when referenced row is deleted</li>
+                            <li><code>onUpdate()</code> - Action when referenced key is updated</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <p>Example of creating relationships with Knex.js:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+// One-to-One relationship: User and Profile
+exports.up = function(knex) {
+  return knex.schema
+    .createTable('users', table => {
+      table.increments('id');
+      table.string('username').notNullable().unique();
+      table.string('email').notNullable().unique();
+    })
+    .createTable('profiles', table => {
+      // Primary key is also a foreign key
+      table.integer('user_id').primary();
+      table.text('bio');
+      table.string('avatar_url');
+      
+      // Define foreign key relationship
+      table.foreign('user_id')
+        .references('id')
+        .inTable('users')
+        .onDelete('CASCADE');
+    });
+};
+
+// One-to-Many relationship: Departments and Employees
+exports.up = function(knex) {
+  return knex.schema
+    .createTable('departments', table => {
+      table.increments('id');
+      table.string('name').notNullable();
+    })
+    .createTable('employees', table => {
+      table.increments('id');
+      table.string('name').notNullable();
+      
+      // Foreign key in the "many" table
+      table.integer('department_id')
+        .references('id')
+        .inTable('departments')
+        .onDelete('SET NULL');
+    });
+};
+
+// Many-to-Many relationship: Students and Courses
+exports.up = function(knex) {
+  return knex.schema
+    .createTable('students', table => {
+      table.increments('id');
+      table.string('name').notNullable();
+    })
+    .createTable('courses', table => {
+      table.increments('id');
+      table.string('title').notNullable();
+    })
+    .createTable('enrollments', table => {
+      // Composite primary key
+      table.integer('student_id')
+        .notNullable()
+        .references('id')
+        .inTable('students')
+        .onDelete('CASCADE');
+        
+      table.integer('course_id')
+        .notNullable()
+        .references('id')
+        .inTable('courses')
+        .onDelete('CASCADE');
+        
+      table.date('enrollment_date').notNullable();
+      
+      // Define the composite primary key
+      table.primary(['student_id', 'course_id']);
+    });
+};
+                </pre>
+            </div>
         </div>
 
         <div class="section">
