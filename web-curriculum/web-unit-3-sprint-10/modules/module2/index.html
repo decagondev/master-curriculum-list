@@ -179,16 +179,119 @@
             <div class="video-container">
                 <h3>Understanding Context</h3>
                 <iframe src="https://fast.wistia.net/embed/iframe/si144c6vwr" title="Understanding Context" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+                
+                <div class="resources">
+                    <h4>What is the Context API?</h4>
+                    <p>In a typical React application, data is passed top-down (parent to child) via props, but this can be cumbersome for certain types of props that are required by many components within an application, like application state. Context provides a way to share data or state between components without having to explicitly pass a prop through every level of the tree.</p>
+                    
+                    <p>The Context API solves the problem of <strong>prop drilling</strong>, which occurs when you pass data through multiple layers of components just to reach a deeply nested component that needs that data.</p>
+                    
+                    <p>We use the Context API when we have:</p>
+                    <ul>
+                        <li>Global data that many components share</li>
+                        <li>Data that needs to pass through intermediate components that don't actually use the data</li>
+                        <li>Application state that needs to be accessed by components at different nesting levels</li>
+                    </ul>
+                    
+                    <p>Because of one-way data flow in React, state must exist above the components that need it. Context helps you centralize application state and make it easily accessible to any component in the tree, no matter how deeply nested.</p>
+                </div>
             </div>
 
             <div class="video-container">
                 <h3>Providing Data with Context</h3>
                 <iframe src="https://fast.wistia.net/embed/iframe/q4vs1ygtij" title="Providing Data with Context" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+                
+                <div class="resources">
+                    <h4>Creating a Context Provider</h4>
+                    <p>To provide data with Context, you need to complete these steps:</p>
+                    
+                    <ol>
+                        <li>Create a context object using <code>createContext()</code></li>
+                        <li>Create a provider component that will hold and provide the data</li>
+                        <li>Wrap your component tree (or part of it) with the provider</li>
+                    </ol>
+                    
+                    <p>Here's a basic example of creating a context provider:</p>
+                    
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 10px; border-radius: 4px; overflow-x: auto;">
+// context/ThemeContext.js
+import React, { createContext } from 'react';
+
+// Create the context
+export const ThemeContext = createContext();
+
+// Create the context provider
+export const ThemeProvider = ({ children }) => {
+  const theme = {
+    colors: {
+      primary: '#ff5722',
+      background: '#222831',
+      text: '#ffffff'
+    }
+  };
+
+  return (
+    &lt;ThemeContext.Provider value={theme}>
+      {children}
+    &lt;/ThemeContext.Provider>
+  );
+};</pre>
+                    
+                    <p>Then, you would wrap your application (or part of it) with the provider:</p>
+                    
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 10px; border-radius: 4px; overflow-x: auto;">
+// index.js or App.js
+import { ThemeProvider } from './context/ThemeContext';
+
+root.render(
+  &lt;ThemeProvider>
+    &lt;App />
+  &lt;/ThemeProvider>
+);</pre>
+                </div>
             </div>
 
             <div class="video-container">
                 <h3>Consuming Context Data</h3>
                 <iframe src="https://fast.wistia.net/embed/iframe/kxlu6pdwxy" title="Consuming Context Data" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+                
+                <div class="resources">
+                    <h4>Using the useContext Hook</h4>
+                    <p>Once you've set up a context provider, any component within the provider's tree can access the context data using the <code>useContext</code> hook.</p>
+                    
+                    <p>Here's how to consume context data in a component:</p>
+                    
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 10px; border-radius: 4px; overflow-x: auto;">
+// components/Button.js
+import React, { useContext } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
+
+function Button({ children }) {
+  // Access the context data
+  const theme = useContext(ThemeContext);
+  
+  return (
+    &lt;button 
+      style={{ 
+        backgroundColor: theme.colors.primary,
+        color: theme.colors.text
+      }}
+    >
+      {children}
+    &lt;/button>
+  );
+}</pre>
+                    
+                    <p>Key benefits of using Context:</p>
+                    <ul>
+                        <li>Eliminates prop drilling</li>
+                        <li>Makes component code cleaner and more focused</li>
+                        <li>Centralizes related data and functionality</li>
+                        <li>Components only consume what they need from the context</li>
+                    </ul>
+                    
+                    <p>Context is perfect for themes, user authentication, language preferences, and other global application states that many components throughout your application need to access.</p>
+                </div>
             </div>
         </div>
 
@@ -197,11 +300,11 @@
             <div class="resources">
                 <h4>Guided Project</h4>
                 <ul>
-                    <li><a href="#">Module 2 Guided Project</a></li>
+                    <li><a href="https://github.com/bloominstituteoftechnology/web-guided-project-context" target="_blank">Context API Guided Project</a></li>
                 </ul>
                 <h4>Project Solution</h4>
                 <ul>
-                    <li><a href="#">Module 2 Project Solution</a></li>
+                    <li><a href="https://github.com/bloominstituteoftechnology/web-module-project-context" target="_blank">Context API Project Solution</a></li>
                 </ul>
             </div>
         </div>
@@ -210,11 +313,13 @@
             <h2>Additional Resources</h2>
             <div class="resources">
                 <ul>
-                    <li><a href="#">Module 2 Documentation</a></li>
-                    <li><a href="#">Practice Exercises</a></li>
-                    <li><a href="#">Code Examples</a></li>
+                    <li><a href="https://react.dev/reference/react/createContext" target="_blank">React Context API Documentation</a></li>
+                    <li><a href="https://react.dev/learn/passing-data-deeply-with-context" target="_blank">Passing Data Deeply with Context</a></li>
+                    <li><a href="https://react.dev/reference/react/useContext" target="_blank">useContext Hook Documentation</a></li>
+                    <li><a href="https://redux-toolkit.js.org/introduction/getting-started" target="_blank">Redux Toolkit Getting Started</a></li>
                 </ul>
             </div>
+        </div>
     </div>
 </body>
 </html> 
