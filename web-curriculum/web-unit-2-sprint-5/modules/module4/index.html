@@ -122,45 +122,251 @@
         
         <a href="../../index.html" class="back-link">← Back to Course Overview</a>
         <h1>Module 4: Consuming Data From the Network</h1>
-        <p>In this module, you'll learn how to work with APIs and handle asynchronous data. You'll understand the fetch API, promises, and how to handle errors in network requests.</p>
+        <p>In this module, you'll learn how to work with APIs and handle asynchronous data. Web applications frequently need to retrieve and send data to servers to provide dynamic content and functionality. You'll understand the fetch API, promises, HTTP methods, and how to handle success and error cases in network requests to create robust, data-driven web applications.</p>
 
         <div class="content-section">
             <h2>JavaScript Promises</h2>
-            <p>Learn about promises and how they help handle asynchronous operations.</p>
+            <p>Learn about promises and how they help handle asynchronous operations. Promises are objects representing the eventual completion or failure of an asynchronous operation, allowing you to chain operations and handle results when they become available, rather than blocking execution while waiting for responses.</p>
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/5dbzxf5557" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+            <div class="concept-details">
+                <h3>Understanding Asynchronous Code</h3>
+                <p>In JavaScript, we have the concept of 'asynchronous' code. This means code that does not run instantly in line. Instead, perhaps the code needs to wait a moment, wait for something to happen, or wait until data comes back from a server.</p>
+                <p>Using asynchronous code can be challenging at first because we need to recognize which code will be asynchronous and which will run instantly. Take the following example, which will run instantly and which will wait to run?</p>
+                <pre><code>setTimeout( () => {
+    console.log('Hello!');
+}, 1000);
+
+console.log('Over here!');</code></pre>
+                <p>Even if you have never seen <code>setTimeout</code> before, you probably realized that it will wait a moment to run, where console.log will run instantly. If you run this code in your console you should see <code>Over here!</code> print first because setTimeout will wait 1 second (1000 ms) to run.</p>
+                <p>Asynchronous code is everywhere in JavaScript. It is an important concept to understand.</p>
+
+                <h3>Introduction to Promises</h3>
+                <p>We have a few different ways to approach asynchronous code; in the last example, we saw callbacks (which you already understand). Other concepts are <code>async/await</code> and <code>Promises</code>.</p>
+                <p>Promises are a design pattern for use when handling asynchronous code in JavaScript. We use them as an alternative to nesting multiple callbacks. You may have heard of a problem called <code>callback hell</code>. Promises are a way to avoid this problem.</p>
+                <p>A promise is a response from the object that it will let us know when it has completed (or errored) what we have asked it to do. A promise can exist in one of three states:</p>
+                <ul>
+                    <li><code>Pending</code>: a state where the promise is neither rejected nor fulfilled (this is the state it is in when we first call it).</li>
+                    <li><code>Fulfilled</code>: a state where all's well and a resolved value can be used by our code.</li>
+                    <li><code>Rejected</code>: a state where something went wrong and an error will need to be dealt with.</li>
+                </ul>
+                <p>If the promise succeeds, it will return the value as a parameter into a callback passed into <code>.then()</code>. If the promise fails, the callback passed into the <code>.catch()</code> runs, taking an error as its argument.</p>
             </div>
         </div>
 
         <div class="content-section">
             <h2>Using Functions That Return Promises</h2>
-            <p>Learn how to work with functions that return promises and handle their results.</p>
+            <p>Learn how to work with functions that return promises and handle their results. Many modern JavaScript APIs, including fetch, return promises. You'll learn to use .then() to handle successful responses, chain operations in a readable sequence, and understand promise states (pending, fulfilled, rejected).</p>
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/8ilphbvski" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+            <div class="concept-details">
+                <h3>Working with Promises</h3>
+                <p>When working with promises, we use the <code>.then()</code> method to handle the resolved value and chain operations. Here's an example of creating and using a promise:</p>
+                <pre><code>let time = 0;
+const timeMachine = () => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve((time += 1000));
+    }, 1000);
+  });
+};
+
+timeMachine()
+  .then(newTime => {
+    console.log(newTime); // OUTPUTS: 1000
+  });</code></pre>
+                
+                <p>We can chain multiple <code>.then()</code> calls to create a sequence of operations:</p>
+                <pre><code>timeMachine()
+  .then(newTime => {
+    const myTime = newTime / 1000;
+    return `${myTime} seconds have passed`;
+  })
+  .then(newString => {
+    console.log(newString); // OUTPUTS "1 seconds have passed"
+  });</code></pre>
+                
+                <p>This chaining is particularly powerful when dealing with functions that return promises, such as the <code>fetch</code> API:</p>
+                <pre><code>fetch('https://api.example.com/data')
+  .then(response => response.json())
+  .then(data => {
+    console.log('Data received:', data);
+    return data;
+  })
+  .then(data => {
+    // Do something else with the data
+    return processData(data);
+  })
+  .then(processedData => {
+    // Continue the chain with the processed data
+    console.log('Processed data:', processedData);
+  });</code></pre>
             </div>
         </div>
 
         <div class="content-section">
             <h2>Handling Failure with .catch</h2>
-            <p>Learn how to handle errors in promises using the catch method.</p>
+            <p>Learn how to handle errors in promises using the catch method. Network requests can fail for many reasons (server errors, network issues, invalid data), and proper error handling is crucial for a good user experience. You'll learn how to implement error handling in promise chains and display appropriate feedback to users.</p>
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/gudmc8nnq7" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+            <div class="concept-details">
+                <h3>Error Handling in Promises</h3>
+                <p>When working with asynchronous operations, things can go wrong. Promises provide a standardized way to handle errors using the <code>.catch()</code> method, which catches any errors that occur in the promise chain.</p>
+                <p>Example of a promise that might reject:</p>
+                <pre><code>const parseTime = ms => {
+  return new Promise((resolve, reject) => {
+    const timeString = time / 1000;
+    if (ms > 999) {
+      resolve(`${timeString} seconds have passed`);
+    } else {
+      reject(new Error(`ms is less than 1 second promise rejected!`));
+    }
+  });
+};</code></pre>
+                
+                <p>Using <code>catch</code> to handle errors:</p>
+                <pre><code>timeMachine()
+  .then(parseTime)
+  .then(timePassed => {
+    console.log(timePassed); // Only runs if the promise is fulfilled
+  })
+  .catch(err => {
+    console.log(err); // OUTPUT: [Error: ms is less than 1 second promise rejected!]
+  });</code></pre>
+                
+                <p>When using the Fetch API, error handling is particularly important:</p>
+                <pre><code>fetch('https://api.example.com/data')
+  .then(response => {
+    if (!response.ok) {
+      // Creating an error and throwing it will trigger the catch block
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Data:', data);
+    // Process the data
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+    // Show user-friendly error message
+    document.querySelector('.error-message').textContent = 
+      'We couldn\'t load the data. Please try again later.';
+  });</code></pre>
+                
+                <p>A good practice is to have error handling for both specific parts of your promise chain and a general catch at the end to prevent unhandled promise rejections.</p>
             </div>
         </div>
 
         <div class="content-section">
             <h2>Using HTTP Methods</h2>
-            <p>Learn about different HTTP methods and how to use them with the fetch API.</p>
+            <p>Learn about different HTTP methods and how to use them with the fetch API. HTTP methods like GET, POST, PUT, and DELETE determine what action you're performing when communicating with a server. Each method has specific use cases: retrieving data (GET), submitting data (POST), updating existing data (PUT), or removing data (DELETE).</p>
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/rb6eeupq29" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+            <div class="concept-details">
+                <h3>Common HTTP Methods</h3>
+                <p>HTTP (Hypertext Transfer Protocol) is the foundation of data communication on the web. When making requests to a server, we use different HTTP methods to indicate the desired action:</p>
+                <ul>
+                    <li><strong>GET</strong>: Retrieve data from the server (read-only)</li>
+                    <li><strong>POST</strong>: Send data to the server to create a new resource</li>
+                    <li><strong>PUT</strong>: Update an existing resource on the server</li>
+                    <li><strong>DELETE</strong>: Remove a resource from the server</li>
+                    <li><strong>PATCH</strong>: Partially update an existing resource</li>
+                </ul>
+                
+                <p>Using the Fetch API with different HTTP methods:</p>
+                <h4>GET Request (Default)</h4>
+                <pre><code>fetch('https://api.example.com/users')
+  .then(response => response.json())
+  .then(users => console.log(users))
+  .catch(error => console.error('Error:', error));</code></pre>
+                
+                <h4>POST Request</h4>
+                <pre><code>fetch('https://api.example.com/users', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'John Doe',
+    email: 'john@example.com'
+  })
+})
+  .then(response => response.json())
+  .then(newUser => console.log('User created:', newUser))
+  .catch(error => console.error('Error:', error));</code></pre>
+                
+                <h4>PUT Request</h4>
+                <pre><code>fetch('https://api.example.com/users/123', {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'John Smith',
+    email: 'john.smith@example.com'
+  })
+})
+  .then(response => response.json())
+  .then(updatedUser => console.log('User updated:', updatedUser))
+  .catch(error => console.error('Error:', error));</code></pre>
+                
+                <h4>DELETE Request</h4>
+                <pre><code>fetch('https://api.example.com/users/123', {
+  method: 'DELETE'
+})
+  .then(response => {
+    if (response.ok) {
+      console.log('User deleted successfully');
+    } else {
+      throw new Error('Failed to delete user');
+    }
+  })
+  .catch(error => console.error('Error:', error));</code></pre>
             </div>
         </div>
 
         <div class="content-section">
             <h2>Hitting an API with Postman</h2>
-            <p>Learn how to test APIs using Postman before implementing them in your code.</p>
+            <p>Learn how to test APIs using Postman before implementing them in your code. Postman is a popular tool for API development that allows you to send requests to endpoints, view responses, and test different parameters without writing code. This helps you understand the API's structure and behavior before integrating it into your application.</p>
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/8sumlfezdi" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+            <div class="concept-details">
+                <h3>Testing APIs with Postman</h3>
+                <p>Before implementing API calls in your code, it's often helpful to test them using a tool like Postman. This allows you to:</p>
+                <ul>
+                    <li>Verify that the API works as expected</li>
+                    <li>Understand the structure of request and response data</li>
+                    <li>Test different parameters and edge cases</li>
+                    <li>Debug issues without the complexity of your application code</li>
+                </ul>
+                
+                <p>When testing an API in Postman:</p>
+                <ol>
+                    <li>Enter the endpoint URL (e.g., <code>https://api.example.com/users</code>)</li>
+                    <li>Select the HTTP method (GET, POST, PUT, DELETE, etc.)</li>
+                    <li>Add any required headers (e.g., Content-Type, Authorization)</li>
+                    <li>For POST/PUT requests, add the request body in the appropriate format</li>
+                    <li>Click "Send" to make the request and view the response</li>
+                </ol>
+                
+                <p>Once you've tested your API calls in Postman, you can implement them in your JavaScript code using Fetch or Axios with confidence that you understand how the API works and what to expect in the responses.</p>
+                
+                <h3>From Postman to Code</h3>
+                <p>Postman can even generate code snippets for you. After creating a working request in Postman:</p>
+                <ol>
+                    <li>Click the "Code" button (usually found under the Save button)</li>
+                    <li>Select JavaScript and your preferred library (Fetch, Axios, etc.)</li>
+                    <li>Copy the generated code into your application</li>
+                    <li>Adapt the code to fit your application's structure and error handling</li>
+                </ol>
+                
+                <p>This workflow helps ensure that your API integration works correctly and helps you understand the API requirements before writing code.</p>
             </div>
         </div>
 
@@ -174,6 +380,9 @@
                 <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API" target="_blank" rel="noopener">MDN Web Docs - Fetch API</a></li>
                 <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods" target="_blank" rel="noopener">MDN Web Docs - HTTP Methods</a></li>
                 <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch" target="_blank" rel="noopener">MDN Web Docs - Promise.catch</a></li>
+                <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises" target="_blank" rel="noopener">MDN Web Docs - Using promises</a></li>
+                <li><a href="https://www.cloudflare.com/learning/ssl/what-is-https/" target="_blank" rel="noopener">What is HTTPS?</a></li>
+                <li><a href="https://backend.turing.edu/module2/lessons/how_the_web_works_http" target="_blank" rel="noopener">How the Web Works, HTTP Request/Response Cycle</a></li>
             </ul>
         </div>
     </div>
