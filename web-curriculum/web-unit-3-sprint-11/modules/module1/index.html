@@ -174,6 +174,56 @@
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/0o8k9quzsp" title="Testing React Components" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
+                <div class="content-box" style="background-color: #333a47; padding: 20px; border-radius: 6px; margin-top: 15px; border: 1px solid #444c5c;">
+                    <h4>Objective 1: Test React Components as Props Change</h4>
+                    <p>When testing React components, it's essential to test how components behave as props change. The React Testing Library provides the <code>rerender()</code> function that allows us to test components after props have been updated.</p>
+                    
+                    <h5 style="color: #ff5722; margin-top: 15px;">Testing Prop Changes with rerender()</h5>
+                    <p>To test components as props change, we need to:</p>
+                    <ol>
+                        <li>Render the component with initial props</li>
+                        <li>Test the initial state</li>
+                        <li>Use the <code>rerender()</code> function to update props</li>
+                        <li>Test the component with the new props</li>
+                    </ol>
+                    
+                    <h5 style="color: #ff5722; margin-top: 15px;">Example: Testing a Component with Props</h5>
+                    <pre style="background-color: #2a303c; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+import { render, screen } from '@testing-library/react';
+import App from './App';
+
+test('renders friends from the API', () => {
+  // Pass an empty list on first render (data hasn't arrived from API)
+  const { rerender } = render(&lt;App friends={[]} /&gt;);
+
+  // Assert that there are no friends yet, because they are still arriving
+  expect(screen.queryAllByTestId('friend')).toHaveLength(0);
+
+  // Assert that a "fetching" message is showing
+  expect(screen.queryByText('Fetching friends...')).toBeInTheDocument();
+
+  // Rerender component with new props
+  rerender(
+    &lt;App friends={[
+      { id: 1, name: 'Alla' },
+      { id: 2, name: 'Josh' }
+    ]} /&gt;
+  );
+
+  // Assert that we have friends now, and that the "fetching" message is gone
+  expect(screen.queryAllByTestId('friend')).toHaveLength(2);
+  expect(screen.queryByText('Fetching friends...')).not.toBeInTheDocument();
+});</pre>
+                    
+                    <h5 style="color: #ff5722; margin-top: 15px;">Testing Content Not Rendered</h5>
+                    <p>Sometimes you need to assert that content is not present in the DOM. Use <code>queryByRole</code> or other <code>queryBy</code> assertions instead of <code>getBy</code> assertions, as these return <code>null</code> instead of throwing an error when an element isn't found.</p>
+                    <pre style="background-color: #2a303c; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// Assert content is not rendered
+expect(screen.queryByRole("alert")).toBeNull();
+
+// Or use .not with toBeInTheDocument()
+expect(screen.queryByText('Error message')).not.toBeInTheDocument();</pre>
+                </div>
             </div>
 
             <div class="video-section">
@@ -181,12 +231,111 @@
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/92jzrqbvdx" title="Using Mocks in Tests" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
+                <div class="content-box" style="background-color: #333a47; padding: 20px; border-radius: 6px; margin-top: 15px; border: 1px solid #444c5c;">
+                    <h4>Objective 2: Use Mocks in Web Application Tests</h4>
+                    <p>Mocks are essential for isolating the behavior of functions in your tests, especially when dealing with dependencies that would make testing difficult, such as random ID generators or API calls.</p>
+                    
+                    <h5 style="color: #ff5722; margin-top: 15px;">Why Use Mocks?</h5>
+                    <p>Mocks provide two key benefits:</p>
+                    <ul>
+                        <li>They replace objects with simulations, allowing isolation of the specific function being tested</li>
+                        <li>They act as "spies" to track calls to functions and the parameters passed in those calls</li>
+                    </ul>
+                    
+                    <h5 style="color: #ff5722; margin-top: 15px;">Example: Mocking a Module</h5>
+                    <p>Consider a component that uses the <code>nanoid</code> library to generate unique IDs:</p>
+                    <pre style="background-color: #2a303c; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+import { nanoid } from "nanoid";
+
+export const makeUser = (firstName, lastName) => {
+  return {
+    id: nanoid(),
+    fullName: `${firstName} ${lastName}`
+  };
+};</pre>
+                    
+                    <p>Testing this would be challenging because <code>nanoid()</code> generates a random ID each time. We can mock the nanoid function to return a predictable value:</p>
+                    
+                    <pre style="background-color: #2a303c; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// At the top of your test file
+jest.mock('nanoid', () => ({
+  nanoid: () => 'abcde',
+}));
+
+test("generates a user with an id and a full name", () => {
+  // Arrange
+  const expected = { id: "abcde", fullName: "Peter Parker" };
+
+  // Act
+  const actual = makeUser("Peter", "Parker");
+
+  // Assert
+  expect(actual).toEqual(expected);
+});</pre>
+                    
+                    <p>The mock replaces the real <code>nanoid</code> module with our controlled version, making the tests predictable and reliable.</p>
+                </div>
             </div>
 
             <div class="video-section">
                 <h3>Testing Async API Calls</h3>
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/92jzrqbvdx" title="Testing Async API Calls" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
+                </div>
+                <div class="content-box" style="background-color: #333a47; padding: 20px; border-radius: 6px; margin-top: 15px; border: 1px solid #444c5c;">
+                    <h4>Objective 3: Test Asynchronous API Calls in Components</h4>
+                    <p>Testing asynchronous operations such as API calls requires special handling to ensure your tests wait for those operations to complete before making assertions.</p>
+                    
+                    <h5 style="color: #ff5722; margin-top: 15px;">Testing Async Operations</h5>
+                    <p>React Testing Library provides the <code>waitFor</code> function to help test asynchronous operations. Combined with mocking, it allows you to test components that make API calls without actually waiting for real network requests.</p>
+                    
+                    <h5 style="color: #ff5722; margin-top: 15px;">Step-by-Step Approach for Testing Async Calls</h5>
+                    <ol>
+                        <li>Import necessary libraries including <code>waitFor</code></li>
+                        <li>Mock the API function</li>
+                        <li>Set up what the mock should return</li>
+                        <li>Render the component and trigger the async action (e.g., button click)</li>
+                        <li>Use <code>waitFor</code> to wait for DOM updates after the async operation</li>
+                        <li>Make assertions about the updated UI</li>
+                    </ol>
+                    
+                    <h5 style="color: #ff5722; margin-top: 15px;">Example: Testing a Component with API Call</h5>
+                    <pre style="background-color: #2a303c; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+import React from "react";
+import { render, waitFor } from "@testing-library/react";
+import userEvent from '@testing-library/user-event';
+import { fetchDoggos as mockFetchDoggos } from "../api/fetchDoggos";
+import Doggos from "./Doggos";
+
+// Create mock before setting up test
+jest.mock("../api/fetchDoggos");
+
+test("renders dog images from API", async () => {
+  // Mock resolved results
+  mockFetchDoggos.mockResolvedValueOnce({
+    message: [
+      "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
+      "https://images.dog.ceo/breeds/hound-afghan/n02088094_1007.jpg",
+      "https://images.dog.ceo/breeds/hound-afghan/n02088094_1023.jpg"
+    ]
+  });
+
+  const { getByText, getAllByTestId } = render(<Doggos />);
+  const user = userEvent.setup();
+
+  const fetchDoggosButton = getByText(/fetch doggos/i);
+  await user.click(fetchDoggosButton);
+  
+  // Wait for the component to update after the async call
+  await waitFor(() => {
+    expect(getAllByTestId(/doggo-images/i)).toHaveLength(3);
+  });
+  
+  // Verify the mock was called
+  expect(mockFetchDoggos).toHaveBeenCalledTimes(1);
+});</pre>
+                    
+                    <p>This approach allows you to test the full user flow, including the async API call, without actually making network requests.</p>
                 </div>
             </div>
         </div>
