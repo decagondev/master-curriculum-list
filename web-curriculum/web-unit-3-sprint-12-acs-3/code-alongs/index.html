@@ -163,7 +163,7 @@
 
         <div class="section">
             <h2>Code-Along Overview</h2>
-            <p>In these code-along sessions, you'll work through practical examples and implementations of the concepts covered in the modules. These sessions provide hands-on experience and reinforce your learning.</p>
+            <p>In these code-along sessions, you'll work through practical examples and implementations of the concepts covered in the modules. These hands-on experiences will reinforce your learning and provide you with real-world problem-solving skills essential for technical interviews and professional development.</p>
         </div>
 
         <div class="section">
@@ -175,6 +175,50 @@
                     <iframe src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" title="Big O Analysis and Caching" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
                 <p>Learn how to analyze algorithm complexity and implement caching strategies through practical examples.</p>
+                <div class="resources">
+                    <h4>Key Concepts Covered:</h4>
+                    <ul>
+                        <li>Identifying time and space complexity of algorithms</li>
+                        <li>Optimizing performance through caching</li>
+                        <li>Implementing memoization for recursive functions</li>
+                        <li>Comparing algorithms with different complexity classes</li>
+                    </ul>
+                    <h4>Code Example - Fibonacci with Caching:</h4>
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// Naive recursive implementation - O(2^n) time complexity
+function fibonacciSlow(n) {
+  if (n <= 1) return n;
+  return fibonacciSlow(n - 1) + fibonacciSlow(n - 2);
+}
+
+// Optimized implementation with caching - O(n) time complexity
+function fibonacciFast(n, memo = {}) {
+  // Check if we've already calculated this value
+  if (n in memo) return memo[n];
+  
+  // Base cases
+  if (n <= 1) return n;
+  
+  // Calculate and cache the result
+  memo[n] = fibonacciFast(n - 1, memo) + fibonacciFast(n - 2, memo);
+  return memo[n];
+}
+
+// Compare performance
+console.time('Slow Fibonacci');
+console.log(fibonacciSlow(30)); // Takes several seconds
+console.timeEnd('Slow Fibonacci');
+
+console.time('Fast Fibonacci');
+console.log(fibonacciFast(30)); // Nearly instant
+console.timeEnd('Fast Fibonacci');
+
+// The performance difference becomes even more dramatic for larger inputs
+// fibonacciSlow(50) would take millions of years
+// fibonacciFast(50) completes in microseconds
+                    </pre>
+                    <p>Related Practice: <a href="https://leetcode.com/problems/climbing-stairs/" style="color: #ff5722;">LeetCode: Climbing Stairs</a> - A problem well-suited for memoization.</p>
+                </div>
             </div>
 
             <div class="video-section">
@@ -183,6 +227,163 @@
                     <iframe src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" title="Object References and Linked Lists" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
                 <p>Work through examples of object references and linked list implementations.</p>
+                <div class="resources">
+                    <h4>Key Concepts Covered:</h4>
+                    <ul>
+                        <li>Understanding object references vs. primitive values</li>
+                        <li>Implementing and manipulating linked list structures</li>
+                        <li>Handling edge cases in linked list operations</li>
+                        <li>Solving common linked list interview problems</li>
+                    </ul>
+                    <h4>Code Example - Reversing a Linked List:</h4>
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// Node class for our linked list
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
+// Function to create a linked list from an array for testing
+function createLinkedList(array) {
+  if (array.length === 0) return null;
+  
+  const head = new Node(array[0]);
+  let current = head;
+  
+  for (let i = 1; i < array.length; i++) {
+    current.next = new Node(array[i]);
+    current = current.next;
+  }
+  
+  return head;
+}
+
+// Function to print a linked list for visualization
+function printList(head) {
+  const values = [];
+  let current = head;
+  
+  while (current) {
+    values.push(current.value);
+    current = current.next;
+  }
+  
+  return values.join(' -> ');
+}
+
+// Function to reverse a linked list (in-place)
+function reverseLinkedList(head) {
+  let prev = null;
+  let current = head;
+  
+  while (current) {
+    // Save next pointer before we change it
+    const next = current.next;
+    
+    // Reverse the pointer
+    current.next = prev;
+    
+    // Move pointers forward
+    prev = current;
+    current = next;
+  }
+  
+  // The new head is the previous tail
+  return prev;
+}
+
+// Test our implementation
+const list = createLinkedList([1, 2, 3, 4, 5]);
+console.log('Original list:', printList(list)); // 1 -> 2 -> 3 -> 4 -> 5
+
+const reversed = reverseLinkedList(list);
+console.log('Reversed list:', printList(reversed)); // 5 -> 4 -> 3 -> 2 -> 1
+                    </pre>
+                    <p>Related Practice: <a href="https://leetcode.com/problems/reverse-linked-list/" style="color: #ff5722;">LeetCode: Reverse Linked List</a> - A classic linked list problem that tests your understanding of references.</p>
+                </div>
+            </div>
+            
+            <div class="video-section">
+                <h3>3. Classes and Object-Oriented Programming</h3>
+                <div class="resources">
+                    <h4>Key Concepts Covered:</h4>
+                    <ul>
+                        <li>Creating and extending JavaScript classes</li>
+                        <li>Implementing object-oriented design patterns</li>
+                        <li>Building data structures with classes</li>
+                        <li>Encapsulating logic and state within classes</li>
+                    </ul>
+                    <h4>Code Example - Stack Implementation:</h4>
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// Stack implementation using JavaScript class
+class Stack {
+  constructor() {
+    this.items = [];
+    this.size = 0;
+  }
+  
+  // Add element to the top of the stack
+  push(element) {
+    this.items.push(element);
+    this.size++;
+    return this;
+  }
+  
+  // Remove and return the top element
+  pop() {
+    if (this.isEmpty()) {
+      return null;
+    }
+    
+    this.size--;
+    return this.items.pop();
+  }
+  
+  // View the top element without removing it
+  peek() {
+    if (this.isEmpty()) {
+      return null;
+    }
+    
+    return this.items[this.size - 1];
+  }
+  
+  // Check if stack is empty
+  isEmpty() {
+    return this.size === 0;
+  }
+  
+  // Get the size of the stack
+  getSize() {
+    return this.size;
+  }
+  
+  // Clear the stack
+  clear() {
+    this.items = [];
+    this.size = 0;
+    return this;
+  }
+}
+
+// Example usage
+const stack = new Stack();
+stack.push(10).push(20).push(30);
+
+console.log('Stack size:', stack.getSize()); // 3
+console.log('Top element:', stack.peek()); // 30
+
+console.log('Popped element:', stack.pop()); // 30
+console.log('New top element:', stack.peek()); // 20
+console.log('New size:', stack.getSize()); // 2
+
+stack.clear();
+console.log('After clearing, is empty?', stack.isEmpty()); // true
+                    </pre>
+                    <p>Related Practice: <a href="https://leetcode.com/problems/min-stack/" style="color: #ff5722;">LeetCode: Min Stack</a> - A problem that requires implementing a stack data structure with additional functionality.</p>
+                </div>
             </div>
         </div>
 
@@ -190,9 +391,12 @@
             <h2>Additional Resources</h2>
             <div class="resources">
                 <ul>
-                    <li><a href="#">Code-Along Repository</a></li>
-                    <li><a href="#">Practice Problems</a></li>
-                    <li><a href="#">Solution Guides</a></li>
+                    <li><a href="#" style="color: #ff5722;">Code-Along Repository</a></li>
+                    <li><a href="#" style="color: #ff5722;">Practice Problems</a></li>
+                    <li><a href="#" style="color: #ff5722;">Solution Guides</a></li>
+                    <li><a href="https://leetcode.com/explore/interview/card/top-interview-questions-easy/" style="color: #ff5722;">LeetCode: Top Interview Questions</a> - Curated problems commonly asked in interviews, replacing CodeSignal Arcade</li>
+                    <li><a href="https://leetcode.com/problemset/algorithms/" style="color: #ff5722;">LeetCode: Algorithm Problems</a> - Comprehensive set of algorithmic challenges sorted by difficulty</li>
+                    <li><a href="https://leetcode.com/problems/valid-parentheses/" style="color: #ff5722;">LeetCode: Valid Parentheses</a> - A classic stack problem to practice your implementation</li>
                 </ul>
             </div>
         </div>
