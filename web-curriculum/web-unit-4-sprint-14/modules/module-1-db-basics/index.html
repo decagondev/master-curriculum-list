@@ -226,6 +226,113 @@
             <div class="video-container">
                 <iframe src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" title="Database Basics Introduction"></iframe>
             </div>
+            
+            <div class="content-section" style="margin-top: 30px;">
+                <h3>Understanding Relational Databases</h3>
+                <p>A relational database is a collection of data organized as a set of formally described tables. These tables have relationships between them, allowing data to be defined and accessed in various ways.</p>
+                
+                <h4>Core Components</h4>
+                <ul>
+                    <li><strong>Tables:</strong> The main building blocks that store data in rows and columns, similar to spreadsheets.</li>
+                    <li><strong>Records (Rows):</strong> Each individual entry in a table, representing a single instance of an entity.</li>
+                    <li><strong>Fields (Columns):</strong> Categories of data that define what type of information is stored.</li>
+                    <li><strong>Primary Keys:</strong> Unique identifiers for each record in a table, ensuring data integrity.</li>
+                    <li><strong>Foreign Keys:</strong> Fields that link to primary keys in other tables, establishing relationships.</li>
+                </ul>
+                
+                <p>Example of a simple table structure:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  username TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+                </pre>
+            </div>
+            
+            <div class="content-section">
+                <h3>SQL Fundamentals</h3>
+                <p>SQL (Structured Query Language) is the standard language for interacting with relational databases. It allows you to create, read, update, and delete data with precision.</p>
+                
+                <h4>Key SQL Operations</h4>
+                <ul>
+                    <li><strong>SELECT:</strong> Retrieves data from one or more tables.</li>
+                    <li><strong>INSERT:</strong> Adds new records to a table.</li>
+                    <li><strong>UPDATE:</strong> Modifies existing records.</li>
+                    <li><strong>DELETE:</strong> Removes records from a table.</li>
+                    <li><strong>JOIN:</strong> Combines rows from multiple tables based on related columns.</li>
+                </ul>
+                
+                <p>Example SQL queries:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+-- Select all users
+SELECT * FROM users;
+
+-- Insert a new user
+INSERT INTO users (username, email) 
+VALUES ('john_doe', 'john@example.com');
+
+-- Update a user's email
+UPDATE users 
+SET email = 'john.doe@example.com' 
+WHERE username = 'john_doe';
+
+-- Delete a user
+DELETE FROM users 
+WHERE username = 'john_doe';
+                </pre>
+            </div>
+            
+            <div class="content-section">
+                <h3>Working with Knex.js</h3>
+                <p>Knex.js is a SQL query builder for Node.js that provides a unified interface for interacting with different database systems, including SQLite, PostgreSQL, MySQL, and others.</p>
+                
+                <h4>Benefits of Knex.js</h4>
+                <ul>
+                    <li>Prevents SQL injection attacks through query parameterization</li>
+                    <li>Provides a consistent API across different database systems</li>
+                    <li>Makes complex queries more readable with a chainable interface</li>
+                    <li>Supports migrations and seeds for database version control</li>
+                </ul>
+                
+                <p>Example of Knex.js setup and queries:</p>
+                <pre style="background-color: #2a303c; padding: 15px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+// Setup connection
+const knex = require('knex')({
+  client: 'sqlite3',
+  connection: {
+    filename: './dev.sqlite3'
+  },
+  useNullAsDefault: true
+});
+
+// Select all users
+knex('users')
+  .select('*')
+  .then(users => {
+    console.log(users);
+  });
+
+// Insert a new user
+knex('users')
+  .insert({
+    username: 'jane_doe',
+    email: 'jane@example.com'
+  })
+  .then(ids => {
+    console.log('New user created with ID:', ids[0]);
+  });
+
+// Update a user
+knex('users')
+  .where({ username: 'jane_doe' })
+  .update({ email: 'jane.doe@example.com' })
+  .then(count => {
+    console.log(`${count} user(s) updated`);
+  });
+                </pre>
+            </div>
         </div>
 
         <div class="section">
