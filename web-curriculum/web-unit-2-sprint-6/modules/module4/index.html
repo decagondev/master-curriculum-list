@@ -133,6 +133,22 @@
         <div class="content-section">
             <h2>Introduction to Styled Components</h2>
             <p>Learn about the styled-components library and how it enables CSS-in-JS styling.</p>
+            
+            <p>Styled Components is a popular CSS-in-JS library for React that allows you to write actual CSS code to style your components while keeping the styles scoped to the component. This helps eliminate many of the problems with traditional CSS, such as class name collisions, specificity issues, and the need for separate CSS files.</p>
+            
+            <p>Key benefits of using styled-components include:</p>
+            <ul style="color: #b3b3b3; padding-left: 20px;">
+                <li><strong>Automatic critical CSS</strong>: Only the styles actually used on the current page are sent to the client</li>
+                <li><strong>No class name bugs</strong>: Styled components generates unique class names, so you never have to worry about duplication, overlap or misspellings</li>
+                <li><strong>Easier deletion of CSS</strong>: Since every bit of styling is tied to a specific component, if the component is unused or removed, all its styles get removed as well</li>
+                <li><strong>Simple dynamic styling</strong>: Adapting styling based on props or a global theme is simple and intuitive</li>
+                <li><strong>Painless maintenance</strong>: You never have to hunt across files to find the styling affecting your component</li>
+                <li><strong>Automatic vendor prefixing</strong>: Write your CSS rules according to the current standard, and styled-components handles the rest</li>
+            </ul>
+            
+            <p>To get started with styled-components, first install the library:</p>
+            <pre><code>npm install styled-components</code></pre>
+            
             <div class="video-container">
                 <iframe class="wistia_embed" title="Introduction to Styled Components" src="https://fast.wistia.net/embed/iframe/rh7ozbads1" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
@@ -141,6 +157,47 @@
         <div class="content-section">
             <h2>Creating and Using Styled Components</h2>
             <p>Master the creation and usage of styled components in your React applications.</p>
+            
+            <p>Creating a styled component is as simple as importing the styled object from the library and using it to create components with CSS. The styled object has methods for all HTML elements, which you can call and pass a template literal with CSS rules.</p>
+            
+            <p>Here's a basic example of creating and using styled components:</p>
+            
+            <pre><code>import styled from 'styled-components';
+
+// Create a styled button component
+const Button = styled.button`
+  background-color: #ff5722;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  
+  &:hover {
+    background-color: #ff7043;
+  }
+`;
+
+// Create a styled heading component
+const Heading = styled.h1`
+  color: #333;
+  font-size: 2rem;
+  margin-bottom: 20px;
+`;
+
+// Use the styled components in your React component
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Heading&gt;Hello World&lt;/Heading&gt;
+      &lt;Button&gt;Click Me&lt;/Button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+            
+            <p>Notice how you can use all the regular CSS syntax inside the template literal, including pseudo-selectors like <code>&:hover</code>. The ampersand (&) is a reference to the component itself, which makes it easy to create nested styles.</p>
+            
             <div class="video-container">
                 <iframe class="wistia_embed" title="Creating Styled Components" src="https://fast.wistia.net/embed/iframe/16idmt7vfu" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
@@ -149,6 +206,54 @@
         <div class="content-section">
             <h2>Dynamic Styling with Props</h2>
             <p>Learn how to create dynamic styles using props in styled components.</p>
+            
+            <p>One of the most powerful features of styled-components is the ability to adapt styling based on props. You can make your styles dynamic by passing props to the styled components and using these props inside the template literals to determine styles.</p>
+            
+            <p>Here's an example of dynamic styling using props:</p>
+            
+            <pre><code>import styled from 'styled-components';
+
+// Create a Button with dynamic styling
+const Button = styled.button`
+  background-color: ${props => props.primary ? '#ff5722' : 'transparent'};
+  color: ${props => props.primary ? 'white' : '#ff5722'};
+  border: 2px solid #ff5722;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: ${props => props.large ? '18px' : '14px'};
+  margin: 5px;
+  
+  &:hover {
+    background-color: ${props => props.primary ? '#ff7043' : '#ffebee'};
+  }
+`;
+
+// Use buttons with different props
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Button&gt;Normal Button&lt;/Button&gt;
+      &lt;Button primary&gt;Primary Button&lt;/Button&gt;
+      &lt;Button large&gt;Large Button&lt;/Button&gt;
+      &lt;Button primary large&gt;Large Primary Button&lt;/Button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+            
+            <p>You can also extend existing styled components to create variations:</p>
+            
+            <pre><code>// Extend the Button to create a new variant
+const DangerButton = styled(Button)`
+  background-color: ${props => props.primary ? '#f44336' : 'transparent'};
+  border-color: #f44336;
+  color: ${props => props.primary ? 'white' : '#f44336'};
+  
+  &:hover {
+    background-color: ${props => props.primary ? '#e53935' : '#ffebee'};
+  }
+`;</code></pre>
+            
             <div class="video-container">
                 <iframe class="wistia_embed" title="Dynamic Styling with Props" src="https://fast.wistia.net/embed/iframe/pj94lrdhs4" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
@@ -157,6 +262,88 @@
         <div class="content-section">
             <h2>Theme Provider and Global Styles</h2>
             <p>Understand how to use ThemeProvider and create global styles in your application.</p>
+            
+            <p>Styled Components offers a ThemeProvider wrapper component that allows you to inject a theme into all styled components anywhere in your application. This is incredibly useful for creating consistent styling across your app and for implementing features like dark mode.</p>
+            
+            <p>Here's an example of using ThemeProvider:</p>
+            
+            <pre><code>import styled, { ThemeProvider } from 'styled-components';
+
+// Define your theme
+const theme = {
+  primary: '#ff5722',
+  secondary: '#2196f3',
+  danger: '#f44336',
+  text: {
+    light: '#ffffff',
+    dark: '#333333'
+  },
+  spacing: {
+    small: '8px',
+    medium: '16px',
+    large: '24px'
+  }
+};
+
+// Create styled components that use the theme
+const Button = styled.button`
+  background-color: ${props => props.theme.primary};
+  color: ${props => props.theme.text.light};
+  padding: ${props => props.theme.spacing.small} ${props => props.theme.spacing.medium};
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+`;
+
+// Apply the theme to your app
+function App() {
+  return (
+    &lt;ThemeProvider theme={theme}&gt;
+      &lt;div&gt;
+        &lt;h1&gt;Themed Components&lt;/h1&gt;
+        &lt;Button&gt;Themed Button&lt;/Button&gt;
+      &lt;/div&gt;
+    &lt;/ThemeProvider&gt;
+  );
+}</code></pre>
+            
+            <p>You can also create global styles using the createGlobalStyle helper:</p>
+            
+            <pre><code>import { createGlobalStyle } from 'styled-components';
+
+const GlobalStyles = createGlobalStyle`
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  a {
+    color: ${props => props.theme.primary};
+    text-decoration: none;
+  }
+`;
+
+// Include GlobalStyles at the top level of your app
+function App() {
+  return (
+    &lt;ThemeProvider theme={theme}&gt;
+      &lt;GlobalStyles /&gt;
+      &lt;div&gt;
+        &lt;h1&gt;App with Global Styles&lt;/h1&gt;
+        &lt;!-- Rest of your app --&gt;
+      &lt;/div&gt;
+    &lt;/ThemeProvider&gt;
+  );
+}</code></pre>
+            
             <div class="video-container">
                 <iframe class="wistia_embed" title="Theme Provider and Global Styles" src="https://fast.wistia.net/embed/iframe/m0fcm36xkr" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
@@ -165,6 +352,102 @@
         <div class="content-section">
             <h2>Animations and Advanced Techniques</h2>
             <p>Learn how to create animations and implement advanced styling techniques.</p>
+            
+            <p>Styled Components provides a keyframes helper for creating CSS animations. You can define your animations and then use them in your styled components.</p>
+            
+            <pre><code>import styled, { keyframes } from 'styled-components';
+
+// Create a keyframes animation
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const slideIn = keyframes`
+  from {
+    transform: translateY(-20px);
+  }
+  to {
+    transform: translateY(0);
+  }
+`;
+
+// Use the animation in a styled component
+const AnimatedBox = styled.div`
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  animation: ${fadeIn} 0.5s ease-out, ${slideIn} 0.5s ease-out;
+`;
+
+// Create a Spinner component with rotation animation
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const Spinner = styled.div`
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #ff5722;
+  border-radius: 50%;
+  animation: ${rotate} 1s linear infinite;
+  margin: 20px auto;
+`;</code></pre>
+            
+            <p>Advanced techniques include:</p>
+            <ul style="color: #b3b3b3; padding-left: 20px;">
+                <li><strong>Using attrs to add HTML attributes</strong>: You can set default HTML attributes for your components</li>
+                <li><strong>Responsive design with media queries</strong>: Easily implement responsive designs directly in your components</li>
+                <li><strong>Styling based on a child or parent</strong>: Target nested components for advanced styling patterns</li>
+            </ul>
+            
+            <pre><code>// Adding attributes with .attrs
+const Input = styled.input.attrs(props => ({
+  type: props.type || 'text',
+  placeholder: props.placeholder || 'Enter text...',
+  required: props.required || false,
+}))`
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+  margin-bottom: 10px;
+`;
+
+// Responsive design with media queries
+const Container = styled.div`
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
+`;
+
+// Targeting child components
+const Card = styled.div`
+  padding: 20px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  
+  ${Button} {
+    margin-top: 10px;
+  }
+`;</code></pre>
+            
             <div class="video-container">
                 <iframe class="wistia_embed" title="Animations and Advanced Techniques" src="https://fast.wistia.net/embed/iframe/tmgoh2bqxu" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
@@ -189,6 +472,8 @@
                 <li><a href="https://styled-components.com/docs/api" target="_blank" rel="noopener">Styled Components API Reference</a></li>
                 <li><a href="https://styled-components.com/docs/basics#animations" target="_blank" rel="noopener">Styled Components Animations</a></li>
                 <li><a href="https://styled-components.com/docs/advanced" target="_blank" rel="noopener">Advanced Styled Components Concepts</a></li>
+                <li><a href="https://www.w3schools.com/react/react_css.asp" target="_blank" rel="noopener">Styling React Using CSS (W3Schools)</a></li>
+                <li><a href="https://blog.logrocket.com/styling-in-react-4-ways-style-react-app/" target="_blank" rel="noopener">Styling in React: 4 ways to style a React app</a></li>
             </ul>
         </div>
     </div>

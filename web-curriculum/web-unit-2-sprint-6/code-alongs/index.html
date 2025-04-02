@@ -138,6 +138,13 @@
             font-family: 'Courier New', Courier, monospace;
             color: #ff5722;
         }
+        ul.features {
+            color: #b3b3b3;
+            padding-left: 20px;
+        }
+        ul.features li {
+            margin-bottom: 8px;
+        }
         
         /* Logo styling */
         .logo {
@@ -162,8 +169,46 @@
         <h1>Code-Alongs - Web Unit 2 Sprint 6</h1>
 
         <div class="content-section">
-            <h2>Code-Along 1: Building a React Component Library</h2>
-            <p>Follow along as we build a reusable component library using React and styled-components.</p>
+            <h2>Code-Along 1: Building a React Component Library with useState and Props</h2>
+            <p>Follow along as we build a reusable component library using React and styled-components, focusing on useState for state management and props for component communication.</p>
+            
+            <h3>What You'll Learn</h3>
+            <ul class="features">
+                <li><strong>Setting up a component library</strong>: Structure your project for scalability and reusability</li>
+                <li><strong>Creating functional components</strong>: Build UI components using React's functional component pattern</li>
+                <li><strong>Managing state with useState</strong>: Implement state management within components</li>
+                <li><strong>Passing data with props</strong>: Create dynamic, reusable components that accept different inputs</li>
+                <li><strong>Component composition</strong>: Combine smaller components to build more complex interfaces</li>
+                <li><strong>Event handling</strong>: Add interactivity to components using event handlers</li>
+            </ul>
+            
+            <h3>What You'll Build</h3>
+            <p>In this code-along, you'll build a component library that includes:</p>
+            <ul class="features">
+                <li>Button components with various states (primary, secondary, disabled)</li>
+                <li>Form input components with validation</li>
+                <li>A counter component demonstrating useState</li>
+                <li>A toggle component for boolean states</li>
+                <li>Card components for displaying content</li>
+                <li>A demo page showcasing all components</li>
+            </ul>
+            
+            <pre><code>// Example of what you'll create:
+import React, { useState } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+  
+  return (
+    &lt;div className="counter"&gt;
+      &lt;h2&gt;Counter: {count}&lt;/h2&gt;
+      &lt;Button onClick={() => setCount(count - 1)}&gt;Decrease&lt;/Button&gt;
+      &lt;Button primary onClick={() => setCount(count + 1)}&gt;Increase&lt;/Button&gt;
+      &lt;Button secondary onClick={() => setCount(0)}&gt;Reset&lt;/Button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+            
             <p><strong>Note:</strong> Please visit the platform to access the current code-along materials and videos.</p>
             <div class="resources">
                 <h3>Resources</h3>
@@ -175,8 +220,86 @@
         </div>
 
         <div class="content-section">
-            <h2>Code-Along 2: Advanced State Management with useEffect</h2>
-            <p>Learn advanced state management techniques using the useEffect hook in React.</p>
+            <h2>Code-Along 2: Advanced State Management with useEffect and APIs</h2>
+            <p>Learn advanced state management techniques using the useEffect hook in React, including data fetching, handling side effects, and working with external APIs.</p>
+            
+            <h3>What You'll Learn</h3>
+            <ul class="features">
+                <li><strong>Understanding side effects in React</strong>: Learn when and why to use useEffect</li>
+                <li><strong>API integration</strong>: Fetch and display data from external APIs</li>
+                <li><strong>Dependency arrays</strong>: Control when your effects run</li>
+                <li><strong>Loading states</strong>: Implement loading indicators for better UX</li>
+                <li><strong>Cleaning up effects</strong>: Properly handle component unmounting</li>
+                <li><strong>Error handling</strong>: Gracefully manage API errors</li>
+                <li><strong>Conditional rendering</strong>: Display different UI based on state</li>
+            </ul>
+            
+            <h3>What You'll Build</h3>
+            <p>In this code-along, you'll build a data-driven application that includes:</p>
+            <ul class="features">
+                <li>A dashboard that displays data from an external API</li>
+                <li>Search functionality that updates results as you type</li>
+                <li>Filters that automatically refresh content</li>
+                <li>Pagination with useEffect for loading more data</li>
+                <li>A data visualization component with cleanup</li>
+                <li>Error boundaries and fallback UI</li>
+            </ul>
+            
+            <pre><code>// Example of what you'll create:
+import React, { useState, useEffect } from 'react';
+
+function UserDirectory() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [search, setSearch] = useState('');
+  
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        setLoading(true);
+        const response = await fetch('https://api.example.com/users');
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        setUsers(data);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchUsers();
+  }, []); // Empty dependency array means this runs once on mount
+  
+  // Filter users based on search term
+  const filteredUsers = users.filter(user => 
+    user.name.toLowerCase().includes(search.toLowerCase())
+  );
+  
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;User Directory&lt;/h1&gt;
+      &lt;input 
+        type="text" 
+        placeholder="Search users..." 
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      /&gt;
+      
+      {loading && &lt;p&gt;Loading users...&lt;/p&gt;}
+      {error && &lt;p&gt;Error: {error}&lt;/p&gt;}
+      
+      &lt;ul&gt;
+        {filteredUsers.map(user => (
+          &lt;li key={user.id}&gt;{user.name} - {user.email}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+            
             <p><strong>Note:</strong> Please visit the platform to access the current code-along materials and videos.</p>
             <div class="resources">
                 <h3>Resources</h3>
@@ -193,6 +316,9 @@
                 <li><a href="https://reactjs.org/docs/components-and-props.html" target="_blank" rel="noopener">React Components and Props</a></li>
                 <li><a href="https://reactjs.org/docs/hooks-effect.html" target="_blank" rel="noopener">Using the Effect Hook</a></li>
                 <li><a href="https://styled-components.com/docs" target="_blank" rel="noopener">Styled Components Documentation</a></li>
+                <li><a href="https://reactjs.org/docs/hooks-state.html" target="_blank" rel="noopener">Using the State Hook</a></li>
+                <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch" target="_blank" rel="noopener">Using the Fetch API</a></li>
+                <li><a href="https://reactjs.org/docs/conditional-rendering.html" target="_blank" rel="noopener">Conditional Rendering in React</a></li>
             </ul>
         </div>
     </div>
