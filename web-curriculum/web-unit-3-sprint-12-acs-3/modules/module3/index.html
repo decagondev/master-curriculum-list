@@ -159,10 +159,12 @@
         <div class="section">
             <h2>Module Objectives</h2>
             <ul>
-                <li>Understand object references and their behavior</li>
-                <li>Implement and work with linked lists</li>
-                <li>Create and use classes effectively</li>
-                <li>Complete guided projects and practice exercises</li>
+                <li>Understand object references and how they differ from primitive values</li>
+                <li>Learn about memory management and object mutation in JavaScript</li>
+                <li>Implement linked list data structures using object references</li>
+                <li>Create and extend JavaScript classes for data structure implementations</li>
+                <li>Practice traversing, manipulating, and optimizing linked data structures</li>
+                <li>Apply object-oriented programming concepts to solve complex problems</li>
             </ul>
         </div>
 
@@ -174,69 +176,412 @@
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/nw0hp8x87c" title="Object References" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
+                <div class="resources">
+                    <p>This video explores how objects are stored and referenced in JavaScript, which is fundamental to understanding more complex data structures.</p>
+                    <h4>Key Concepts:</h4>
+                    <ul>
+                        <li>Primitive vs. reference types in JavaScript</li>
+                        <li>How objects are stored in memory</li>
+                        <li>Understanding shallow vs. deep copying</li>
+                        <li>Object mutation and its implications</li>
+                    </ul>
+                    <h4>Code Example:</h4>
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// Primitive types are copied by value
+let a = 5;
+let b = a;
+a = 10;
+console.log(a); // 10
+console.log(b); // Still 5 (unaffected by change to a)
+
+// Objects are copied by reference
+let obj1 = { name: 'Alice', age: 25 };
+let obj2 = obj1;
+obj1.age = 26;
+console.log(obj1.age); // 26
+console.log(obj2.age); // Also 26 (affected by change to obj1)
+
+// Shallow copying objects
+let original = { name: 'Bob', profile: { job: 'Developer' } };
+let shallowCopy = { ...original }; // Using spread operator
+
+original.name = 'Charlie'; // This won't affect the copy
+console.log(shallowCopy.name); // Still 'Bob'
+
+original.profile.job = 'Designer'; // This WILL affect the copy
+console.log(shallowCopy.profile.job); // Also 'Designer' (nested objects are still references)
+                    </pre>
+                    <p>Related Practice: <a href="https://leetcode.com/problems/copy-list-with-random-pointer/" style="color: #ff5722;">LeetCode: Copy List with Random Pointer</a> - A challenge that tests your understanding of object references.</p>
+                </div>
             </div>
             
             <div class="video-section">
-                <h3>2. Linked Lists - Introduction</h3>
+                <h3>2. Linked List Introduction</h3>
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/ghbmfm90f2" title="Linked List Introduction" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
+                <div class="resources">
+                    <p>Linked lists are fundamental data structures that use object references to create sequential collections of data. This video introduces the concept and basic operations.</p>
+                    <h4>Key Concepts:</h4>
+                    <ul>
+                        <li>Basic structure of singly linked lists</li>
+                        <li>Nodes and references in linked structures</li>
+                        <li>Advantages and disadvantages compared to arrays</li>
+                        <li>Real-world applications of linked lists</li>
+                    </ul>
+                    <h4>Basic Linked List Structure:</h4>
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// A node in a linked list
+class Node {
+  constructor(value) {
+    this.value = value;  // The data stored in this node
+    this.next = null;    // Reference to the next node
+  }
+}
+
+// Creating a simple linked list manually
+const head = new Node('A');
+head.next = new Node('B');
+head.next.next = new Node('C');
+
+// Traversing the linked list
+let current = head;
+while (current !== null) {
+  console.log(current.value);
+  current = current.next;
+}
+// Output: A, B, C
+                    </pre>
+                    <p>Related Practice: <a href="https://leetcode.com/problems/reverse-linked-list/" style="color: #ff5722;">LeetCode: Reverse Linked List</a> - A classic problem for practicing linked list manipulation.</p>
+                </div>
             </div>
             
             <div class="video-section">
-                <h3>2. Linked Lists - Classes</h3>
+                <h3>3. Linked List Classes</h3>
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/aqd9jcuxf6" title="Linked List Classes" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
+                <div class="resources">
+                    <p>This video focuses on implementing linked lists using JavaScript classes, creating a more structured and reusable data structure.</p>
+                    <h4>Key Concepts:</h4>
+                    <ul>
+                        <li>Creating a LinkedList class to encapsulate operations</li>
+                        <li>Implementing methods for insertion, deletion, and traversal</li>
+                        <li>Using object-oriented principles in data structure design</li>
+                        <li>Handling edge cases in linked list operations</li>
+                    </ul>
+                    <h4>LinkedList Class Implementation:</h4>
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
+class LinkedList {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
+  }
+  
+  // Add a new node to the end of the list
+  append(value) {
+    const newNode = new Node(value);
+    
+    if (!this.head) {
+      this.head = newNode;
+      this.tail = newNode;
+    } else {
+      this.tail.next = newNode;
+      this.tail = newNode;
+    }
+    
+    this.length++;
+    return this;
+  }
+  
+  // Add a new node to the beginning of the list
+  prepend(value) {
+    const newNode = new Node(value);
+    
+    if (!this.head) {
+      this.head = newNode;
+      this.tail = newNode;
+    } else {
+      newNode.next = this.head;
+      this.head = newNode;
+    }
+    
+    this.length++;
+    return this;
+  }
+  
+  // Get a node at a specific index
+  getNodeAtIndex(index) {
+    if (index < 0 || index >= this.length) return null;
+    
+    let current = this.head;
+    for (let i = 0; i < index; i++) {
+      current = current.next;
+    }
+    
+    return current;
+  }
+  
+  // Print the list (for debugging)
+  printList() {
+    const values = [];
+    let current = this.head;
+    
+    while (current) {
+      values.push(current.value);
+      current = current.next;
+    }
+    
+    return values.join(' -> ');
+  }
+}
+
+// Using the LinkedList class
+const list = new LinkedList();
+list.append('A');
+list.append('B');
+list.append('C');
+list.prepend('Z');
+console.log(list.printList()); // Z -> A -> B -> C
+console.log(list.getNodeAtIndex(1).value); // A
+                    </pre>
+                    <p>Related Practice: <a href="https://leetcode.com/problems/linked-list-cycle/" style="color: #ff5722;">LeetCode: Linked List Cycle</a> - Detect if a linked list has a cycle, a common interview question.</p>
+                </div>
             </div>
             
             <div class="video-section">
-                <h3>2. Linked Lists Build - Part 1: Understand</h3>
+                <h3>4. Linked List Build - Part 1: Understand</h3>
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/2gqodhtwjr" title="Linked List Build - Part 1: Understand" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
+                <div class="resources">
+                    <p>This video begins a series on building a complete linked list implementation, starting with understanding the requirements and design considerations.</p>
+                    <h4>Key Points:</h4>
+                    <ul>
+                        <li>Defining the operations our linked list needs to support</li>
+                        <li>Understanding the time and space complexity requirements</li>
+                        <li>Identifying potential edge cases and challenges</li>
+                        <li>Planning the structure of our implementation</li>
+                    </ul>
+                    <p>Related Practice: <a href="https://leetcode.com/problems/design-linked-list/" style="color: #ff5722;">LeetCode: Design Linked List</a> - Implement your own linked list from scratch.</p>
+                </div>
             </div>
             
             <div class="video-section">
-                <h3>2. Linked Lists Build - Part 2: Plan</h3>
+                <h3>4. Linked List Build - Part 2: Plan</h3>
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/j3z2n526bq" title="Linked List Build - Part 2: Plan" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
+                <div class="resources">
+                    <p>In this video, you'll learn how to plan your linked list implementation, designing the API and considering implementation details.</p>
+                    <h4>Planning Steps:</h4>
+                    <ul>
+                        <li>Defining the Node and LinkedList class interfaces</li>
+                        <li>Planning the methods and properties needed</li>
+                        <li>Creating pseudocode for key operations</li>
+                        <li>Addressing potential edge cases before implementation</li>
+                    </ul>
+                    <h4>Pseudocode for Key Operations:</h4>
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+/*
+INSERT AT INDEX:
+1. If index is 0, use prepend method
+2. If index is length, use append method
+3. If index is out of bounds, return false
+4. Get the node at index - 1
+5. Create a new node
+6. Set new node's next to previous node's next
+7. Set previous node's next to new node
+8. Increment length
+9. Return true
+
+REMOVE AT INDEX:
+1. If list is empty or index is out of bounds, return undefined
+2. If index is 0, remove head
+3. If index is last element, remove tail
+4. Otherwise, get node at index - 1
+5. Set removed node = previous node's next
+6. Set previous node's next to removed node's next
+7. Decrement length
+8. Return removed node's value
+*/
+                    </pre>
+                </div>
             </div>
             
             <div class="video-section">
-                <h3>2. Linked Lists Build - Part 3: Execute</h3>
+                <h3>4. Linked List Build - Part 3: Execute</h3>
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/w3hivphbht" title="Linked List Build - Part 3: Execute" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
+                <div class="resources">
+                    <p>This video covers the implementation phase, turning your plan into working code with a complete linked list implementation.</p>
+                    <h4>Implementation Focus:</h4>
+                    <ul>
+                        <li>Coding the full LinkedList class</li>
+                        <li>Implementing insert, delete, and search operations</li>
+                        <li>Handling edge cases like empty lists and invalid indices</li>
+                        <li>Testing each method to ensure correctness</li>
+                    </ul>
+                    <h4>Additional LinkedList Methods:</h4>
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// Additional methods for our LinkedList class
+
+// Insert a node at a specific index
+insertAt(index, value) {
+  if (index < 0 || index > this.length) return false;
+  if (index === 0) return !!this.prepend(value);
+  if (index === this.length) return !!this.append(value);
+  
+  const newNode = new Node(value);
+  const prevNode = this.getNodeAtIndex(index - 1);
+  
+  newNode.next = prevNode.next;
+  prevNode.next = newNode;
+  this.length++;
+  
+  return true;
+}
+
+// Remove a node at a specific index
+removeAt(index) {
+  if (index < 0 || index >= this.length) return undefined;
+  
+  // Remove head
+  if (index === 0) {
+    const removedNode = this.head;
+    this.head = this.head.next;
+    
+    // If we removed the last node
+    if (this.length === 1) {
+      this.tail = null;
+    }
+    
+    this.length--;
+    return removedNode.value;
+  }
+  
+  // Remove tail or middle node
+  const prevNode = this.getNodeAtIndex(index - 1);
+  const removedNode = prevNode.next;
+  
+  prevNode.next = removedNode.next;
+  
+  // If we removed the tail
+  if (index === this.length - 1) {
+    this.tail = prevNode;
+  }
+  
+  this.length--;
+  return removedNode.value;
+}
+
+// Search for a value, return its index or -1 if not found
+indexOf(value) {
+  let current = this.head;
+  let index = 0;
+  
+  while (current) {
+    if (current.value === value) {
+      return index;
+    }
+    current = current.next;
+    index++;
+  }
+  
+  return -1; // Not found
+}
+                    </pre>
+                    <p>Related Practice: <a href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/" style="color: #ff5722;">LeetCode: Remove Nth Node From End of List</a> - A problem that tests your linked list manipulation skills.</p>
+                </div>
             </div>
             
             <div class="video-section">
-                <h3>2. Linked Lists Build - Part 4: Reflect</h3>
+                <h3>4. Linked List Build - Part 4: Reflect</h3>
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/vwubiabqlm" title="Linked List Build - Part 4: Reflect" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
-            </div>
+                <div class="resources">
+                    <p>The final video in the linked list series focuses on reflecting on the implementation, analyzing its performance, and considering potential improvements.</p>
+                    <h4>Reflection Points:</h4>
+                    <ul>
+                        <li>Analyzing the time and space complexity of each operation</li>
+                        <li>Comparing linked list performance to arrays for different operations</li>
+                        <li>Considering potential optimizations and extensions</li>
+                        <li>Discussing real-world applications of linked lists</li>
+                    </ul>
+                    <h4>Time Complexity Analysis:</h4>
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+/*
+LINKED LIST TIME COMPLEXITY:
+- Access: O(n) - must traverse from head
+- Search: O(n) - must traverse to find value
+- Insertion:
+  - At beginning (prepend): O(1)
+  - At end (append): O(1) with tail reference
+  - At middle: O(n) to find position + O(1) to insert = O(n)
+- Deletion:
+  - At beginning: O(1)
+  - At end: O(n) to find node before tail
+  - At middle: O(n) to find position + O(1) to remove = O(n)
 
-            <div class="video-section">
-                <h3>3. Classes in JavaScript</h3>
-                <div class="video-container">
-                    <iframe src="https://fast.wistia.net/embed/iframe/dkw8oz42xo" title="Classes in JavaScript" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
+COMPARED TO ARRAYS:
+Arrays have O(1) access but O(n) insertion/deletion at beginning
+or middle due to reindexing.
+
+Linked Lists excel when:
+- Frequent insertions/deletions at beginning
+- Unknown size (dynamic growth)
+- No need for random access
+*/
+                    </pre>
+                    <h4>Extensions to Consider:</h4>
+                    <ul>
+                        <li><strong>Doubly Linked List</strong>: Add previous pointers for bidirectional traversal</li>
+                        <li><strong>Circular Linked List</strong>: Connect the tail back to the head</li>
+                        <li><strong>Sorted Linked List</strong>: Maintain nodes in sorted order during insertion</li>
+                    </ul>
+                    <p>Related Practice: <a href="https://leetcode.com/problems/lru-cache/" style="color: #ff5722;">LeetCode: LRU Cache</a> - An advanced problem that often uses a doubly linked list with a hash map.</p>
                 </div>
             </div>
 
             <div class="video-section">
-                <h3>4. Guided Project</h3>
-                <p>Complete the Module 3 Guided Project to practice working with object references, linked lists, and classes.</p>
+                <h3>5. Guided Project</h3>
+                <p>Complete the Module 3 Guided Project to practice implementing and manipulating linked lists with object references.</p>
+                <div class="resources">
+                    <h4>Project Focus:</h4>
+                    <ul>
+                        <li>Building a customized linked list data structure</li>
+                        <li>Implementing advanced operations on linked lists</li>
+                        <li>Applying object reference concepts to linked data</li>
+                        <li>Solving algorithmic problems with linked structures</li>
+                    </ul>
+                </div>
             </div>
             
             <div class="video-section">
-                <h3>5. Practice Activities</h3>
+                <h3>6. Practice Activities</h3>
                 <ul>
                     <li>Module 3 Practice Exercises</li>
                     <li>Check for Understanding Quiz</li>
                     <li>Practice GCA Test</li>
                 </ul>
+                <div class="resources">
+                    <p>Instead of using CodeSignal Arcade which is no longer available, we recommend the following LeetCode collections that follow the same principles and provide great alternatives for interview preparation:</p>
+                    <ul>
+                        <li><a href="https://leetcode.com/explore/learn/card/linked-list/" style="color: #ff5722;">LeetCode: Linked List Explore Card</a> - A structured learning path for linked lists</li>
+                        <li><a href="https://leetcode.com/problems/tag/linked-list/" style="color: #ff5722;">LeetCode: Linked List Problems</a> - Comprehensive collection of linked list challenges</li>
+                        <li><a href="https://leetcode.com/explore/interview/card/top-interview-questions-medium/107/linked-list/" style="color: #ff5722;">LeetCode: Top Interview Questions - Linked Lists</a> - Common interview problems</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -244,10 +589,12 @@
             <h2>Additional Resources</h2>
             <div class="resources">
                 <ul>
-                    <li><a href="#">Module 3 Guided Project</a></li>
-                    <li><a href="#">Practice Exercises</a></li>
-                    <li><a href="#">Check for Understanding Quiz</a></li>
-                    <li><a href="#">Practice GCA Test</a></li>
+                    <li><a href="#" style="color: #ff5722;">Module 3 Guided Project</a></li>
+                    <li><a href="#" style="color: #ff5722;">Practice Exercises</a></li>
+                    <li><a href="#" style="color: #ff5722;">Check for Understanding Quiz</a></li>
+                    <li><a href="#" style="color: #ff5722;">Practice GCA Test</a></li>
+                    <li><a href="https://leetcode.com/problems/merge-two-sorted-lists/" style="color: #ff5722;">LeetCode: Merge Two Sorted Lists</a> - A fundamental linked list manipulation problem</li>
+                    <li><a href="https://leetcode.com/problems/palindrome-linked-list/" style="color: #ff5722;">LeetCode: Palindrome Linked List</a> - Tests your understanding of linked list traversal and manipulation</li>
                 </ul>
             </div>
         </div>

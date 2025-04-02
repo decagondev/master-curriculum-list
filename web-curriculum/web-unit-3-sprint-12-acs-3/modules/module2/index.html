@@ -159,10 +159,12 @@
         <div class="section">
             <h2>Module Objectives</h2>
             <ul>
-                <li>Understand and implement caching strategies</li>
-                <li>Learn Big O notation for algorithm analysis</li>
-                <li>Practice optimizing code performance</li>
-                <li>Complete guided projects and practice exercises</li>
+                <li>Understand and implement caching strategies using objects as storage mechanisms</li>
+                <li>Learn Big O notation for algorithm analysis and identify performance bottlenecks</li>
+                <li>Compare cached vs. non-cached solution performance</li>
+                <li>Apply memoization techniques to optimize recursive and iterative algorithms</li>
+                <li>Implement efficient lookup tables to avoid redundant calculations</li>
+                <li>Practice analyzing and optimizing code complexity through practical examples</li>
             </ul>
         </div>
 
@@ -174,12 +176,45 @@
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/kif5labifl" title="Caching - Part 1: Understand" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
+                <div class="resources">
+                    <p>Caching is a technique used to store results of expensive operations for future use. This video explains the concept of caching and when to use it.</p>
+                    <h4>Key Concepts:</h4>
+                    <ul>
+                        <li>What caching is and why it's important for performance</li>
+                        <li>Identifying expensive computations that benefit from caching</li>
+                        <li>Using objects as cache storage in JavaScript</li>
+                        <li>Understanding trade-offs between space and time complexity</li>
+                    </ul>
+                    <p>Related Practice: <a href="https://leetcode.com/problems/lru-cache/" style="color: #ff5722;">LeetCode: LRU Cache</a> - A more advanced caching implementation challenge.</p>
+                </div>
             </div>
             
             <div class="video-section">
                 <h3>1. Introduction to Caching - Part 2: Plan</h3>
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/8uwe8qpln8" title="Caching - Part 2: Plan" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
+                </div>
+                <div class="resources">
+                    <p>This video focuses on planning a caching implementation, considering what data to cache and how to structure your cache.</p>
+                    <h4>Planning Steps:</h4>
+                    <ul>
+                        <li>Identifying appropriate cache keys and values</li>
+                        <li>Designing the cache data structure</li>
+                        <li>Planning for cache validation and potential invalidation</li>
+                        <li>Considering edge cases in your caching strategy</li>
+                    </ul>
+                    <h4>Pseudocode Example:</h4>
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+/*
+1. Create a cache object to store results
+2. When function is called with input:
+   a. Check if input exists as a key in the cache
+   b. If exists, return the cached value
+   c. If not, perform the calculation
+   d. Store the result in cache with input as key
+   e. Return the calculated result
+*/
+                    </pre>
                 </div>
             </div>
             
@@ -188,6 +223,60 @@
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/ukhkmamms6" title="Caching - Part 3: Execute" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
+                <div class="resources">
+                    <p>In this video, you'll implement a caching solution in JavaScript, translating your plan into working code.</p>
+                    <h4>Key Implementation Concepts:</h4>
+                    <ul>
+                        <li>Creating and maintaining a cache object</li>
+                        <li>Implementing cache lookup and storage logic</li>
+                        <li>Using closure to maintain a persistent cache</li>
+                        <li>Testing the cached solution against non-cached version</li>
+                    </ul>
+                    <h4>Code Example - Memoized Fibonacci:</h4>
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// Without caching - exponential time complexity O(2^n)
+function fibonacci(n) {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+// With caching - linear time complexity O(n)
+function memoizedFibonacci() {
+  // Cache object to store previously computed values
+  const cache = {};
+  
+  // Inner function that uses the cache
+  return function fib(n) {
+    // Check if we have already calculated this value
+    if (n in cache) {
+      return cache[n];
+    }
+    
+    // Base cases
+    if (n <= 1) {
+      return n;
+    }
+    
+    // Calculate and cache the result
+    cache[n] = fib(n - 1) + fib(n - 2);
+    return cache[n];
+  };
+}
+
+// Create the memoized function
+const fastFib = memoizedFibonacci();
+
+// Compare performance
+console.time('Without caching');
+fibonacci(30); // Will be very slow
+console.timeEnd('Without caching');
+
+console.time('With caching');
+fastFib(30);   // Will be very fast
+console.timeEnd('With caching');
+                    </pre>
+                    <p>Related Practice: <a href="https://leetcode.com/problems/climbing-stairs/" style="color: #ff5722;">LeetCode: Climbing Stairs</a> - A problem well-suited for caching/memoization.</p>
+                </div>
             </div>
             
             <div class="video-section">
@@ -195,11 +284,61 @@
                 <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/rtrnfk2g7y" title="Big O Notation" allow="autoplay; fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
                 </div>
+                <div class="resources">
+                    <p>Big O notation is a mathematical notation used to describe the performance or complexity of an algorithm. This video will help you understand how to analyze and compare algorithm efficiency.</p>
+                    <h4>Common Big O Complexities:</h4>
+                    <ul>
+                        <li><strong>O(1)</strong> - Constant time: operations that take the same amount of time regardless of input size (e.g., accessing an array element by index)</li>
+                        <li><strong>O(log n)</strong> - Logarithmic time: operations whose time grows logarithmically with input size (e.g., binary search)</li>
+                        <li><strong>O(n)</strong> - Linear time: operations whose time scales linearly with input size (e.g., iterating through an array)</li>
+                        <li><strong>O(n log n)</strong> - Linearithmic time: slightly worse than linear (e.g., efficient sorting algorithms like mergesort)</li>
+                        <li><strong>O(n²)</strong> - Quadratic time: operations whose time scales with the square of input size (e.g., nested loops)</li>
+                        <li><strong>O(2^n)</strong> - Exponential time: operations whose time doubles with each addition to input (e.g., recursive fibonacci without caching)</li>
+                    </ul>
+                    <h4>Examples in Code:</h4>
+                    <pre style="background-color: #333a47; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// O(1) - Constant time
+function getFirstElement(array) {
+  return array[0];
+}
+
+// O(n) - Linear time
+function sum(array) {
+  let total = 0;
+  for (let i = 0; i < array.length; i++) {
+    total += array[i];
+  }
+  return total;
+}
+
+// O(n²) - Quadratic time
+function bubbleSort(array) {
+  for (let i = 0; i < array.length; i++) {
+    for (let j = 0; j < array.length - i - 1; j++) {
+      if (array[j] > array[j + 1]) {
+        [array[j], array[j + 1]] = [array[j + 1], array[j]]; // Swap
+      }
+    }
+  }
+  return array;
+}
+                    </pre>
+                    <p>Related Practice: <a href="https://leetcode.com/problems/contains-duplicate/" style="color: #ff5722;">LeetCode: Contains Duplicate</a> - Practice comparing O(n²) vs O(n) solutions.</p>
+                </div>
             </div>
 
             <div class="video-section">
                 <h3>3. Guided Project</h3>
                 <p>Complete the Module 2 Guided Project to practice implementing caching strategies and analyzing algorithm complexity.</p>
+                <div class="resources">
+                    <h4>Project Focus:</h4>
+                    <ul>
+                        <li>Implementing memoization to optimize recursive functions</li>
+                        <li>Creating a caching layer for expensive operations</li>
+                        <li>Measuring and comparing performance improvements</li>
+                        <li>Analyzing time and space complexity trade-offs</li>
+                    </ul>
+                </div>
             </div>
             
             <div class="video-section">
@@ -209,6 +348,14 @@
                     <li>Check for Understanding Quiz</li>
                     <li>Practice GCA Test</li>
                 </ul>
+                <div class="resources">
+                    <p>Instead of using CodeSignal Arcade which is no longer available, we recommend the following LeetCode collections that follow the same principles and provide great alternatives for interview preparation:</p>
+                    <ul>
+                        <li><a href="https://leetcode.com/problems/tag/dynamic-programming/" style="color: #ff5722;">LeetCode: Dynamic Programming Problems</a> - Many DP problems use memoization/caching techniques</li>
+                        <li><a href="https://leetcode.com/problems/fibonacci-number/" style="color: #ff5722;">LeetCode: Fibonacci Number</a> - Classic problem for practicing memoization</li>
+                        <li><a href="https://leetcode.com/explore/interview/card/top-interview-questions-medium/108/trees-and-graphs/" style="color: #ff5722;">LeetCode: Trees and Graphs Questions</a> - Many problems benefit from caching visited nodes</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -216,10 +363,12 @@
             <h2>Additional Resources</h2>
             <div class="resources">
                 <ul>
-                    <li><a href="#">Module 2 Guided Project</a></li>
-                    <li><a href="#">Practice Exercises</a></li>
-                    <li><a href="#">Check for Understanding Quiz</a></li>
-                    <li><a href="#">Practice GCA Test</a></li>
+                    <li><a href="#" style="color: #ff5722;">Module 2 Guided Project</a></li>
+                    <li><a href="#" style="color: #ff5722;">Practice Exercises</a></li>
+                    <li><a href="#" style="color: #ff5722;">Check for Understanding Quiz</a></li>
+                    <li><a href="#" style="color: #ff5722;">Practice GCA Test</a></li>
+                    <li><a href="https://leetcode.com/tag/memoization/" style="color: #ff5722;">LeetCode Memoization Problems</a> - A curated set of problems that benefit from caching techniques</li>
+                    <li><a href="https://leetcode.com/problems/coin-change/" style="color: #ff5722;">LeetCode: Coin Change</a> - A classic dynamic programming problem that benefits from memoization</li>
                 </ul>
             </div>
         </div>
