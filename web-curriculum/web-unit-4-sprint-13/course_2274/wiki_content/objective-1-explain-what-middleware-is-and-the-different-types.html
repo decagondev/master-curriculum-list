@@ -1,0 +1,46 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Objective 1 - Explain What Middleware Is and the Different Types</title>
+<meta name="identifier" content="ga2df6cdb164e76dcd28254fbbba57ade"/>
+<meta name="editing_roles" content="teachers"/>
+<meta name="workflow_state" content="active"/>
+</head>
+<body>
+<p>&nbsp;</p>
+<p><iframe class="wistia_embed" title="Express Middleware Video" src="https://fast.wistia.net/embed/iframe/67gj9hua12" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe></p>
+<p>&nbsp;</p>
+<h2 id="overview">Overview</h2>
+<p><span>There are different types of middleware; for our purposes, we'll group them into three different categories:</span></p>
+<ol>
+<li aria-level="1"><span>Built-in middleware</span></li>
+<li aria-level="1"><span>Third-party middleware</span></li>
+<li aria-level="1"><span>Custom middleware</span></li>
+</ol>
+<h3 id="built-in-middleware">Built-in Middleware</h3>
+<p><strong>Built-in middleware</strong> is included with Express but not added to the application automatically. Like the other types, we need to opt-in to using it in our application.</p>
+<p>We saw an example of built-in middleware when we added support for parsing JSON content out of the request body using <code>server.use(express.json());</code>.</p>
+<p>Every type of middleware works in the same way. We tell Express about the middleware we want to <em>turn on</em> for our application by making a call to <code>.use()</code> on our server and passing <code>.use()</code> the piece of middleware we want to apply. This line must come after the server has been created by calling <code>express()</code>.</p>
+<h3 id="third-party-middleware">Third-party Middleware</h3>
+<p><strong>Third-party middleware</strong> are npm modules that we can install and then import into our applications using <code>require()</code>. There are thousands of middleware modules we can use. There is no need to write our own in most cases.</p>
+<p>Some popular middleware modules are:</p>
+<ul>
+<li><a href="https://www.npmjs.com/package/morgan">morgan</a>.</li>
+<li><a href="https://www.npmjs.com/package/cors">cors</a>.</li>
+<li><a href="https://www.npmjs.com/package/helmet">helmet</a>.</li>
+</ul>
+<h3 id="custom-middleware">Custom Middleware</h3>
+<p><span><strong>Custom middleware</strong> is functions we write to perform specific tasks. We'll learn more about how to write and use them in the next section.</span></p>
+<h2 id="follow-along">Follow Along</h2>
+<p>One thing that is not immediately obvious is that <strong>route handlers are middleware</strong>. Let's see this in action.</p>
+<p><span>Suppose a client visits a non-existent endpoint in our current implementation. In that case, they will get a default message when a resource is not found on the server. In the case of a browser, it's Cannot Get <em>/urlWeTriedToAccess. </em>This default message makes for a poor user experience. So please code along as we write a request handler that responds with a custom message for invalid URLs.</span></p>
+<pre style="background-image: none;  background-attachment: scroll;   background-color: #ffffff; border: 1px solid #c7cdd1; clear: none; color: #24292e; cursor: auto; direction: ltr; font-style: normal;   font-stretch: normal; font-size: 12px; line-height: 14.4px; font-family: Monaco, Menlo, Consolas, 'Courier New', monospace; margin: 0px 0px 12px; padding: 9px; text-align: start; text-decoration: none; text-indent: 0px; white-space: pre-wrap; border-collapse: separate; border-spacing: 0px;      background-position: 0% 0%; background-repeat: repeat repeat;" data-hljs-language="javascript"><code style="background-image: none;  background-attachment: scroll;   background-color: rgba(0, 0, 0, 0); border: 0px none #24292e; font-style: normal;   font-stretch: normal; font-size: 16px; line-height: 19.200001px; font-family: Monaco, Menlo, Consolas, 'Courier New', monospace; margin: 0px; padding: 0px; background-position: 0% 0%; background-repeat: repeat repeat;"><span style="border: 0px none #d73a49; color: #d73a49;">function</span>(<span>req, res</span>) {<br>&nbsp;&nbsp;res.<span style="border: 0px none #6f42c1; color: #6f42c1;">status</span>(<span style="border: 0px none #005cc5; color: #005cc5;">404</span>).<span style="border: 0px none #6f42c1; color: #6f42c1;">send</span>(<span style="border: 0px none #032f62; color: #032f62;">"Ain't nobody got time for that!"</span>);<br>};</code></pre>
+<p>This code is not complete yet, but you can see that it is, in fact, a request handler function. We know because <em>the homies</em> (req and res) are there.</p>
+<p>Now let's just <em>use</em> it as if it was middleware:</p>
+<pre style="background-image: none;  background-attachment: scroll;   background-color: #ffffff; border: 1px solid #c7cdd1; clear: none; color: #24292e; cursor: auto; direction: ltr; font-style: normal;   font-stretch: normal; font-size: 12px; line-height: 14.4px; font-family: Monaco, Menlo, Consolas, 'Courier New', monospace; margin: 0px 0px 12px; padding: 9px; text-align: start; text-decoration: none; text-indent: 0px; white-space: pre-wrap; border-collapse: separate; border-spacing: 0px;      background-position: 0% 0%; background-repeat: repeat repeat;" data-hljs-language="javascript"><code style="background-image: none;  background-attachment: scroll;   background-color: rgba(0, 0, 0, 0); border: 0px none #24292e; font-style: normal;   font-stretch: normal; font-size: 16px; line-height: 19.200001px; font-family: Monaco, Menlo, Consolas, 'Courier New', monospace; margin: 0px; padding: 0px; background-position: 0% 0%; background-repeat: repeat repeat;">server.<span style="border: 0px none #6f42c1; color: #6f42c1;">use</span>(<span style="border: 0px none #d73a49; color: #d73a49;">function</span>(<span>req, res</span>) {<br>&nbsp;&nbsp;res.<span style="border: 0px none #6f42c1; color: #6f42c1;">status</span>(<span style="border: 0px none #005cc5; color: #005cc5;">404</span>).<span style="border: 0px none #6f42c1; color: #6f42c1;">send</span>(<span style="border: 0px none #032f62; color: #032f62;">"Ain't nobody got time for that!"</span>);<br>});</code></pre>
+<p><span>Almost there! The last step is adding this status <strong>after each route handler</strong>. That way, if the preceding middleware or route handlers do not respond to the request, this will become our<em> catch-all</em> and respond with the correct HTTP status code and a helpful message.</span></p>
+<p>Now, requests to non-existent endpoints will result in a better experience for our clients.</p>
+<h2 id="challenge">Challenge</h2>
+<p><span>Write a paragraph (or two) explaining Express middleware and how you would use it when writing Web APIs.</span></p>
+</body>
+</html>
