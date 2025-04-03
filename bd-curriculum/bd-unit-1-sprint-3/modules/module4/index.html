@@ -160,11 +160,152 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul>
-                <li>Understand Java's pass-by-value mechanism</li>
-                <li>Learn how objects and primitives are passed</li>
-                <li>Practice working with method parameters</li>
-                <li>Debug pass-by-value related issues</li>
+                <li>Recall that a variable of a reference type holds the memory location of an object, or null if there is no object</li>
+                <li>Given a method that reassigns or calls methods on its arguments, predict which changes will be visible to the caller</li>
             </ul>
+        </section>
+
+        <section>
+            <h2>Pass-by-value Explained</h2>
+            <div class="resources">
+                <p>Java is strictly pass-by-value, which means that method parameters always receive a copy of the value being passed. Understanding this mechanism is crucial for writing effective Java code.</p>
+                
+                <h3>Primitive Types</h3>
+                <p>When passing primitive types (int, boolean, double, etc.), a copy of the actual value is passed to the method. Changes to the parameter inside the method do not affect the original variable.</p>
+                <pre><code>
+public void modifyPrimitive(int x) {
+    x = x + 10;  // Only modifies the local copy
+    System.out.println("Inside method: x = " + x);
+}
+
+public static void main(String[] args) {
+    int num = 5;
+    System.out.println("Before method call: num = " + num);
+    modifyPrimitive(num);
+    System.out.println("After method call: num = " + num);  // Still 5
+}
+                </code></pre>
+
+                <h3>Reference Types (Objects)</h3>
+                <p>When passing reference types (objects), Java copies the reference value (memory address), not the object itself. This means:</p>
+                <ul>
+                    <li>You can modify the object's state through the copied reference</li>
+                    <li>You cannot reassign the original reference variable</li>
+                </ul>
+                
+                <h4>Example 1: Modifying Object State</h4>
+                <pre><code>
+class Person {
+    String name;
+    
+    Person(String name) {
+        this.name = name;
+    }
+}
+
+public void modifyObject(Person p) {
+    p.name = "Modified";  // Modifies the actual object's state
+}
+
+public static void main(String[] args) {
+    Person person = new Person("Original");
+    System.out.println("Before: " + person.name);
+    modifyObject(person);
+    System.out.println("After: " + person.name);  // "Modified"
+}
+                </code></pre>
+
+                <h4>Example 2: Reassigning Reference</h4>
+                <pre><code>
+public void reassignReference(Person p) {
+    p = new Person("New Person");  // Only reassigns the local copy
+    System.out.println("Inside method: " + p.name);
+}
+
+public static void main(String[] args) {
+    Person person = new Person("Original");
+    System.out.println("Before: " + person.name);
+    reassignReference(person);
+    System.out.println("After: " + person.name);  // Still "Original"
+}
+                </code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2>Common Misconceptions</h2>
+            <div class="resources">
+                <h3>Java is NOT Pass-by-Reference</h3>
+                <p>A common misconception is that Java passes objects by reference. In true pass-by-reference, you would be able to reassign the original variable, which is not possible in Java.</p>
+                
+                <h3>Parameter Behavior Summary</h3>
+                <ul>
+                    <li><strong>Primitives:</strong> The value is copied, and changes to the parameter don't affect the original</li>
+                    <li><strong>Objects:</strong> The reference value (memory address) is copied. You can modify the object's state, but reassigning the parameter doesn't affect the original reference variable</li>
+                </ul>
+                
+                <h3>Visual Explanation</h3>
+                <pre><code>
+// Primitive parameters
+int x = 10;
+increment(x);    // x is still 10
+
+// Reference parameters  
+Person p = new Person("John");
+changeName(p);   // p.name is now "Jane"
+replacePerson(p); // p still refers to the original Person object
+</code></pre>
+
+                <pre><code>
+void increment(int num) {
+    num = num + 1;  // Only affects local copy
+}
+
+void changeName(Person person) {
+    person.name = "Jane";  // Modifies the actual object
+}
+
+void replacePerson(Person person) {
+    person = new Person("New Person");  // Only reassigns local reference
+}
+                </code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2>Special Cases</h2>
+            <div class="resources">
+                <h3>Immutable Objects</h3>
+                <p>Some Java objects like String, Integer, etc., are immutable. Their state cannot be modified after creation. Methods that appear to modify them actually create new objects.</p>
+                <pre><code>
+public void manipulateString(String s) {
+    s = s + " World";  // Creates a new String object
+    System.out.println("Inside method: " + s);
+}
+
+public static void main(String[] args) {
+    String greeting = "Hello";
+    manipulateString(greeting);
+    System.out.println("After method: " + greeting);  // Still "Hello"
+}
+                </code></pre>
+
+                <h3>Arrays</h3>
+                <p>Arrays are objects in Java. You can modify their contents but not reassign the original reference.</p>
+                <pre><code>
+public void modifyArray(int[] arr) {
+    arr[0] = 100;  // Modifies the actual array
+    arr = new int[]{200, 300};  // Only reassigns local reference
+}
+
+public static void main(String[] args) {
+    int[] numbers = {1, 2, 3};
+    modifyArray(numbers);
+    System.out.println(numbers[0]);  // 100
+    System.out.println(numbers.length);  // 3, not 2
+}
+                </code></pre>
+            </div>
         </section>
 
         <section>
