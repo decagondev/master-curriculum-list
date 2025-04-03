@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guided Project: Graphs III - Floodfill</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#93005a',
+                        secondary: '#00808c',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.classList.remove('border-primary', 'text-primary');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            document.querySelector(`[data-tab-content="${tabId}"]`).classList.remove('hidden');
+            element.classList.remove('text-gray-500', 'border-transparent');
+            element.classList.add('border-primary', 'text-primary');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mb-8">
+            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Welcome Page</span>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-primary mb-4">Guided Project: Floodfill Algorithm</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Learn how to implement the Floodfill algorithm - a powerful graph traversal technique used in image processing,
+                game development, and more.
+            </p>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="border-b border-gray-200 mb-8">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button 
+                    data-tab="overview"
+                    onclick="switchTab('overview', this)"
+                    class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-medium"
+                    aria-current="page">
+                    Overview
+                </button>
+                <button 
+                    data-tab="guided-implementation"
+                    onclick="switchTab('guided-implementation', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Guided Implementation
+                </button>
+                <button 
+                    data-tab="practice"
+                    onclick="switchTab('practice', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Practice Challenge
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="space-y-8">
+            <!-- Overview Tab -->
+            <div data-tab-content="overview" class="space-y-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">What is Floodfill?</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Core Concepts</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Graph traversal algorithm</li>
+                                <li>Fills connected regions</li>
+                                <li>Uses DFS or BFS approach</li>
+                                <li>4-way or 8-way connectivity</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Applications</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Paint bucket tool</li>
+                                <li>Image segmentation</li>
+                                <li>Game map exploration</li>
+                                <li>Maze solving</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Visual Example</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Before Floodfill</h3>
+                            <pre class="bg-gray-100 p-4 rounded-lg font-mono">
+1 1 1 1 1
+1 0 0 0 1
+1 0 0 0 1
+1 1 1 1 1</pre>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">After Floodfill (start at [1,1])</h3>
+                            <pre class="bg-gray-100 p-4 rounded-lg font-mono">
+1 1 1 1 1
+1 2 2 2 1
+1 2 2 2 1
+1 1 1 1 1</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guided Implementation Tab -->
+            <div data-tab-content="guided-implementation" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Step-by-Step Implementation</h2>
+                    
+                    <!-- Video Section -->
+                    <div class="mb-8">
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                            <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                                <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                    <iframe src="https://fast.wistia.net/embed/iframe/8kiae5gf08?videoFoam=true" title="S20M3 Guided Project - Floodfill Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 class="text-xl font-medium text-secondary mb-4">Implementation Steps</h3>
+                                <div class="space-y-4">
+                                    <div class="bg-gray-800 rounded-lg p-4">
+                                        <pre class="text-gray-100"><code>function floodFill(grid, row, col, newColor, oldColor = grid[row][col]) {
+    // Check bounds and color match
+    if (row < 0 || row >= grid.length || 
+        col < 0 || col >= grid[0].length || 
+        grid[row][col] !== oldColor) {
+        return;
+    }
+
+    // Fill current cell
+    grid[row][col] = newColor;
+
+    // Recursively fill neighbors (4-way connectivity)
+    floodFill(grid, row + 1, col, newColor, oldColor);  // Down
+    floodFill(grid, row - 1, col, newColor, oldColor);  // Up
+    floodFill(grid, row, col + 1, newColor, oldColor);  // Right
+    floodFill(grid, row, col - 1, newColor, oldColor);  // Left
+}</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 class="text-xl font-medium text-secondary mb-4">Example Usage</h3>
+                                <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg"><code>const grid = [
+    [1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 1],
+    [1, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1]
+];
+
+floodFill(grid, 1, 1, 2);  // Fill starting at position [1,1] with color 2
+console.log(grid);
+// Output will show all connected '0's changed to '2's</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Challenge Tab -->
+            <div data-tab-content="practice" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Practice Challenges</h2>
+                    
+                    <div class="space-y-8">
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Challenge 1: 8-Way Connectivity</h3>
+                            <p class="text-gray-600">Modify the floodFill function to support 8-way connectivity (including diagonals).</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Requirements:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                    <li>Add diagonal movements</li>
+                                    <li>Maintain boundary checks</li>
+                                    <li>Test with different patterns</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Challenge 2: Island Counter</h3>
+                            <p class="text-gray-600">Implement a function that counts the number of distinct islands in a grid.</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Example:</h4>
+                                <pre class="bg-gray-100 p-2 rounded"><code>const grid = [
+    [1, 1, 0, 0, 0],
+    [1, 1, 0, 0, 0],
+    [0, 0, 1, 0, 0],
+    [0, 0, 0, 1, 1]
+];
+
+console.log(countIslands(grid));  // Should output: 3</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Challenge 3: Bounded Fill</h3>
+                            <p class="text-gray-600">Implement a version of floodFill that only fills up to a maximum area.</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Requirements:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                    <li>Add maxArea parameter</li>
+                                    <li>Track filled area count</li>
+                                    <li>Stop when limit reached</li>
+                                    <li>Return total area filled</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

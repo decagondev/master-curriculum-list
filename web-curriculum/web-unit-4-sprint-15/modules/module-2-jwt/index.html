@@ -105,7 +105,7 @@
         /* Module grid styling */
         .module-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: 1fr;
             gap: 20px;
             margin-top: 20px;
         }
@@ -134,7 +134,7 @@
         /* Video grid styling */
         .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: 1fr;
             gap: 30px;
             margin-top: 20px;
         }
@@ -143,6 +143,7 @@
             border-radius: 6px;
             padding: 20px;
             border: 1px solid #444c5c;
+            width: 100%;
         }
         .video-container {
             position: relative;
@@ -189,6 +190,22 @@
                 flex-direction: column;
                 gap: 0.5rem;
             }
+        }
+        
+        /* Code pre formatting */
+        pre {
+            background-color: #1a1d23;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 14px;
+            border: 1px solid #444c5c;
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
         }
     </style>
 </head>
@@ -248,43 +265,363 @@
         </div>
 
         <div class="section">
-            <h2>Video Content</h2>
+            <h2>JWT Structure and Components</h2>
+            
             <div class="video-grid">
                 <div class="video-card">
-                    <h3>JWT Fundamentals</h3>
                     <div class="video-container">
-                        <iframe 
-                            title="JWT Basics" 
-                            src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" 
-                            allow="autoplay; fullscreen" 
-                            loading="lazy">
-                        </iframe>
+                        <iframe src="https://fast.wistia.net/embed/iframe/wn6vs7l815" title="Introduction to JWTs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
-                    <p>Understanding JSON Web Tokens and their role in authentication.</p>
+                    <h3>JWT Components</h3>
+                    <p>JSON Web Tokens (JWT) are a way to transmit information between parties in the form of a JSON object. The JSON information is most commonly used for authentication and information exchange.</p>
+                    
+                    <p>A JWT is a string that has three parts separated by a period (.). Those are:</p>
+                    <ul>
+                        <li>The header</li>
+                        <li>The payload</li>
+                        <li>The signature</li>
+                    </ul>
+                    
+                    <h4>Header</h4>
+                    <p>The header contains the algorithm with the token type. Typically the header for a JWT looks like this:</p>
+                    <pre>
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}</pre>
+                    <p>The <code>alg</code> key specifies which algorithm was used to create the token, in this case, the algorithm is HMACSHA-256, and the <code>typ</code> property classifies this token as being of the type JWT.</p>
                 </div>
+                
                 <div class="video-card">
-                    <h3>JWT Implementation</h3>
                     <div class="video-container">
-                        <iframe 
-                            title="Implementing JWT in Node.js" 
-                            src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" 
-                            allow="autoplay; fullscreen" 
-                            loading="lazy">
-                        </iframe>
+                        <iframe src="https://fast.wistia.net/embed/iframe/n9g6leixyu" title="JWT Implementation" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
-                    <p>Step-by-step guide to implementing JWT authentication in your Node.js applications.</p>
+                    <h3>JWT Payload</h3>
+                    <p>The payload includes <em>claims</em> (fancy name for things like permissions for the user) information or any other data we'd like to store in the token, which is most likely a user id. There are specific claims defined in the JWT standard, and you can also add custom properties to this object.</p>
+                    
+                    <p>An example payload:</p>
+                    <pre>
+{
+  "sub": "1234567890", // standard - subject, normally the user id
+  "name": "John Doe", // custom property
+  "iat": 1516239022 // standard - The Date the token was issued, expressed in seconds since epoch.
+}</pre>
+                    
+                    <h4>Standard Claims</h4>
+                    <ul>
+                        <li><code>sub</code> (subject): Entity to whom the token belongs, usually a user ID</li>
+                        <li><code>iat</code> (issued at): Time at which the token was issued</li>
+                        <li><code>exp</code> (expiration time): After this time, the token is invalid</li>
+                        <li><code>nbf</code> (not before): Token can't be used before this time</li>
+                        <li><code>iss</code> (issuer): Identifies who issued the token</li>
+                    </ul>
                 </div>
+                
                 <div class="video-card">
-                    <h3>JWT Security</h3>
                     <div class="video-container">
-                        <iframe 
-                            title="JWT Security Best Practices" 
-                            src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" 
-                            allow="autoplay; fullscreen" 
-                            loading="lazy">
-                        </iframe>
+                        <iframe src="https://fast.wistia.net/embed/iframe/4zv6i69yos" title="Secure JWT Implementation" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
-                    <p>Learn about JWT security considerations and best practices.</p>
+                    <h3>JWT Security Implementation</h3>
+                    <p>To create a signature, we must create a string by base64 encoding the header and payload together and then signing it with a secret.</p>
+                    
+                    <p>The signature is created using the following pseudocode:</p>
+                    <pre>
+HMACSHA256(
+  base64UrlEncode(header) + "." +
+  base64UrlEncode(payload),
+  secret
+)</pre>
+                    
+                    <p>Combining all three parts, you will get a JWT that looks like this:</p>
+                    <pre>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</pre>
+                    
+                    <p>You can visit <a href="https://jwt.io/" style="color: #ff5722;">jwt.io</a> and use the debugger to see an excellent representation of a JWT.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>JWT Implementation</h2>
+            
+            <div class="video-grid">
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/n9g6leixyu" title="JWT Token Generation" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <h3>Producing and Sending JWTs</h3>
+                    <p>When implementing JWT-based authentication, we need to generate tokens during login and verify them on subsequent requests.</p>
+                    
+                    <h4>Code Example - Creating JWTs with Node.js:</h4>
+                    <pre>
+const jwt = require('jsonwebtoken');
+
+// Secret key for signing tokens (store in env variables in production)
+const JWT_SECRET = 'your_jwt_secret';
+
+// Function to generate a token
+function generateToken(user) {
+  const payload = {
+    subject: user.id,        // standard claim for user id
+    username: user.username, // custom data
+    role: user.role,         // custom data for authorization
+    iat: Date.now() / 1000   // issued at time in seconds
+  };
+  
+  const options = {
+    expiresIn: '1h' // token expires in 1 hour
+  };
+  
+  return jwt.sign(payload, JWT_SECRET, options);
+}</pre>
+                </div>
+                
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/4zv6i69yos" title="JWT Authentication Routes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <h3>Login with JWT Authentication</h3>
+                    <p>Once we have the token generation function, we can implement a login endpoint:</p>
+                    
+                    <h4>Code Example - Login Route with JWT:</h4>
+                    <pre>
+// Login endpoint
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+  
+  try {
+    // Verify credentials (pseudo code)
+    const user = await getUserByUsername(username);
+    
+    // Check if user exists and password matches
+    if (!user || !await bcrypt.compare(password, user.password)) {
+      return res.status(401).json({
+        message: 'Invalid credentials'
+      });
+    }
+    
+    // Generate token
+    const token = generateToken(user);
+    
+    // Send the token in the response
+    res.status(200).json({
+      message: 'Login successful',
+      token
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Server error during login'
+    });
+  }
+});</pre>
+                </div>
+                
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/4zv6i69yos" title="JWT Authentication Middleware" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <h3>JWT Authentication Middleware</h3>
+                    <p>To protect routes and require authentication, we need middleware to verify the JWT:</p>
+                    
+                    <h4>Code Example - JWT Authentication Middleware:</h4>
+                    <pre>
+// JWT authentication middleware
+function authenticateToken(req, res, next) {
+  // Get token from Authorization header
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+  
+  if (!token) {
+    return res.status(401).json({ 
+      message: 'Access denied. No token provided.' 
+    });
+  }
+  
+  try {
+    // Verify the token
+    const decoded = jwt.verify(token, JWT_SECRET);
+    
+    // Add the decoded token to the request object
+    req.user = decoded;
+    
+    // Continue to the next middleware/route handler
+    next();
+  } catch (error) {
+    return res.status(403).json({ 
+      message: 'Invalid token.' 
+    });
+  }
+}
+
+// Example of protected route using JWT
+app.get('/api/protected', authenticateToken, (req, res) => {
+  res.json({ 
+    message: 'This is protected data',
+    user: req.user
+  });
+});</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>JWT Security Best Practices</h2>
+            
+            <div class="video-grid">
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/4zv6i69yos" title="JWT Security Considerations" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <h3>JWT Security Considerations</h3>
+                    <p>When using JWTs, we need to consider several security aspects:</p>
+                    
+                    <h4>1. Token Expiration</h4>
+                    <p>Always set a reasonable expiration time on tokens to limit the damage if a token is compromised. Use the <code>expiresIn</code> option when signing tokens.</p>
+                    
+                    <h4>2. Keep Secrets Secret</h4>
+                    <p>Store JWT secrets in environment variables, never hardcode them into your application.</p>
+                    
+                    <h4>3. HTTPS Only</h4>
+                    <p>Always use HTTPS in production to protect tokens in transit. JWTs sent over HTTP are vulnerable to interception.</p>
+                    
+                    <h4>4. Minimize Payload Size</h4>
+                    <p>Keep the payload small. Don't include sensitive data in it as the payload can be easily decoded (though not tampered with due to signature verification).</p>
+                </div>
+                
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/4zv6i69yos" title="Refresh Tokens" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <h3>Refresh Tokens</h3>
+                    <p>For improved security, use a two-token system: short-lived access tokens and longer-lived refresh tokens.</p>
+                    
+                    <h4>Code Example - Refresh Token Implementation:</h4>
+                    <pre>
+// Generate both access and refresh tokens
+function generateTokens(user) {
+  const accessToken = jwt.sign(
+    { subject: user.id, username: user.username },
+    JWT_ACCESS_SECRET,
+    { expiresIn: '15m' } // short-lived
+  );
+  
+  const refreshToken = jwt.sign(
+    { subject: user.id },
+    JWT_REFRESH_SECRET,
+    { expiresIn: '7d' } // longer-lived
+  );
+  
+  return { accessToken, refreshToken };
+}
+
+// Login route providing both tokens
+app.post('/api/login', async (req, res) => {
+  // ... verify credentials
+  
+  const tokens = generateTokens(user);
+  
+  // Store refresh token in DB (important for token revocation)
+  await storeRefreshToken(user.id, tokens.refreshToken);
+  
+  res.json(tokens);
+});
+
+// Refresh token endpoint
+app.post('/api/refresh-token', async (req, res) => {
+  const { refreshToken } = req.body;
+  
+  if (!refreshToken) {
+    return res.status(401).json({ message: 'Refresh token required' });
+  }
+  
+  try {
+    // Verify the refresh token
+    const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET);
+    
+    // Check if token is in our database and not revoked
+    const storedToken = await getRefreshToken(decoded.subject, refreshToken);
+    
+    if (!storedToken) {
+      return res.status(403).json({ message: 'Invalid refresh token' });
+    }
+    
+    // Get user and generate new access token
+    const user = await getUserById(decoded.subject);
+    const accessToken = jwt.sign(
+      { subject: user.id, username: user.username },
+      JWT_ACCESS_SECRET,
+      { expiresIn: '15m' }
+    );
+    
+    res.json({ accessToken });
+  } catch (error) {
+    res.status(403).json({ message: 'Invalid refresh token' });
+  }
+});</pre>
+                </div>
+                
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/4zv6i69yos" title="JWT Best Practices" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <h3>Client-Side Handling</h3>
+                    <p>Proper client-side handling of JWTs is crucial for security:</p>
+                    
+                    <h4>1. Storage Location</h4>
+                    <p>There are several options for storing JWTs in the browser:</p>
+                    <ul>
+                        <li><strong>localStorage</strong>: Convenient but vulnerable to XSS attacks</li>
+                        <li><strong>httpOnly Cookies</strong>: More secure against XSS but requires proper CSRF protection</li>
+                        <li><strong>In-memory storage</strong>: Safest option but lost on page refresh</li>
+                    </ul>
+                    
+                    <h4>Code Example - Client-side JWT handling:</h4>
+                    <pre>
+// Example React hook for JWT authentication
+function useAuth() {
+  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
+  
+  // Login function
+  const login = async (username, password) => {
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      
+      if (!response.ok) throw new Error('Login failed');
+      
+      const data = await response.json();
+      
+      // Store token in memory (not localStorage for security)
+      setToken(data.token);
+      
+      // Decode user info from token
+      const decoded = parseJwt(data.token);
+      setUser(decoded);
+      
+      return true;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
+    }
+  };
+  
+  // Function to add token to requests
+  const authFetch = async (url, options = {}) => {
+    if (!token) throw new Error('No authentication token');
+    
+    const headers = {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`
+    };
+    
+    return fetch(url, { ...options, headers });
+  };
+  
+  return { user, login, authFetch };
+}</pre>
                 </div>
             </div>
         </div>

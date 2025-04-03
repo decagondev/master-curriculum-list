@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3: Hash Tables II</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#93005a',
+                        secondary: '#00808c',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.classList.remove('border-primary', 'text-primary');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            document.querySelector(`[data-tab-content="${tabId}"]`).classList.remove('hidden');
+            element.classList.remove('text-gray-500', 'border-transparent');
+            element.classList.add('border-primary', 'text-primary');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mb-8">
+            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Welcome Page</span>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-primary mb-4">Module 3: Advanced Hash Table Applications</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Master advanced hash table techniques and learn how to solve complex problems efficiently using hash-based data structures.
+            </p>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="border-b border-gray-200 mb-8">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button 
+                    data-tab="overview"
+                    onclick="switchTab('overview', this)"
+                    class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-medium"
+                    aria-current="page">
+                    Overview
+                </button>
+                <button 
+                    data-tab="lecture-content"
+                    onclick="switchTab('lecture-content', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Lecture Content
+                </button>
+                <button 
+                    data-tab="implementation"
+                    onclick="switchTab('implementation', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Implementation
+                </button>
+                <button 
+                    data-tab="practice"
+                    onclick="switchTab('practice', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Practice Exercises
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="space-y-8">
+            <!-- Overview Tab -->
+            <div data-tab-content="overview" class="space-y-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Learning Objectives</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Core Concepts</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Advanced hash table optimization techniques</li>
+                                <li>Common hash table patterns and use cases</li>
+                                <li>Time and space complexity analysis</li>
+                                <li>Problem-solving strategies with hash tables</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Key Skills</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Identify hash table-suitable problems</li>
+                                <li>Implement efficient hash-based solutions</li>
+                                <li>Handle collisions and edge cases</li>
+                                <li>Optimize space usage</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Common Applications</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="text-lg font-medium text-secondary mb-2">Frequency Counting</h3>
+                            <p class="text-gray-600">Track occurrences of elements in arrays, strings, or streams of data.</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="text-lg font-medium text-secondary mb-2">Caching</h3>
+                            <p class="text-gray-600">Store frequently accessed data for quick retrieval.</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="text-lg font-medium text-secondary mb-2">De-duplication</h3>
+                            <p class="text-gray-600">Efficiently remove or identify duplicate items.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div data-tab-content="lecture-content" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Advanced Hash Table Techniques</h2>
+                    
+                    <!-- Video Section -->
+                    <div class="mb-8">
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                            <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                                <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                    <iframe src="https://fast.wistia.net/embed/iframe/my4tk1h3pg?videoFoam=true" title="s19M3 Web JavaScript Guided Project Part 1 First Non-Repeating Character Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 class="text-xl font-medium text-secondary mb-4">Key Concepts Covered</h3>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                    <li>Finding first non-repeating character</li>
+                                    <li>Two-pass vs. single-pass solutions</li>
+                                    <li>Space-time complexity tradeoffs</li>
+                                    <li>Handling edge cases</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div data-tab-content="implementation" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Implementation Examples</h2>
+                    
+                    <div class="space-y-8">
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">First Non-Repeating Character</h3>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>function firstNonRepeatingChar(str) {
+    // Create frequency map
+    const charCount = new Map();
+    
+    // First pass: count frequencies
+    for (const char of str) {
+        charCount.set(char, (charCount.get(char) || 0) + 1);
+    }
+    
+    // Second pass: find first char with count 1
+    for (const char of str) {
+        if (charCount.get(char) === 1) {
+            return char;
+        }
+    }
+    
+    return null;
+}</code></pre>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Example Usage:</h4>
+                                <pre class="bg-gray-100 p-2 rounded"><code>console.log(firstNonRepeatingChar("leetcode"));    // "l"
+console.log(firstNonRepeatingChar("aabbcc"));     // null
+console.log(firstNonRepeatingChar("aabbc"));      // "c"</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Optimized Single-Pass Solution</h3>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>function firstNonRepeatingCharOptimized(str) {
+    const charInfo = new Map();
+    
+    // Single pass: track both count and first position
+    for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        if (!charInfo.has(char)) {
+            charInfo.set(char, { count: 1, firstIndex: i });
+        } else {
+            const info = charInfo.get(char);
+            info.count++;
+        }
+    }
+    
+    // Find character with count 1 and minimum index
+    let result = null;
+    let minIndex = str.length;
+    
+    for (const [char, info] of charInfo) {
+        if (info.count === 1 && info.firstIndex < minIndex) {
+            result = char;
+            minIndex = info.firstIndex;
+        }
+    }
+    
+    return result;
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div data-tab-content="practice" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Practice Exercises</h2>
+                    
+                    <div class="space-y-8">
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Exercise 1: First Repeating Character</h3>
+                            <p class="text-gray-600">Implement a function that finds the first character that repeats in a string.</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Example:</h4>
+                                <pre class="bg-gray-100 p-2 rounded"><code>firstRepeatingChar("abcdeef") → "e"
+firstRepeatingChar("abcde") → null
+firstRepeatingChar("abba") → "b"</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Exercise 2: Character Frequency Map</h3>
+                            <p class="text-gray-600">Create a function that returns a map of character frequencies in descending order.</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Example:</h4>
+                                <pre class="bg-gray-100 p-2 rounded"><code>charFrequency("programming") →
+{
+    "g": 2,
+    "r": 2,
+    "m": 2,
+    "p": 1,
+    "o": 1,
+    "a": 1,
+    "i": 1,
+    "n": 1
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Exercise 3: Anagram Groups</h3>
+                            <p class="text-gray-600">Write a function that groups anagrams together from an array of strings.</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Example:</h4>
+                                <pre class="bg-gray-100 p-2 rounded"><code>groupAnagrams(["eat", "tea", "tan", "ate", "nat", "bat"]) →
+[
+    ["eat", "tea", "ate"],
+    ["tan", "nat"],
+    ["bat"]
+]</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

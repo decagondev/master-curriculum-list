@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guided Project: Graphs I</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#93005a',
+                        secondary: '#00808c',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.classList.remove('border-primary', 'text-primary');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            document.querySelector(`[data-tab-content="${tabId}"]`).classList.remove('hidden');
+            element.classList.remove('text-gray-500', 'border-transparent');
+            element.classList.add('border-primary', 'text-primary');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mb-8">
+            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Welcome Page</span>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-primary mb-4">Guided Project: Detecting Cycles in Graphs</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Learn how to implement cycle detection in graphs using depth-first search.
+                Master this essential algorithm used in various real-world applications.
+            </p>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="border-b border-gray-200 mb-8">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button 
+                    data-tab="overview"
+                    onclick="switchTab('overview', this)"
+                    class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-medium"
+                    aria-current="page">
+                    Overview
+                </button>
+                <button 
+                    data-tab="guided-implementation"
+                    onclick="switchTab('guided-implementation', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Guided Implementation
+                </button>
+                <button 
+                    data-tab="practice"
+                    onclick="switchTab('practice', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Practice Challenge
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="space-y-8">
+            <!-- Overview Tab -->
+            <div data-tab-content="overview" class="space-y-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Project Overview</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Learning Goals</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Understand cycle detection algorithms</li>
+                                <li>Implement DFS-based cycle detection</li>
+                                <li>Handle directed and undirected graphs</li>
+                                <li>Analyze algorithm complexity</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Prerequisites</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Graph fundamentals</li>
+                                <li>Depth-first search</li>
+                                <li>JavaScript classes</li>
+                                <li>Recursive functions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Real-World Applications</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Use Cases</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Deadlock detection in operating systems</li>
+                                <li>Dependency resolution in package managers</li>
+                                <li>Circuit design verification</li>
+                                <li>Network topology analysis</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Example Scenarios</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="text-gray-600 mb-2">Deadlock Example:</p>
+                                <pre class="bg-gray-100 p-2 rounded text-sm">Process A → Resource 1 → Process B → Resource 2 → Process A
+(Cycle indicates potential deadlock)</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guided Implementation Tab -->
+            <div data-tab-content="guided-implementation" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Detecting Cycles in Graphs</h2>
+                    
+                    <!-- Video Section -->
+                    <div class="mb-8">
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                            <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                                <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                    <iframe src="https://fast.wistia.net/embed/iframe/cz1gs6r8ew?videoFoam=true" title="s20M1 Web-JavaScript Guided Project Detecting Cycles Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Implementation Steps -->
+                        <div class="space-y-6 mt-8">
+                            <h3 class="text-xl font-medium text-secondary">Implementation Steps</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <h4 class="text-lg font-medium text-gray-900">Step 1: Graph Setup</h4>
+                                    <div class="bg-gray-800 rounded-lg p-4">
+                                        <pre class="text-gray-100"><code>class Graph {
+    constructor() {
+        this.adjacencyList = {};
+    }
+
+    addVertex(vertex) {
+        if (!this.adjacencyList[vertex]) {
+            this.adjacencyList[vertex] = [];
+        }
+    }
+
+    addEdge(v1, v2) {
+        this.adjacencyList[v1].push(v2);
+        // For undirected graphs, add:
+        // this.adjacencyList[v2].push(v1);
+    }
+}</code></pre>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <h4 class="text-lg font-medium text-gray-900">Step 2: Cycle Detection</h4>
+                                    <div class="bg-gray-800 rounded-lg p-4">
+                                        <pre class="text-gray-100"><code>hasCycle() {
+    const visited = {};
+    const recStack = {};
+
+    for (let vertex in this.adjacencyList) {
+        if (this.hasCycleUtil(vertex, visited, recStack)) {
+            return true;
+        }
+    }
+    return false;
+}</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <h4 class="text-lg font-medium text-gray-900">Step 3: Helper Method</h4>
+                                <div class="bg-gray-800 rounded-lg p-4">
+                                    <pre class="text-gray-100"><code>hasCycleUtil(vertex, visited, recStack) {
+    if (!visited[vertex]) {
+        visited[vertex] = true;
+        recStack[vertex] = true;
+
+        for (let neighbor of this.adjacencyList[vertex]) {
+            if (!visited[neighbor] && 
+                this.hasCycleUtil(neighbor, visited, recStack)) {
+                return true;
+            } else if (recStack[neighbor]) {
+                return true;
+            }
+        }
+    }
+    recStack[vertex] = false;
+    return false;
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Challenge Tab -->
+            <div data-tab-content="practice" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Practice Challenge</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Challenge: Cycle Detection with Path</h3>
+                            <p class="text-gray-600">Modify the cycle detection algorithm to return the path of the cycle if one exists.</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Requirements:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                    <li>Return array of vertices forming the cycle</li>
+                                    <li>Handle both directed and undirected graphs</li>
+                                    <li>Return empty array if no cycle exists</li>
+                                    <li>Track the path during traversal</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Example:</h4>
+                                <pre class="bg-gray-100 p-2 rounded"><code>const graph = new Graph();
+graph.addVertex("A");
+graph.addVertex("B");
+graph.addVertex("C");
+graph.addEdge("A", "B");
+graph.addEdge("B", "C");
+graph.addEdge("C", "A");
+
+console.log(graph.findCycle());
+// Output: ["A", "B", "C", "A"]</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Starter Code</h3>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>class Graph {
+    constructor() {
+        this.adjacencyList = {};
+    }
+
+    findCycle() {
+        const visited = {};
+        const recStack = {};
+        const path = [];
+        
+        // Your implementation here
+    }
+
+    // Add any helper methods you need
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

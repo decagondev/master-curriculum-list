@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Graphs II</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#93005a',
+                        secondary: '#00808c',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.classList.remove('border-primary', 'text-primary');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            document.querySelector(`[data-tab-content="${tabId}"]`).classList.remove('hidden');
+            element.classList.remove('text-gray-500', 'border-transparent');
+            element.classList.add('border-primary', 'text-primary');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mb-8">
+            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Welcome Page</span>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-primary mb-4">Module 2: Graphs II</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Master advanced graph traversal techniques and understand connected components.
+                Learn how to implement both breadth-first and depth-first search algorithms efficiently.
+            </p>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="border-b border-gray-200 mb-8">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button 
+                    data-tab="overview"
+                    onclick="switchTab('overview', this)"
+                    class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-medium"
+                    aria-current="page">
+                    Overview
+                </button>
+                <button 
+                    data-tab="lecture"
+                    onclick="switchTab('lecture', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Lecture Content
+                </button>
+                <button 
+                    data-tab="implementation"
+                    onclick="switchTab('implementation', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Implementation
+                </button>
+                <button 
+                    data-tab="exercises"
+                    onclick="switchTab('exercises', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Practice Exercises
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="space-y-8">
+            <!-- Overview Tab -->
+            <div data-tab-content="overview" class="space-y-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Learning Objectives</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Core Concepts</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Implement depth-first search using a stack</li>
+                                <li>Implement breadth-first search using a queue</li>
+                                <li>Understand connected components in graphs</li>
+                                <li>Compare iterative vs recursive approaches</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Applications</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Social network analysis</li>
+                                <li>Web crawling and indexing</li>
+                                <li>Network connectivity testing</li>
+                                <li>Shortest path algorithms</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Prerequisites</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Required Knowledge</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Basic graph terminology</li>
+                                <li>JavaScript fundamentals</li>
+                                <li>Stack and Queue data structures</li>
+                                <li>Basic graph traversal concepts</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Recommended Review</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Graph representation methods</li>
+                                <li>Basic graph operations</li>
+                                <li>Time complexity analysis</li>
+                                <li>JavaScript classes and objects</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div data-tab-content="lecture" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Breadth-First Traversal</h2>
+                    
+                    <!-- Video Section -->
+                    <div class="mb-8">
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                            <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                                <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                    <iframe src="https://fast.wistia.net/embed/iframe/9zztjzmv8h?videoFoam=true" title="s20M2 JavaScript CC1 Graph BFT Breadth First Traversal Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 mt-6">
+                            <h3 class="text-xl font-medium text-secondary">Key Concepts</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <h4 class="text-lg font-medium text-gray-900 mb-2">BFS Properties</h4>
+                                    <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                        <li>Visits nodes level by level</li>
+                                        <li>Uses a queue data structure</li>
+                                        <li>Optimal for shortest path</li>
+                                        <li>Time complexity: O(V + E)</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <h4 class="text-lg font-medium text-gray-900 mb-2">Applications</h4>
+                                    <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                        <li>Shortest path finding</li>
+                                        <li>Web crawling</li>
+                                        <li>Social network friends suggestions</li>
+                                        <li>GPS navigation systems</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Connected Components</h2>
+                    
+                    <!-- Video Section -->
+                    <div class="mb-8">
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                            <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                                <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                    <iframe src="https://fast.wistia.net/embed/iframe/6t17eggd93?videoFoam=true" title="s20M2 JavaScript CC2 Graph Connected Components Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 mt-6">
+                            <h3 class="text-xl font-medium text-secondary">Understanding Connected Components</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <h4 class="text-lg font-medium text-gray-900 mb-2">Key Concepts</h4>
+                                    <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                        <li>Subgraphs where all nodes are connected</li>
+                                        <li>Important for graph analysis</li>
+                                        <li>Used in network partitioning</li>
+                                        <li>Helps identify isolated groups</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <h4 class="text-lg font-medium text-gray-900 mb-2">Real-world Applications</h4>
+                                    <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                        <li>Social network communities</li>
+                                        <li>Network topology analysis</li>
+                                        <li>Image segmentation</li>
+                                        <li>Biological networks</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div data-tab-content="implementation" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Implementation Examples</h2>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-xl font-medium text-secondary mb-4">Breadth-First Search Implementation</h3>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>class Graph {
+    constructor() {
+        this.adjacencyList = {};
+    }
+
+    bfs(startVertex) {
+        const queue = [startVertex];
+        const visited = new Set();
+        const result = [];
+
+        visited.add(startVertex);
+
+        while (queue.length) {
+            const currentVertex = queue.shift();
+            result.push(currentVertex);
+
+            this.adjacencyList[currentVertex].forEach(neighbor => {
+                if (!visited.has(neighbor)) {
+                    visited.add(neighbor);
+                    queue.push(neighbor);
+                }
+            });
+        }
+
+        return result;
+    }
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-medium text-secondary mb-4">Connected Components Implementation</h3>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>findConnectedComponents() {
+    const visited = new Set();
+    const components = [];
+
+    for (let vertex in this.adjacencyList) {
+        if (!visited.has(vertex)) {
+            const component = this.bfs(vertex);
+            component.forEach(v => visited.add(v));
+            components.push(component);
+        }
+    }
+
+    return components;
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="text-lg font-medium text-gray-900 mb-2">Example Usage:</h4>
+                            <pre class="bg-gray-100 p-2 rounded"><code>const graph = new Graph();
+// Add vertices and edges
+graph.addVertex("A");
+graph.addVertex("B");
+graph.addVertex("C");
+graph.addVertex("D");
+graph.addVertex("E");
+
+graph.addEdge("A", "B");
+graph.addEdge("B", "C");
+graph.addEdge("D", "E");
+
+console.log(graph.findConnectedComponents());
+// Output: [["A", "B", "C"], ["D", "E"]]</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div data-tab-content="exercises" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Practice Exercises</h2>
+                    
+                    <div class="space-y-8">
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Exercise 1: Shortest Path</h3>
+                            <p class="text-gray-600">Modify the BFS implementation to find the shortest path between two vertices.</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Requirements:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                    <li>Return the path as an array of vertices</li>
+                                    <li>Return null if no path exists</li>
+                                    <li>Handle disconnected graphs</li>
+                                    <li>Track parent nodes during traversal</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Exercise 2: Island Count</h3>
+                            <p class="text-gray-600">Given a 2D grid of 1s (land) and 0s (water), count the number of islands.</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Example:</h4>
+                                <pre class="bg-gray-100 p-2 rounded"><code>const grid = [
+    [1, 1, 0, 0, 0],
+    [1, 1, 0, 0, 0],
+    [0, 0, 1, 0, 0],
+    [0, 0, 0, 1, 1]
+];
+
+console.log(countIslands(grid)); // Output: 3</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Exercise 3: Bipartite Graph</h3>
+                            <p class="text-gray-600">Implement a function to determine if a graph is bipartite using BFS.</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Hints:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                    <li>Use two colors to mark vertices</li>
+                                    <li>Adjacent vertices must have different colors</li>
+                                    <li>Use BFS to traverse and color nodes</li>
+                                    <li>Check for color conflicts</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
