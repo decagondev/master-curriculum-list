@@ -102,6 +102,33 @@
         section {
             margin-bottom: 30px;
         }
+        /* New classes to replace inline styles */
+        .concept-block {
+            background-color: #2a303c;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .concept-last {
+            margin-bottom: 0;
+        }
+        .text-muted {
+            color: #b3b3b3;
+        }
+        .list-styled {
+            color: #b3b3b3;
+            padding-left: 20px;
+        }
+        .code-block {
+            background-color: #1a1d23;
+            color: #dddddd;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .text-highlight {
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -121,12 +148,156 @@
 
         <section>
             <h2>Learning Objectives</h2>
-            <ul style="color: #b3b3b3; padding-left: 20px;">
+            <ul class="list-styled">
                 <li>Understand the concept of encapsulation in Java</li>
                 <li>Learn how to use access modifiers effectively</li>
                 <li>Implement defensive copying for better data protection</li>
                 <li>Use the final keyword appropriately</li>
             </ul>
+        </section>
+
+        <section>
+            <h2>Key Concepts</h2>
+            <div class="concept-block">
+                <h3>Encapsulation</h3>
+                <p class="text-muted">Encapsulation is the process of hiding implementation details and combining data and methods into a single unit (class). This protects internal state from external interference and allows implementation to change without affecting dependent code.</p>
+                
+                <h4>Benefits of Encapsulation:</h4>
+                <ul class="list-styled">
+                    <li>Protects classes from misuse</li>
+                    <li>Prevents unexpected behaviors</li>
+                    <li>Allows internal representation to change without affecting dependents</li>
+                </ul>
+                
+                <h4>Example:</h4>
+                <pre class="code-block">
+public class Species {
+    // Private fields (encapsulated data)
+    private String name;
+    private int population;
+    private double yearlyGrowthRatePercentage;
+
+    // Constructor validates data upon creation
+    public Species(String name, int population, double yearlyGrowthRatePercentage) {
+        this.name = name;
+        if(population < 0) {
+            throw new IllegalArgumentException("Population must be positive.");
+        }
+        this.population = population;
+        this.yearlyGrowthRatePercentage = yearlyGrowthRatePercentage;
+    }
+    
+    // Getter methods provide controlled access
+    public String getName() {
+        return name;
+    }
+    
+    public int getPopulation() {
+        return population;
+    }
+    
+    public double getYearlyGrowthRatePercentage() {
+        return yearlyGrowthRatePercentage;
+    }
+    
+    // Controlled way to modify population
+    public void setPopulation(int population) {
+        if(population < 0) {
+            throw new IllegalArgumentException("Population must be positive.");
+        }
+        this.population = population;
+    }
+}</pre>
+            </div>
+            
+            <div class="concept-block">
+                <h3>Defensive Copying</h3>
+                <p class="text-muted">Defensive copying creates copies of mutable objects when they enter or leave your class to prevent unintended modifications. This is essential when your class contains references to mutable objects (like arrays or collections) to maintain encapsulation.</p>
+                
+                <h4>When to use defensive copying:</h4>
+                <ul class="list-styled">
+                    <li>When accepting mutable objects as constructor parameters</li>
+                    <li>When returning mutable objects from getter methods</li>
+                </ul>
+                
+                <h4>Example:</h4>
+                <pre class="code-block">
+public class Student {
+    private final String name;
+    private final int[] scores; // Mutable array
+    
+    // Defensive copy in constructor
+    public Student(String name, int[] scores) {
+        this.name = name;
+        // Create a defensive copy (don't store the reference directly)
+        this.scores = (scores != null) ? Arrays.copyOf(scores, scores.length) : new int[0];
+    }
+    
+    // Defensive copy in getter
+    public int[] getScores() {
+        // Return a copy, not the original reference
+        return Arrays.copyOf(scores, scores.length);
+    }
+}</pre>
+            </div>
+            
+            <div class="concept-block">
+                <h3>Copy Constructors</h3>
+                <p class="text-muted">A copy constructor creates a new object with the same values as an existing object. It performs a deep copy, creating entirely new instances of mutable members rather than copying references.</p>
+                
+                <h4>Example:</h4>
+                <pre class="code-block">
+public class Person {
+    private String name;
+    private List<String> hobbies;
+    
+    // Regular constructor
+    public Person(String name, List<String> hobbies) {
+        this.name = name;
+        this.hobbies = new ArrayList<>(hobbies); // Defensive copy
+    }
+    
+    // Copy constructor
+    public Person(Person original) {
+        this.name = original.name;
+        this.hobbies = new ArrayList<>(original.hobbies); // Deep copy
+    }
+}</pre>
+            </div>
+            
+            <div class="concept-block concept-last">
+                <h3>The final Keyword</h3>
+                <p class="text-muted">The final keyword in Java has different effects depending on where it's used:</p>
+                
+                <ul class="list-styled">
+                    <li><strong>final variables:</strong> Cannot be reassigned after initialization</li>
+                    <li><strong>final methods:</strong> Cannot be overridden by subclasses</li>
+                    <li><strong>final classes:</strong> Cannot be extended (no subclasses allowed)</li>
+                </ul>
+                
+                <h4>Example:</h4>
+                <pre class="code-block">
+public class MathConstants {
+    // Constant (cannot be changed)
+    public static final double PI = 3.14159265359;
+    
+    // Immutable object reference (reference cannot change)
+    private final List<Integer> primes;
+    
+    public MathConstants() {
+        // Initialize final field
+        primes = new ArrayList<>();
+        primes.add(2);
+        primes.add(3);
+        primes.add(5);
+    }
+    
+    // Final method that cannot be overridden
+    public final double calculateCircleArea(double radius) {
+        return PI * radius * radius;
+    }
+}</pre>
+            </div>
         </section>
 
         <div class="resources">

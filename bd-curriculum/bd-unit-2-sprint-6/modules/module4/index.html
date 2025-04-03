@@ -102,6 +102,34 @@
         section {
             margin-bottom: 30px;
         }
+        .list-styled {
+            padding-left: 20px;
+        }
+        .concept-block {
+            background-color: #2a303c;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .concept-block h3 {
+            color: #ffffff;
+            margin-top: 0;
+        }
+        .text-muted {
+            color: #b3b3b3;
+        }
+        .concept-image {
+            max-width: 100%;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .code-block {
+            background-color: #1a1d23;
+            color: #dddddd;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
@@ -121,12 +149,207 @@
 
         <section>
             <h2>Learning Objectives</h2>
-            <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand the concept and purpose of wrapper classes in Java</li>
-                <li>Learn about autoboxing and unboxing mechanisms</li>
-                <li>Work with primitive wrapper class methods and constants</li>
-                <li>Understand performance implications of wrapper classes vs. primitives</li>
+            <ul class="list-styled">
+                <li>Understand what Java collections are and when to use them</li>
+                <li>Learn the core interfaces of the Collections Framework</li>
+                <li>Explore implementation classes for Lists, Sets, and Maps</li>
+                <li>Utilize collection utility methods for common operations</li>
             </ul>
+        </section>
+
+        <section>
+            <h2>Key Concepts</h2>
+            <div class="concept-block">
+                <h3>Java Collections Framework Overview</h3>
+                <p class="text-muted">The Java Collections Framework (JCF) is a unified architecture for representing and manipulating collections of objects. It provides standard data structures like lists, sets, and maps, along with algorithms for searching, sorting, and manipulating these collections.</p>
+                
+                <h4>Core Collection Interfaces:</h4>
+                <ul class="list-styled">
+                    <li><strong>Collection</strong> - The root interface with basic methods like add(), remove(), and contains()</li>
+                    <li><strong>List</strong> - An ordered collection that allows duplicate elements</li>
+                    <li><strong>Set</strong> - A collection that cannot contain duplicate elements</li>
+                    <li><strong>Queue</strong> - A collection designed for holding elements prior to processing</li>
+                    <li><strong>Map</strong> - An object that maps keys to values, with no duplicate keys allowed</li>
+                </ul>
+                
+                <img src="images/collection-hierarchy.png" alt="Java Collections Framework Hierarchy" class="concept-image">
+            </div>
+            
+            <div class="concept-block">
+                <h3>Lists</h3>
+                <p class="text-muted">Lists are ordered collections that allow duplicate elements. Elements can be accessed by their integer index.</p>
+                
+                <h4>Common List Implementations:</h4>
+                <ul class="list-styled">
+                    <li><strong>ArrayList</strong> - Resizable array implementation; fast for random access, slower for insertions/deletions</li>
+                    <li><strong>LinkedList</strong> - Doubly-linked list implementation; fast for insertions/deletions, slower for random access</li>
+                    <li><strong>Vector</strong> - Legacy synchronized list implementation (thread-safe)</li>
+                    <li><strong>Stack</strong> - Legacy LIFO (Last-In-First-Out) stack implementation</li>
+                </ul>
+                
+                <h4>Example:</h4>
+                <pre class="code-block">
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+public class ListExample {
+    public static void main(String[] args) {
+        // ArrayList example
+        List<String> arrayList = new ArrayList<>();
+        arrayList.add("Java");
+        arrayList.add("Python");
+        arrayList.add("JavaScript");
+        arrayList.add("Java");  // Duplicates allowed
+        
+        System.out.println("ArrayList: " + arrayList);
+        System.out.println("Element at index 1: " + arrayList.get(1));
+        
+        // LinkedList example
+        List<String> linkedList = new LinkedList<>(arrayList);  // Initialize with another collection
+        linkedList.add(0, "C++");  // Add at specific position
+        linkedList.remove("Java");  // Remove first occurrence
+        
+        System.out.println("LinkedList: " + linkedList);
+        
+        // Common operations
+        System.out.println("Size: " + linkedList.size());
+        System.out.println("Contains 'Python'? " + linkedList.contains("Python"));
+        System.out.println("Index of 'JavaScript': " + linkedList.indexOf("JavaScript"));
+    }
+}</pre>
+            </div>
+            
+            <div class="concept-block">
+                <h3>Sets</h3>
+                <p class="text-muted">Sets are collections that cannot contain duplicate elements. They model the mathematical set abstraction.</p>
+                
+                <h4>Common Set Implementations:</h4>
+                <ul class="list-styled">
+                    <li><strong>HashSet</strong> - Uses hash table for storage; doesn't guarantee order, offers constant-time performance</li>
+                    <li><strong>LinkedHashSet</strong> - Hash table with linked list, maintains insertion order</li>
+                    <li><strong>TreeSet</strong> - Based on TreeMap (Red-Black tree), elements stored in sorted order</li>
+                </ul>
+                
+                <h4>Example:</h4>
+                <pre class="code-block">
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.TreeSet;
+
+public class SetExample {
+    public static void main(String[] args) {
+        // HashSet example
+        Set<Integer> hashSet = new HashSet<>();
+        hashSet.add(10);
+        hashSet.add(5);
+        hashSet.add(20);
+        hashSet.add(10);  // Duplicate - will be ignored
+        
+        System.out.println("HashSet: " + hashSet);  // Order not guaranteed
+        
+        // LinkedHashSet example - maintains insertion order
+        Set<Integer> linkedHashSet = new LinkedHashSet<>();
+        linkedHashSet.add(10);
+        linkedHashSet.add(5);
+        linkedHashSet.add(20);
+        
+        System.out.println("LinkedHashSet: " + linkedHashSet);  // Maintains insertion order
+        
+        // TreeSet example - maintains sorted order
+        Set<Integer> treeSet = new TreeSet<>();
+        treeSet.add(10);
+        treeSet.add(5);
+        treeSet.add(20);
+        
+        System.out.println("TreeSet: " + treeSet);  // Natural ordering (ascending)
+        
+        // Set operations
+        Set<Integer> set1 = new HashSet<>(Set.of(1, 2, 3, 4, 5));
+        Set<Integer> set2 = new HashSet<>(Set.of(4, 5, 6, 7, 8));
+        
+        // Union
+        Set<Integer> union = new HashSet<>(set1);
+        union.addAll(set2);
+        System.out.println("Union: " + union);
+        
+        // Intersection
+        Set<Integer> intersection = new HashSet<>(set1);
+        intersection.retainAll(set2);
+        System.out.println("Intersection: " + intersection);
+        
+        // Difference
+        Set<Integer> difference = new HashSet<>(set1);
+        difference.removeAll(set2);
+        System.out.println("Difference (set1 - set2): " + difference);
+    }
+}</pre>
+            </div>
+            
+            <div class="concept-block concept-last">
+                <h3>Maps</h3>
+                <p class="text-muted">Maps are objects that map keys to values. A map cannot contain duplicate keys, and each key can map to at most one value.</p>
+                
+                <h4>Common Map Implementations:</h4>
+                <ul class="list-styled">
+                    <li><strong>HashMap</strong> - General-purpose implementation based on a hash table</li>
+                    <li><strong>LinkedHashMap</strong> - Hash table with linked list, maintains insertion order of keys</li>
+                    <li><strong>TreeMap</strong> - Based on a Red-Black tree, keys maintained in sorted order</li>
+                    <li><strong>Hashtable</strong> - Legacy synchronized implementation (thread-safe)</li>
+                </ul>
+                
+                <h4>Example:</h4>
+                <pre class="code-block">
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
+public class MapExample {
+    public static void main(String[] args) {
+        // HashMap example
+        Map<String, Integer> hashMap = new HashMap<>();
+        hashMap.put("John", 25);
+        hashMap.put("Alice", 30);
+        hashMap.put("Bob", 28);
+        hashMap.put("John", 26);  // Overwrites previous value for "John"
+        
+        System.out.println("HashMap: " + hashMap);  // Order not guaranteed
+        
+        // LinkedHashMap example - maintains insertion order
+        Map<String, Integer> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("John", 25);
+        linkedHashMap.put("Alice", 30);
+        linkedHashMap.put("Bob", 28);
+        
+        System.out.println("LinkedHashMap: " + linkedHashMap);  // Maintains insertion order
+        
+        // TreeMap example - maintains sorted key order
+        Map<String, Integer> treeMap = new TreeMap<>();
+        treeMap.put("John", 25);
+        treeMap.put("Alice", 30);
+        treeMap.put("Bob", 28);
+        
+        System.out.println("TreeMap: " + treeMap);  // Sorted by keys
+        
+        // Common operations
+        System.out.println("Value for 'Alice': " + hashMap.get("Alice"));
+        System.out.println("Contains key 'David'? " + hashMap.containsKey("David"));
+        System.out.println("Contains value 28? " + hashMap.containsValue(28));
+        
+        // Iterating over a Map
+        System.out.println("Iterating over HashMap:");
+        for (Map.Entry<String, Integer> entry : hashMap.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+        
+        // Using forEach (Java 8+)
+        System.out.println("Using forEach:");
+        hashMap.forEach((key, value) -> System.out.println(key + ": " + value));
+    }
+}</pre>
+            </div>
         </section>
 
         <div class="resources">

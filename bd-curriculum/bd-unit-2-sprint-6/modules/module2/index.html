@@ -102,6 +102,30 @@
         section {
             margin-bottom: 30px;
         }
+        /* New classes to replace inline styles */
+        .concept-block {
+            background-color: #2a303c;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .concept-last {
+            margin-bottom: 0;
+        }
+        .text-muted {
+            color: #b3b3b3;
+        }
+        .list-styled {
+            color: #b3b3b3;
+            padding-left: 20px;
+        }
+        .code-block {
+            background-color: #1a1d23;
+            color: #dddddd;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
@@ -121,12 +145,200 @@
 
         <section>
             <h2>Learning Objectives</h2>
-            <ul style="color: #b3b3b3; padding-left: 20px;">
+            <ul class="list-styled">
                 <li>Understand polymorphism and its benefits in Java</li>
                 <li>Learn how to create and implement interfaces</li>
                 <li>Apply polymorphic design patterns to make code more flexible</li>
                 <li>Recognize when to use interfaces versus abstract classes</li>
             </ul>
+        </section>
+
+        <section>
+            <h2>Key Concepts</h2>
+            <div class="concept-block">
+                <h3>Polymorphism</h3>
+                <p class="text-muted">Polymorphism is the ability to process objects differently based on their data type. It allows a single interface to represent different underlying types, enabling more flexible and reusable code.</p>
+                
+                <h4>Benefits of Polymorphism:</h4>
+                <ul class="list-styled">
+                    <li>Code reusability and maintainability</li>
+                    <li>Simplified method calls across different types</li>
+                    <li>Runtime determination of which implementation to execute</li>
+                    <li>Ability to extend functionality without modifying existing code</li>
+                </ul>
+                
+                <h4>Example:</h4>
+                <pre class="code-block">
+// Interface defining a contract
+public interface Vehicle {
+    void start();
+    void stop();
+    void accelerate();
+}
+
+// Implementation for a Car
+public class Car implements Vehicle {
+    @Override
+    public void start() {
+        System.out.println("Car engine starts with ignition key");
+    }
+    
+    @Override
+    public void stop() {
+        System.out.println("Car stops by applying brakes");
+    }
+    
+    @Override
+    public void accelerate() {
+        System.out.println("Car accelerates by pressing gas pedal");
+    }
+}
+
+// Implementation for an Electric Bike
+public class ElectricBike implements Vehicle {
+    @Override
+    public void start() {
+        System.out.println("Electric bike starts with power button");
+    }
+    
+    @Override
+    public void stop() {
+        System.out.println("Bike stops by applying brakes");
+    }
+    
+    @Override
+    public void accelerate() {
+        System.out.println("Bike accelerates by twisting throttle");
+    }
+}
+
+// Using polymorphism
+public class VehicleTest {
+    public static void main(String[] args) {
+        // Vehicle reference can hold different implementations
+        Vehicle myCar = new Car();
+        Vehicle myBike = new ElectricBike();
+        
+        // Same method calls, different behaviors
+        myCar.start();    // "Car engine starts with ignition key"
+        myBike.start();   // "Electric bike starts with power button"
+    }
+}</pre>
+            </div>
+            
+            <div class="concept-block">
+                <h3>Interfaces</h3>
+                <p class="text-muted">An interface is a contract that defines what a class can do without specifying how it does it. Interfaces contain method signatures without implementations and can include constant values.</p>
+                
+                <h4>Characteristics of Interfaces:</h4>
+                <ul class="list-styled">
+                    <li>Define methods without implementation (abstract by default)</li>
+                    <li>Cannot be instantiated directly</li>
+                    <li>Classes can implement multiple interfaces</li>
+                    <li>All fields in interfaces are implicitly public, static, and final</li>
+                </ul>
+                
+                <h4>Example:</h4>
+                <pre class="code-block">
+// Interface definition
+public interface Sortable {
+    // Constants (implicitly public, static, final)
+    int ASCENDING = 1;
+    int DESCENDING = -1;
+    
+    // Abstract methods (no implementation)
+    void sort(int direction);
+    boolean isSorted();
+}
+
+// Class implementing the interface
+public class SortableArray implements Sortable {
+    private int[] data;
+    
+    public SortableArray(int[] data) {
+        this.data = data;
+    }
+    
+    @Override
+    public void sort(int direction) {
+        // Implementation of sorting algorithm
+        if (direction == ASCENDING) {
+            // Sort in ascending order
+        } else {
+            // Sort in descending order
+        }
+    }
+    
+    @Override
+    public boolean isSorted() {
+        // Implementation to check if array is sorted
+        return true; // Placeholder
+    }
+}</pre>
+            </div>
+            
+            <div class="concept-block">
+                <h3>"Is-a" vs "Has-a" Relationships</h3>
+                <p class="text-muted">In object-oriented programming, understanding the relationships between classes is crucial:</p>
+                
+                <h4>"Is-a" Relationship (Inheritance/Implementation):</h4>
+                <ul class="list-styled">
+                    <li>Established through class inheritance or interface implementation</li>
+                    <li>Example: A Car "is-a" Vehicle, a Circle "is-a" Shape</li>
+                    <li>Represented by extends or implements keywords</li>
+                </ul>
+                
+                <h4>"Has-a" Relationship (Composition):</h4>
+                <ul class="list-styled">
+                    <li>Established when one class contains an instance of another class</li>
+                    <li>Example: A Car "has-a" Engine, a Library "has-a" collection of Books</li>
+                    <li>Implemented by declaring member variables</li>
+                </ul>
+                
+                <h4>Example:</h4>
+                <pre class="code-block">
+// "Is-a" relationship example
+public interface Shape {
+    double area();
+    double perimeter();
+}
+
+public class Circle implements Shape {  // Circle "is-a" Shape
+    private double radius;
+    
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+    
+    @Override
+    public double area() {
+        return Math.PI * radius * radius;
+    }
+    
+    @Override
+    public double perimeter() {
+        return 2 * Math.PI * radius;
+    }
+}
+
+// "Has-a" relationship example
+public class Car {
+    private Engine engine;  // Car "has-a" Engine
+    private Wheel[] wheels;
+    
+    public Car() {
+        engine = new Engine();
+        wheels = new Wheel[4];
+        for (int i = 0; i < 4; i++) {
+            wheels[i] = new Wheel();
+        }
+    }
+    
+    public void start() {
+        engine.turnOn();
+    }
+}</pre>
+            </div>
         </section>
 
         <div class="resources">
