@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guided Project: Graphs II</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#93005a',
+                        secondary: '#00808c',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.classList.remove('border-primary', 'text-primary');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            document.querySelector(`[data-tab-content="${tabId}"]`).classList.remove('hidden');
+            element.classList.remove('text-gray-500', 'border-transparent');
+            element.classList.add('border-primary', 'text-primary');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mb-8">
+            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Welcome Page</span>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-primary mb-4">Guided Project: Iterative Depth-First Search</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Learn how to implement depth-first search without recursion using a stack data structure.
+                Master this essential technique for traversing graphs in a memory-efficient way.
+            </p>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="border-b border-gray-200 mb-8">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button 
+                    data-tab="overview"
+                    onclick="switchTab('overview', this)"
+                    class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-medium"
+                    aria-current="page">
+                    Overview
+                </button>
+                <button 
+                    data-tab="guided-implementation"
+                    onclick="switchTab('guided-implementation', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Guided Implementation
+                </button>
+                <button 
+                    data-tab="practice"
+                    onclick="switchTab('practice', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Practice Challenge
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="space-y-8">
+            <!-- Overview Tab -->
+            <div data-tab-content="overview" class="space-y-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Project Overview</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Learning Goals</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Understand iterative DFS implementation</li>
+                                <li>Use stack data structure effectively</li>
+                                <li>Handle graph traversal without recursion</li>
+                                <li>Optimize memory usage in graph algorithms</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Prerequisites</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                <li>Graph representation basics</li>
+                                <li>Stack data structure understanding</li>
+                                <li>Basic DFS concepts</li>
+                                <li>JavaScript fundamentals</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-4">Key Concepts</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Iterative vs Recursive DFS</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Advantages of Iterative Approach:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                    <li>No stack overflow for deep graphs</li>
+                                    <li>Better memory management</li>
+                                    <li>Explicit control over traversal</li>
+                                    <li>Easier to modify during execution</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-secondary">Applications</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                    <li>Maze solving algorithms</li>
+                                    <li>File system traversal</li>
+                                    <li>Network routing</li>
+                                    <li>Game state exploration</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guided Implementation Tab -->
+            <div data-tab-content="guided-implementation" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Iterative Depth-First Search Implementation</h2>
+                    
+                    <!-- Video Section -->
+                    <div class="mb-8">
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-4">
+                            <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                                <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                    <iframe src="https://fast.wistia.net/embed/iframe/renmky8nl6?videoFoam=true" title="s20M2 Web-JavaScript Guided Project Depth-First Traversal - No Recursion Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Implementation Steps -->
+                        <div class="space-y-6 mt-8">
+                            <h3 class="text-xl font-medium text-secondary">Step-by-Step Implementation</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <h4 class="text-lg font-medium text-gray-900">Step 1: Graph Setup</h4>
+                                    <div class="bg-gray-800 rounded-lg p-4">
+                                        <pre class="text-gray-100"><code>class Graph {
+    constructor() {
+        this.adjacencyList = {};
+    }
+
+    addVertex(vertex) {
+        if (!this.adjacencyList[vertex]) {
+            this.adjacencyList[vertex] = [];
+        }
+    }
+
+    addEdge(v1, v2) {
+        this.adjacencyList[v1].push(v2);
+        this.adjacencyList[v2].push(v1);
+    }
+}</code></pre>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <h4 class="text-lg font-medium text-gray-900">Step 2: DFS Implementation</h4>
+                                    <div class="bg-gray-800 rounded-lg p-4">
+                                        <pre class="text-gray-100"><code>dfsIterative(start) {
+    const stack = [start];
+    const visited = new Set();
+    const result = [];
+
+    visited.add(start);
+
+    while (stack.length) {
+        const vertex = stack.pop();
+        result.push(vertex);
+
+        this.adjacencyList[vertex].forEach(neighbor => {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                stack.push(neighbor);
+            }
+        });
+    }
+
+    return result;
+}</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Example Usage:</h4>
+                                <pre class="bg-gray-100 p-2 rounded"><code>const graph = new Graph();
+
+// Add vertices
+['A', 'B', 'C', 'D', 'E'].forEach(vertex => graph.addVertex(vertex));
+
+// Add edges to create a sample graph
+graph.addEdge('A', 'B');
+graph.addEdge('A', 'C');
+graph.addEdge('B', 'D');
+graph.addEdge('C', 'E');
+
+console.log(graph.dfsIterative('A')); 
+// Possible output: ['A', 'C', 'E', 'B', 'D']</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Challenge Tab -->
+            <div data-tab-content="practice" class="hidden space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-primary mb-6">Practice Challenge</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Challenge: Path Finding with DFS</h3>
+                            <p class="text-gray-600">Modify the iterative DFS implementation to find a path between two vertices in the graph.</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Requirements:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                    <li>Return the path as an array of vertices</li>
+                                    <li>Return null if no path exists</li>
+                                    <li>Track parent vertices during traversal</li>
+                                    <li>Handle cycles in the graph</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Example:</h4>
+                                <pre class="bg-gray-100 p-2 rounded"><code>const graph = new Graph();
+
+// Create a graph
+['A', 'B', 'C', 'D', 'E'].forEach(vertex => graph.addVertex(vertex));
+graph.addEdge('A', 'B');
+graph.addEdge('B', 'C');
+graph.addEdge('C', 'D');
+graph.addEdge('D', 'E');
+graph.addEdge('A', 'E');
+
+console.log(graph.findPath('A', 'D'));
+// Expected output: ['A', 'B', 'C', 'D']
+// or ['A', 'E', 'D'] (both are valid paths)</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Starter Code</h3>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>class Graph {
+    // ... existing methods ...
+
+    findPath(start, end) {
+        const stack = [start];
+        const visited = new Set();
+        const parent = new Map();
+        
+        // Your implementation here
+    }
+
+    // Helper method to reconstruct path
+    reconstructPath(parent, start, end) {
+        // Your implementation here
+    }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
