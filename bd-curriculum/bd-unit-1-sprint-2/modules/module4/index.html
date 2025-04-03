@@ -154,18 +154,112 @@
         </div>
 
         <div class="video-container">
-            <iframe src="https://fast.wistia.net/embed/iframe/1t5fxkzb9j" allowfullscreen></iframe>
+            <iframe src="https://fast.wistia.net/embed/iframe/4sxf4e4m0h" allowfullscreen></iframe>
         </div>
 
         <section>
             <h2>Learning Objectives</h2>
             <ul>
-                <li>Understand the exception hierarchy in Java</li>
-                <li>Handle exceptions using try-catch blocks</li>
-                <li>Implement proper exception chaining and propagation</li>
-                <li>Create custom exception classes</li>
-                <li>Apply best practices for exception handling</li>
+                <li>Implement code that throws an exception when a method input is invalid</li>
+                <li>Recall that the JVM throws a NullPointerException when it tries to call a method on a null reference</li>
             </ul>
+        </section>
+
+        <section class="resources">
+            <h3>Key Concepts Explained</h3>
+            <p>Exception handling is a crucial part of Java programming that allows developers to manage errors and unexpected situations gracefully.</p>
+            
+            <h4>Understanding Exceptions</h4>
+            <p>Exceptions are events that disrupt the normal flow of program execution. They are objects that inherit from the <code>java.lang.Throwable</code> class.</p>
+            <p>The Java exception hierarchy:</p>
+            <ul>
+                <li><strong>Throwable</strong> - The parent class for all exceptions</li>
+                <li><strong>Error</strong> - Serious problems that application shouldn't try to handle (e.g., OutOfMemoryError)</li>
+                <li><strong>Exception</strong> - Problems that can be reasonably handled
+                    <ul>
+                        <li><strong>RuntimeException</strong> - Unchecked exceptions that occur at runtime (e.g., NullPointerException)</li>
+                        <li><strong>Other exceptions</strong> - Checked exceptions that must be declared or caught (e.g., IOException)</li>
+                    </ul>
+                </li>
+            </ul>
+            
+            <h4>Throwing Exceptions</h4>
+            <p>Use the <code>throw</code> keyword to throw an exception when invalid inputs or states are detected.</p>
+            <pre>
+public void deposit(double amount) {
+    if (amount <= 0) {
+        throw new IllegalArgumentException("Deposit amount must be positive");
+    }
+    
+    this.balance += amount;
+}
+            </pre>
+            
+            <h4>NullPointerException</h4>
+            <p>A <code>NullPointerException</code> is thrown automatically by the JVM when a program attempts to use a null reference where an object is required.</p>
+            <pre>
+String name = null;
+
+// This will throw a NullPointerException
+int length = name.length(); 
+
+// Prevent NullPointerException with a null check
+if (name != null) {
+    int length = name.length();
+}
+            </pre>
+            
+            <h4>Try-Catch-Finally</h4>
+            <p>Use try-catch blocks to handle exceptions and finally blocks to ensure cleanup code always executes.</p>
+            <pre>
+public void readFile(String filename) {
+    FileReader reader = null;
+    try {
+        reader = new FileReader(filename);
+        // Process file contents
+    } catch (FileNotFoundException e) {
+        System.err.println("File not found: " + filename);
+    } catch (IOException e) {
+        System.err.println("Error reading file: " + e.getMessage());
+    } finally {
+        // This block always executes
+        if (reader != null) {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                System.err.println("Error closing file");
+            }
+        }
+    }
+}
+            </pre>
+            
+            <h4>Custom Exceptions</h4>
+            <p>Create custom exception classes to provide more specific information about errors in your application.</p>
+            <pre>
+// Custom exception class
+public class InsufficientFundsException extends Exception {
+    private double amount;
+    
+    public InsufficientFundsException(double amount) {
+        super("Insufficient funds: Needed $" + amount + " more");
+        this.amount = amount;
+    }
+    
+    public double getAmount() {
+        return amount;
+    }
+}
+
+// Using the custom exception
+public void withdraw(double amount) throws InsufficientFundsException {
+    if (amount > balance) {
+        throw new InsufficientFundsException(amount - balance);
+    }
+    
+    balance -= amount;
+}
+            </pre>
         </section>
 
         <section>

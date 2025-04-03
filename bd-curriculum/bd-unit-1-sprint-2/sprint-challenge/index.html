@@ -143,6 +143,223 @@
         </div>
 
         <section>
+            <h2>Learning Objectives Assessed</h2>
+            <div class="content-box">
+                <h3>Module 1: Classes, Objects, and Access</h3>
+                <ul>
+                    <li>Define instance variables to store the internal state of an object</li>
+                    <li>Implement a class with multiple constructors to allow optional constructor arguments</li>
+                    <li>Explain the relationship between a class and an object</li>
+                    <li>Implement code to instantiate an object by calling a constructor with and without parameters</li>
+                    <li>Explain the scope of visibility of a class's public and private member variables</li>
+                    <li>Implement instance methods that read and modify instance variables</li>
+                </ul>
+                
+                <h3>Module 2: Class Design</h3>
+                <ul>
+                    <li>Implement a set of classes that translate a class diagram containing composition, instance variables, constructors and methods into code</li>
+                    <li>Compare and contrast private against public access</li>
+                    <li>Decide which access modifiers to use when implementing a class, its member variables and methods</li>
+                </ul>
+                
+                <h3>Module 3: Boolean Logic and Enums</h3>
+                <ul>
+                    <li>Calculate and use boolean expressions in conditional logic</li>
+                    <li>Implement compound boolean expressions with short-circuiting</li>
+                    <li>Use the equals method to compare objects</li>
+                    <li>Implement enum types to represent sets of predefined constants</li>
+                    <li>Use defined enum types in your code</li>
+                </ul>
+                
+                <h3>Module 4: Exceptions</h3>
+                <ul>
+                    <li>Implement code that throws an exception when a method input is invalid</li>
+                    <li>Handle NullPointerException and other runtime exceptions appropriately</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>Challenge Requirements</h2>
+            <div class="resources">
+                <p>Your sprint challenge is to implement a Task Management System with the following components:</p>
+                
+                <h3>1. Task Class</h3>
+                <p>Create a Task class with appropriate instance variables, constructors, and methods:</p>
+                <ul>
+                    <li>Instance variables for task details (id, title, description, dueDate, etc.)</li>
+                    <li>Multiple constructors with different parameter options</li>
+                    <li>Getter and setter methods with appropriate validation</li>
+                    <li>Methods to mark tasks as complete, overdue, etc.</li>
+                </ul>
+                
+                <h3>2. TaskStatus Enum</h3>
+                <p>Create an enum to represent different task statuses:</p>
+                <ul>
+                    <li>Define statuses like NOT_STARTED, IN_PROGRESS, COMPLETED, CANCELLED</li>
+                    <li>Add appropriate properties and methods to the enum</li>
+                </ul>
+                
+                <h3>3. Task Priority Enum</h3>
+                <p>Create an enum to represent task priorities:</p>
+                <ul>
+                    <li>Define priorities like LOW, MEDIUM, HIGH, URGENT</li>
+                    <li>Include methods to compare priorities</li>
+                </ul>
+                
+                <h3>4. Custom Exception Classes</h3>
+                <p>Create custom exception classes for your application:</p>
+                <ul>
+                    <li>TaskNotFoundException</li>
+                    <li>InvalidTaskException</li>
+                </ul>
+                
+                <h3>5. TaskManager Class</h3>
+                <p>Create a TaskManager class to manage a collection of tasks:</p>
+                <ul>
+                    <li>Methods to add, remove, and find tasks</li>
+                    <li>Methods to filter tasks by status, priority, due date, etc.</li>
+                    <li>Proper exception handling for invalid inputs and edge cases</li>
+                </ul>
+                
+                <h3>Code Quality Requirements</h3>
+                <ul>
+                    <li>Proper encapsulation of instance variables (use appropriate access modifiers)</li>
+                    <li>Comprehensive validation of method inputs</li>
+                    <li>Consistent and descriptive variable and method naming</li>
+                    <li>Clear exception handling with informative error messages</li>
+                    <li>Javadoc comments for classes and methods</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>Implementation Guidance</h2>
+            <div class="content-box">
+                <h3>Task Class Example</h3>
+                <pre>
+public class Task {
+    private String id;
+    private String title;
+    private String description;
+    private LocalDate dueDate;
+    private TaskStatus status;
+    private TaskPriority priority;
+    
+    // Constructors
+    public Task(String title) {
+        this(title, "", LocalDate.now().plusDays(7), TaskPriority.MEDIUM);
+    }
+    
+    public Task(String title, String description, LocalDate dueDate, TaskPriority priority) {
+        this.id = UUID.randomUUID().toString();
+        this.title = title;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.status = TaskStatus.NOT_STARTED;
+        this.priority = priority;
+    }
+    
+    // Getters and setters with validation
+    public String getTitle() {
+        return title;
+    }
+    
+    public void setTitle(String title) {
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be empty");
+        }
+        this.title = title;
+    }
+    
+    // Other methods
+    public boolean isOverdue() {
+        return LocalDate.now().isAfter(dueDate) && status != TaskStatus.COMPLETED;
+    }
+    
+    public void markComplete() {
+        this.status = TaskStatus.COMPLETED;
+    }
+}
+                </pre>
+                
+                <h3>Enum Examples</h3>
+                <pre>
+public enum TaskStatus {
+    NOT_STARTED("Not Started"),
+    IN_PROGRESS("In Progress"),
+    COMPLETED("Completed"),
+    CANCELLED("Cancelled");
+    
+    private final String displayName;
+    
+    TaskStatus(String displayName) {
+        this.displayName = displayName;
+    }
+    
+    public String getDisplayName() {
+        return displayName;
+    }
+}
+
+public enum TaskPriority {
+    LOW(1),
+    MEDIUM(2),
+    HIGH(3),
+    URGENT(4);
+    
+    private final int level;
+    
+    TaskPriority(int level) {
+        this.level = level;
+    }
+    
+    public int getLevel() {
+        return level;
+    }
+    
+    public boolean isHigherThan(TaskPriority other) {
+        return this.level > other.level;
+    }
+}
+                </pre>
+                
+                <h3>Exception Handling Example</h3>
+                <pre>
+// Custom exception
+public class TaskNotFoundException extends Exception {
+    public TaskNotFoundException(String taskId) {
+        super("Task not found with ID: " + taskId);
+    }
+}
+
+// Using in TaskManager
+public class TaskManager {
+    private List<Task> tasks = new ArrayList<>();
+    
+    public Task findTaskById(String id) throws TaskNotFoundException {
+        for (Task task : tasks) {
+            if (task.getId().equals(id)) {
+                return task;
+            }
+        }
+        throw new TaskNotFoundException(id);
+    }
+    
+    public void updateTaskTitle(String id, String newTitle) throws TaskNotFoundException {
+        Task task = findTaskById(id);
+        try {
+            task.setTitle(newTitle);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Failed to update task: " + e.getMessage());
+        }
+    }
+}
+                </pre>
+            </div>
+        </section>
+
+        <section>
             <h2>Getting Started</h2>
             <div class="content-box">
                 <h3>Repository Setup</h3>

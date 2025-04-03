@@ -153,9 +153,248 @@
             <h2>Available Code-Along Topics</h2>
             <div class="resources">
                 <ul>
-                    <li><a href="#" target="_blank" rel="noopener">Code-Along 1: Writing Classes - Practice creating classes and implementing object-oriented principles</a></li>
-                    <li><a href="#" target="_blank" rel="noopener">Code-Along 2: Enums and Exceptions - Learn to work with enumerated types and exception handling</a></li>
+                    <li><a href="#writing-classes" style="color: #ff5722;">Code-Along 1: Writing Classes - Practice creating classes and implementing object-oriented principles</a></li>
+                    <li><a href="#enums-exceptions" style="color: #ff5722;">Code-Along 2: Enums and Exceptions - Learn to work with enumerated types and exception handling</a></li>
                 </ul>
+            </div>
+        </section>
+
+        <section id="writing-classes">
+            <h2>Code-Along 1: Writing Classes</h2>
+            <div class="video-container">
+                <iframe src="https://fast.wistia.net/embed/iframe/jx4r7bq9zp" allowfullscreen></iframe>
+            </div>
+            
+            <div class="resources">
+                <h3>Learning Objectives Covered</h3>
+                <ul>
+                    <li>Define instance variables to store the internal state of an object</li>
+                    <li>Implement a class with multiple constructors to allow optional constructor arguments</li>
+                    <li>Implement code to instantiate an object by calling a constructor with and without parameters</li>
+                    <li>Explain the scope of visibility of a class's public and private member variables</li>
+                    <li>Implement instance methods that read and modify instance variables</li>
+                </ul>
+                
+                <h3>Key Code Examples</h3>
+                <pre>
+// Creating a basic class
+public class Person {
+    // Instance variables
+    private String name;
+    private int age;
+    private String email;
+    
+    // Default constructor
+    public Person() {
+        this.name = "Unknown";
+        this.age = 0;
+        this.email = "";
+    }
+    
+    // Constructor with name parameter
+    public Person(String name) {
+        this.name = name;
+        this.age = 0;
+        this.email = "";
+    }
+    
+    // Constructor with all parameters
+    public Person(String name, int age, String email) {
+        this.name = name;
+        this.age = age;
+        this.email = email;
+    }
+    
+    // Getter methods
+    public String getName() {
+        return this.name;
+    }
+    
+    public int getAge() {
+        return this.age;
+    }
+    
+    public String getEmail() {
+        return this.email;
+    }
+    
+    // Setter methods
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public void setAge(int age) {
+        if (age >= 0) {
+            this.age = age;
+        }
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    // Business method
+    public boolean isAdult() {
+        return this.age >= 18;
+    }
+}
+                </pre>
+                
+                <h3>Instantiating Objects</h3>
+                <pre>
+// Creating objects using different constructors
+Person person1 = new Person(); // Uses default constructor
+Person person2 = new Person("Alice"); // Uses constructor with name parameter
+Person person3 = new Person("Bob", 25, "bob@example.com"); // Uses constructor with all parameters
+
+// Using getters to access state
+System.out.println(person3.getName()); // Outputs: Bob
+System.out.println(person3.getAge()); // Outputs: 25
+
+// Using setters to modify state
+person1.setName("Charlie");
+person1.setAge(30);
+person1.setEmail("charlie@example.com");
+
+// Using business method
+if (person1.isAdult()) {
+    System.out.println(person1.getName() + " is an adult.");
+}
+                </pre>
+            </div>
+        </section>
+
+        <section id="enums-exceptions">
+            <h2>Code-Along 2: Enums and Exceptions</h2>
+            <div class="video-container">
+                <iframe src="https://fast.wistia.net/embed/iframe/cv9p4f2klr" allowfullscreen></iframe>
+            </div>
+            
+            <div class="resources">
+                <h3>Learning Objectives Covered</h3>
+                <ul>
+                    <li>Implement an enum type to represent a set of predefined constants</li>
+                    <li>Implement code that uses a defined enum type</li>
+                    <li>Implement code that throws an exception when a method input is invalid</li>
+                    <li>Handle NullPointerException and other runtime exceptions</li>
+                </ul>
+                
+                <h3>Enum Examples</h3>
+                <pre>
+// Simple enum definition
+public enum Day {
+    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+}
+
+// Enum with properties and methods
+public enum Status {
+    PENDING("Pending", 0),
+    IN_PROGRESS("In Progress", 1),
+    COMPLETED("Completed", 2),
+    CANCELLED("Cancelled", 3);
+    
+    private final String displayName;
+    private final int code;
+    
+    // Constructor
+    Status(String displayName, int code) {
+        this.displayName = displayName;
+        this.code = code;
+    }
+    
+    // Getters
+    public String getDisplayName() {
+        return displayName;
+    }
+    
+    public int getCode() {
+        return code;
+    }
+    
+    // Static method to find by code
+    public static Status findByCode(int code) {
+        for (Status status : values()) {
+            if (status.getCode() == code) {
+                return status;
+            }
+        }
+        return null;
+    }
+}
+                </pre>
+                
+                <h3>Using Enums</h3>
+                <pre>
+// Using simple enum
+Day today = Day.MONDAY;
+
+// Switch statement with enum
+switch (today) {
+    case MONDAY:
+        System.out.println("Start of work week");
+        break;
+    case FRIDAY:
+        System.out.println("End of work week");
+        break;
+    case SATURDAY:
+    case SUNDAY:
+        System.out.println("Weekend!");
+        break;
+    default:
+        System.out.println("Mid-week");
+}
+
+// Using enum with properties
+Status taskStatus = Status.IN_PROGRESS;
+System.out.println("Task status: " + taskStatus.getDisplayName());
+System.out.println("Status code: " + taskStatus.getCode());
+
+// Finding enum by value
+Status foundStatus = Status.findByCode(2);
+if (foundStatus != null) {
+    System.out.println("Found status: " + foundStatus.name());
+}
+                </pre>
+                
+                <h3>Exception Handling Examples</h3>
+                <pre>
+// Method that throws an exception for invalid input
+public void processAge(int age) {
+    if (age < 0) {
+        throw new IllegalArgumentException("Age cannot be negative");
+    }
+    
+    if (age > 150) {
+        throw new IllegalArgumentException("Age is unrealistically high");
+    }
+    
+    // Process valid age...
+    System.out.println("Processing age: " + age);
+}
+
+// Handling potential exceptions
+try {
+    processAge(-5);
+} catch (IllegalArgumentException e) {
+    System.err.println("Invalid age provided: " + e.getMessage());
+}
+
+// Handling NullPointerException
+String name = null;
+try {
+    int length = name.length(); // Will throw NullPointerException
+} catch (NullPointerException e) {
+    System.err.println("Name is null, cannot get length");
+    name = "Default";
+}
+
+// Using null check to avoid exception
+if (name != null) {
+    int length = name.length();
+} else {
+    System.out.println("Name is null");
+}
+                </pre>
             </div>
         </section>
 
