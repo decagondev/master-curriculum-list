@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3: Build Sprint 2 - Web Labs</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1d23;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #222831;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            margin: 0;
+        }
+        h1 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff5722;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333a47;
+            background-color: #2a303c;
+            border-radius: 4px;
+        }
+        .section h2 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .section p {
+            color: #b3b3b3;
+            margin-bottom: 15px;
+        }
+        .video-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .resources {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #1f242e;
+            border-radius: 4px;
+            border-left: 4px solid #ff5722;
+        }
+        .resources h3 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .resources ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .resources li {
+            margin-bottom: 8px;
+        }
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: #ff7043;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background-color: #333a47;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .back-link:hover {
+            background-color: #444e5c;
+            text-decoration: none;
+        }
+        iframe, .wistia_embed {
+            width: 100%;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .code-block {
+            background-color: #1f242e;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            color: #e0e0e0;
+            margin: 15px 0;
+        }
+        .note {
+            background-color: #2c3850;
+            border-left: 4px solid #4a90e2;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .note h4 {
+            color: #4a90e2;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-link">← Back to Main Page</a>
+        
+        <h1>Module 3: Build Sprint 2</h1>
+        
+        <div class="section">
+            <h2>Your Second Ticket</h2>
+            <p>Now that you've completed your first ticket, it's time to tackle more complex features and advance your understanding of the project.</p>
+            
+            <div class="video-container">
+                <h3>Your Second Ticket</h3>
+                <div class="wistia_embed wistia_async_a5htg2j7h5" style="height:360px;position:relative;width:640px">
+                    <div class="wistia_swatch" style="height:100%;left:0;overflow:hidden;position:absolute;top:0;width:100%;">
+                        <img src="https://fast.wistia.com/embed/medias/a5htg2j7h5/swatch" style="height:100%;width:100%;" alt="" aria-hidden="true">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="resources">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://github.com/BloomTech-Labs/asylum-hrf-fe-starter/blob/main/tickets/2_secondTicket.md" target="_blank">Access your second ticket here</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>State Management</h2>
+            <p>As your application grows, proper state management becomes crucial. Learn about different state management approaches in React applications.</p>
+            
+            <div class="code-block">
+<pre>// Example using React Context API for global state
+import React, { createContext, useContext, useReducer } from 'react';
+
+// Initial state
+const initialState = {
+  user: null,
+  isAuthenticated: false,
+  theme: 'light'
+};
+
+// Create context
+const AppContext = createContext();
+
+// Reducer function
+function reducer(state, action) {
+  switch (action.type) {
+    case 'LOGIN':
+      return {
+        ...state,
+        user: action.payload,
+        isAuthenticated: true
+      };
+    case 'LOGOUT':
+      return {
+        ...state,
+        user: null,
+        isAuthenticated: false
+      };
+    case 'TOGGLE_THEME':
+      return {
+        ...state,
+        theme: state.theme === 'light' ? 'dark' : 'light'
+      };
+    default:
+      return state;
+  }
+}
+
+// Context provider component
+export function AppProvider({ children }) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  
+  return (
+    <AppContext.Provider value={{ state, dispatch }}>
+      {children}
+    </AppContext.Provider>
+  );
+}
+
+// Custom hook to use the context
+export function useAppContext() {
+  return useContext(AppContext);
+}</pre>
+            </div>
+            
+            <div class="resources">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://reactjs.org/docs/context.html" target="_blank">React Context API</a></li>
+                    <li><a href="https://reactjs.org/docs/hooks-reference.html#usereducer" target="_blank">useReducer Hook</a></li>
+                    <li><a href="https://redux.js.org/introduction/getting-started" target="_blank">Redux - State Management Library</a></li>
+                    <li><a href="https://zustand-demo.pmnd.rs/" target="_blank">Zustand - Lightweight State Management</a></li>
+                    <li><a href="https://recoiljs.org/docs/introduction/getting-started" target="_blank">Recoil - State Management Library</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Testing Your Components</h2>
+            <p>Learn how to write effective tests for your React components to ensure they work as expected.</p>
+            
+            <div class="code-block">
+<pre>// Example of testing a React component with Jest and React Testing Library
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import Counter from './Counter';
+
+describe('Counter Component', () => {
+  test('renders with initial count of 0', () => {
+    render(<Counter />);
+    
+    const countElement = screen.getByText(/count: 0/i);
+    expect(countElement).toBeInTheDocument();
+  });
+  
+  test('increments count when increment button is clicked', () => {
+    render(<Counter />);
+    
+    const incrementButton = screen.getByRole('button', { name: /increment/i });
+    fireEvent.click(incrementButton);
+    
+    const countElement = screen.getByText(/count: 1/i);
+    expect(countElement).toBeInTheDocument();
+  });
+  
+  test('decrements count when decrement button is clicked', () => {
+    render(<Counter />);
+    
+    const decrementButton = screen.getByRole('button', { name: /decrement/i });
+    fireEvent.click(decrementButton);
+    
+    const countElement = screen.getByText(/count: -1/i);
+    expect(countElement).toBeInTheDocument();
+  });
+});</pre>
+            </div>
+            
+            <div class="resources">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://jestjs.io/docs/getting-started" target="_blank">Jest Testing Framework</a></li>
+                    <li><a href="https://testing-library.com/docs/react-testing-library/intro/" target="_blank">React Testing Library</a></li>
+                    <li><a href="https://kentcdodds.com/blog/common-mistakes-with-react-testing-library" target="_blank">Common Testing Mistakes</a></li>
+                    <li><a href="https://www.cypress.io/how-it-works" target="_blank">Cypress for End-to-End Testing</a></li>
+                    <li><a href="https://mswjs.io/docs/" target="_blank">Mock Service Worker for API Mocking</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Improving Performance</h2>
+            <p>As you add more features to your application, optimizing performance becomes important. Learn strategies to improve React app performance.</p>
+            
+            <div class="note">
+                <h4>Performance Optimization Tips</h4>
+                <p>Here are some key techniques to improve React application performance:</p>
+                <ul>
+                    <li>Use React.memo for component memoization</li>
+                    <li>Implement useCallback for memoizing functions</li>
+                    <li>Use useMemo for expensive calculations</li>
+                    <li>Virtualize long lists with react-window or react-virtualized</li>
+                    <li>Implement code-splitting with React.lazy and Suspense</li>
+                    <li>Use proper keys for items in lists</li>
+                    <li>Avoid unnecessary re-renders</li>
+                    <li>Consider using the production build for deployment</li>
+                </ul>
+            </div>
+            
+            <div class="code-block">
+<pre>// Example of using React.memo and useCallback
+import React, { useState, useCallback } from 'react';
+
+// Memoized child component
+const ExpensiveComponent = React.memo(({ onClick, name }) => {
+  console.log(`ExpensiveComponent ${name} rendered`);
+  return (
+    <button onClick={onClick}>
+      Click {name}
+    </button>
+  );
+});
+
+function App() {
+  const [count1, setCount1] = useState(0);
+  const [count2, setCount2] = useState(0);
+  
+  // Memoize callbacks to prevent recreation on every render
+  const incrementCount1 = useCallback(() => {
+    setCount1(c => c + 1);
+  }, []);
+  
+  const incrementCount2 = useCallback(() => {
+    setCount2(c => c + 1);
+  }, []);
+  
+  return (
+    <div>
+      <div>Count 1: {count1}</div>
+      <div>Count 2: {count2}</div>
+      <ExpensiveComponent onClick={incrementCount1} name="Button 1" />
+      <ExpensiveComponent onClick={incrementCount2} name="Button 2" />
+    </div>
+  );
+}</pre>
+            </div>
+            
+            <div class="resources">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://reactjs.org/docs/optimizing-performance.html" target="_blank">React Performance Optimization</a></li>
+                    <li><a href="https://reactjs.org/docs/hooks-reference.html#usecallback" target="_blank">useCallback Hook</a></li>
+                    <li><a href="https://reactjs.org/docs/hooks-reference.html#usememo" target="_blank">useMemo Hook</a></li>
+                    <li><a href="https://web.dev/articles/react-lazy-loading" target="_blank">Lazy Loading React Components</a></li>
+                    <li><a href="https://github.com/bvaughn/react-window" target="_blank">react-window for Virtualized Lists</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load Wistia script to enable async videos
+        window._wq = window._wq || [];
+        (function() {
+            var wistiaScript = document.createElement('script');
+            wistiaScript.src = "https://fast.wistia.com/assets/external/E-v1.js";
+            wistiaScript.async = true;
+            document.body.appendChild(wistiaScript);
+        })();
+    </script>
+</body>
+</html> 
