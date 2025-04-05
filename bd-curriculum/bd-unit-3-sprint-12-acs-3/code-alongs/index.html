@@ -106,11 +106,55 @@
             <div class="video-container">
                 <iframe class="wistia_embed" title="Code-Along Learner Facing Walkthrough Video" src="https://fast.wistia.net/embed/iframe/7nbnjuh24f" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
+            
+            <div style="margin: 20px 0; padding: 15px; background-color: #2a303c; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0;">Learning Objectives</h3>
+                <ul style="padding-left: 20px;">
+                    <li>Implement dependency injection in a real-world Java application</li>
+                    <li>Apply loose coupling principles to improve code maintainability</li>
+                    <li>Learn to identify dependencies that should be injected</li>
+                    <li>Practice constructor-based dependency injection</li>
+                    <li>Use interfaces to define contracts between components</li>
+                </ul>
+                
+                <h3 style="color: #ffffff; margin-top: 15px;">Implementation Details</h3>
+                <p>In this code-along, we'll refactor a tightly coupled application to use dependency injection. We'll extract interfaces for our dependencies and inject them through constructors to make the code more modular and testable.</p>
+                
+                <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// Before: Tightly coupled code
+public class OrderService {
+    private final MySQLOrderRepository repository = new MySQLOrderRepository();
+    private final SmtpEmailSender emailSender = new SmtpEmailSender();
+    
+    public void createOrder(Order order) {
+        repository.save(order);
+        emailSender.sendOrderConfirmation(order);
+    }
+}
+
+// After: Dependency injection
+public class OrderService {
+    private final OrderRepository repository;
+    private final EmailSender emailSender;
+    
+    public OrderService(OrderRepository repository, EmailSender emailSender) {
+        this.repository = repository;
+        this.emailSender = emailSender;
+    }
+    
+    public void createOrder(Order order) {
+        repository.save(order);
+        emailSender.sendOrderConfirmation(order);
+    }
+}</pre>
+            </div>
+            
             <div class="resources">
                 <h3>Resources</h3>
                 <ul>
                     <li><a href="https://classroom.github.com/a/YYTrF9Tk" target="_blank" rel="noopener">Starter Repository</a></li>
                     <li><a href="https://classroom.github.com/a/zna2Bzml" target="_blank" rel="noopener">Solution Repository</a></li>
+                    <li><a href="https://martinfowler.com/articles/injection.html" target="_blank" rel="noopener">Dependency Injection - Martin Fowler</a></li>
                 </ul>
             </div>
         </div>
@@ -120,11 +164,66 @@
             <div class="video-container">
                 <iframe class="wistia_embed" title="Code-Along Learner Facing Walkthrough Video" src="https://fast.wistia.net/embed/iframe/7nbnjuh24f" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
+            
+            <div style="margin: 20px 0; padding: 15px; background-color: #2a303c; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0;">Learning Objectives</h3>
+                <ul style="padding-left: 20px;">
+                    <li>Apply Test-Driven Development in a practical scenario</li>
+                    <li>Learn to use Mockito to create and configure mock objects</li>
+                    <li>Practice the red-green-refactor cycle of TDD</li>
+                    <li>Write tests that verify specific method interactions</li>
+                    <li>Use mock objects to isolate units during testing</li>
+                </ul>
+                
+                <h3 style="color: #ffffff; margin-top: 15px;">Implementation Details</h3>
+                <p>In this code-along, we'll build a feature using the Test-Driven Development approach while using mocks to isolate our system under test. We'll write tests first, implement the minimum code to make them pass, and then refactor.</p>
+                
+                <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// 1. First we write a test with mocks
+@Test
+void shouldProcessOrderAndNotifyCustomer() {
+    // Arrange
+    Order testOrder = new Order("123", "Test Customer", 99.99);
+    OrderRepository mockRepository = mock(OrderRepository.class);
+    NotificationService mockNotification = mock(NotificationService.class);
+    
+    OrderProcessor processor = new OrderProcessor(mockRepository, mockNotification);
+    
+    // Act
+    processor.processOrder(testOrder);
+    
+    // Assert
+    verify(mockRepository).saveOrder(testOrder);
+    verify(mockNotification).notifyCustomer(testOrder.getCustomerEmail(), 
+                                           contains("Order 123 processed"));
+}
+
+// 2. Then we implement the minimum code to make the test pass
+public class OrderProcessor {
+    private final OrderRepository repository;
+    private final NotificationService notificationService;
+    
+    public OrderProcessor(OrderRepository repository, 
+                          NotificationService notificationService) {
+        this.repository = repository;
+        this.notificationService = notificationService;
+    }
+    
+    public void processOrder(Order order) {
+        repository.saveOrder(order);
+        notificationService.notifyCustomer(order.getCustomerEmail(),
+                                         "Order " + order.getId() + " processed");
+    }
+}</pre>
+            </div>
+            
             <div class="resources">
                 <h3>Resources</h3>
                 <ul>
                     <li><a href="https://classroom.github.com/a/-z_L8xhi" target="_blank" rel="noopener">Starter Repository</a></li>
                     <li><a href="https://classroom.github.com/a/c6k6rdWX" target="_blank" rel="noopener">Solution Repository</a></li>
+                    <li><a href="https://site.mockito.org/" target="_blank" rel="noopener">Mockito Documentation</a></li>
+                    <li><a href="https://www.baeldung.com/mockito-series" target="_blank" rel="noopener">Mockito Tutorial Series - Baeldung</a></li>
                 </ul>
             </div>
         </div>

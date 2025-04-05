@@ -120,6 +120,94 @@
             <iframe class="wistia_embed" title="BD Unit 3 Sprint 12 Challenge Video" src="https://fast.wistia.net/embed/iframe/7nbnjuh24f" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
+        <div style="margin: 20px 0; padding: 15px; background-color: #2a303c; border-radius: 4px; color: #b3b3b3;">
+            <h3 style="color: #ffffff; margin-top: 0;">Challenge Overview</h3>
+            <p>In this sprint challenge, you'll apply the core concepts from this sprint: dependency injection, test-driven development, and mocking to build a library service application. You'll demonstrate your ability to write loosely coupled, testable code using best practices.</p>
+            
+            <h3 style="color: #ffffff; margin-top: 15px;">Learning Objectives Tested</h3>
+            <ul style="padding-left: 20px;">
+                <li>Design and implement classes using dependency injection principles</li>
+                <li>Write unit tests that verify functionality while isolating components</li>
+                <li>Use Mockito to create and configure mock objects</li>
+                <li>Follow test-driven development practices</li>
+                <li>Apply software design patterns to create maintainable code</li>
+            </ul>
+            
+            <h3 style="color: #ffffff; margin-top: 15px;">Implementation Tasks</h3>
+            <ol style="padding-left: 20px;">
+                <li>Create interfaces for your dependencies to enable loose coupling</li>
+                <li>Implement the library service with proper dependency injection</li>
+                <li>Write comprehensive unit tests using mocks where appropriate</li>
+                <li>Implement the required business logic following TDD practices</li>
+                <li>Ensure your code follows best practices for maintainability</li>
+            </ol>
+            
+            <h3 style="color: #ffffff; margin-top: 15px;">Code Example</h3>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// Example of a properly designed service with dependency injection
+public class LibraryService {
+    private final BookRepository bookRepository;
+    private final UserRepository userRepository;
+    private final NotificationService notificationService;
+    
+    public LibraryService(BookRepository bookRepository, 
+                         UserRepository userRepository,
+                         NotificationService notificationService) {
+        this.bookRepository = bookRepository;
+        this.userRepository = userRepository;
+        this.notificationService = notificationService;
+    }
+    
+    public boolean borrowBook(String userId, String bookId) {
+        User user = userRepository.findById(userId);
+        Book book = bookRepository.findById(bookId);
+        
+        if (user == null || book == null || !book.isAvailable()) {
+            return false;
+        }
+        
+        book.setAvailable(false);
+        book.setBorrowedBy(userId);
+        
+        bookRepository.save(book);
+        notificationService.sendBookBorrowedNotification(user.getEmail(), book.getTitle());
+        
+        return true;
+    }
+}
+
+// Example of a proper test with mocks
+@Test
+void shouldBorrowAvailableBook() {
+    // Arrange
+    String userId = "user123";
+    String bookId = "book456";
+    
+    User testUser = new User(userId, "test@example.com");
+    Book testBook = new Book(bookId, "Test Book", true);
+    
+    BookRepository mockBookRepo = mock(BookRepository.class);
+    UserRepository mockUserRepo = mock(UserRepository.class);
+    NotificationService mockNotification = mock(NotificationService.class);
+    
+    when(mockUserRepo.findById(userId)).thenReturn(testUser);
+    when(mockBookRepo.findById(bookId)).thenReturn(testBook);
+    
+    LibraryService service = new LibraryService(mockBookRepo, mockUserRepo, mockNotification);
+    
+    // Act
+    boolean result = service.borrowBook(userId, bookId);
+    
+    // Assert
+    assertTrue(result);
+    assertFalse(testBook.isAvailable());
+    assertEquals(userId, testBook.getBorrowedBy());
+    
+    verify(mockBookRepo).save(testBook);
+    verify(mockNotification).sendBookBorrowedNotification(testUser.getEmail(), testBook.getTitle());
+}</pre>
+        </div>
+
         <div class="setup-instructions">
             <h3>Setup Instructions</h3>
             <ol>
