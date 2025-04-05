@@ -177,14 +177,16 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul>
-                <li>Understand the benefits of automated testing</li>
-                <li>Learn to write effective unit tests with JUnit</li>
-                <li>Master test-driven development (TDD) practices</li>
-                <li>Apply mocking techniques with Mockito</li>
-                <li>Implement integration testing strategies</li>
-                <li>Understand test coverage and how to measure it</li>
-                <li>Practice refactoring with tests as a safety net</li>
-                <li>Design testable code from the ground up</li>
+                <li>Utilize an IDE's interactive debugger to identify why a unit test is failing</li>
+                <li>Implement a unit test that initializes state, executes a unit of code, and asserts that the state is as expected afterwards</li>
+                <li>Describe the purpose of a unit test</li>
+                <li>Outline the pattern GIVEN, WHEN, THEN for implementing a unit test</li>
+                <li>Remember that tests for empty arrays, out of bounds access, off by one errors, and null values should be included in unit test suites even if they're not in the use cases</li>
+                <li>Identify potential missing unit tests given a set of unit tests and use cases</li>
+                <li>Outline why a unit test should only test a single condition</li>
+                <li>Write a unit test that could only fail for a single reason</li>
+                <li>Recall that a deterministic test always produces the same outcome for the same inputs</li>
+                <li>Outline why unit tests should be deterministic</li>
             </ul>
         </section>
 
@@ -196,6 +198,60 @@
                     <p>Learn how to write effective unit tests using the JUnit framework.</p>
                     <div class="video-container">
                         <iframe class="wistia_embed" title="Unit Testing with JUnit Video" src="https://fast.wistia.net/embed/iframe/ejsrfvpcnq" width="640" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                    <div class="content-details">
+                        <h4>The Purpose of Unit Testing</h4>
+                        <p>Unit testing is a software development process where individual units of source code are tested to determine if they work correctly. Benefits include:</p>
+                        <ul>
+                            <li>Finding bugs early in the development cycle</li>
+                            <li>Ensuring code behaves as expected when making changes</li>
+                            <li>Enabling safer refactoring by immediately revealing broken functionality</li>
+                            <li>Providing documentation of expected behavior</li>
+                        </ul>
+                        
+                        <h4>The GIVEN-WHEN-THEN Pattern</h4>
+                        <p>The GIVEN-WHEN-THEN pattern is a structured approach to writing unit tests:</p>
+                        <ul>
+                            <li><strong>GIVEN</strong>: Set up the initial state or preconditions</li>
+                            <li><strong>WHEN</strong>: Perform the action being tested</li>
+                            <li><strong>THEN</strong>: Assert the expected outcomes</li>
+                        </ul>
+                        
+                        <h4>Example JUnit Test</h4>
+                        <pre style="background-color: #1a1d23; padding: 10px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CalculatorTest {
+    
+    @Test
+    public void add_twoPositiveNumbers_returnsCorrectSum() {
+        // GIVEN
+        Calculator calculator = new Calculator();
+        int a = 5;
+        int b = 7;
+        
+        // WHEN
+        int result = calculator.add(a, b);
+        
+        // THEN
+        assertEquals(12, result, "5 + 7 should equal 12");
+    }
+    
+    @Test
+    public void divide_byZero_throwsArithmeticException() {
+        // GIVEN
+        Calculator calculator = new Calculator();
+        int a = 10;
+        int b = 0;
+        
+        // WHEN & THEN
+        assertThrows(ArithmeticException.class, 
+            () -> calculator.divide(a, b),
+            "Division by zero should throw ArithmeticException");
+    }
+}
+</pre>
                     </div>
                     <a href="unit-testing-fundamentals.html" class="button">Read More</a>
                 </div>
