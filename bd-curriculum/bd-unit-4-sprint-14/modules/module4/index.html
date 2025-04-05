@@ -119,24 +119,341 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand the structure and functionality of linked lists</li>
-                <li>Learn to implement singly and doubly linked lists</li>
-                <li>Compare performance characteristics of linked lists vs. array-based lists</li>
-                <li>Master common linked list operations (add, remove, insert, traverse)</li>
-                <li>Analyze the time and space complexity of linked list operations</li>
+                <li>Design and implement a class that uses a List as a member that maintains an ordered collection of objects</li>
+                <li>Explain why accessing a value by index from a LinkedList runs in linear O(n) time</li>
+                <li>Explain why inserting or removing the first value in a LinkedList runs in constant O(1) time</li>
+                <li>Analyze whether to use a LinkedList or an ArrayList for a provided scenario</li>
             </ul>
         </section>
 
         <div class="video-container">
-            <iframe class="wistia_embed" title="Introduction to Linked Lists" src="https://fast.wistia.net/embed/iframe/4aeyfcntqa" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <iframe class="wistia_embed" title="Linked Lists Introduction" src="https://fast.wistia.net/embed/iframe/5xg2mqbdt6" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: Linked Lists Introduction</h3>
+                <p style="color: #b3b3b3;">This video introduces the concept of linked lists, explaining their structure, basic operations, and comparative advantages over array-based lists in certain scenarios.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+// Basic Node class for a singly linked list
+public class Node&lt;T&gt; {
+    private T data;
+    private Node&lt;T&gt; next;
+    
+    public Node(T data) {
+        this.data = data;
+        this.next = null;
+    }
+    
+    public T getData() {
+        return data;
+    }
+    
+    public void setData(T data) {
+        this.data = data;
+    }
+    
+    public Node&lt;T&gt; getNext() {
+        return next;
+    }
+    
+    public void setNext(Node&lt;T&gt; next) {
+        this.next = next;
+    }
+}
+
+// Simple LinkedList implementation
+public class LinkedList&lt;T&gt; {
+    private Node&lt;T&gt; head;
+    private int size;
+    
+    public LinkedList() {
+        head = null;
+        size = 0;
+    }
+    
+    // Add to the beginning - O(1) operation
+    public void addFirst(T data) {
+        Node&lt;T&gt; newNode = new Node&lt;&gt;(data);
+        newNode.setNext(head);
+        head = newNode;
+        size++;
+    }
+    
+    // Get element at index - O(n) operation
+    public T get(int index) {
+        if (index &lt; 0 || index &gt;= size) {
+            throw new IndexOutOfBoundsException("Index: " + index);
+        }
+        
+        Node&lt;T&gt; current = head;
+        for (int i = 0; i &lt; index; i++) {
+            current = current.getNext();
+        }
+        
+        return current.getData();
+    }
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This example shows a basic implementation of a singly linked list with a Node class and essential operations. Note how adding to the beginning is an O(1) operation (constant time) because it only requires updating the head reference, while accessing an element by index is an O(n) operation (linear time) as we must traverse from the head to the desired index.</p>
+            </div>
         </div>
 
         <div class="video-container">
-            <iframe class="wistia_embed" title="Using a Linked List" src="https://fast.wistia.net/embed/iframe/bt7hpvyp88" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <iframe class="wistia_embed" title="LinkedList in Java Collections" src="https://fast.wistia.net/embed/iframe/lkslp3kqmq" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: LinkedList in Java Collections</h3>
+                <p style="color: #b3b3b3;">This video discusses Java's built-in LinkedList implementation in the Collections framework, comparing it with ArrayList and examining when to use each.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ListPerformanceComparison {
+    
+    public static void main(String[] args) {
+        // Creating both types of lists
+        List&lt;Integer&gt; arrayList = new ArrayList&lt;&gt;();
+        List&lt;Integer&gt; linkedList = new LinkedList&lt;&gt;();
+        
+        // Measuring insertion time at the beginning
+        long startTime = System.nanoTime();
+        
+        // ArrayList insertion at beginning (slow - O(n))
+        for (int i = 0; i &lt; 100000; i++) {
+            arrayList.add(0, i);  // Have to shift all elements
+        }
+        
+        long endTime = System.nanoTime();
+        System.out.println("ArrayList insertion at beginning: " + 
+            (endTime - startTime) / 1000000 + " ms");
+        
+        startTime = System.nanoTime();
+        
+        // LinkedList insertion at beginning (fast - O(1))
+        for (int i = 0; i &lt; 100000; i++) {
+            linkedList.add(0, i);  // Just update references
+        }
+        
+        endTime = System.nanoTime();
+        System.out.println("LinkedList insertion at beginning: " + 
+            (endTime - startTime) / 1000000 + " ms");
+        
+        // Random access performance (get by index)
+        startTime = System.nanoTime();
+        
+        // ArrayList random access (fast - O(1))
+        for (int i = 0; i &lt; 10000; i++) {
+            int index = (int) (Math.random() * arrayList.size());
+            arrayList.get(index);  // Direct index calculation
+        }
+        
+        endTime = System.nanoTime();
+        System.out.println("ArrayList random access: " + 
+            (endTime - startTime) / 1000000 + " ms");
+        
+        startTime = System.nanoTime();
+        
+        // LinkedList random access (slow - O(n))
+        for (int i = 0; i &lt; 10000; i++) {
+            int index = (int) (Math.random() * linkedList.size());
+            linkedList.get(index);  // Must traverse from head/tail
+        }
+        
+        endTime = System.nanoTime();
+        System.out.println("LinkedList random access: " + 
+            (endTime - startTime) / 1000000 + " ms");
+    }
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This code demonstrates performance differences between ArrayList and LinkedList. LinkedList excels at insertions/deletions at the beginning or end (O(1) operations) but is inefficient for random access (O(n) operations). ArrayList has the opposite characteristics: fast random access (O(1)) but slow insertions/deletions that require shifting elements (O(n)).</p>
+            </div>
         </div>
         
         <div class="video-container">
-            <iframe class="wistia_embed" title="Sprint 14 Linked Lists Video" src="https://fast.wistia.net/embed/iframe/3km257ox0t" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <iframe class="wistia_embed" title="Implementing a Linked List" src="https://fast.wistia.net/embed/iframe/tsfxwvcdxx" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: Implementing a Linked List</h3>
+                <p style="color: #b3b3b3;">This video walks through building a custom linked list implementation, demonstrating key operations and design considerations.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+// More complete linked list implementation
+public class CustomLinkedList&lt;E&gt; {
+    
+    private static class Node&lt;E&gt; {
+        E data;
+        Node&lt;E&gt; next;
+        
+        Node(E data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+    
+    private Node&lt;E&gt; head;
+    private Node&lt;E&gt; tail;
+    private int size;
+    
+    public CustomLinkedList() {
+        this.head = null;
+        this.tail = null;
+        this.size = 0;
+    }
+    
+    // Add to the end - with tail reference this is O(1)
+    public void add(E element) {
+        Node&lt;E&gt; newNode = new Node&lt;&gt;(element);
+        
+        if (head == null) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail.next = newNode;
+            tail = newNode;
+        }
+        
+        size++;
+    }
+    
+    // Add at specific index - O(n) in worst case
+    public void add(int index, E element) {
+        if (index &lt; 0 || index &gt; size) {
+            throw new IndexOutOfBoundsException("Index: " + index);
+        }
+        
+        if (index == 0) {
+            addFirst(element);
+            return;
+        }
+        
+        if (index == size) {
+            add(element);
+            return;
+        }
+        
+        Node&lt;E&gt; current = head;
+        for (int i = 0; i &lt; index - 1; i++) {
+            current = current.next;
+        }
+        
+        Node&lt;E&gt; newNode = new Node&lt;&gt;(element);
+        newNode.next = current.next;
+        current.next = newNode;
+        size++;
+    }
+    
+    // Add to the beginning - O(1)
+    public void addFirst(E element) {
+        Node&lt;E&gt; newNode = new Node&lt;&gt;(element);
+        
+        if (head == null) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            newNode.next = head;
+            head = newNode;
+        }
+        
+        size++;
+    }
+    
+    // Get element at index - O(n)
+    public E get(int index) {
+        if (index &lt; 0 || index &gt;= size) {
+            throw new IndexOutOfBoundsException("Index: " + index);
+        }
+        
+        Node&lt;E&gt; current = head;
+        for (int i = 0; i &lt; index; i++) {
+            current = current.next;
+        }
+        
+        return current.data;
+    }
+    
+    // Remove first element - O(1)
+    public E removeFirst() {
+        if (head == null) {
+            throw new NoSuchElementException();
+        }
+        
+        E data = head.data;
+        head = head.next;
+        
+        if (head == null) {
+            tail = null;
+        }
+        
+        size--;
+        return data;
+    }
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This more comprehensive implementation demonstrates key linked list operations with time complexity analysis. Note the use of tail reference to make adding to the end an O(1) operation. The code includes methods for inserting elements at different positions, retrieving elements by index, and removing elements, each with appropriate time complexity considerations.</p>
+            </div>
+        </div>
+        
+        <div class="video-container">
+            <iframe class="wistia_embed" title="Sprint 14 Linked Lists Video" src="https://fast.wistia.net/embed/iframe/3nvygmkggu" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: Sprint 14 Linked Lists Overview</h3>
+                <p style="color: #b3b3b3;">This video provides a comprehensive overview of linked lists, summarizing key concepts, implementations, and use cases covered in this module.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+// Example: Choosing the right list implementation for the job
+import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+
+public class ListSelectionExample {
+    
+    // Queue/stack operations (add/remove at ends) - use LinkedList
+    public static void queueOperationExample() {
+        Deque&lt;String&gt; queue = new LinkedList&lt;&gt;();
+        
+        // Add to end (enqueue)
+        queue.addLast("First");
+        queue.addLast("Second");
+        queue.addLast("Third");
+        
+        // Remove from front (dequeue)
+        String first = queue.removeFirst();  // "First"
+        String second = queue.removeFirst(); // "Second"
+    }
+    
+    // Random access and modification - use ArrayList
+    public static void randomAccessExample() {
+        List&lt;Integer&gt; numbers = new ArrayList&lt;&gt;();
+        
+        // Fill with data
+        for (int i = 0; i &lt; 1000; i++) {
+            numbers.add(i);
+        }
+        
+        // Fast random access
+        int value = numbers.get(500);  // O(1) operation
+        
+        // Update value at specific index
+        numbers.set(500, 9999);        // O(1) operation
+    }
+    
+    // Frequent insertions/deletions in the middle - consider choices carefully
+    public static void frequentModificationExample() {
+        // If most operations are at the beginning/end
+        LinkedList&lt;String&gt; linkedNames = new LinkedList&lt;&gt;();
+        
+        // If most operations are random access with occasional insertions
+        ArrayList&lt;String&gt; arrayNames = new ArrayList&lt;&gt;();
+        
+        // LinkedList is better when you have a reference to the node
+        // and can directly insert/remove without traversal
+        // But often ArrayList is still faster overall due to cache locality
+        // and lower overhead, unless insertions/deletions dominate
+    }
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This code demonstrates practical scenarios for choosing between LinkedList and ArrayList. LinkedList is optimal for queue/stack operations (adding/removing at ends) and for frequent insertions in the middle when you already have a reference to the position. ArrayList excels with random access and performs better overall in many scenarios due to memory locality and lower overhead per element.</p>
+            </div>
         </div>
 
         <div class="resources">

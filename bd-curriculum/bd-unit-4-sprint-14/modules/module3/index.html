@@ -119,20 +119,222 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand advanced Dagger concepts like scoping and component hierarchies</li>
-                <li>Learn to implement constructor injection with Dagger</li>
-                <li>Master the use of qualifiers to distinguish between similar dependencies</li>
-                <li>Understand when and how to use subcomponents</li>
-                <li>Practice implementing complex dependency graphs</li>
+                <li>Use a dependency injection framework to provide an object with its dependencies</li>
+                <li>Analyze if an injected object should be scoped as a singleton or not for a provided scenario</li>
+                <li>Identify what types a given Java class depends on</li>
+                <li>Illustrate object dependency relationships as a dependency graph</li>
+                <li>Explain what dependency injection is</li>
+                <li>Explain why dependency injection is preferable to having objects instantiate their own dependencies</li>
             </ul>
         </section>
 
         <div class="video-container">
-            <iframe class="wistia_embed" title="Dagger @Provides, @Module, and @Singleton" src="https://fast.wistia.net/embed/iframe/vimf80aiqq" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <iframe class="wistia_embed" title="Dagger @Binds Annotation" src="https://fast.wistia.net/embed/iframe/s3b6lm3edf" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: Dagger @Binds Annotation</h3>
+                <p style="color: #b3b3b3;">This video explains the @Binds annotation in Dagger, which is a more efficient way to bind an interface to its implementation compared to @Provides methods.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+// Interface definition
+public interface UserRepository {
+    User findById(String id);
+    void save(User user);
+}
+
+// Implementation
+public class SQLUserRepository implements UserRepository {
+    private final Database database;
+    
+    @Inject
+    public SQLUserRepository(Database database) {
+        this.database = database;
+    }
+    
+    @Override
+    public User findById(String id) {
+        // Implementation using database
+        return database.executeQuery("SELECT * FROM users WHERE id = ?", id);
+    }
+    
+    @Override
+    public void save(User user) {
+        // Implementation using database
+        database.executeUpdate("INSERT INTO users VALUES (?, ?, ?)",
+            user.getId(), user.getName(), user.getEmail());
+    }
+}
+
+// Module with @Binds - more efficient than @Provides
+@Module
+public abstract class RepositoryModule {
+    // Bind UserRepository interface to SQLUserRepository implementation
+    @Binds
+    abstract UserRepository bindUserRepository(SQLUserRepository impl);
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This example demonstrates the use of @Binds in a Dagger module to efficiently bind an interface (UserRepository) to its implementation (SQLUserRepository). The @Binds method is abstract, as Dagger only needs to know about the binding relationship, not how to construct the implementation.</p>
+            </div>
+        </div>
+
+        <div class="video-container">
+            <iframe class="wistia_embed" title="DI Component Creation" src="https://fast.wistia.net/embed/iframe/2nifctlcrb" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: DI Component Creation</h3>
+                <p style="color: #b3b3b3;">This video covers how to create and use Dagger components in different scenarios, including component factories and instance binding in component builders.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+// Component with a Builder pattern
+@Singleton
+@Component(modules = {AppModule.class, NetworkModule.class})
+public interface AppComponent {
+    UserService userService();
+    
+    // Component.Builder pattern with runtime values
+    @Component.Builder
+    interface Builder {
+        // Bind a module that requires parameters
+        @BindsInstance
+        Builder apiKey(@Named("api-key") String apiKey);
+        
+        // Set a module instance
+        Builder networkModule(NetworkModule module);
+        
+        // Build method returns the component
+        AppComponent build();
+    }
+}
+
+// Using the component builder
+public class MyApplication {
+    private AppComponent component;
+    
+    public void onCreate() {
+        // Create network module with custom configuration
+        NetworkModule networkModule = new NetworkModule("https://api.example.com");
+        
+        // Build component with runtime values
+        component = DaggerAppComponent.builder()
+            .apiKey("my-secret-key")
+            .networkModule(networkModule)
+            .build();
+    }
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This example shows how to use Dagger's Component.Builder pattern to create a component with runtime values. The @BindsInstance annotation allows binding values directly into the graph, while modules can also be provided as instances when they require custom configuration.</p>
+            </div>
         </div>
         
         <div class="video-container">
-            <iframe class="wistia_embed" title="Sprint 14 Dependency Injection 2 Video" src="https://fast.wistia.net/embed/iframe/albvx1j6ba" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <iframe class="wistia_embed" title="Subcomponents and Scopes" src="https://fast.wistia.net/embed/iframe/x34rtt1fpf" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: Subcomponents and Scopes</h3>
+                <p style="color: #b3b3b3;">This video explores Dagger subcomponents and custom scopes, which help organize dependencies based on their lifecycles in complex applications.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+// Custom scope annotation for user session
+@Scope
+@Retention(RetentionPolicy.RUNTIME)
+public @interface SessionScope {}
+
+// Parent component (application-wide singleton scope)
+@Singleton
+@Component(modules = {AppModule.class})
+public interface AppComponent {
+    // Factory method to create the session subcomponent
+    SessionComponent.Factory sessionComponentFactory();
+}
+
+// Subcomponent with session scope
+@SessionScope
+@Subcomponent(modules = {SessionModule.class})
+public interface SessionComponent {
+    // Dependencies provided by this subcomponent
+    UserManager userManager();
+    ShoppingCart shoppingCart();
+    
+    // Factory to create this subcomponent
+    @Subcomponent.Factory
+    interface Factory {
+        SessionComponent create(@BindsInstance User user);
+    }
+}
+
+// Usage example
+public class MyApp {
+    private AppComponent appComponent;
+    private SessionComponent sessionComponent;
+    
+    public void onCreate() {
+        appComponent = DaggerAppComponent.create();
+    }
+    
+    public void onUserLogin(User user) {
+        // Create session-scoped component when user logs in
+        sessionComponent = appComponent.sessionComponentFactory().create(user);
+        
+        // Get session-scoped dependencies
+        UserManager userManager = sessionComponent.userManager();
+        ShoppingCart cart = sessionComponent.shoppingCart();
+    }
+    
+    public void onUserLogout() {
+        // Clear session component on logout
+        sessionComponent = null;
+    }
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This example demonstrates using subcomponents with custom scopes to manage different dependency lifecycles. The @SessionScope indicates dependencies that should live for the duration of a user session. The parent @Singleton component provides application-wide dependencies, while the @SessionScope subcomponent manages session-specific dependencies.</p>
+            </div>
+        </div>
+        
+        <div class="video-container">
+            <iframe class="wistia_embed" title="Sprint 14 Dependency Injection 2 Video" src="https://fast.wistia.net/embed/iframe/1w4yhcbfpa" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: Sprint 14 Dependency Injection 2 Overview</h3>
+                <p style="color: #b3b3b3;">This video brings together the advanced dependency injection concepts covered in this module, presenting a comprehensive view of advanced Dagger usage.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+// Complete advanced DI example
+// Multibinding with a map - useful for plugins or feature modules
+@Module
+public abstract class ProcessorsModule {
+    // Bind multiple implementations to a map
+    @Binds
+    @IntoMap
+    @StringKey("json")
+    abstract DataProcessor bindJsonProcessor(JsonProcessor impl);
+    
+    @Binds
+    @IntoMap
+    @StringKey("xml")
+    abstract DataProcessor bindXmlProcessor(XmlProcessor impl);
+    
+    @Binds
+    @IntoMap
+    @StringKey("csv")
+    abstract DataProcessor bindCsvProcessor(CsvProcessor impl);
+}
+
+// Service using map injection
+public class DataProcessingService {
+    private final Map&lt;String, DataProcessor&gt; processors;
+    
+    @Inject
+    public DataProcessingService(Map&lt;String, DataProcessor&gt; processors) {
+        this.processors = processors;
+    }
+    
+    public void processData(String format, String data) {
+        DataProcessor processor = processors.get(format);
+        if (processor == null) {
+            throw new IllegalArgumentException("No processor found for format: " + format);
+        }
+        processor.process(data);
+    }
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This advanced example shows Dagger's multibinding feature for injecting a map of processors indexed by a key. This pattern is powerful for plugin architectures where different implementations can be selected at runtime. The @IntoMap annotation with key annotations helps Dagger build the map automatically from all the bound implementations.</p>
+            </div>
         </div>
 
         <div class="resources">

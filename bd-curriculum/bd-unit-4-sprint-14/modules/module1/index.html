@@ -119,24 +119,121 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand the purpose and benefits of custom exceptions</li>
-                <li>Learn to create exception classes that extend from Exception or RuntimeException</li>
-                <li>Master the implementation of custom exception constructors</li>
-                <li>Practice throwing and catching custom exceptions</li>
-                <li>Implement effective error handling strategies using custom exceptions</li>
+                <li>Examine whether to throw an existing exception or implement a new exception for a given error case</li>
+                <li>Design and implement an exception that describes an error case specific to a service</li>
+                <li>Produce a unique serialVersionUID when creating a new exception type</li>
+                <li>Design and implement an exception class hierarchy for a code base</li>
+                <li>Outline when to chain (or wrap) an exception to hide implementation details from the caller</li>
+                <li>Explain why making custom exceptions can be helpful in the debugging process</li>
+                <li>Explain how to create chain (or wrapping) exceptions</li>
+                <li>Explain how to define error cases given a set of requirements</li>
+                <li>Outline the public constructors of the Exception class</li>
+                <li>Understand that it is a good practice to provide an Exception subclass with the same public constructor signatures as the base java.lang.Exception class</li>
             </ul>
         </section>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="Overview of Throwing and Writing Exceptions" src="https://fast.wistia.net/embed/iframe/65guq8bz08" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: Overview of Throwing and Writing Exceptions</h3>
+                <p style="color: #b3b3b3;">This video introduces the fundamentals of custom exceptions in Java. When standard exceptions don't adequately describe your error cases, creating custom exceptions can improve code clarity and debugging.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+public class ResourceNotFoundException extends Exception {
+    private static final long serialVersionUID = 1L;
+    
+    public ResourceNotFoundException() {
+        super();
+    }
+    
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
+    
+    public ResourceNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+    
+    public ResourceNotFoundException(Throwable cause) {
+        super(cause);
+    }
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This example shows a custom exception that extends the standard Exception class, including the recommended constructor signatures that match the base Exception class. The serialVersionUID is essential for serialization compatibility.</p>
+            </div>
         </div>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="Designing Custom Exceptions" src="https://fast.wistia.net/embed/iframe/kqfh1ow2j7" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: Designing Custom Exceptions</h3>
+                <p style="color: #b3b3b3;">This video explores the process of designing an effective custom exception hierarchy for your application. A well-designed exception hierarchy helps organize error cases and provides meaningful context to callers.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+// Base exception for the service
+public class ServiceException extends Exception {
+    private static final long serialVersionUID = 1L;
+    
+    public ServiceException(String message) {
+        super(message);
+    }
+    
+    public ServiceException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+
+// More specific exception extending the base
+public class InvalidInputException extends ServiceException {
+    private static final long serialVersionUID = 2L;
+    
+    public InvalidInputException(String message) {
+        super(message);
+    }
+    
+    // Example of exception chaining (wrapping)
+    public InvalidInputException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This code demonstrates how to create a hierarchy of exceptions with a base service exception and more specific child exceptions. Exception chaining (wrapping) is shown, which helps preserve the original cause while presenting a more appropriate exception to the caller.</p>
+            </div>
         </div>
         
         <div class="video-container">
             <iframe class="wistia_embed" title="Sprint 14 Creating Exceptions Video" src="https://fast.wistia.net/embed/iframe/nzkeoq97mg" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: Sprint 14 Creating Exceptions Overview</h3>
+                <p style="color: #b3b3b3;">This video provides a comprehensive overview of the Sprint 14 material on custom exceptions, bringing together the concepts from the previous videos and showing their application in real-world scenarios.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+// Using custom exceptions in application code
+public class UserService {
+    public User findUserById(String userId) throws UserNotFoundException {
+        User user = userRepository.findById(userId);
+        
+        if (user == null) {
+            throw new UserNotFoundException("User with ID " + userId + " not found");
+        }
+        
+        return user;
+    }
+    
+    public void updateUser(User user) throws InvalidUserDataException {
+        try {
+            validateUser(user);
+            userRepository.save(user);
+        } catch (ValidationException e) {
+            // Example of exception chaining - wrapping a low-level exception
+            // in a more appropriate high-level exception
+            throw new InvalidUserDataException("Invalid user data", e);
+        }
+    }
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This example shows custom exceptions in action within a service class. The code demonstrates how to throw custom exceptions in error cases and how to wrap lower-level exceptions to provide more context while preserving the original cause information.</p>
+            </div>
         </div>
 
         <div class="resources">
