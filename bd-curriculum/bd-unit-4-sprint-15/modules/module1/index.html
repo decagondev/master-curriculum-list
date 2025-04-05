@@ -103,6 +103,30 @@
         section {
             margin-bottom: 30px;
         }
+        .content-section {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #2a303c;
+            border-radius: 4px;
+            border-left: 4px solid #ff5722;
+            color: #b3b3b3;
+        }
+        .content-section h3, .content-section h4 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .content-section pre {
+            background-color: #1a1d23;
+            padding: 15px;
+            border-radius: 4px;
+            overflow: auto;
+            margin: 15px 0;
+        }
+        .content-section code {
+            font-family: 'Courier New', Courier, monospace;
+            color: #e0e0e0;
+        }
     </style>
 </head>
 <body>
@@ -124,15 +148,113 @@
                 <li>Implement both linear and binary search algorithms</li>
                 <li>Determine when to use different searching techniques based on data characteristics</li>
                 <li>Apply algorithm analysis to optimize code performance</li>
+                <li>Apply linear search to retrieve an element with a given property from a list</li>
+                <li>Discuss the time complexity of binary search on a sorted ArrayList</li>
+                <li>Discuss the time complexity of binary search on a sorted LinkedList</li>
+                <li>Explain why selection sort runs in quadratic O(n²) time</li>
+                <li>Explain why merge sort runs in O(n log(n)) time</li>
+                <li>Determine if a given algorithm has logarithmic time complexity</li>
             </ul>
         </section>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="Linear and Binary Searching" src="https://fast.wistia.net/embed/iframe/qusbjb7nyg" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            
+            <div class="content-section">
+                <h3>Linear Search</h3>
+                <p>Linear search is a simple search algorithm that checks each element in a list sequentially until the desired element is found. It's straightforward but can be inefficient for large data sets.</p>
+                
+                <p>When using linear search:</p>
+                <ul>
+                    <li>We check each element one by one</li>
+                    <li>Works on both sorted and unsorted data</li>
+                    <li>Time complexity is O(n) - linear time</li>
+                    <li>Best for small lists or when data is not sorted</li>
+                </ul>
+                
+                <pre><code>public static int linearSearch(int[] array, int target) {
+    for (int i = 0; i &lt; array.length; i++) {
+        if (array[i] == target) {
+            return i; // Found the target, return its index
+        }
+    }
+    return -1; // Target not found
+}</code></pre>
+            </div>
+            
+            <div class="content-section">
+                <h3>Binary Search</h3>
+                <p>Binary search is an efficient algorithm that works on sorted arrays by repeatedly dividing the search interval in half. It has a logarithmic time complexity, making it much faster than linear search for large datasets.</p>
+                
+                <p>When using binary search:</p>
+                <ul>
+                    <li>The data must be sorted</li>
+                    <li>We repeatedly divide the search space in half</li>
+                    <li>Time complexity is O(log n) - logarithmic time</li>
+                    <li>Each step eliminates half of the remaining elements</li>
+                    <li>Only effective when data is sorted and indexed (like ArrayList)</li>
+                </ul>
+                
+                <pre><code>public static int binarySearch(int[] sortedArray, int target) {
+    int left = 0;
+    int right = sortedArray.length - 1;
+    
+    while (left &lt;= right) {
+        int mid = left + (right - left) / 2;
+        
+        // Check if target is at mid
+        if (sortedArray[mid] == target) {
+            return mid;
+        }
+        
+        // If target is greater, ignore left half
+        if (sortedArray[mid] &lt; target) {
+            left = mid + 1;
+        }
+        // If target is smaller, ignore right half
+        else {
+            right = mid - 1;
+        }
+    }
+    
+    // Target not found
+    return -1;
+}</code></pre>
+            </div>
+            
+            <div class="content-section">
+                <h3>Binary Search on LinkedList</h3>
+                <p>While binary search is highly efficient for ArrayList (with O(log n) time complexity), it performs poorly on LinkedList due to the lack of random access. In a LinkedList, each element access requires traversal from the beginning or end of the list, resulting in O(n) time complexity for access operations.</p>
+                
+                <p>For LinkedLists, linear search is often more appropriate despite its theoretical inefficiency because the overhead of element access in binary search negates its advantages.</p>
+            </div>
         </div>
         
         <div class="video-container">
             <iframe class="wistia_embed" title="Sprint 15 Searching and Big O Part B Video" src="https://fast.wistia.net/embed/iframe/dwd88dma3j" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            
+            <div class="content-section">
+                <h3>Big O Analysis</h3>
+                <p>Big O notation is used to classify algorithms according to how their run time or space requirements grow as the input size grows.</p>
+                
+                <h4>Common Time Complexities:</h4>
+                <ul>
+                    <li><strong>O(1)</strong> - Constant time: Operations that take the same amount of time regardless of input size</li>
+                    <li><strong>O(log n)</strong> - Logarithmic time: Algorithms that divide the problem in half each time (like binary search)</li>
+                    <li><strong>O(n)</strong> - Linear time: Operations that process each input element once (like linear search)</li>
+                    <li><strong>O(n log n)</strong> - Linearithmic time: Algorithms like efficient sorting methods (merge sort, quicksort)</li>
+                    <li><strong>O(n²)</strong> - Quadratic time: Operations with nested loops processing all elements (selection sort, bubble sort)</li>
+                </ul>
+                
+                <h4>Algorithm Comparison:</h4>
+                <ul>
+                    <li>Linear Search: O(n) - has to potentially check all elements</li>
+                    <li>Binary Search on ArrayList: O(log n) - divides problem in half each iteration</li>
+                    <li>Binary Search on LinkedList: O(n) - random access is O(n), negating benefits</li>
+                    <li>Selection Sort: O(n²) - requires nested loops to compare and swap elements</li>
+                    <li>Merge Sort: O(n log n) - divides problem and merges results</li>
+                </ul>
+            </div>
         </div>
 
         <div class="resources">

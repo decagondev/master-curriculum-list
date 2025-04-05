@@ -96,6 +96,30 @@
         .back-button:hover {
             background-color: #333a47;
         }
+        .content-section {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #2a303c;
+            border-radius: 4px;
+            border-left: 4px solid #ff5722;
+            color: #b3b3b3;
+        }
+        .content-section h3, .content-section h4 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .content-section pre {
+            background-color: #1a1d23;
+            padding: 15px;
+            border-radius: 4px;
+            overflow: auto;
+            margin: 15px 0;
+        }
+        .content-section code {
+            font-family: 'Courier New', Courier, monospace;
+            color: #e0e0e0;
+        }
     </style>
 </head>
 <body>
@@ -109,6 +133,106 @@
             <div class="video-container">
                 <iframe class="wistia_embed" title="Code-Along Learner Facing Walkthrough Video" src="https://fast.wistia.net/embed/iframe/m3huj6opvn" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
+            
+            <div class="content-section">
+                <h3>Sorting Algorithms Overview</h3>
+                <p>In this code-along, we'll implement and analyze different sorting algorithms, focusing on their time complexity and practical applications.</p>
+                
+                <h4>Objectives</h4>
+                <ul>
+                    <li>Implement selection sort and understand its O(n²) time complexity</li>
+                    <li>Implement merge sort and understand its O(n log n) time complexity</li>
+                    <li>Compare the performance of different sorting algorithms</li>
+                    <li>Analyze when to use each sorting algorithm based on data characteristics</li>
+                </ul>
+                
+                <h4>Selection Sort Implementation</h4>
+                <p>Selection sort works by repeatedly finding the minimum element from the unsorted part of the array and putting it at the beginning.</p>
+                
+                <pre><code>public static void selectionSort(int[] arr) {
+    int n = arr.length;
+    
+    // One by one move boundary of unsorted subarray
+    for (int i = 0; i &lt; n - 1; i++) {
+        // Find the minimum element in unsorted array
+        int minIdx = i;
+        for (int j = i + 1; j &lt; n; j++) {
+            if (arr[j] &lt; arr[minIdx]) {
+                minIdx = j;
+            }
+        }
+        
+        // Swap the found minimum element with the first element
+        int temp = arr[minIdx];
+        arr[minIdx] = arr[i];
+        arr[i] = temp;
+    }
+}</code></pre>
+
+                <h4>Merge Sort Implementation</h4>
+                <p>Merge sort is a divide and conquer algorithm that divides the input array into two halves, recursively sorts them, and then merges the sorted halves.</p>
+                
+                <pre><code>public static void mergeSort(int[] arr, int left, int right) {
+    if (left &lt; right) {
+        // Find the middle point
+        int mid = left + (right - left) / 2;
+        
+        // Sort first and second halves
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        
+        // Merge the sorted halves
+        merge(arr, left, mid, right);
+    }
+}
+
+private static void merge(int[] arr, int left, int mid, int right) {
+    // Find sizes of two subarrays to be merged
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+    
+    // Create temp arrays
+    int[] L = new int[n1];
+    int[] R = new int[n2];
+    
+    // Copy data to temp arrays
+    for (int i = 0; i &lt; n1; ++i) {
+        L[i] = arr[left + i];
+    }
+    for (int j = 0; j &lt; n2; ++j) {
+        R[j] = arr[mid + 1 + j];
+    }
+    
+    // Merge the temp arrays
+    int i = 0, j = 0;
+    int k = left;
+    while (i &lt; n1 && j &lt; n2) {
+        if (L[i] &lt;= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+    
+    // Copy remaining elements of L[] if any
+    while (i &lt; n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+    
+    // Copy remaining elements of R[] if any
+    while (j &lt; n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}</code></pre>
+            </div>
+            
             <div class="resources">
                 <h3>Resources</h3>
                 <ul>
@@ -124,6 +248,65 @@
             <div class="video-container">
                 <iframe class="wistia_embed" title="Code-Along Learner Facing Walkthrough Video" src="https://fast.wistia.net/embed/iframe/m3huj6opvn" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
+            
+            <div class="content-section">
+                <h3>Recursion Implementation and Analysis</h3>
+                <p>In this code-along, we'll implement recursive solutions to several problems and analyze their performance characteristics.</p>
+                
+                <h4>Objectives</h4>
+                <ul>
+                    <li>Identify base cases and recursive cases in algorithm development</li>
+                    <li>Implement recursive algorithms for factorial, Fibonacci, and more complex problems</li>
+                    <li>Analyze the time and space complexity of recursive algorithms</li>
+                    <li>Compare recursive solutions with their iterative counterparts</li>
+                </ul>
+                
+                <h4>Factorial Implementation</h4>
+                <p>The factorial function is a classic example of recursion. It calculates the product of all positive integers less than or equal to n.</p>
+                
+                <pre><code>/**
+ * Calculate factorial recursively
+ * @param n The number to calculate factorial for
+ * @return n!
+ */
+public static long factorial(int n) {
+    // Base case
+    if (n == 0 || n == 1) {
+        return 1;
+    }
+    
+    // Recursive case
+    return n * factorial(n - 1);
+}</code></pre>
+
+                <h4>Recursive String Reversal</h4>
+                <p>String reversal is another problem that can be solved elegantly with recursion.</p>
+                
+                <pre><code>/**
+ * Reverse a string using recursion
+ * @param str The string to reverse
+ * @return The reversed string
+ */
+public static String reverseString(String str) {
+    // Base case
+    if (str.isEmpty() || str.length() == 1) {
+        return str;
+    }
+    
+    // Recursive case: first character goes to the end
+    return reverseString(str.substring(1)) + str.charAt(0);
+}</code></pre>
+
+                <h4>Recursive vs. Iterative Approaches</h4>
+                <p>During this code-along, we'll explore the tradeoffs between recursive and iterative solutions:</p>
+                <ul>
+                    <li>Recursive solutions are often more elegant and readable</li>
+                    <li>Iterative solutions typically use less memory (no call stack overhead)</li>
+                    <li>Some problems (like tree traversal) are naturally recursive</li>
+                    <li>Recursive solutions can suffer from stack overflow for large inputs</li>
+                </ul>
+            </div>
+            
             <div class="resources">
                 <h3>Resources</h3>
                 <ul>
