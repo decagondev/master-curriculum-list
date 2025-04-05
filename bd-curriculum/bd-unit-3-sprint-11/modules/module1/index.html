@@ -129,6 +129,32 @@
         </div>
 
         <section>
+            <div class="content-explanation">
+                <h3>Introduction to Mocking</h3>
+                <p>Mocking is essential for writing effective unit tests. It allows you to test classes in isolation by creating dummy implementations of their dependencies. This ensures your tests are deterministic, fast, and focused on the specific code you're testing.</p>
+                <p>Mock objects let you define the output of method calls from dependencies, giving you precise control over test conditions without relying on external systems or real implementation details.</p>
+                <pre><code>// Example of creating a mock
+@Mock
+private RenterDao renterDao;
+
+@Mock
+private DriverLicenseService driverLicenseService;
+
+@InjectMocks
+private RenterRegistrar renterRegistrar;
+
+@BeforeEach
+public void setup() {
+    initMocks(this);
+}
+
+// Defining mock behavior
+when(renterDao.getRegisteredRenter(driverLicenseId)).thenReturn(driver);
+</code></pre>
+            </div>
+        </section>
+
+        <section>
             <h2>Learning Objectives</h2>
             <ul class="learning-objectives-list">
                 <li>Understand the purpose and benefits of mocking in unit tests</li>
@@ -136,7 +162,38 @@
                 <li>Master the basics of stubbing method responses</li>
                 <li>Practice verifying mock interactions</li>
                 <li>Implement mocks to isolate code units for testing</li>
+                <li>Implement unit tests that isolate code by mocking dependencies</li>
+                <li>Design unit tests that verify class interactions with dependencies</li>
+                <li>Create unit tests that verify exception handling from dependencies</li>
+                <li>Design unit tests for expected error conditions and exceptions</li>
+                <li>Refactor classes to make them more testable without direct dependency instantiation</li>
+                <li>Discuss the advantages of dependency injection for testing</li>
             </ul>
+        </section>
+
+        <section>
+            <div class="content-explanation">
+                <h3>When to Use Mocking</h3>
+                <p>Mocking provides several key benefits in unit testing:</p>
+                <ul>
+                    <li><strong>Deterministic tests:</strong> Tests produce predictable results regardless of external factors</li>
+                    <li><strong>Testing edge cases:</strong> Easily test rare conditions that are difficult to reproduce naturally</li>
+                    <li><strong>Speed:</strong> Tests run faster without waiting for real dependencies like databases or networks</li>
+                    <li><strong>Cost efficiency:</strong> Avoid expenses associated with real services or resources</li>
+                    <li><strong>Isolation:</strong> Test only your specific code unit without interference from dependencies</li>
+                </ul>
+                <pre><code>// Example of mocking exceptional behavior
+@Test
+public void getRegisteredRenter_unregisteredDriver_throwsNotRegisteredException() throws NotRegisteredException {
+    // GIVEN
+    String driverLicenseId = "ABC1234567";
+    when(renterDao.getRegisteredRenter(driverLicenseId)).thenThrow(NotRegisteredException.class);
+
+    // WHEN/THEN
+    assertThrows(NotRegisteredException.class,
+            () -> renterRegistrar.getRegisteredRenter(driverLicenseId));
+}</code></pre>
+            </div>
         </section>
 
         <div class="resources">
