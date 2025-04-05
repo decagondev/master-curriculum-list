@@ -122,12 +122,84 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Review serverless computing concepts and AWS Lambda architecture</li>
-                <li>Master the development and deployment of Lambda functions</li>
-                <li>Learn best practices for testing serverless applications</li>
-                <li>Understand AWS Lambda logging and monitoring</li>
-                <li>Apply dependency injection concepts to AWS Lambda functions</li>
+                <li>Understand AWS Lambda Functions conceptually
+                    <ul>
+                        <li>Serverless computing model</li>
+                        <li>Event-driven architecture</li>
+                        <li>Function as a Service (FaaS) paradigm</li>
+                    </ul>
+                </li>
+                <li>Understand the advantages and disadvantages of using AWS Lambda Functions
+                    <ul>
+                        <li>Cost efficiency - pay only for compute time used</li>
+                        <li>Automatic scaling</li>
+                        <li>No server management</li>
+                        <li>Cold start concerns</li>
+                        <li>Execution time limitations</li>
+                    </ul>
+                </li>
+                <li>Know how to create and configure an AWS Lambda Function</li>
+                <li>Learn how to upload your code to an AWS Lambda</li>
+                <li>Master techniques for testing AWS Lambda Functions locally and in the cloud</li>
+                <li>Understand request handlers and how to write one that connects to your AWS Lambda Function</li>
+                <li>Apply dependency injection concepts to AWS Lambda functions for improved testability</li>
             </ul>
+        </section>
+
+        <section>
+            <h3>Code Example: AWS Lambda Function</h3>
+            <pre style="background-color: #2a303c; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// Basic AWS Lambda Function Handler
+public class MyLambdaHandler implements RequestHandler&lt;APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent&gt; {
+    
+    private final DynamoDbClient dynamoDbClient;
+    
+    // Constructor for dependency injection
+    public MyLambdaHandler(DynamoDbClient dynamoDbClient) {
+        this.dynamoDbClient = dynamoDbClient;
+    }
+    
+    // Default constructor for AWS Lambda
+    public MyLambdaHandler() {
+        this(DynamoDbClient.create());
+    }
+    
+    @Override
+    public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent input, Context context) {
+        LambdaLogger logger = context.getLogger();
+        logger.log("Received event: " + input.getBody());
+        
+        try {
+            // Process the request
+            String requestBody = input.getBody();
+            MyRequest request = new Gson().fromJson(requestBody, MyRequest.class);
+            
+            // Perform business logic
+            String result = processRequest(request);
+            
+            // Create success response
+            return new APIGatewayProxyResponseEvent()
+                .withStatusCode(200)
+                .withBody(result)
+                .withHeaders(Map.of("Content-Type", "application/json"));
+                
+        } catch (Exception e) {
+            logger.log("Error processing request: " + e.getMessage());
+            
+            // Create error response
+            return new APIGatewayProxyResponseEvent()
+                .withStatusCode(500)
+                .withBody("{\"error\":\"" + e.getMessage() + "\"}")
+                .withHeaders(Map.of("Content-Type", "application/json"));
+        }
+    }
+    
+    private String processRequest(MyRequest request) {
+        // Actual business logic implementation
+        // This could interact with DynamoDB, other AWS services, etc.
+        return "Processed request for: " + request.getName();
+    }
+}</pre>
         </section>
 
         <div class="resources">

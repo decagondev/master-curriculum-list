@@ -124,6 +124,29 @@
         </div>
 
         <section>
+            <div class="content-explanation">
+                <h3>Advanced Mocking Techniques</h3>
+                <p>Once you understand the basics of mocking, you can leverage more sophisticated techniques to handle complex testing scenarios. Mockito provides powerful capabilities for defining precise behavior, verifying interactions, and capturing arguments.</p>
+                <p>This module builds on the foundation of basic mocking to help you create comprehensive test suites for real-world applications.</p>
+                <pre><code>// Example of verifying method calls
+@Test
+public void registerRenter_eligibleDriver_successfullyRegisters() throws NotEligibleToRegisterException {
+    // GIVEN
+    String driverLicenseId = "1234ABC567";
+    Driver driver = new Driver("Danica Patrick", 38, driverLicenseId);
+    when(driverLicenseService.isValid(driverLicenseId)).thenReturn(true);
+
+    // WHEN
+    renterRegistrar.registerRenter(driver);
+
+    // THEN
+    verify(renterDao).addRenter(driver);
+}
+</code></pre>
+            </div>
+        </section>
+
+        <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
                 <li>Master advanced mockito techniques for complex scenarios</li>
@@ -131,7 +154,37 @@
                 <li>Understand how to verify interaction order and number of invocations</li>
                 <li>Practice using argument captors for complex assertions</li>
                 <li>Implement advanced mocking strategies for production-level testing</li>
+                <li>Design and implement tests that verify dependencies interact as expected</li>
+                <li>Create comprehensive tests for exception handling from dependencies</li>
+                <li>Identify and debug issues using log files and fragments</li>
+                <li>Master testing of void methods that perform actions rather than return values</li>
+                <li>Understand what not to mock and best practices for effective mocking</li>
             </ul>
+        </section>
+
+        <section>
+            <div class="content-explanation">
+                <h3>Advanced Verification Techniques</h3>
+                <p>Beyond basic verification, Mockito offers several modes to verify complex interactions:</p>
+                <ul>
+                    <li><strong>Verifying call counts:</strong> Ensure methods are called exactly the expected number of times</li>
+                    <li><strong>Capturing arguments:</strong> Examine the actual values passed to mocked methods</li>
+                    <li><strong>Verifying order:</strong> Confirm that method calls happen in the expected sequence</li>
+                </ul>
+                <pre><code>// Verifying number of calls
+verify(renterDao, times(1)).addRenter(driver);
+
+// Verification modes
+verify(renterDao, atLeastOnce()).addRenter(driver);
+verify(renterDao, atMost(3)).getRegisteredRenter(anyString());
+verify(renterDao, never()).removeRenter(anyString());
+
+// Using ArgumentCaptor
+ArgumentCaptor&lt;Driver&gt; driverCaptor = ArgumentCaptor.forClass(Driver.class);
+verify(renterDao).addRenter(driverCaptor.capture());
+Driver capturedDriver = driverCaptor.getValue();
+assertEquals("Danica Patrick", capturedDriver.getName());</code></pre>
+            </div>
         </section>
 
         <div class="resources">

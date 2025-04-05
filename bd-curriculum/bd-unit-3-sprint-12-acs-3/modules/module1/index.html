@@ -122,12 +122,74 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand the concept of dependency injection and its benefits</li>
-                <li>Learn how to implement dependency injection in Java applications</li>
-                <li>Recognize when and how to use dependency injection to improve code design</li>
-                <li>Practice implementing dependency injection using constructor injection</li>
-                <li>Explore how dependency injection simplifies unit testing</li>
+                <li>Understand loose vs tight-coupling and identify how to remedy tight-coupling</li>
+                <li>Understand the concept of dependency injection and its benefits
+                    <ul>
+                        <li>What problems does it solve for us</li>
+                        <li>What are the advantages</li>
+                    </ul>
+                </li>
+                <li>Learn how to implement dependency injection manually in Java applications
+                    <ul>
+                        <li>Constructor injection: passing dependencies through constructors</li>
+                        <li>Field injection: setting dependencies directly into fields</li>
+                        <li>Method injection: passing dependencies through setter methods</li>
+                    </ul>
+                </li>
+                <li>Understand what a dependency graph (or chain) is and how it relates to DI</li>
+                <li>Understand what a DI framework is and how it helps simplify dependency management</li>
+                <li>Explore how the Spring framework helps with implementing dependency injection
+                    <ul>
+                        <li>What is <code>@Autowire</code> annotation</li>
+                        <li>What are <code>@Component</code>s and their specializations</li>
+                        <li>What kinds of components we use in Spring applications</li>
+                    </ul>
+                </li>
+                <li>Practice using Spring DI annotations effectively</li>
+                <li>Understand ApplicationContext and its role in Spring's DI container</li>
             </ul>
+        </section>
+
+        <section>
+            <h3>Code Example: Dependency Injection</h3>
+            <pre style="background-color: #2a303c; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// Without Dependency Injection (tight coupling)
+public class OrderService {
+    private final DatabaseRepository repository = new MySQLRepository(); // Tightly coupled
+    
+    public void createOrder(Order order) {
+        repository.save(order);
+    }
+}
+
+// With Dependency Injection (loose coupling)
+public class OrderService {
+    private final Repository repository; // Interface reference
+    
+    // Constructor injection
+    public OrderService(Repository repository) {
+        this.repository = repository;
+    }
+    
+    public void createOrder(Order order) {
+        repository.save(order);
+    }
+}
+
+// With Spring Framework
+@Service
+public class OrderService {
+    private final Repository repository;
+    
+    @Autowired // Spring handles the injection
+    public OrderService(Repository repository) {
+        this.repository = repository;
+    }
+    
+    public void createOrder(Order order) {
+        repository.save(order);
+    }
+}</pre>
         </section>
 
         <div class="resources">

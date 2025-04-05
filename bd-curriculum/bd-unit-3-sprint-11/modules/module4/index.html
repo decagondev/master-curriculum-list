@@ -120,6 +120,39 @@
         </div>
 
         <section>
+            <div class="content-explanation">
+                <h3>Introduction to AWS Lambda</h3>
+                <p>AWS Lambda is a serverless computing service that lets you run code without provisioning or managing servers. You pay only for the compute time you consume, with no charge when your code is not running.</p>
+                <p>Lambda functions are event-driven, executing your code in response to triggers like HTTP requests, file uploads, database changes, or scheduled events.</p>
+                <pre><code>// Basic AWS Lambda function in Java
+public class MyLambdaHandler implements RequestHandler&lt;APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent&gt; {
+    @Override
+    public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent input, Context context) {
+        // Get the logger from the context
+        LambdaLogger logger = context.getLogger();
+        
+        // Log information about the request
+        logger.log("Received request: " + input.getBody());
+        
+        // Process the request
+        String result = processRequest(input.getBody());
+        
+        // Create and return the response
+        APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
+        response.setStatusCode(200);
+        response.setBody(result);
+        return response;
+    }
+    
+    private String processRequest(String requestBody) {
+        // Business logic here
+        return "Request processed successfully";
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
                 <li>Understand the serverless computing model and AWS Lambda architecture</li>
@@ -127,7 +160,89 @@
                 <li>Master AWS CloudWatch logging for Lambda functions</li>
                 <li>Practice testing Lambda functions effectively</li>
                 <li>Implement best practices for Lambda function development</li>
+                <li>Add appropriate logging statements to facilitate issue diagnosis</li>
+                <li>Identify the correct log level for different types of statements</li>
+                <li>Understand the purpose and importance of logging</li>
+                <li>Access and analyze logs for both local and deployed services</li>
+                <li>Troubleshoot Lambda functions using CloudWatch logs</li>
             </ul>
+        </section>
+
+        <section>
+            <div class="content-explanation">
+                <h3>CloudWatch Logging</h3>
+                <p>Effective logging is critical for monitoring and debugging serverless applications, especially since you don't have direct access to the server environment.</p>
+                <p>AWS Lambda automatically integrates with CloudWatch Logs, storing all output from your Lambda function's console (stdout/stderr).</p>
+                <pre><code>// Effective logging in Lambda functions
+public class LoggingExample implements RequestHandler&lt;Map&lt;String, Object&gt;, String&gt; {
+    // Create a logger instance
+    private static final Logger logger = LogManager.getLogger(LoggingExample.class);
+    
+    @Override
+    public String handleRequest(Map&lt;String, Object&gt; input, Context context) {
+        // Different log levels for different purposes
+        logger.trace("TRACE: Detailed information for debugging");
+        logger.debug("DEBUG: Information useful for debugging");
+        logger.info("INFO: Highlights progress of the application");
+        logger.warn("WARN: Potentially harmful situations that should be addressed");
+        logger.error("ERROR: Error events that might still allow the application to continue");
+        
+        try {
+            // Business logic that might throw an exception
+            Object result = processSomething(input);
+            return result.toString();
+        } catch (Exception e) {
+            // Log the full exception with stack trace
+            logger.error("Failed to process input", e);
+            return "Error processing request";
+        }
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <div class="content-explanation">
+                <h3>Testing Lambda Functions</h3>
+                <p>Testing Lambda functions requires different approaches compared to traditional applications:</p>
+                <ol>
+                    <li><strong>Local testing:</strong> Test the handler logic without deploying to AWS</li>
+                    <li><strong>Integration testing:</strong> Test the deployed function with real AWS services</li>
+                    <li><strong>Mocking AWS services:</strong> Use libraries like localstack or AWS SDK mocking</li>
+                </ol>
+                <pre><code>// Example of unit testing a Lambda function
+@Test
+public void testHandleRequest() {
+    // Create test input
+    APIGatewayProxyRequestEvent input = new APIGatewayProxyRequestEvent();
+    input.setBody("{\"name\":\"John\"}");
+    
+    // Mock the AWS Lambda context
+    Context context = createMockContext();
+    
+    // Create the handler
+    MyLambdaHandler handler = new MyLambdaHandler();
+    
+    // Execute the function
+    APIGatewayProxyResponseEvent response = handler.handleRequest(input, context);
+    
+    // Verify the response
+    assertEquals(200, response.getStatusCode().intValue());
+    assertTrue(response.getBody().contains("Successfully processed John"));
+}
+
+private Context createMockContext() {
+    // Create a mock implementation of Context
+    Context context = mock(Context.class);
+    LambdaLogger logger = mock(LambdaLogger.class);
+    
+    // Setup the mock behavior
+    when(context.getLogger()).thenReturn(logger);
+    when(context.getRemainingTimeInMillis()).thenReturn(10000);
+    
+    return context;
+}</code></pre>
+            </div>
         </section>
 
         <div class="resources">
