@@ -103,6 +103,30 @@
         section {
             margin-bottom: 30px;
         }
+        .content-section {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #2a303c;
+            border-radius: 4px;
+            border-left: 4px solid #ff5722;
+            color: #b3b3b3;
+        }
+        .content-section h3, .content-section h4 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .content-section pre {
+            background-color: #1a1d23;
+            padding: 15px;
+            border-radius: 4px;
+            overflow: auto;
+            margin: 15px 0;
+        }
+        .content-section code {
+            font-family: 'Courier New', Courier, monospace;
+            color: #e0e0e0;
+        }
     </style>
 </head>
 <body>
@@ -124,11 +148,152 @@
                 <li>Set up monitoring and alerting for deployed services</li>
                 <li>Implement deployment strategies such as blue-green and canary deployments</li>
                 <li>Optimize application performance in production environments</li>
+                <li>Classify the purpose of each part of a given Continuous Deployment pipeline into source, build, test, and deploy</li>
+                <li>Explain how having different deployment stages separates test data from production data</li>
+                <li>Examine where in a provided pipeline a given test should be executed</li>
+                <li>Compare and contrast integration tests and unit tests</li>
+                <li>Explain why tests should be run and catch bugs in the earliest stage possible</li>
+                <li>Explain why separating test data from production data is valuable when testing</li>
+                <li>Recall that an approval workflow only runs after a successful promotion to that stage</li>
             </ul>
         </section>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="Sprint 15 Deploying 2 Video" src="https://fast.wistia.net/embed/iframe/ryhwg7echf" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            
+            <div class="content-section">
+                <h3>Advanced CI/CD Pipeline Strategies</h3>
+                <p>Continuous Integration and Continuous Deployment (CI/CD) pipelines automate the software delivery process. Advanced CI/CD pipelines include sophisticated testing, deployment, and monitoring strategies.</p>
+                
+                <h4>CI/CD Pipeline Components</h4>
+                <ul>
+                    <li><strong>Source Control Integration</strong>: Automatic triggers based on code commits</li>
+                    <li><strong>Automated Testing Suite</strong>: Unit, integration, and end-to-end tests</li>
+                    <li><strong>Quality Gates</strong>: Code coverage, security checks, and linting</li>
+                    <li><strong>Deployment Automation</strong>: Scripted deployment processes for all environments</li>
+                    <li><strong>Monitoring Integration</strong>: Automatic monitoring of newly deployed services</li>
+                </ul>
+                
+                <p>Modern CI/CD pipelines balance speed with quality by implementing comprehensive testing while keeping the pipeline efficient enough to enable multiple deployments per day.</p>
+            </div>
+        </div>
+        
+        <div class="content-section">
+            <h3>Advanced Deployment Strategies</h3>
+            <p>Modern deployment practices go beyond simple updates to minimize risk and downtime when deploying to production environments.</p>
+            
+            <h4>Blue-Green Deployment</h4>
+            <p>Blue-green deployment involves maintaining two identical production environments, with only one active at a time:</p>
+            <ul>
+                <li>Two identical environments: "Blue" (current) and "Green" (new version)</li>
+                <li>Deploy new version to the inactive environment</li>
+                <li>Test thoroughly in the inactive environment</li>
+                <li>Switch traffic from active to inactive environment when ready</li>
+                <li>Previous environment becomes standby for quick rollback if needed</li>
+            </ul>
+            
+            <h4>Canary Deployment</h4>
+            <p>Canary deployment gradually shifts traffic to the new version:</p>
+            <ul>
+                <li>Deploy new version alongside the current version</li>
+                <li>Route a small percentage of traffic (e.g., 5%) to the new version</li>
+                <li>Monitor for issues and performance</li>
+                <li>Gradually increase traffic to the new version if stable</li>
+                <li>Revert to previous version if problems occur</li>
+            </ul>
+            
+            <h4>Feature Flags</h4>
+            <p>Feature flags allow toggling features on/off without redeploying:</p>
+            <ul>
+                <li>Deploy code with new features disabled by default</li>
+                <li>Enable features via configuration changes rather than code deployments</li>
+                <li>Roll out features to specific user segments</li>
+                <li>Quickly disable problematic features without rollback</li>
+            </ul>
+        </div>
+        
+        <div class="content-section">
+            <h3>Auto-Scaling and Infrastructure as Code</h3>
+            <p>Modern applications need to scale dynamically based on demand and be deployed consistently across environments.</p>
+            
+            <h4>Auto-Scaling Configuration</h4>
+            <ul>
+                <li><strong>Scaling Policies</strong>: Define conditions for scaling (CPU usage, request count, memory)</li>
+                <li><strong>Scale-Out Rules</strong>: Add instances when load increases</li>
+                <li><strong>Scale-In Rules</strong>: Remove instances when load decreases</li>
+                <li><strong>Cooldown Periods</strong>: Prevent rapid scaling oscillations</li>
+                <li><strong>Predictive Scaling</strong>: Scale based on anticipated load patterns</li>
+            </ul>
+            
+            <h4>Infrastructure as Code (IaC)</h4>
+            <p>IaC tools like AWS CloudFormation, Terraform, or AWS CDK allow defining infrastructure in code:</p>
+            <ul>
+                <li>Version-controlled infrastructure definitions</li>
+                <li>Consistent environments across development, testing, and production</li>
+                <li>Automated infrastructure provisioning</li>
+                <li>Self-documenting infrastructure</li>
+                <li>Reproducible deployments</li>
+            </ul>
+            
+            <pre><code>// Example AWS CloudFormation template snippet for auto-scaling
+{
+  "Resources": {
+    "WebServerGroup": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "MinSize": "1",
+        "MaxSize": "5",
+        "DesiredCapacity": "2",
+        "LaunchConfigurationName": { "Ref": "LaunchConfig" },
+        "VPCZoneIdentifier": { "Ref": "Subnets" }
+      }
+    },
+    "CPUHighAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Scale up if CPU > 90% for 5 minutes",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/EC2",
+        "Statistic": "Average",
+        "Period": "300",
+        "Threshold": "90",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {"Name": "AutoScalingGroupName", "Value": {"Ref": "WebServerGroup"}}
+        ],
+        "EvaluationPeriods": "2",
+        "AlarmActions": [{"Ref": "WebServerScaleUpPolicy"}]
+      }
+    }
+  }
+}</code></pre>
+        </div>
+        
+        <div class="content-section">
+            <h3>Monitoring and Performance Optimization</h3>
+            <p>Comprehensive monitoring is crucial for maintaining application health and optimizing performance in production.</p>
+            
+            <h4>Monitoring Strategy Components</h4>
+            <ul>
+                <li><strong>Application Metrics</strong>: Response times, throughput, error rates</li>
+                <li><strong>System Metrics</strong>: CPU, memory, disk usage, network I/O</li>
+                <li><strong>Business Metrics</strong>: User logins, transactions, conversions</li>
+                <li><strong>Log Aggregation</strong>: Centralized logging for troubleshooting</li>
+                <li><strong>Distributed Tracing</strong>: Track requests across services</li>
+                <li><strong>Alerting</strong>: Notifications when metrics exceed thresholds</li>
+            </ul>
+            
+            <h4>Performance Optimization Techniques</h4>
+            <ul>
+                <li><strong>Caching</strong>: Implement application and database caching</li>
+                <li><strong>Database Optimization</strong>: Index tuning, query optimization</li>
+                <li><strong>Content Delivery Networks (CDNs)</strong>: Distribute static content globally</li>
+                <li><strong>Asynchronous Processing</strong>: Move long-running tasks to background jobs</li>
+                <li><strong>Load Testing</strong>: Regularly test application under various load conditions</li>
+                <li><strong>Resource Right-Sizing</strong>: Adjust instance types based on actual usage patterns</li>
+            </ul>
+            
+            <p>Effective monitoring enables proactive identification of issues before they impact users and provides data for continuous optimization of application performance.</p>
         </div>
 
         <div class="resources">
