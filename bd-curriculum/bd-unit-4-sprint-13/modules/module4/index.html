@@ -119,8 +119,22 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
+                <li>Given a use case fulfilled by a RESTful service, classify whether its endpoint should be invoked through a GET, POST, PUT or DELETE request</li>
+                <li>Identify the corresponding HTTP response code class for a given description of an interaction with a RESTful endpoint</li>
+                <li>Given a RESTful API's documentation, implement submission of a GET request to retrieve a resource</li>
+                <li>Given a RESTful API's documentation, implement submission of a PUT request to update a resource</li>
+                <li>Given a RESTful API's documentation, implement submission of a POST request to create a resource</li>
+                <li>Given a RESTful API's documentation, implement submission of a DELETE request to delete a resource</li>
+                <li>Recall that to send an HTTP request, the host name must be resolved to an IP address</li>
+                <li>Explain how ports enable a host to handle incoming requests for multiple services</li>
+                <li>Recall that an API defines how to interact with a given service</li>
+                <li>Define the terms HTTP, IP, DNS, port, URL</li>
+                <li>Outline the cases in which each of GET, POST, PUT, and DELETE HTTP request methods is used</li>
+                <li>Outline the meaning of the 2xx, 4xx, and 5xx HTTP response code classes</li>
+                <li>Use cURL to test HTTP requests/responses</li>
+                <li>Explain what it means for an operation to be idempotent</li>
                 <li>Understand RESTful service design principles and best practices</li>
-                <li>Master the use of HTTP methods for CRUD operations (GET, POST, PUT, DELETE)</li>
+                <li>Master the use of HTTP methods for CRUD operations</li>
                 <li>Learn how to make requests to RESTful APIs</li>
                 <li>Explore techniques for consuming and processing API responses</li>
                 <li>Understand status codes and their meanings in API communication</li>
@@ -131,11 +145,325 @@
             <h2>Making a Request to a RESTful API</h2>
             <iframe class="wistia_embed" title="Making a Request to a RESTful API Video" src="https://fast.wistia.net/embed/iframe/mgco0h2ep4" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
             
+            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">HTTP Methods and RESTful API Requests</h3>
+                <p>HTTP methods define the type of operation being performed on a resource in a RESTful API. Each method has specific semantics and use cases:</p>
+                <h4 style="color: #ffffff; margin-top: 15px;">GET</h4>
+                <p>Used to retrieve resources without modifying them. GET requests are:</p>
+                <ul>
+                    <li><strong>Read-only</strong> - They should never modify data</li>
+                    <li><strong>Idempotent</strong> - Making the same request multiple times produces the same result</li>
+                    <li><strong>Cacheable</strong> - Responses can be cached for performance</li>
+                </ul>
+                <p>Example of a GET request using Java's HttpClient:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+HttpClient client = HttpClient.newHttpClient();<br>
+<br>
+HttpRequest request = HttpRequest.newBuilder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.uri(URI.create("https://api.example.com/songs/imagine-dragons/radioactive"))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.header("Accept", "application/json")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.GET()  // This is the default, so it could be omitted<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+<br>
+HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());<br>
+<br>
+System.out.println("Status code: " + response.statusCode());<br>
+System.out.println("Response body: " + response.body());
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">POST</h4>
+                <p>Used to create new resources. POST requests are:</p>
+                <ul>
+                    <li><strong>Not idempotent</strong> - Multiple identical requests may create multiple resources</li>
+                    <li><strong>Not cacheable</strong> - Generally, responses should not be cached</li>
+                    <li><strong>Includes a request body</strong> - Contains the data for the new resource</li>
+                </ul>
+                <p>Example of a POST request:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+String jsonBody = """
+    {
+        "artist": "Imagine Dragons",
+        "songTitle": "Believer",
+        "albumTitle": "Evolve",
+        "yearReleased": 2017,
+        "genres": ["Alternative Rock", "Pop Rock"]
+    }
+    """;<br>
+<br>
+HttpRequest postRequest = HttpRequest.newBuilder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.uri(URI.create("https://api.example.com/songs"))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.header("Content-Type", "application/json")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.POST(HttpRequest.BodyPublishers.ofString(jsonBody))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+<br>
+HttpResponse&lt;String&gt; postResponse = client.send(postRequest, HttpResponse.BodyHandlers.ofString());<br>
+<br>
+// Expect a 201 Created status code for successful creation<br>
+System.out.println("Status code: " + postResponse.statusCode());<br>
+System.out.println("Response body: " + postResponse.body());
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">PUT</h4>
+                <p>Used to update existing resources or create them if they don't exist. PUT requests are:</p>
+                <ul>
+                    <li><strong>Idempotent</strong> - Multiple identical requests have the same effect as a single request</li>
+                    <li><strong>Complete replacement</strong> - The entire resource is replaced with the request payload</li>
+                    <li><strong>Requires the complete resource</strong> - All fields should be provided</li>
+                </ul>
+                <p>Example of a PUT request:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+String updateJson = """
+    {
+        "artist": "Imagine Dragons",
+        "songTitle": "Believer",
+        "albumTitle": "Evolve",
+        "yearReleased": 2017,
+        "genres": ["Alternative Rock", "Pop Rock", "Electronic"]
+    }
+    """;<br>
+<br>
+HttpRequest putRequest = HttpRequest.newBuilder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.uri(URI.create("https://api.example.com/songs/imagine-dragons/believer"))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.header("Content-Type", "application/json")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.PUT(HttpRequest.BodyPublishers.ofString(updateJson))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+<br>
+HttpResponse&lt;String&gt; putResponse = client.send(putRequest, HttpResponse.BodyHandlers.ofString());<br>
+<br>
+// Expect a 200 OK or 204 No Content for successful update<br>
+System.out.println("Status code: " + putResponse.statusCode());
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">DELETE</h4>
+                <p>Used to remove resources. DELETE requests are:</p>
+                <ul>
+                    <li><strong>Idempotent</strong> - Multiple identical requests have the same effect (resource remains deleted)</li>
+                    <li><strong>Typically don't include a request body</strong> - The resource to delete is identified by the URL</li>
+                </ul>
+                <p>Example of a DELETE request:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+HttpRequest deleteRequest = HttpRequest.newBuilder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.uri(URI.create("https://api.example.com/songs/imagine-dragons/believer"))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.DELETE()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+<br>
+HttpResponse&lt;String&gt; deleteResponse = client.send(deleteRequest, HttpResponse.BodyHandlers.ofString());<br>
+<br>
+// Expect a 204 No Content for successful deletion<br>
+System.out.println("Status code: " + deleteResponse.statusCode());
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">HTTP Status Codes</h4>
+                <p>HTTP status codes indicate the result of the request:</p>
+                <ul>
+                    <li><strong>2xx (Success)</strong> - The request was successfully received, understood, and accepted
+                        <ul>
+                            <li>200 OK - Standard success response</li>
+                            <li>201 Created - Resource successfully created</li>
+                            <li>204 No Content - Success with no response body</li>
+                        </ul>
+                    </li>
+                    <li><strong>4xx (Client Error)</strong> - The request contains errors or cannot be fulfilled
+                        <ul>
+                            <li>400 Bad Request - Invalid syntax or parameters</li>
+                            <li>401 Unauthorized - Authentication required</li>
+                            <li>403 Forbidden - Server understands but refuses the request</li>
+                            <li>404 Not Found - Resource doesn't exist</li>
+                            <li>409 Conflict - Request conflicts with server state</li>
+                        </ul>
+                    </li>
+                    <li><strong>5xx (Server Error)</strong> - The server failed to fulfill a valid request
+                        <ul>
+                            <li>500 Internal Server Error - Generic server error</li>
+                            <li>502 Bad Gateway - Invalid response from upstream server</li>
+                            <li>503 Service Unavailable - Server temporarily unavailable</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
             <h2>Consuming a RESTful API</h2>
             <iframe class="wistia_embed" title="Consuming a RESTful API" src="https://fast.wistia.net/embed/iframe/m0t47jfudb" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
             
+            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">Processing API Responses</h3>
+                <p>When consuming RESTful APIs, you need to properly handle and process the responses:</p>
+                <h4 style="color: #ffffff; margin-top: 15px;">Response Formats</h4>
+                <p>RESTful APIs typically return data in JSON or XML format. JSON is the most common format due to its simplicity and compatibility with JavaScript:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+// Example JSON response for a GET request to /songs/imagine-dragons/radioactive<br>
+{<br>
+&nbsp;&nbsp;"artist": "Imagine Dragons",<br>
+&nbsp;&nbsp;"songTitle": "Radioactive",<br>
+&nbsp;&nbsp;"albumTitle": "Night Visions",<br>
+&nbsp;&nbsp;"yearReleased": 2012,<br>
+&nbsp;&nbsp;"genres": ["Alternative Rock", "Indie Rock"],<br>
+&nbsp;&nbsp;"playCount": 10452687<br>
+}
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">Parsing JSON Responses</h4>
+                <p>In Java, you can parse JSON responses using libraries like Jackson or Gson:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+// Using Jackson for JSON processing<br>
+import com.fasterxml.jackson.databind.ObjectMapper;<br>
+<br>
+// Send the GET request<br>
+HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());<br>
+<br>
+// Check for successful response<br>
+if (response.statusCode() == 200) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Parse JSON to Java object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ObjectMapper mapper = new ObjectMapper();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;MusicItem song = mapper.readValue(response.body(), MusicItem.class);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Loaded song: " + song.getSongTitle());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Album: " + song.getAlbumTitle());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Year: " + song.getYearReleased());<br>
+} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Error: " + response.statusCode());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Handle error based on status code<br>
+}
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">Error Handling</h4>
+                <p>Proper error handling is crucial when working with APIs:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+try {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;switch (response.statusCode() / 100) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case 2:  // 2xx Success<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Process successful response<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case 4:  // 4xx Client Error<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (response.statusCode() == 404) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Resource not found");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else if (response.statusCode() == 401 || response.statusCode() == 403) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Authentication or authorization error");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Client error: " + response.statusCode());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case 5:  // 5xx Server Error<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Server error: " + response.statusCode());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Implement retry logic for 5xx errors<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+} catch (IOException e) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Network error: " + e.getMessage());<br>
+} catch (InterruptedException e) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Request interrupted: " + e.getMessage());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Thread.currentThread().interrupt();<br>
+}
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">Testing with cURL</h4>
+                <p>cURL is a command-line tool for making HTTP requests, useful for testing APIs:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+# GET request<br>
+curl -X GET https://api.example.com/songs/imagine-dragons/radioactive<br>
+<br>
+# POST request with JSON body<br>
+curl -X POST https://api.example.com/songs \<br>
+  -H "Content-Type: application/json" \<br>
+  -d '{"artist":"Imagine Dragons","songTitle":"Believer","albumTitle":"Evolve","yearReleased":2017}'<br>
+<br>
+# PUT request<br>
+curl -X PUT https://api.example.com/songs/imagine-dragons/believer \<br>
+  -H "Content-Type: application/json" \<br>
+  -d '{"artist":"Imagine Dragons","songTitle":"Believer","albumTitle":"Evolve","yearReleased":2017,"genres":["Alternative Rock","Pop Rock"]}'<br>
+<br>
+# DELETE request<br>
+curl -X DELETE https://api.example.com/songs/imagine-dragons/believer
+                </code>
+            </div>
+            
             <h2>HTTP and RESTful Services Overview</h2>
             <iframe class="wistia_embed" title="Sprint 13 HTTP and RESTful Services Video" src="https://fast.wistia.net/embed/iframe/j9ymuf1eq3" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            
+            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">RESTful API Design Best Practices</h3>
+                <p>When designing or working with RESTful APIs, keep these best practices in mind:</p>
+                <h4 style="color: #ffffff; margin-top: 15px;">1. Resource Naming</h4>
+                <ul>
+                    <li><strong>Use nouns, not verbs</strong> - Resources should be named as nouns, not actions</li>
+                    <li><strong>Use plurals</strong> - Collections should be plural (e.g., /songs, not /song)</li>
+                    <li><strong>Use lowercase</strong> - All URLs should be lowercase</li>
+                    <li><strong>Use hyphens for readability</strong> - Use hyphens (-) instead of underscores (_)</li>
+                </ul>
+                <h4 style="color: #ffffff; margin-top: 15px;">2. Resource Hierarchy</h4>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+# Good examples of RESTful URL patterns<br>
+/artists                         # List all artists<br>
+/artists/123                     # Get a specific artist<br>
+/artists/123/albums              # List all albums by artist 123<br>
+/artists/123/albums/456          # Get a specific album by artist 123<br>
+/artists/123/albums/456/songs    # List all songs in album 456 by artist 123
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">3. Use HTTP Methods Correctly</h4>
+                <ul>
+                    <li><strong>GET</strong> for reading (never for modifying)</li>
+                    <li><strong>POST</strong> for creating</li>
+                    <li><strong>PUT</strong> for complete updates</li>
+                    <li><strong>PATCH</strong> for partial updates</li>
+                    <li><strong>DELETE</strong> for removing</li>
+                </ul>
+                <h4 style="color: #ffffff; margin-top: 15px;">4. Always Use HTTPS</h4>
+                <p>Secure your API with HTTPS to protect data in transit. This is not optional in production environments.</p>
+                <h4 style="color: #ffffff; margin-top: 15px;">5. Versioning</h4>
+                <p>Include API versioning to make changes without breaking existing clients:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+# Versioning in URL path<br>
+/api/v1/songs<br>
+<br>
+# Versioning in header<br>
+curl -H "Accept: application/vnd.example.v1+json" https://api.example.com/songs
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">6. Use Proper Status Codes</h4>
+                <p>Return appropriate HTTP status codes for different scenarios:</p>
+                <ul>
+                    <li>200 OK for successful GET, PUT, or PATCH</li>
+                    <li>201 Created for successful POST</li>
+                    <li>204 No Content for successful DELETE</li>
+                    <li>400 Bad Request for validation errors</li>
+                    <li>401 Unauthorized for missing authentication</li>
+                    <li>403 Forbidden for insufficient permissions</li>
+                    <li>404 Not Found for non-existent resources</li>
+                    <li>500 Internal Server Error for server-side issues</li>
+                </ul>
+                <h4 style="color: #ffffff; margin-top: 15px;">7. Pagination, Filtering, and Sorting</h4>
+                <p>For collections, support pagination, filtering, and sorting via query parameters:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+# Pagination<br>
+/songs?page=2&limit=10<br>
+<br>
+# Filtering<br>
+/songs?genre=rock&year=2020<br>
+<br>
+# Sorting<br>
+/songs?sort=yearReleased:desc
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">8. Error Handling</h4>
+                <p>Return descriptive error responses with appropriate status codes:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+# Example error response<br>
+{<br>
+&nbsp;&nbsp;"status": 400,<br>
+&nbsp;&nbsp;"error": "Bad Request",<br>
+&nbsp;&nbsp;"message": "Validation failed",<br>
+&nbsp;&nbsp;"errors": [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"field": "yearReleased",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"message": "Year must be between 1900 and current year"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;],<br>
+&nbsp;&nbsp;"timestamp": "2023-06-01T12:34:56Z",<br>
+&nbsp;&nbsp;"path": "/songs"<br>
+}
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">9. Idempotency</h4>
+                <p>Understand and respect idempotency:</p>
+                <ul>
+                    <li><strong>Idempotent operations</strong> produce the same result regardless of how many times they're called</li>
+                    <li>GET, PUT, DELETE are idempotent</li>
+                    <li>POST is not idempotent</li>
+                </ul>
+                <p>This is especially important for error handling and retries. If a request fails due to a network issue, idempotent operations can be safely retried without side effects.</p>
+            </div>
         </div>
 
         <div class="resources">
