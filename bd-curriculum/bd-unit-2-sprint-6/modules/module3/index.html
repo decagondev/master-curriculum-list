@@ -102,6 +102,33 @@
         section {
             margin-bottom: 30px;
         }
+        /* New classes to replace inline styles */
+        .concept-block {
+            background-color: #2a303c;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .concept-last {
+            margin-bottom: 0;
+        }
+        .text-muted {
+            color: #b3b3b3;
+        }
+        .list-styled {
+            color: #b3b3b3;
+            padding-left: 20px;
+        }
+        .code-block {
+            background-color: #1a1d23;
+            color: #dddddd;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .code-inline {
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
@@ -121,12 +148,193 @@
 
         <section>
             <h2>Learning Objectives</h2>
-            <ul style="color: #b3b3b3; padding-left: 20px;">
+            <ul class="list-styled">
                 <li>Understand the concept and benefits of generics in Java</li>
                 <li>Learn how to create generic classes and interfaces</li>
                 <li>Implement generic methods to improve code reusability</li>
                 <li>Work with bounded type parameters and wildcards</li>
             </ul>
+        </section>
+
+        <section>
+            <h2>Key Concepts</h2>
+            <div class="concept-block">
+                <h3>Introduction to Generics</h3>
+                <p class="text-muted">Generics enable you to create classes, interfaces, and methods that operate on types that are specified at compilation time. They provide stronger type checks, eliminate the need for casting, and enable programmers to implement generic algorithms.</p>
+                
+                <h4>Benefits of Generics:</h4>
+                <ul class="list-styled">
+                    <li>Type safety - detect errors at compile time instead of runtime</li>
+                    <li>Elimination of casts - no need for explicit type casting</li>
+                    <li>Code reusability - write algorithms that work with different types</li>
+                    <li>Type-specific operations - perform operations specific to the input type</li>
+                </ul>
+                
+                <h4>Example - Without Generics:</h4>
+                <pre class="code-block">
+// Non-generic collection
+public class Box {
+    private Object object;
+    
+    public void set(Object object) {
+        this.object = object;
+    }
+    
+    public Object get() {
+        return object;
+    }
+}
+
+// Client code - requires casting and is not type-safe
+Box box = new Box();
+box.set("Hello World");  // Store a String
+
+// Type casting is required - potential runtime error
+String message = (String) box.get();
+
+// This would compile but fail at runtime
+Integer wrongType = (Integer) box.get();  // ClassCastException</pre>
+                
+                <h4>Example - With Generics:</h4>
+                <pre class="code-block">
+// Generic collection
+public class Box<T> {
+    private T t;
+    
+    public void set(T t) {
+        this.t = t;
+    }
+    
+    public T get() {
+        return t;
+    }
+}
+
+// Client code - type-safe and no casting required
+Box<String> stringBox = new Box<>();
+stringBox.set("Hello World");
+
+// No casting required, and type safety is guaranteed
+String message = stringBox.get();
+
+// This won't compile - caught at compile time
+// stringBox.set(10);  // Error: incompatible types</pre>
+            </div>
+            
+            <div class="concept-block">
+                <h3>Generic Methods</h3>
+                <p class="text-muted">Generic methods allow type parameters to be used in a single method declaration, making it possible to implement algorithms that operate on multiple types while providing type safety.</p>
+                
+                <h4>Example:</h4>
+                <pre class="code-block">
+public class Util {
+    // Generic method to find maximum of two comparable values
+    public static <T extends Comparable<T>> T findMax(T a, T b) {
+        if (a.compareTo(b) > 0) {
+            return a;
+        } else {
+            return b;
+        }
+    }
+    
+    // Generic method to print array elements
+    public static <E> void printArray(E[] array) {
+        for (E element : array) {
+            System.out.print(element + " ");
+        }
+        System.out.println();
+    }
+}
+
+// Client code
+public class TestGenerics {
+    public static void main(String[] args) {
+        // Using the generic method with Integers
+        Integer max = Util.findMax(10, 20);
+        System.out.println("Maximum of 10 and 20: " + max);
+        
+        // Using the generic method with Strings
+        String maxString = Util.findMax("apple", "orange");
+        System.out.println("Maximum of 'apple' and 'orange': " + maxString);
+        
+        // Using the generic printArray method
+        Integer[] intArray = {1, 2, 3, 4, 5};
+        String[] stringArray = {"Hello", "World"};
+        
+        Util.printArray(intArray);
+        Util.printArray(stringArray);
+    }
+}</pre>
+            </div>
+            
+            <div class="concept-block concept-last">
+                <h3>Bounded Type Parameters</h3>
+                <p class="text-muted">Bounded type parameters restrict the types that can be used as type arguments in a generic class, interface, or method. This allows you to invoke methods of the bound type without casting.</p>
+                
+                <h4>Types of Bounds:</h4>
+                <ul class="list-styled">
+                    <li><strong>Upper bounded:</strong> <span class="code-inline">&lt;T extends UpperBound&gt;</span> - T must be a subtype of UpperBound</li>
+                    <li><strong>Multiple bounds:</strong> <span class="code-inline">&lt;T extends Class1 & Interface1 & Interface2&gt;</span> - T must implement all specified types</li>
+                    <li><strong>Wildcards:</strong> <span class="code-inline">&lt;? extends Type&gt;</span> or <span class="code-inline">&lt;? super Type&gt;</span> - for flexible method parameters</li>
+                </ul>
+                
+                <h4>Example:</h4>
+                <pre class="code-block">
+// Upper bounded type parameter
+public class NumericCalculator<T extends Number> {
+    private T number;
+    
+    public NumericCalculator(T number) {
+        this.number = number;
+    }
+    
+    // Can call methods of Number class without casting
+    public double getDoubleValue() {
+        return number.doubleValue();
+    }
+    
+    public double square() {
+        return number.doubleValue() * number.doubleValue();
+    }
+}
+
+// Example with wildcards
+public class WildcardExample {
+    // Producer - use "extends" (read-only)
+    public static void printList(List<? extends Number> list) {
+        for (Number n : list) {
+            System.out.print(n + " ");
+        }
+        System.out.println();
+    }
+    
+    // Consumer - use "super" (write-only)
+    public static void addNumbers(List<? super Integer> list) {
+        for (int i = 1; i <= 5; i++) {
+            list.add(i);
+        }
+    }
+    
+    public static void main(String[] args) {
+        // Using bounded type parameter
+        NumericCalculator<Integer> intCalc = new NumericCalculator<>(5);
+        System.out.println("Square: " + intCalc.square());
+        
+        NumericCalculator<Double> doubleCalc = new NumericCalculator<>(2.5);
+        System.out.println("Double value: " + doubleCalc.getDoubleValue());
+        
+        // Using wildcards
+        List<Integer> intList = new ArrayList<>();
+        List<Double> doubleList = new ArrayList<>();
+        
+        addNumbers(intList);  // Works fine
+        // addNumbers(doubleList);  // Won't compile - Double is not a supertype of Integer
+        
+        printList(intList);     // Works fine - Integer extends Number
+        printList(doubleList);  // Works fine - Double extends Number
+    }
+}</pre>
+            </div>
         </section>
 
         <div class="resources">

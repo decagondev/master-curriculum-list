@@ -151,6 +151,9 @@
         <section>
             <h2>Introduction</h2>
             <p>As a Quality Assurance Engineer, you'll be responsible for ensuring that software meets its requirements. This involves understanding both functional and non-functional requirements, and creating test cases to verify them.</p>
+            <p>At Amazon, and in general software development, a Quality Assurance Engineer (QAE) works with developers to ensure that products are high quality. "Quality" describes how well something does its job. Therefore, to determine if our software is high quality, we have to describe its job.</p>
+            <p>Usually, customers give us requirements, telling us what they want our software to do. We refine these into simple stories about how the customer will use our software. Each story is a use case.</p>
+            <p>Use cases help us understand and improve our requirements. Once we have finalized our use cases, we use them to determine whether our software does its job: whether it is high quality.</p>
         </section>
 
         <section>
@@ -158,6 +161,9 @@
             <h3>Functional Requirements</h3>
             <p>Functional requirements describe what the software should do. They specify the behavior and features of the system. Examples include:</p>
             <ul>
+                <li>The order number retriever function shall throw an Exception when the provided order number is invalid.</li>
+                <li>The ATM shall log a user in when they provide a valid card and matching PIN.</li>
+                <li>The game shall merge two blocks with the same value when the player swipes them together.</li>
                 <li>User authentication</li>
                 <li>Data processing</li>
                 <li>Business logic implementation</li>
@@ -166,22 +172,48 @@
             <h3>Non-Functional Requirements</h3>
             <p>Non-functional requirements describe how the software should perform. They specify qualities and constraints of the system. Examples include:</p>
             <ul>
+                <li>The program shall require no more than 6GB of memory.</li>
+                <li>The service shall retrieve the orders for an order ID in less than 500ms.</li>
+                <li>The online chat shall display messages from 1000 simultaneous users.</li>
                 <li>Performance</li>
                 <li>Security</li>
                 <li>Scalability</li>
                 <li>Usability</li>
             </ul>
+            <p>SDEs and QAEs work together to write and perform tests that prove our software does what the customer expects. Although their areas of responsibility are not cleanly separated, SDEs generally spend most of their effort on functional requirements and tests, and QAEs handle most non-functional requirements.</p>
         </section>
 
         <section>
             <h2>Writing Use Cases</h2>
             <p>A use case is a description of how a user interacts with a system to achieve a specific goal. It includes:</p>
             <ul>
-                <li>Preconditions - what must be true before the use case can begin</li>
-                <li>Steps - the sequence of actions that occur</li>
-                <li>Postconditions - what must be true after the use case completes</li>
-                <li>Alternate cases - what happens when things go wrong</li>
+                <li><strong>Unique name</strong>: short description.</li>
+                <li><strong>Preconditions</strong>: conditions that must be true before we can apply this use case.</li>
+                <li><strong>Invariants</strong>: conditions that do not change at all when this use case is applied.</li>
+                <li><strong>Postconditions</strong>: conditions that are true after this use case is applied.</li>
+                <li><strong>Steps</strong>: the actions taken during the use case.</li>
             </ul>
+
+            <h3>Naming a Use Case</h3>
+            <p>Use case names often follow an "actor verb noun" pattern, like "Player Places Bid" or "Customer Adds Item to Cart". If the actor is very general or is known ahead of time, it can be left out.</p>
+            
+            <h3>Preconditions</h3>
+            <p>List the assumptions we make about the use case. For example, "Starting warehouse ID is not null" would be a good precondition for a route planning use case.</p>
+            
+            <h3>Invariants</h3>
+            <p>List the promises you can make about what won't change when the use case is performed. For example, "Input will not be modified".</p>
+            
+            <h3>Postconditions</h3>
+            <p>List the promises you can make about what will change by the time the use case is done. For example, "Result will be the order in which the drone should deliver items such that it travels the shortest distance."</p>
+            
+            <h3>Steps</h3>
+            <p>List the steps that the actor and your software will take. These are most useful if they follow one of these templates:</p>
+            <ul>
+                <li>The actor provides or requests information.</li>
+                <li>The software provides or requests information.</li>
+                <li>The software does some work.</li>
+            </ul>
+            <p>Notice that none of the steps includes the word "if". Instead of using "if" in a step, create two use cases with preconditions for each of the "if" conditions.</p>
 
             <h3>Example Use Case</h3>
             <div class="use-case-example">
@@ -211,6 +243,49 @@
                     <li>Network error - show connection error</li>
                 </ul>
             </div>
+            
+            <h3>Route Planning Example</h3>
+            <div class="use-case-example">
+                <h4>Requests Shortest Route from Non-null Warehouse ID</h4>
+                <p><strong>Preconditions:</strong></p>
+                <ul>
+                    <li>The input is a non-null warehouse ID and a list of orders.</li>
+                </ul>
+                <p><strong>Invariants:</strong></p>
+                <ul>
+                    <li>The input will not be modified.</li>
+                </ul>
+                <p><strong>Postconditions:</strong></p>
+                <ul>
+                    <li>The result will be a sorted list of orders that provides the shortest delivery route.</li>
+                </ul>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>The caller invokes the shortest route function with an existing warehouse ID and a list of orders.</li>
+                    <li>The algorithm calculates the shortest delivery route and returns the sorted list of orders.</li>
+                </ol>
+            </div>
+            
+            <div class="use-case-example">
+                <h4>Requests Shortest Route from Null Warehouse ID</h4>
+                <p><strong>Preconditions:</strong></p>
+                <ul>
+                    <li>The input is a null warehouse ID and a list of orders.</li>
+                </ul>
+                <p><strong>Invariants:</strong></p>
+                <ul>
+                    <li>The input will not be modified.</li>
+                </ul>
+                <p><strong>Postconditions:</strong></p>
+                <ul>
+                    <li>The result is an exception.</li>
+                </ul>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>The caller calls the shortest route function with a null warehouse ID and a list of orders.</li>
+                    <li>The function raises an IllegalArgumentException.</li>
+                </ol>
+            </div>
         </section>
 
         <section>
@@ -221,7 +296,53 @@
                 <li>Consider error cases and alternate flows</li>
                 <li>Use consistent terminology</li>
                 <li>Keep use cases focused on a single goal</li>
+                <li>Avoid UI descriptions in steps (focus on what gets done, not how)</li>
+                <li>If you have more than 10 steps, consider breaking the use case into smaller ones</li>
+                <li>Write separate use cases for "happy paths" and "alternate paths"</li>
             </ul>
+        </section>
+        
+        <section>
+            <h2>Implementing Use Cases in Code</h2>
+            <p>When we write code, we turn "the software" steps in all the use cases into Java. Here's an example implementation for the shortest route use case:</p>
+            <pre>
+public class ShortestRouteFromWarehouse {
+    /**
+     * Finds the shortest route from a warehouse to deliver all orders.
+     * 
+     * @param warehouseId The ID of the starting warehouse
+     * @param orders The orders to be delivered
+     * @return A sorted list of orders representing the shortest delivery route
+     * @throws IllegalArgumentException if warehouseId is null
+     */
+    public List&lt;Order&gt; findShortestRoute(String warehouseId, List&lt;Order&gt; orders) {
+        // Check precondition
+        if (warehouseId == null) {
+            throw new IllegalArgumentException("Warehouse ID cannot be null");
+        }
+        
+        // Make a copy to ensure we don't modify the input (invariant)
+        List&lt;Order&gt; routeOrders = new ArrayList&lt;&gt;(orders);
+        
+        // Calculate the shortest route (simplified for example)
+        Collections.sort(routeOrders, (o1, o2) -> {
+            // Sort based on distance from warehouse and between orders
+            // Implementation details omitted for brevity
+            return 0;
+        });
+        
+        // Return the sorted list (postcondition)
+        return routeOrders;
+    }
+}
+</pre>
+        </section>
+
+        <section>
+            <h2>Refining the Requirements</h2>
+            <p>Complex software can have many requirements, making it easy to forget or misunderstand important functionality. You can find missed functionality by examining each step of your use cases and asking, "what could go wrong here?" Make a new use case with preconditions for every answer.</p>
+            <p>Once you're done, determine which requirement each use case helps satisfy. Some requirements will have multiple use cases. Requirements without use cases indicate that you either don't understand how the customer will use your software or need to write another use case.</p>
+            <p>On the other hand, use cases without requirements indicate that you either have found a hidden requirement or don't need to write that code.</p>
         </section>
 
         <section>

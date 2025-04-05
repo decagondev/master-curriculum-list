@@ -177,14 +177,15 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul>
-                <li>Understand JVM memory architecture</li>
-                <li>Learn about different memory areas (heap, stack, method area)</li>
-                <li>Master garbage collection concepts and algorithms</li>
-                <li>Identify and fix memory leaks</li>
-                <li>Optimize memory usage in applications</li>
-                <li>Use memory profiling tools effectively</li>
-                <li>Implement memory-efficient data structures</li>
-                <li>Handle large datasets efficiently</li>
+                <li>Identify what will be allocated in the heap when a code snippet is executed</li>
+                <li>Describe the contents of a particular frame in the stack at a given point in a code snippet</li>
+                <li>Identify the frames in the stack at a given point in a code snippet</li>
+                <li>Identify which objects in the heap are eligible for garbage collection at a given point in a code snippet</li>
+                <li>Outline how data, variables, and objects are stored in a computer's memory</li>
+                <li>Recall that the stack is the portion of memory reserved for the local variables of currently executing methods, and that it is composed of frames that contain each executing method's local variables</li>
+                <li>Recall that the heap is the portion of memory that is reserved for storing objects' state</li>
+                <li>Distinguish between storing a primitive member variable's value and an object member variable's references in memory</li>
+                <li>Explain why the JVM does not necessarily run out of heap memory due to garbage collection</li>
             </ul>
         </section>
 
@@ -196,6 +197,67 @@
                     <p>Learn about the JVM memory architecture and how memory is managed in Java applications.</p>
                     <div class="video-container">
                         <iframe class="wistia_embed" title="Introduction to Memory Video" src="https://fast.wistia.net/embed/iframe/92wu32swni" width="640" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                    <div class="content-details">
+                        <h4>JVM Memory Architecture</h4>
+                        <p>The Java Virtual Machine (JVM) manages memory in several different areas:</p>
+                        <ul>
+                            <li><strong>Stack</strong>: Stores method frames, local variables, and partial results</li>
+                            <li><strong>Heap</strong>: Stores all objects and their instance variables</li>
+                            <li><strong>Method Area</strong>: Stores class structures, static variables, and method code</li>
+                        </ul>
+                        
+                        <h4>Stack vs. Heap</h4>
+                        <p>Understanding the difference between stack and heap memory is crucial:</p>
+                        <ul>
+                            <li>The <strong>stack</strong> is organized as frames, with each frame representing a method call</li>
+                            <li>Each stack frame contains local variables and references to objects in the heap</li>
+                            <li>The <strong>heap</strong> stores all objects, regardless of where they were created</li>
+                            <li>References to heap objects can be stored in local variables (on the stack) or as fields in other objects (on the heap)</li>
+                        </ul>
+                        
+                        <h4>Example: Memory Allocation</h4>
+                        <pre style="background-color: #1a1d23; padding: 10px; border-radius: 4px; color: #b3b3b3; overflow-x: auto;">
+public class MemoryExample {
+    public static void main(String[] args) {
+        // Local primitive variable - stored on stack
+        int count = 5;
+        
+        // Object reference stored on stack, object stored on heap
+        Person person = new Person("Alice", 30);
+        
+        // Method call creates new stack frame
+        doSomething(person);
+    }
+    
+    public static void doSomething(Person p) {
+        // Local primitive - stored on stack in the doSomething frame
+        int age = p.getAge();
+        
+        // New object created on heap, reference on stack
+        String message = "Hello, " + p.getName();
+        
+        System.out.println(message);
+        
+        // When method exits, stack frame is removed
+        // If no more references to message exist, it becomes eligible for garbage collection
+    }
+}
+
+class Person {
+    // Instance variables stored on heap with the object
+    private String name;
+    private int age;
+    
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    public String getName() { return name; }
+    public int getAge() { return age; }
+}
+</pre>
                     </div>
                     <a href="introduction-to-memory.html" class="button">Read More</a>
                 </div>

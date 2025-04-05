@@ -140,6 +140,32 @@
             padding: 15px;
             overflow-x: auto;
         }
+        .code-example {
+            background-color: #2a303c;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+            border-left: 4px solid #ff5722;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #2a303c;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #333a47;
+            color: #b3b3b3;
+        }
+        th {
+            background-color: #333a47;
+            color: #ffffff;
+        }
+        tr:hover {
+            background-color: #333a47;
+        }
     </style>
 </head>
 <body>
@@ -150,32 +176,82 @@
 
         <section>
             <h2>Introduction</h2>
-            <p>Testing functional use cases is a crucial part of software development. It ensures that the software behaves as expected and meets the specified requirements. This guide will help you understand how to write and execute tests for functional use cases.</p>
+            <p>Testing functional use cases is a crucial part of software development. It ensures that the software behaves as expected and meets the specified requirements. This guide will help you understand how to write and execute tests for functional use cases, with a focus on Java applications.</p>
+            <p>Functional testing verifies that your application implements the behaviors outlined in your functional requirements. By testing each use case, you confirm that the system works correctly from the user's perspective and that all business requirements are satisfied.</p>
+        </section>
+
+        <section>
+            <h2>Requirements Traceability</h2>
+            <p>A key aspect of effective functional testing is maintaining traceability between your requirements, use cases, and test cases:</p>
+            <ul>
+                <li>Each functional requirement should map to one or more use cases</li>
+                <li>Each use case should be covered by one or more test cases</li>
+                <li>Test cases should reference the use cases and requirements they verify</li>
+            </ul>
+            <div class="code-example">
+                <h3>Requirements Traceability Matrix Example</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Requirement ID</th>
+                            <th>Requirement Description</th>
+                            <th>Use Case ID</th>
+                            <th>Test Case IDs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>REQ-001</td>
+                            <td>Users must be able to place lunch orders</td>
+                            <td>UC-001</td>
+                            <td>TC-001, TC-002, TC-003</td>
+                        </tr>
+                        <tr>
+                            <td>REQ-002</td>
+                            <td>Users must be able to filter menu by dietary restrictions</td>
+                            <td>UC-002</td>
+                            <td>TC-004, TC-005</td>
+                        </tr>
+                        <tr>
+                            <td>REQ-003</td>
+                            <td>Users must be able to cancel orders within policy timeframe</td>
+                            <td>UC-003</td>
+                            <td>TC-006, TC-007</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
         <section>
             <h2>Test Planning</h2>
             <p>Before writing tests, it's important to create a test plan that outlines:</p>
             <ul>
-                <li>Test objectives</li>
-                <li>Test scope</li>
-                <li>Test cases to be executed</li>
-                <li>Test environment requirements</li>
-                <li>Test data requirements</li>
+                <li>Test objectives - what you're trying to verify</li>
+                <li>Test scope - what will and won't be tested</li>
+                <li>Test cases to be executed - mapped to requirements</li>
+                <li>Test environment requirements - hardware, software, test data</li>
+                <li>Test data requirements - input data needed for testing</li>
+                <li>Entry and exit criteria - when to start and end testing</li>
+                <li>Risk assessment - potential obstacles and their mitigation</li>
+                <li>Schedule and resource allocation - who does what and when</li>
             </ul>
+            <p>A well-structured test plan enables efficient verification of all functional requirements and provides clear guidance for the testing team.</p>
         </section>
 
         <section>
             <h2>Writing Test Cases</h2>
             <p>A good test case should include:</p>
             <ul>
-                <li>Test case ID</li>
-                <li>Test case description</li>
-                <li>Preconditions</li>
-                <li>Test steps</li>
-                <li>Expected results</li>
-                <li>Actual results</li>
-                <li>Pass/Fail criteria</li>
+                <li>Test case ID - unique identifier for reference</li>
+                <li>Test case description - what functionality is being tested</li>
+                <li>Requirements reference - which requirements are being verified</li>
+                <li>Preconditions - setup needed before test execution</li>
+                <li>Test steps - detailed step-by-step instructions</li>
+                <li>Expected results - what should happen if the test passes</li>
+                <li>Actual results - what actually happened during testing</li>
+                <li>Pass/Fail criteria - how to determine test success</li>
+                <li>Test data - specific inputs to use during testing</li>
             </ul>
 
             <h3>Example Test Case</h3>
@@ -183,37 +259,151 @@
                 <h4>User Login Test</h4>
                 <p><strong>Test Case ID:</strong> TC001</p>
                 <p><strong>Description:</strong> Verify successful user login with valid credentials</p>
+                <p><strong>Requirements Reference:</strong> REQ-004 (User Authentication)</p>
                 <p><strong>Preconditions:</strong></p>
                 <ul>
-                    <li>User account exists in the system</li>
+                    <li>User account exists in the system with username "john.doe@example.com" and password "Secure123!"</li>
                     <li>User is not already logged in</li>
-                    <li>System is accessible</li>
+                    <li>System is accessible and login page is available</li>
                 </ul>
                 <p><strong>Test Steps:</strong></p>
                 <ol>
-                    <li>Navigate to login page</li>
-                    <li>Enter valid email address</li>
-                    <li>Enter valid password</li>
+                    <li>Navigate to login page at https://example.com/login</li>
+                    <li>Enter email address: john.doe@example.com</li>
+                    <li>Enter password: Secure123!</li>
                     <li>Click login button</li>
                 </ol>
                 <p><strong>Expected Results:</strong></p>
                 <ul>
                     <li>User is successfully logged in</li>
-                    <li>User is redirected to dashboard</li>
-                    <li>Session is created</li>
+                    <li>User is redirected to dashboard at https://example.com/dashboard</li>
+                    <li>Dashboard displays user's name "John Doe"</li>
+                    <li>Session cookie is created with appropriate expiration</li>
+                    <li>Login event is recorded in system logs</li>
+                </ul>
+                <p><strong>Test Data:</strong></p>
+                <ul>
+                    <li>Username: john.doe@example.com</li>
+                    <li>Password: Secure123!</li>
                 </ul>
             </div>
+        </section>
+
+        <section>
+            <h2>Test Implementation in Java</h2>
+            <p>In Java applications, you can implement functional tests using frameworks like JUnit, TestNG, and Selenium. Here's an example of a JUnit test that verifies a login functionality:</p>
+            
+            <div class="code-example">
+                <h3>Java Test Implementation Example</h3>
+                <pre>
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Tests for the UserAuthenticationService
+ * Covers requirement REQ-004: User Authentication
+ */
+public class UserAuthenticationTest {
+    
+    private UserAuthenticationService authService;
+    private UserRepository userRepository;
+    
+    @BeforeEach
+    void setUp() {
+        // Set up test dependencies
+        userRepository = new InMemoryUserRepository();
+        authService = new UserAuthenticationService(userRepository);
+        
+        // Create test user
+        User testUser = new User("john.doe@example.com", "Secure123!");
+        userRepository.save(testUser);
+    }
+    
+    /**
+     * Test case ID: TC001
+     * Verifies successful login with valid credentials
+     */
+    @Test
+    void loginWithValidCredentials_shouldReturnAuthenticatedUser() {
+        // GIVEN
+        String email = "john.doe@example.com";
+        String password = "Secure123!";
+        
+        // WHEN
+        AuthenticationResult result = authService.login(email, password);
+        
+        // THEN
+        assertTrue(result.isSuccess());
+        assertNotNull(result.getUser());
+        assertEquals(email, result.getUser().getEmail());
+        assertNotNull(result.getSessionToken());
+        assertTrue(result.getSessionToken().length() > 0);
+    }
+    
+    /**
+     * Test case ID: TC002
+     * Verifies failed login with invalid password
+     */
+    @Test
+    void loginWithInvalidPassword_shouldReturnAuthenticationFailure() {
+        // GIVEN
+        String email = "john.doe@example.com";
+        String invalidPassword = "WrongPassword123";
+        
+        // WHEN
+        AuthenticationResult result = authService.login(email, invalidPassword);
+        
+        // THEN
+        assertFalse(result.isSuccess());
+        assertNull(result.getUser());
+        assertNull(result.getSessionToken());
+        assertEquals("Invalid credentials", result.getErrorMessage());
+    }
+    
+    /**
+     * Test case ID: TC003
+     * Verifies failed login with non-existent user
+     */
+    @Test
+    void loginWithNonExistentUser_shouldReturnAuthenticationFailure() {
+        // GIVEN
+        String nonExistentEmail = "nobody@example.com";
+        String password = "AnyPassword123";
+        
+        // WHEN
+        AuthenticationResult result = authService.login(nonExistentEmail, password);
+        
+        // THEN
+        assertFalse(result.isSuccess());
+        assertNull(result.getUser());
+        assertNull(result.getSessionToken());
+        assertEquals("User not found", result.getErrorMessage());
+    }
+}
+                </pre>
+            </div>
+            <p>Notice how this test class follows best practices:</p>
+            <ul>
+                <li>Clear test case IDs linked to requirements</li>
+                <li>Descriptive test method names that explain behavior and expected outcome</li>
+                <li>GIVEN-WHEN-THEN structure for readability</li>
+                <li>Multiple test cases for different scenarios (happy path and error cases)</li>
+                <li>Clear assertions that validate expected outcomes</li>
+            </ul>
         </section>
 
         <section>
             <h2>Executing Tests</h2>
             <p>When executing tests:</p>
             <ul>
-                <li>Follow the test steps exactly as written</li>
-                <li>Record actual results</li>
-                <li>Compare actual results with expected results</li>
-                <li>Document any issues or bugs found</li>
-                <li>Mark test as pass/fail based on results</li>
+                <li>Follow the test steps exactly as written to ensure consistency</li>
+                <li>Record actual results in detail, including screenshots if relevant</li>
+                <li>Compare actual results with expected results using explicit criteria</li>
+                <li>Document any issues or bugs found with detailed reproduction steps</li>
+                <li>Mark test as pass/fail based on comparison of actual vs. expected results</li>
+                <li>Execute tests in a controlled environment that matches production as closely as possible</li>
+                <li>If using automated tests, ensure they run in a consistent environment (CI/CD pipeline)</li>
             </ul>
         </section>
 
@@ -221,11 +411,32 @@
             <h2>Test Coverage</h2>
             <p>Ensure your test suite covers:</p>
             <ul>
-                <li>Happy path scenarios</li>
-                <li>Error cases</li>
-                <li>Edge cases</li>
-                <li>Boundary conditions</li>
-                <li>Integration points</li>
+                <li><strong>Happy path scenarios</strong> - normal, expected user flows</li>
+                <li><strong>Error cases</strong> - invalid inputs, system errors, error handling</li>
+                <li><strong>Edge cases</strong> - uncommon or extreme scenarios</li>
+                <li><strong>Boundary conditions</strong> - minimum/maximum values, limits</li>
+                <li><strong>Integration points</strong> - interactions with external systems</li>
+                <li><strong>Security scenarios</strong> - authentication, authorization, data validation</li>
+                <li><strong>Performance aspects</strong> - response times, resource usage</li>
+            </ul>
+            <p>Use a coverage analysis tool to identify gaps in your testing. For Java applications, tools like JaCoCo can help measure code coverage of your tests.</p>
+        </section>
+
+        <section>
+            <h2>Test Automation</h2>
+            <p>While manual testing is valuable, automating functional tests provides several benefits:</p>
+            <ul>
+                <li><strong>Consistency</strong> - Tests execute the same way every time</li>
+                <li><strong>Repeatability</strong> - Tests can be run frequently with minimal effort</li>
+                <li><strong>Regression testing</strong> - Quickly verify that new changes don't break existing functionality</li>
+                <li><strong>CI/CD integration</strong> - Tests can be part of your continuous integration pipeline</li>
+            </ul>
+            <p>For Java applications, consider these automation frameworks:</p>
+            <ul>
+                <li><strong>JUnit/TestNG</strong> - For unit and integration testing</li>
+                <li><strong>Selenium</strong> - For web UI testing</li>
+                <li><strong>REST Assured</strong> - For API testing</li>
+                <li><strong>Cucumber</strong> - For behavior-driven development (BDD) testing</li>
             </ul>
         </section>
 
@@ -233,6 +444,19 @@
             <h2>Video Content</h2>
             <div class="video-container">
                 <iframe class="wistia_embed" title="Testing Functional Use Cases Video" src="https://fast.wistia.net/embed/iframe/92wu32swni" width="640" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+        </section>
+
+        <section>
+            <h2>Additional Resources</h2>
+            <div class="resources">
+                <ul>
+                    <li><a href="https://junit.org/junit5/docs/current/user-guide/" target="_blank" rel="noopener">JUnit 5 User Guide</a></li>
+                    <li><a href="https://www.selenium.dev/documentation/" target="_blank" rel="noopener">Selenium Documentation</a></li>
+                    <li><a href="https://cucumber.io/docs/guides/overview/" target="_blank" rel="noopener">Cucumber BDD Testing Framework</a></li>
+                    <li><a href="https://martinfowler.com/articles/practical-test-pyramid.html" target="_blank" rel="noopener">The Practical Test Pyramid</a></li>
+                    <li><a href="https://www.istqb.org/downloads/send/51-ctfl2018/208-ctfl-2018-syllabus.html" target="_blank" rel="noopener">ISTQB Certified Tester Foundation Level Syllabus</a></li>
+                </ul>
             </div>
         </section>
     </div>
