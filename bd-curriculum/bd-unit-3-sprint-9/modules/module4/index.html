@@ -122,11 +122,116 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand unit testing and test-driven development</li>
-                <li>Learn about debugging tools and techniques</li>
-                <li>Explore performance testing and optimization</li>
-                <li>Master error tracking and logging</li>
+                <li>Master inheritance and polymorphism in Java</li>
+                <li>Understand method overriding in complex inheritance hierarchies</li>
+                <li>Implement constructors that use superclass constructors</li>
+                <li>Use superclass types to reference subclass instances effectively</li>
+                <li>Learn how to expose members to subclasses without public access</li>
+                <li>Analyze is-a relationships in class design</li>
+                <li>Understand when to use a superclass vs an interface</li>
+                <li>Design and implement abstract classes and methods</li>
+                <li>Recognize the risks in modifying superclasses</li>
+                <li>Compare different inheritance approaches for effective class hierarchies</li>
             </ul>
+        </section>
+
+        <section>
+            <h2>Advanced Inheritance and Polymorphism</h2>
+            <div style="color: #b3b3b3; margin-bottom: 20px;">
+                <p>Advanced inheritance and polymorphism concepts are crucial for designing robust, maintainable, and extensible applications. A deeper understanding of these concepts allows developers to leverage the full power of object-oriented programming.</p>
+                
+                <h3>Method Execution in Inheritance Hierarchies:</h3>
+                <ul style="padding-left: 20px;">
+                    <li><strong>Method Dispatch:</strong> When a method is called on an object, Java determines which implementation to use based on the actual object type, not the reference type</li>
+                    <li><strong>Superclass Method Calling Overridden Method:</strong> When a superclass method calls another method that is overridden in a subclass, the subclass's implementation is called</li>
+                    <li>Example:
+                        <pre style="background-color: #333a47; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>class Parent {
+    public void doWork() {
+        System.out.println("Parent working");
+        this.prepareWork(); // Will call Child's implementation if called on Child
+    }
+    
+    public void prepareWork() {
+        System.out.println("Parent preparing");
+    }
+}
+
+class Child extends Parent {
+    @Override
+    public void prepareWork() {
+        System.out.println("Child preparing");
+    }
+}
+
+// Usage
+Parent p = new Child();
+p.doWork(); // Outputs: "Parent working" followed by "Child preparing"</code></pre>
+                    </li>
+                </ul>
+
+                <h3>Access Modifiers and Inheritance:</h3>
+                <ul style="padding-left: 20px;">
+                    <li><strong>Protected Members:</strong> Visible to subclasses and classes in the same package, but not to the outside world</li>
+                    <li>This allows superclasses to expose functionality to subclasses without making it public</li>
+                    <li>Example:
+                        <pre style="background-color: #333a47; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>public class DatabaseConnection {
+    protected Connection getConnection() {
+        // Implementation that returns a database connection
+        // Available to subclasses but not to external classes
+    }
+    
+    public void executeQuery(String sql) {
+        Connection conn = getConnection();
+        // Use connection to execute query
+    }
+}</code></pre>
+                    </li>
+                </ul>
+
+                <h3>Superclass vs Interface Decision Making:</h3>
+                <ul style="padding-left: 20px;">
+                    <li><strong>Use a Superclass When:</strong>
+                        <ul>
+                            <li>You want to share code implementation</li>
+                            <li>You have a clear is-a relationship</li>
+                            <li>You need to maintain state across all subclasses</li>
+                        </ul>
+                    </li>
+                    <li><strong>Use an Interface When:</strong>
+                        <ul>
+                            <li>You want to define a contract without implementation</li>
+                            <li>You need multiple inheritance (a class can implement multiple interfaces)</li>
+                            <li>You want to define behavior that can be implemented by unrelated classes</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3>Risks of Modifying Superclasses:</h3>
+                <ul style="padding-left: 20px;">
+                    <li>Adding or changing methods can break existing subclasses</li>
+                    <li>Changing method behavior can cause unexpected issues in subclasses</li>
+                    <li>Implementation details that subclasses depend on may change</li>
+                    <li>Best practices:
+                        <ul>
+                            <li>Design superclasses carefully from the start</li>
+                            <li>Document clearly which methods are meant to be overridden</li>
+                            <li>Consider marking classes as final if they're not designed for extension</li>
+                            <li>Use composition over inheritance when appropriate</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3>Polymorphic Assignment and Type Casting:</h3>
+                <pre style="background-color: #333a47; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>// Polymorphic assignment - reference type vs object type
+Shape shape = new Circle(10); // Shape is reference type, Circle is object type
+shape.area(); // Calls Circle's implementation
+
+// Accessing subclass-specific methods requires casting
+if (shape instanceof Circle) {
+    Circle circle = (Circle) shape;
+    double diameter = circle.getDiameter(); // Method only available in Circle
+}</code></pre>
+            </div>
         </section>
 
         <div class="resources">

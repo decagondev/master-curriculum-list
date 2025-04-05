@@ -122,11 +122,105 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand different types of exceptions and their hierarchy</li>
-                <li>Learn about try-catch blocks and exception handling patterns</li>
-                <li>Explore custom exception creation and handling</li>
-                <li>Master best practices for error handling</li>
+                <li>Understand hashing and its importance in Java collections</li>
+                <li>Learn about the hashCode() and equals() contract</li>
+                <li>Implement proper hashCode() methods using Objects.hash()</li>
+                <li>Analyze consistency between hashCode() and equals() implementations</li>
+                <li>Understand how hashing enables constant-time lookup in collections</li>
+                <li>Handle hash collisions appropriately</li>
+                <li>Learn the importance of immutable fields in hashCode() implementations</li>
+                <li>Implement hashCode() in subclasses correctly</li>
             </ul>
+        </section>
+
+        <section>
+            <h2>Hashing and HashCode Implementation in Detail</h2>
+            <div style="color: #b3b3b3; margin-bottom: 20px;">
+                <p>Hashing is a fundamental concept in computer science that allows for efficient data retrieval. In Java, proper implementation of hashCode() is essential for the correct functioning of hash-based collections like HashMap, HashSet, and Hashtable.</p>
+                
+                <h3>Hash Functions and Hash Codes:</h3>
+                <ul style="padding-left: 20px;">
+                    <li><strong>Hash Function:</strong> A function that converts data of arbitrary size to fixed-size values (hash codes)</li>
+                    <li><strong>Hash Code:</strong> The integer value returned by a hash function</li>
+                    <li><strong>Hash Code Collision:</strong> Occurs when two different objects have the same hash code</li>
+                </ul>
+
+                <h3>The hashCode() and equals() Contract:</h3>
+                <ul style="padding-left: 20px;">
+                    <li>If two objects are equal according to equals(), they MUST have the same hash code</li>
+                    <li>If two objects have the same hash code, they are NOT necessarily equal</li>
+                    <li>hashCode() should consistently return the same value for the same object (unless state changes)</li>
+                    <li>For good performance, different objects should have different hash codes when possible</li>
+                </ul>
+
+                <h3>Proper hashCode() Implementation:</h3>
+                <pre style="background-color: #333a47; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>public class Person {
+    private final String firstName;
+    private final String lastName;
+    private final int age;
+    
+    public Person(String firstName, String lastName, int age) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        Person person = (Person) o;
+        return age == person.age && 
+               Objects.equals(firstName, person.firstName) && 
+               Objects.equals(lastName, person.lastName);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, age);
+    }
+}</code></pre>
+
+                <h3>Hash Collision Resolution:</h3>
+                <ul style="padding-left: 20px;">
+                    <li><strong>Chaining:</strong> Store multiple entries with the same hash in a linked list or similar structure</li>
+                    <li><strong>Open Addressing:</strong> When a collision occurs, look for the next available slot</li>
+                    <li>Java's HashMap uses chaining with balanced trees for buckets that become too large</li>
+                </ul>
+
+                <h3>Common Issues with hashCode() Implementations:</h3>
+                <ul style="padding-left: 20px;">
+                    <li><strong>Mutable Fields:</strong> Using mutable fields in hashCode() can cause objects to be "lost" in hash-based collections if the fields change</li>
+                    <li><strong>Inconsistency with equals():</strong> If hashCode() doesn't use all fields used in equals(), objects considered equal might have different hash codes</li>
+                    <li><strong>Poor Distribution:</strong> A hashCode() that doesn't distribute values well leads to more collisions and worse performance</li>
+                </ul>
+
+                <h3>Implementing hashCode() in Subclasses:</h3>
+                <pre style="background-color: #333a47; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>public class Employee extends Person {
+    private final String employeeId;
+    
+    public Employee(String firstName, String lastName, int age, String employeeId) {
+        super(firstName, lastName, age);
+        this.employeeId = employeeId;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        
+        Employee employee = (Employee) o;
+        return Objects.equals(employeeId, employee.employeeId);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), employeeId);
+    }
+}</code></pre>
+            </div>
         </section>
 
         <div class="resources">

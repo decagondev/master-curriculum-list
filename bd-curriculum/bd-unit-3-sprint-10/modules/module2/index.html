@@ -122,12 +122,149 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand the Map interface and key-value pair concept</li>
-                <li>Learn about HashMap implementation and its performance characteristics</li>
-                <li>Explore LinkedHashMap and its insertion-order guarantees</li>
-                <li>Master TreeMap and its natural ordering capabilities</li>
-                <li>Implement efficient data lookups and manipulations using maps</li>
+                <li>Implement code to iterate over the key:value pairs in a Map to perform an operation on each one</li>
+                <li>Implement code to add a key:value pair to a Map</li>
+                <li>Implement code to remove a key:value pair from a Map</li>
+                <li>Outline how to overwrite the value associated with a key in a Map</li>
+                <li>Implement code to associate multiple objects with a single key in a Map</li>
+                <li>Explain why retrieving the value associated with a key in a HashMap runs in constant O(1) time</li>
+                <li>Design and implement a class that uses a Map to establish relationships between objects</li>
+                <li>Explain what a Map is and outline its characteristics</li>
+                <li>Explain why the hashCode and equals methods must be overriden for a type being use as a Map's key</li>
+                <li>Recall that keys are unique in a Map</li>
+                <li>Outline how put(), get(), and remove() methods work for a Map</li>
+                <li>Explain common use cases for a Map</li>
+                <li>Outline when you would use either entrySet(), keySet(), or values() to access the contents of a Map</li>
             </ul>
+        </section>
+
+        <section style="margin-top: 30px; background-color: #2a303c; padding: 20px; border-radius: 4px;">
+            <h3>Code Examples</h3>
+            <p style="color: #b3b3b3;">Here are some examples demonstrating key Map concepts:</p>
+            
+            <h4 style="margin-top: 15px;">Creating and Using a HashMap</h4>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; overflow-x: auto; color: #e6e6e6;">
+import java.util.HashMap;
+import java.util.Map;
+
+public class MapExample {
+    public static void main(String[] args) {
+        // Creating a new HashMap
+        Map&lt;String, Integer&gt; studentScores = new HashMap&lt;&gt;();
+        
+        // Adding key-value pairs to the Map
+        studentScores.put("Alice", 95);
+        studentScores.put("Bob", 87);
+        studentScores.put("Charlie", 92);
+        
+        // Accessing a value by key
+        System.out.println("Bob's score: " + studentScores.get("Bob"));
+        
+        // Overwriting an existing value
+        studentScores.put("Bob", 90);
+        System.out.println("Bob's updated score: " + studentScores.get("Bob"));
+        
+        // Checking if a key exists
+        System.out.println("Contains David? " + studentScores.containsKey("David"));
+        System.out.println("Contains score 95? " + studentScores.containsValue(95));
+        
+        // Removing a key-value pair
+        studentScores.remove("Charlie");
+        
+        // Size of the Map
+        System.out.println("Number of students: " + studentScores.size());
+    }
+}</pre>
+            
+            <h4 style="margin-top: 15px;">Iterating Over a Map</h4>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; overflow-x: auto; color: #e6e6e6;">
+import java.util.HashMap;
+import java.util.Map;
+
+public class MapIterationExample {
+    public static void main(String[] args) {
+        Map&lt;String, String&gt; capitals = new HashMap&lt;&gt;();
+        capitals.put("USA", "Washington D.C.");
+        capitals.put("UK", "London");
+        capitals.put("France", "Paris");
+        capitals.put("Germany", "Berlin");
+        
+        // Using entrySet() - iterate over key-value pairs
+        System.out.println("Iterating using entrySet():");
+        for (Map.Entry&lt;String, String&gt; entry : capitals.entrySet()) {
+            System.out.println(entry.getKey() + " has capital " + entry.getValue());
+        }
+        
+        // Using keySet() - iterate over keys
+        System.out.println("\nIterating using keySet():");
+        for (String country : capitals.keySet()) {
+            System.out.println("Country: " + country);
+        }
+        
+        // Using values() - iterate over values
+        System.out.println("\nIterating using values():");
+        for (String capital : capitals.values()) {
+            System.out.println("Capital: " + capital);
+        }
+    }
+}</pre>
+            
+            <h4 style="margin-top: 15px;">Using Map with Custom Objects as Keys</h4>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; overflow-x: auto; color: #e6e6e6;">
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+class Student {
+    private int id;
+    private String name;
+    
+    public Student(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+    
+    // Must override equals for objects used as Map keys
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return id == student.id;
+    }
+    
+    // Must override hashCode for objects used as Map keys
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+    
+    @Override
+    public String toString() {
+        return "Student{id=" + id + ", name='" + name + "'}";
+    }
+}
+
+public class CustomKeyExample {
+    public static void main(String[] args) {
+        Map&lt;Student, Double&gt; studentGPA = new HashMap&lt;&gt;();
+        
+        Student alice = new Student(1001, "Alice");
+        Student bob = new Student(1002, "Bob");
+        
+        studentGPA.put(alice, 3.85);
+        studentGPA.put(bob, 3.62);
+        
+        // Creating another Student object with same ID as Alice
+        Student aliceDuplicate = new Student(1001, "Alice Smith");
+        
+        // Since equals and hashCode are based on ID, this will update Alice's GPA
+        studentGPA.put(aliceDuplicate, 3.90);
+        
+        System.out.println("Alice's GPA: " + studentGPA.get(alice));
+        System.out.println("Number of entries: " + studentGPA.size());
+    }
+}</pre>
         </section>
 
         <div class="resources">

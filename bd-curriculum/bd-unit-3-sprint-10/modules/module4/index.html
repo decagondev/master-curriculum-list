@@ -122,12 +122,242 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand the exception hierarchy in Java</li>
-                <li>Learn to implement try-catch-finally blocks correctly</li>
-                <li>Explore checked vs. unchecked exceptions</li>
-                <li>Master creating and throwing custom exceptions</li>
-                <li>Implement best practices for exception handling in production code</li>
+                <li>Implement a method that handles an exception using a try-catch block</li>
+                <li>Implement a method that propagates a checked exception thrown by one of the method's dependencies</li>
+                <li>Implement a method that propagates an unchecked exception from one of the class's dependencies</li>
+                <li>Analyze whether an exception thrown by a called method should be handled or propagated</li>
+                <li>Override a method that throws a checked exception</li>
+                <li>Explain which catch block will handle a specified exception, given a code snippet containing a try and multiple catch blocks</li>
+                <li>Explain the dangers of catching the base Exception type</li>
+                <li>Explain the inheritance relationships among the Exception class, unchecked exceptions, and checked exceptions</li>
+                <li>Outline the differences between checked and unchecked exceptions</li>
+                <li>Explain how the JVM determines which catch block to execute if multiple catch blocks are present when an exception is thrown inside the corresponding try block</li>
+                <li>Explain when it is necessary to include a throws clause in a method declaration</li>
+                <li>Outline how to override methods that can throw checked exceptions</li>
             </ul>
+        </section>
+
+        <section style="margin-top: 30px; background-color: #2a303c; padding: 20px; border-radius: 4px;">
+            <h3>Code Examples</h3>
+            <p style="color: #b3b3b3;">Here are some examples demonstrating key exception handling concepts:</p>
+            
+            <h4 style="margin-top: 15px;">Basic Exception Handling with try-catch</h4>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; overflow-x: auto; color: #e6e6e6;">
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+public class ExceptionHandlingExample {
+    public static void main(String[] args) {
+        // Basic try-catch example
+        try {
+            // This code might throw an exception
+            File file = new File("nonexistent-file.txt");
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                System.out.println(scanner.nextLine());
+            }
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            // Handle the exception
+            System.out.println("Error: File not found");
+            System.out.println("Exception message: " + e.getMessage());
+        }
+        
+        System.out.println("Program continues execution...");
+    }
+}</pre>
+            
+            <h4 style="margin-top: 15px;">Multiple Catch Blocks and Exception Hierarchy</h4>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; overflow-x: auto; color: #e6e6e6;">
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+public class MultipleCatchExample {
+    public static void main(String[] args) {
+        FileInputStream fileInput = null;
+        
+        try {
+            // This could cause a FileNotFoundException (which is a subclass of IOException)
+            fileInput = new FileInputStream("example.txt");
+            
+            // This could cause an IOException
+            int data = fileInput.read();
+            
+            // This could cause an ArithmeticException (unchecked)
+            int result = 100 / data;
+            
+            System.out.println("Data read: " + data);
+            System.out.println("Result: " + result);
+            
+        } catch (FileNotFoundException e) {
+            // This block catches FileNotFoundException specifically
+            System.out.println("Error: The file was not found");
+            e.printStackTrace();
+            
+        } catch (IOException e) {
+            // This block catches other IOException types
+            System.out.println("Error: Problem reading the file");
+            e.printStackTrace();
+            
+        } catch (ArithmeticException e) {
+            // This block catches arithmetic errors like division by zero
+            System.out.println("Error: Arithmetic problem");
+            e.printStackTrace();
+            
+        } finally {
+            // This block always executes, whether an exception occurred or not
+            try {
+                if (fileInput != null) {
+                    fileInput.close();
+                }
+            } catch (IOException e) {
+                System.out.println("Error closing the file");
+            }
+            System.out.println("Finally block executed");
+        }
+    }
+}</pre>
+            
+            <h4 style="margin-top: 15px;">Checked vs. Unchecked Exceptions</h4>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; overflow-x: auto; color: #e6e6e6;">
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+public class CheckedUncheckedExample {
+    
+    // Method that handles a checked exception (try-catch)
+    public void readFileHandled(String filename) {
+        try {
+            // Checked exception must be handled or declared
+            FileInputStream file = new FileInputStream(filename);
+            file.close();
+            System.out.println("File read successfully");
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+    
+    // Method that propagates a checked exception (throws)
+    public void readFilePropagated(String filename) throws IOException {
+        // Checked exception is declared in method signature
+        FileInputStream file = new FileInputStream(filename);
+        file.close();
+        System.out.println("File read successfully");
+    }
+    
+    // Method with unchecked exception - no need to handle or declare
+    public int divide(int a, int b) {
+        // ArithmeticException is unchecked (extends RuntimeException)
+        return a / b; // Will throw ArithmeticException if b is 0
+    }
+    
+    // Method that handles an unchecked exception
+    public int divideHandled(int a, int b) {
+        try {
+            return a / b;
+        } catch (ArithmeticException e) {
+            System.out.println("Cannot divide by zero");
+            return 0; // Default value
+        }
+    }
+    
+    public static void main(String[] args) {
+        CheckedUncheckedExample example = new CheckedUncheckedExample();
+        
+        // Using method that handles checked exception
+        example.readFileHandled("nonexistent.txt");
+        
+        try {
+            // Using method that propagates checked exception
+            example.readFilePropagated("nonexistent.txt");
+        } catch (IOException e) {
+            System.out.println("Main caught exception: " + e.getMessage());
+        }
+        
+        // Using method with unchecked exception
+        try {
+            int result = example.divide(10, 0);
+            System.out.println(result); // This won't execute
+        } catch (ArithmeticException e) {
+            System.out.println("Caught arithmetic exception: " + e.getMessage());
+        }
+        
+        // Using method that handles unchecked exception
+        int safeResult = example.divideHandled(10, 0);
+        System.out.println("Safe division result: " + safeResult);
+    }
+}</pre>
+            
+            <h4 style="margin-top: 15px;">Creating Custom Exceptions</h4>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; overflow-x: auto; color: #e6e6e6;">
+// Custom checked exception
+class InsufficientFundsException extends Exception {
+    private double amount;
+    
+    public InsufficientFundsException(double amount) {
+        super("Insufficient funds: You need " + amount + " more to complete this transaction");
+        this.amount = amount;
+    }
+    
+    public double getAmount() {
+        return amount;
+    }
+}
+
+// Custom unchecked exception
+class InvalidAccountException extends RuntimeException {
+    public InvalidAccountException(String message) {
+        super(message);
+    }
+}
+
+class BankAccount {
+    private String accountNumber;
+    private double balance;
+    
+    public BankAccount(String accountNumber, double initialBalance) {
+        if (accountNumber == null || accountNumber.isEmpty()) {
+            throw new InvalidAccountException("Account number cannot be empty");
+        }
+        this.accountNumber = accountNumber;
+        this.balance = initialBalance;
+    }
+    
+    public void withdraw(double amount) throws InsufficientFundsException {
+        if (amount > balance) {
+            double shortfall = amount - balance;
+            throw new InsufficientFundsException(shortfall);
+        }
+        balance -= amount;
+        System.out.println("Withdrawal successful. New balance: " + balance);
+    }
+    
+    public static void main(String[] args) {
+        try {
+            BankAccount account = new BankAccount("12345", 1000);
+            
+            // This will work
+            account.withdraw(500);
+            
+            // This will throw InsufficientFundsException
+            account.withdraw(1000);
+            
+        } catch (InsufficientFundsException e) {
+            System.out.println("Transaction failed: " + e.getMessage());
+            System.out.println("You need $" + e.getAmount() + " more to complete this transaction");
+        }
+        
+        try {
+            // This will throw InvalidAccountException (unchecked)
+            BankAccount invalidAccount = new BankAccount("", 100);
+        } catch (InvalidAccountException e) {
+            System.out.println("Account creation failed: " + e.getMessage());
+        }
+    }
+}</pre>
         </section>
 
         <div class="resources">

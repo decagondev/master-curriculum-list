@@ -122,12 +122,206 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand composition and its advantages over inheritance</li>
-                <li>Learn to apply the "Favor composition over inheritance" principle</li>
-                <li>Explore component-based design patterns</li>
-                <li>Master creating flexible object hierarchies</li>
-                <li>Implement code that is easier to maintain and extend</li>
+                <li>Implement a class that exposes a subset of its member class's functionality</li>
+                <li>Implement a class that exposes a superset of its member class's functionality</li>
+                <li>Design and implement a class with new functionality that uses the functionality of member class' to achieve its goal</li>
+                <li>Design a system that includes "has-a" relationships</li>
+                <li>Recall that Java classes can depend on other classes</li>
+                <li>Outline composition and how it is used when defining a class</li>
+                <li>Compare and contrast inheritance and composition as ways to achieve code reuse</li>
+                <li>Discuss when to expose only a subset of functionality from a member class by using composition</li>
+                <li>Discuss when to expose a superset of functionality from a member class by using composition</li>
+                <li>Discuss when to create a new class that uses the functionality of a member class by using composition</li>
             </ul>
+        </section>
+
+        <section style="margin-top: 30px; background-color: #2a303c; padding: 20px; border-radius: 4px;">
+            <h3>Code Examples</h3>
+            <p style="color: #b3b3b3;">Here are some examples demonstrating key composition patterns:</p>
+            
+            <h4 style="margin-top: 15px;">Exposing a Subset of Functionality (Delegation)</h4>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; overflow-x: auto; color: #e6e6e6;">
+import java.util.ArrayList;
+import java.util.Collection;
+
+// This class implements a read-only list that only exposes
+// a subset of ArrayList functionality
+public class ReadOnlyList&lt;E&gt; {
+    // Composition: has-a relationship with ArrayList
+    private final ArrayList&lt;E&gt; list;
+    
+    public ReadOnlyList(Collection&lt;E&gt; items) {
+        this.list = new ArrayList&lt;&gt;(items);
+    }
+    
+    // We only expose get and size methods
+    public E get(int index) {
+        return list.get(index);
+    }
+    
+    public int size() {
+        return list.size();
+    }
+    
+    public boolean contains(E element) {
+        return list.contains(element);
+    }
+    
+    // Notice we don't expose add, remove, or other mutating methods
+    
+    public static void main(String[] args) {
+        ArrayList&lt;String&gt; source = new ArrayList&lt;&gt;();
+        source.add("Apple");
+        source.add("Banana");
+        source.add("Cherry");
+        
+        ReadOnlyList&lt;String&gt; readOnly = new ReadOnlyList&lt;&gt;(source);
+        System.out.println("Element at index 1: " + readOnly.get(1));
+        System.out.println("Size: " + readOnly.size());
+        System.out.println("Contains Banana? " + readOnly.contains("Banana"));
+        
+        // This would cause a compilation error:
+        // readOnly.add("Date");
+    }
+}</pre>
+            
+            <h4 style="margin-top: 15px;">Exposing a Superset of Functionality</h4>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; overflow-x: auto; color: #e6e6e6;">
+import java.util.ArrayList;
+import java.util.List;
+
+// This class extends ArrayList functionality with additional features
+public class EnhancedList&lt;E&gt; {
+    // Composition: has-a relationship with ArrayList
+    private final List&lt;E&gt; list;
+    
+    public EnhancedList() {
+        this.list = new ArrayList&lt;&gt;();
+    }
+    
+    // Original ArrayList functionality
+    public boolean add(E element) {
+        return list.add(element);
+    }
+    
+    public E get(int index) {
+        return list.get(index);
+    }
+    
+    public int size() {
+        return list.size();
+    }
+    
+    // Enhanced functionality: get first element
+    public E getFirst() {
+        if (list.isEmpty()) {
+            throw new IllegalStateException("List is empty");
+        }
+        return list.get(0);
+    }
+    
+    // Enhanced functionality: get last element
+    public E getLast() {
+        if (list.isEmpty()) {
+            throw new IllegalStateException("List is empty");
+        }
+        return list.get(list.size() - 1);
+    }
+    
+    // Enhanced functionality: add multiple elements at once
+    public boolean addAll(E... elements) {
+        boolean changed = false;
+        for (E element : elements) {
+            changed |= list.add(element);
+        }
+        return changed;
+    }
+    
+    public static void main(String[] args) {
+        EnhancedList&lt;String&gt; enhanced = new EnhancedList&lt;&gt;();
+        
+        // Using original ArrayList functionality
+        enhanced.add("Apple");
+        enhanced.add("Banana");
+        
+        // Using enhanced functionality
+        enhanced.addAll("Cherry", "Date", "Elderberry");
+        
+        System.out.println("First element: " + enhanced.getFirst());
+        System.out.println("Last element: " + enhanced.getLast());
+        System.out.println("Total size: " + enhanced.size());
+    }
+}</pre>
+            
+            <h4 style="margin-top: 15px;">Creating New Functionality with Composition</h4>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; overflow-x: auto; color: #e6e6e6;">
+import java.util.HashMap;
+import java.util.Map;
+
+// An example of using composition to create a cache system
+public class Cache&lt;K, V&gt; {
+    // Composition: uses a HashMap internally
+    private final Map&lt;K, CacheEntry&lt;V&gt;&gt; cacheMap;
+    private final long expiryTimeMs;
+    
+    public Cache(long expiryTimeMs) {
+        this.cacheMap = new HashMap&lt;&gt;();
+        this.expiryTimeMs = expiryTimeMs;
+    }
+    
+    public void put(K key, V value) {
+        cacheMap.put(key, new CacheEntry&lt;&gt;(value, System.currentTimeMillis()));
+    }
+    
+    public V get(K key) {
+        CacheEntry&lt;V&gt; entry = cacheMap.get(key);
+        
+        if (entry == null) {
+            return null;
+        }
+        
+        // Check if entry has expired
+        if (System.currentTimeMillis() - entry.timestamp > expiryTimeMs) {
+            cacheMap.remove(key);
+            return null;
+        }
+        
+        return entry.value;
+    }
+    
+    public int size() {
+        // Clean expired entries before returning size
+        cacheMap.entrySet().removeIf(entry -> 
+            System.currentTimeMillis() - entry.getValue().timestamp > expiryTimeMs);
+        return cacheMap.size();
+    }
+    
+    // Helper class for storing cache entries with timestamps
+    private static class CacheEntry&lt;V&gt; {
+        private final V value;
+        private final long timestamp;
+        
+        public CacheEntry(V value, long timestamp) {
+            this.value = value;
+            this.timestamp = timestamp;
+        }
+    }
+    
+    public static void main(String[] args) throws InterruptedException {
+        Cache&lt;String, String&gt; cache = new Cache&lt;&gt;(2000); // 2 second expiry
+        
+        cache.put("key1", "value1");
+        System.out.println("After adding key1: " + cache.get("key1"));
+        
+        // Sleep for 1 second (not expired yet)
+        Thread.sleep(1000);
+        System.out.println("After 1 second: " + cache.get("key1"));
+        
+        // Sleep for 1.5 more seconds (should be expired now)
+        Thread.sleep(1500);
+        System.out.println("After 2.5 seconds: " + cache.get("key1"));
+    }
+}</pre>
         </section>
 
         <div class="resources">
