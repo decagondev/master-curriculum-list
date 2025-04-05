@@ -130,6 +130,59 @@
             <div class="video-container">
                 <iframe class="wistia_embed" title="Code-Along Learner Facing Walkthrough Video" src="https://fast.wistia.net/embed/iframe/m3huj6opvn" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
+            
+            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">What You'll Learn</h3>
+                <p>In this code-along, you'll learn the fundamentals of creating DynamoDB tables programmatically using the AWS SDK for Java. This is an essential skill for applications that need to manage their own database infrastructure.</p>
+                <h4 style="color: #ffffff; margin-top: 15px;">Key Concepts Covered:</h4>
+                <ul>
+                    <li>Setting up the AWS SDK for Java in your project</li>
+                    <li>Creating a DynamoDB client</li>
+                    <li>Defining table schemas with partition and sort keys</li>
+                    <li>Configuring throughput capacity for DynamoDB tables</li>
+                    <li>Managing table creation processes and handling responses</li>
+                    <li>Working with table creation waiting policies</li>
+                </ul>
+                <h4 style="color: #ffffff; margin-top: 15px;">Code Example Highlights:</h4>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+// Creating a DynamoDB client<br>
+DynamoDbClient dynamoDbClient = DynamoDbClient.builder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.region(Region.US_WEST_2)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+<br>
+// Defining the table schema<br>
+CreateTableRequest request = CreateTableRequest.builder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.attributeDefinitions(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AttributeDefinition.builder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attributeName("artist")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attributeType(ScalarAttributeType.S)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.build(),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AttributeDefinition.builder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attributeName("songTitle")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attributeType(ScalarAttributeType.S)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.build()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.keySchema(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KeySchemaElement.builder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attributeName("artist")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.keyType(KeyType.HASH)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.build(),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KeySchemaElement.builder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attributeName("songTitle")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.keyType(KeyType.RANGE)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.build()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.billingMode(BillingMode.PAY_PER_REQUEST)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.tableName("Music")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+<br>
+// Create the table<br>
+CreateTableResponse response = dynamoDbClient.createTable(request);<br>
+System.out.println("Table created: " + response.tableDescription().tableName());
+                </code>
+                <p>By completing this code-along, you'll gain practical experience with DynamoDB table creation, which is a fundamental skill for working with AWS's NoSQL database service.</p>
+            </div>
+            
             <div class="links">
                 <a href="https://github.com/BloomTechBackend/bd-13-1-codealong-DynamodbCreateTable-starter" target="_blank" rel="noopener">Starter Repository</a>
                 <a href="https://github.com/BloomTechBackend/bd-13-1-codealong-DynamodbCreateTable-solution" target="_blank" rel="noopener">Solution Repository</a>
@@ -142,6 +195,56 @@
             <div class="video-container">
                 <iframe class="wistia_embed" title="Code-Along Learner Facing Walkthrough Video" src="https://fast.wistia.net/embed/iframe/m3huj6opvn" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
+            
+            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">What You'll Learn</h3>
+                <p>In this code-along, you'll explore how to interact with RESTful APIs by making HTTP requests using different methods. You'll learn how to perform the full range of CRUD operations (Create, Read, Update, Delete) through HTTP.</p>
+                <h4 style="color: #ffffff; margin-top: 15px;">Key Concepts Covered:</h4>
+                <ul>
+                    <li>Understanding HTTP methods (GET, POST, PUT, DELETE) and their appropriate use cases</li>
+                    <li>Using Java's HttpClient to make API requests</li>
+                    <li>Working with JSON request and response bodies</li>
+                    <li>Handling different HTTP status codes and error responses</li>
+                    <li>Implementing proper error handling for API calls</li>
+                    <li>Testing API endpoints using different HTTP methods</li>
+                </ul>
+                <h4 style="color: #ffffff; margin-top: 15px;">Code Example Highlights:</h4>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+// Setting up the HTTP client<br>
+HttpClient client = HttpClient.newHttpClient();<br>
+<br>
+// Making a GET request<br>
+HttpRequest getRequest = HttpRequest.newBuilder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.uri(URI.create("https://api.example.com/resources/123"))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.header("Accept", "application/json")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.GET()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+<br>
+HttpResponse&lt;String&gt; getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());<br>
+<br>
+// Making a POST request<br>
+String jsonBody = "{\"name\":\"New Resource\",\"description\":\"This is a new resource\"}";<br>
+<br>
+HttpRequest postRequest = HttpRequest.newBuilder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.uri(URI.create("https://api.example.com/resources"))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.header("Content-Type", "application/json")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.POST(HttpRequest.BodyPublishers.ofString(jsonBody))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+<br>
+HttpResponse&lt;String&gt; postResponse = client.send(postRequest, HttpResponse.BodyHandlers.ofString());<br>
+<br>
+// Handling responses<br>
+if (postResponse.statusCode() == 201) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Resource created successfully!");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Response body: " + postResponse.body());<br>
+} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Error: " + postResponse.statusCode());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Error message: " + postResponse.body());<br>
+}
+                </code>
+                <p>This code-along will give you practical experience making API requests, which is essential for building modern applications that interact with external services or microservices.</p>
+            </div>
+            
             <div class="links">
                 <a href="https://github.com/BloomTechBackend/bd-13-2-codealong-http-methods" target="_blank" rel="noopener">Starter Repository</a>
                 <a href="https://github.com/BloomTechBackend/bd-13-2-code-along-http-methods-solution" target="_blank" rel="noopener">Solution Repository</a>
