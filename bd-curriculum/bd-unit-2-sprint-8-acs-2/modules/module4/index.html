@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Module 4: Performance Optimization - BD Unit 2 Sprint 8</title>
+    <title>Module 4: LocalDateTime - BD Unit 2 Sprint 8</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -108,34 +108,140 @@
     <div class="container">
         <a href="../../index.html" class="back-button">← Back to Home</a>
         
-        <h1>Module 4: Performance Optimization</h1>
+        <h1>Module 4: LocalDateTime</h1>
         
         <div class="module">
             <h2>Module Overview</h2>
-            <p>Understand performance considerations and optimization techniques for collections.</p>
+            <p>Learn about LocalDateTime in Java, a powerful class for working with dates and times without timezone information. Understand how to create, manipulate, format, and compare date-time objects in your applications.</p>
         </div>
         
         <div class="video-container">
-            <iframe class="wistia_embed" title="Performance Optimization Video" src="https://fast.wistia.net/embed/iframe/m9znpv5f0a" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <iframe class="wistia_embed" title="LocalDateTime Video" src="https://fast.wistia.net/embed/iframe/f29ezhp999" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Learn about collection performance characteristics</li>
-                <li>Understand memory usage and optimization techniques</li>
-                <li>Master efficient data structure selection</li>
-                <li>Apply performance best practices in real applications</li>
+                <li>Understand what LocalDateTime objects are</li>
+                <li>Know how to use LocalDateTime to:
+                    <ul>
+                        <li>Get the current date and time</li>
+                        <li>Create an object representative of a specific date</li>
+                    </ul>
+                </li>
+                <li>Know how to compare between other times and dates</li>
+                <li>Know how to add and remove amounts of time from a LocalDateTime object</li>
+                <li>Understand ZonedDateTime and how to covert between LocalDateTime to compensate for timezones</li>
             </ul>
+        </section>
+
+        <section>
+            <h2>Working with LocalDateTime</h2>
+            <p style="color: #b3b3b3;">In Java, the LocalDateTime class represents a date-time without a timezone, like 2022-04-25T10:15:30. It's part of the java.time package introduced in Java 8, which provides a comprehensive date and time API that is both simple to use and powerful.</p>
+            
+            <h3 style="margin-top: 15px;">Creating LocalDateTime Objects</h3>
+            <p style="color: #b3b3b3;">There are several ways to create LocalDateTime objects:</p>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; color: #e0e0e0; overflow-x: auto;">
+// Get the current date and time
+LocalDateTime now = LocalDateTime.now();
+
+// Create a specific date and time
+LocalDateTime dateTime = LocalDateTime.of(2022, 4, 25, 10, 15, 30);
+
+// Parse a string to LocalDateTime
+LocalDateTime parsed = LocalDateTime.parse("2022-04-25T10:15:30");</pre>
+            
+            <h3 style="margin-top: 15px;">Comparing LocalDateTime Objects</h3>
+            <p style="color: #b3b3b3;">LocalDateTime provides methods for comparing date-time objects:</p>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; color: #e0e0e0; overflow-x: auto;">
+LocalDateTime now = LocalDateTime.now();
+LocalDateTime pastDate = now.minusDays(5);
+LocalDateTime futureDate = now.plusDays(5);
+
+// Check if now is after pastDate
+boolean isAfter = now.isAfter(pastDate);  // true
+
+// Check if now is before futureDate
+boolean isBefore = now.isBefore(futureDate);  // true
+
+// Check if two dates are equal
+boolean isEqual = now.isEqual(now);  // true</pre>
+            
+            <h3 style="margin-top: 15px;">Manipulating LocalDateTime Objects</h3>
+            <p style="color: #b3b3b3;">LocalDateTime objects are immutable, but you can create new objects with modifications:</p>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; color: #e0e0e0; overflow-x: auto;">
+LocalDateTime now = LocalDateTime.now();
+
+// Adding time
+LocalDateTime future = now.plusYears(1)
+                          .plusMonths(2)
+                          .plusDays(3)
+                          .plusHours(4)
+                          .plusMinutes(5)
+                          .plusSeconds(6);
+
+// Subtracting time
+LocalDateTime past = now.minusYears(1)
+                        .minusMonths(2)
+                        .minusDays(3)
+                        .minusHours(4)
+                        .minusMinutes(5)
+                        .minusSeconds(6);
+
+// With specific field values
+LocalDateTime withFields = now.withYear(2025)
+                             .withMonth(Month.JULY.getValue())
+                             .withDayOfMonth(15)
+                             .withHour(10)
+                             .withMinute(30)
+                             .withSecond(0);</pre>
+            
+            <h3 style="margin-top: 15px;">Formatting LocalDateTime</h3>
+            <p style="color: #b3b3b3;">You can format LocalDateTime objects in various ways:</p>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; color: #e0e0e0; overflow-x: auto;">
+LocalDateTime dateTime = LocalDateTime.of(2022, 4, 25, 10, 15, 30);
+
+// Using predefined formats
+String iso = dateTime.toString();  // 2022-04-25T10:15:30
+
+// Using DateTimeFormatter
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+String formatted = dateTime.format(formatter);  // 25-04-2022 10:15:30
+
+// Other formatting examples
+String formatDay = dateTime.format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy"));  // Monday, April 25, 2022
+String formatTime = dateTime.format(DateTimeFormatter.ofPattern("hh:mm a"));  // 10:15 AM</pre>
+            
+            <h3 style="margin-top: 15px;">Working with Time Zones</h3>
+            <p style="color: #b3b3b3;">LocalDateTime doesn't have timezone information. For timezone-aware date-time operations, you can convert to ZonedDateTime:</p>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; color: #e0e0e0; overflow-x: auto;">
+LocalDateTime localDateTime = LocalDateTime.now();
+
+// Convert to a specific zone
+ZoneId newYorkZone = ZoneId.of("America/New_York");
+ZonedDateTime newYorkTime = localDateTime.atZone(newYorkZone);
+
+// Convert to a different zone
+ZoneId tokyoZone = ZoneId.of("Asia/Tokyo");
+ZonedDateTime tokyoTime = newYorkTime.withZoneSameInstant(tokyoZone);
+
+// Get the offset
+ZoneOffset offset = tokyoTime.getOffset();
+
+// Display with timezone
+String zonedFormatted = tokyoTime.format(
+    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z")
+);  // 2022-04-26 00:15:30 JST</pre>
         </section>
 
         <div class="resources">
             <h2>Resources</h2>
             <ul>
-                <li><a href="https://github.com/BloomTech-Labs/java-performance-optimization-guided-project" target="_blank" rel="noopener">Module 4 Guided Project Repository</a></li>
-                <li><a href="https://github.com/BloomTech-Labs/java-performance-optimization-guided-project-solution" target="_blank" rel="noopener">Module 4 Solution Repository</a></li>
-                <li><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Collections.html" target="_blank" rel="noopener">Java Collections Framework Documentation</a></li>
-                <li><a href="https://www.baeldung.com/java-collections-performance" target="_blank" rel="noopener">Guide to Collections Performance - Baeldung</a></li>
+                <li><a href="https://github.com/BloomTech-Labs/java-localdatetime-guided-project" target="_blank" rel="noopener">Module 4 Guided Project Repository</a></li>
+                <li><a href="https://github.com/BloomTech-Labs/java-localdatetime-guided-project-solution" target="_blank" rel="noopener">Module 4 Solution Repository</a></li>
+                <li><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/LocalDateTime.html" target="_blank" rel="noopener">Java LocalDateTime Documentation</a></li>
+                <li><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html" target="_blank" rel="noopener">Java DateTimeFormatter Documentation</a></li>
+                <li><a href="https://www.baeldung.com/java-8-date-time-intro" target="_blank" rel="noopener">Introduction to the Java 8 Date/Time API - Baeldung</a></li>
             </ul>
         </div>
     </div>
