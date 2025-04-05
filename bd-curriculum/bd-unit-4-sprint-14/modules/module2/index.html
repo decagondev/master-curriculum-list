@@ -119,28 +119,166 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand the concept of dependency injection and its importance</li>
-                <li>Learn to identify tight coupling in code and why it's problematic</li>
-                <li>Master the basic patterns for implementing dependency injection</li>
-                <li>Understand Dagger's role in simplifying dependency injection</li>
-                <li>Practice implementing Dagger modules, components, and providers</li>
+                <li>Use a dependency injection framework to provide an object with its dependencies</li>
+                <li>Analyze if an injected object should be scoped as a singleton or not for a provided scenario</li>
+                <li>Identify what types a given Java class depends on</li>
+                <li>Illustrate object dependency relationships as a dependency graph</li>
+                <li>Explain what dependency injection is</li>
+                <li>Explain why dependency injection is preferable to having objects instantiate their own dependencies</li>
             </ul>
         </section>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="Dependency Injection Motivation" src="https://fast.wistia.net/embed/iframe/neydpdpet1" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: Dependency Injection Motivation</h3>
+                <p style="color: #b3b3b3;">This video explains why dependency injection is important and how it solves problems with tightly coupled code. Understanding the motivation behind DI helps appreciate its value in software design.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+// Without dependency injection - tight coupling
+public class UserService {
+    // Direct instantiation creates tight coupling
+    private UserRepository userRepository = new MySQLUserRepository();
+    
+    public User getUserById(String id) {
+        return userRepository.findById(id);
+    }
+}
+
+// With dependency injection - loose coupling
+public class UserService {
+    // Dependency is injected, not created internally
+    private final UserRepository userRepository;
+    
+    // Constructor injection
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+    
+    public User getUserById(String id) {
+        return userRepository.findById(id);
+    }
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This example contrasts two approaches: one with hardcoded dependencies (tight coupling) and another with injected dependencies (loose coupling). The second approach is more flexible, testable, and maintainable because the UserService doesn't need to know the concrete implementation of UserRepository.</p>
+            </div>
         </div>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="Introducing Dagger" src="https://fast.wistia.net/embed/iframe/3xe15g9wft" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: Introducing Dagger</h3>
+                <p style="color: #b3b3b3;">This video introduces Dagger, a popular dependency injection framework for Java and Android applications. Dagger uses code generation to create an efficient DI implementation at compile time.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+// Define a Dagger component interface
+@Component
+public interface ApplicationComponent {
+    // Methods to get dependencies
+    UserService userService();
+    
+    // Method to inject dependencies into an object
+    void inject(MainActivity activity);
+}
+
+// Using the component
+public class MyApplication {
+    private ApplicationComponent component;
+    
+    public void onCreate() {
+        // Dagger will generate this implementation
+        component = DaggerApplicationComponent.create();
+        
+        // Get a dependency
+        UserService userService = component.userService();
+    }
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This code illustrates the basic structure of Dagger usage. The @Component annotation defines the interface between the dependency consumer and provider. Dagger generates an implementation of this interface that handles the creation and provision of the dependencies.</p>
+            </div>
         </div>
         
         <div class="video-container">
             <iframe class="wistia_embed" title="Dagger @Provides, @Module, and @Singleton" src="https://fast.wistia.net/embed/iframe/vimf80aiqq" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: Dagger @Provides, @Module, and @Singleton</h3>
+                <p style="color: #b3b3b3;">This video explores Dagger's core annotations for configuring dependency injection. @Provides methods define how to create dependencies, @Module groups these methods, and @Singleton ensures only one instance is created.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+// Dagger module with provider methods
+@Module
+public class AppModule {
+    
+    // Provides a singleton database connection
+    @Provides
+    @Singleton
+    public Database provideDatabase() {
+        return new PostgresDatabase("jdbc:postgresql://localhost/mydb");
+    }
+    
+    // Provides a UserRepository that depends on Database
+    @Provides
+    public UserRepository provideUserRepository(Database database) {
+        return new SQLUserRepository(database);
+    }
+    
+    // Provides UserService that depends on UserRepository
+    @Provides
+    public UserService provideUserService(UserRepository repository) {
+        return new UserServiceImpl(repository);
+    }
+}
+
+// Component with module
+@Singleton
+@Component(modules = {AppModule.class})
+public interface AppComponent {
+    UserService userService();
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This example shows a Dagger module with provider methods. The @Singleton annotation on the Database provider ensures only one instance is created and reused. The dependency graph is clear: UserService depends on UserRepository, which depends on Database. Dagger manages this graph automatically.</p>
+            </div>
         </div>
         
         <div class="video-container">
             <iframe class="wistia_embed" title="Sprint 14 Dependency Injection 1 Video" src="https://fast.wistia.net/embed/iframe/n0006sxhpc" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div style="padding: 15px; background-color: #2a303c; border-radius: 4px; margin-top: -15px;">
+                <h3>Video Content: Sprint 14 Dependency Injection 1 Overview</h3>
+                <p style="color: #b3b3b3;">This video provides a comprehensive overview of the Dependency Injection concepts covered in this module, bringing together all the key points from previous videos.</p>
+                <div style="background-color: #1a1d23; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <pre style="color: #b3b3b3; margin: 0; white-space: pre; tab-size: 4; font-family: monospace; overflow-x: auto;">
+// Practical application - full Dagger setup
+// Service layer with constructor injection
+public class OrderService {
+    private final OrderRepository orderRepository;
+    private final PaymentService paymentService;
+    private final NotificationService notificationService;
+    
+    @Inject // Tells Dagger to inject dependencies
+    public OrderService(OrderRepository orderRepository,
+                       PaymentService paymentService,
+                       NotificationService notificationService) {
+        this.orderRepository = orderRepository;
+        this.paymentService = paymentService;
+        this.notificationService = notificationService;
+    }
+    
+    public void processOrder(Order order) {
+        orderRepository.save(order);
+        paymentService.processPayment(order.getPayment());
+        notificationService.sendOrderConfirmation(order);
+    }
+}
+
+// Component that brings everything together
+@Singleton
+@Component(modules = {RepositoryModule.class, ServiceModule.class})
+public interface ApplicationComponent {
+    OrderService orderService();
+}</pre>
+                </div>
+                <p style="color: #b3b3b3; margin-top: 10px;">This comprehensive example demonstrates a complete Dagger setup with constructor injection using @Inject. The OrderService has multiple dependencies that are automatically provided by Dagger. The component interface combines multiple modules to form the complete dependency graph.</p>
+            </div>
         </div>
 
         <div class="resources">

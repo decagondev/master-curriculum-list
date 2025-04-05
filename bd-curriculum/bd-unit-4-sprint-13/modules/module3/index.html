@@ -119,6 +119,12 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
+                <li>Implement and annotate a Java POJO that represents any item from a provided DynamoDB table</li>
+                <li>Implement and annotate a Java POJO that represents any item from a provided DynamoDB table, where the names of some of its fields differ from the corresponding names of attributes of the DynamoDB table</li>
+                <li>Implement functionality that retrieves a unique item by partition key from a provided DynamoDB table</li>
+                <li>Implement functionality that retrieves a unique item by partition and sort key from a provided DynamoDB table</li>
+                <li>Implement functionality that creates an item in a provided DynamoDB table</li>
+                <li>Implement functionality that modifies an existing item in a provided DynamoDB table</li>
                 <li>Master the techniques for writing and updating data in DynamoDB</li>
                 <li>Understand HTTP fundamentals including methods, status codes, and headers</li>
                 <li>Learn how to implement create and update operations using DynamoDB</li>
@@ -131,11 +137,258 @@
             <h2>DynamoDB Saving</h2>
             <iframe class="wistia_embed" title="DynamoDB Saving" src="https://fast.wistia.net/embed/iframe/9bcog3yfrj" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
             
+            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">Writing Data to DynamoDB</h3>
+                <p>The DynamoDB Enhanced Client provides several operations for creating and updating items in DynamoDB tables:</p>
+                <h4 style="color: #ffffff; margin-top: 15px;">Creating New Items</h4>
+                <p>To add a new item to a DynamoDB table:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+// Create a new MusicItem instance<br>
+MusicItem newSong = new MusicItem();<br>
+newSong.setArtist("Imagine Dragons");<br>
+newSong.setSongTitle("Radioactive");<br>
+newSong.setAlbumTitle("Night Visions");<br>
+newSong.setYearReleased(2012);<br>
+newSong.setGenres(new HashSet&lt;&gt;(Arrays.asList("Alternative Rock", "Indie Rock")));<br>
+<br>
+// Save the item to DynamoDB<br>
+musicTable.putItem(newSong);<br>
+System.out.println("Added new song: " + newSong.getSongTitle() + " by " + newSong.getArtist());
+                </code>
+                <p>The <code>putItem</code> method will overwrite any existing item with the same key, so be careful when using it on items that might already exist.</p>
+                <h4 style="color: #ffffff; margin-top: 15px;">Updating Existing Items</h4>
+                <p>There are two main approaches to updating items:</p>
+                <ol>
+                    <li><strong>Complete Replacement</strong> - Using <code>putItem</code> to replace the entire item</li>
+                    <li><strong>Partial Update</strong> - Using <code>updateItem</code> to modify specific attributes</li>
+                </ol>
+                <p>For partial updates, you can use the <code>UpdateItemEnhancedRequest</code>:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+// Create a key for the item to update<br>
+Key key = Key.builder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.partitionValue("Imagine Dragons")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.sortValue("Radioactive")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+<br>
+// Define the update expression<br>
+UpdateItemEnhancedRequest&lt;MusicItem&gt; updateRequest = UpdateItemEnhancedRequest<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.builder(MusicItem.class)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.key(key)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.updateExpression(Expression.builder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.expression("SET yearReleased = :year, genres = :genres")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.expressionValues(singletonMap(":year", AttributeValue.builder().n("2013").build()))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.expressionValues(singletonMap(":genres", AttributeValue.builder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.ss(Arrays.asList("Alternative Rock", "Electronic Rock"))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.build()))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.build())<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+<br>
+// Execute the update<br>
+musicTable.updateItem(updateRequest);
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">Conditional Writes</h4>
+                <p>DynamoDB supports conditional writes to ensure that operations only proceed if certain conditions are met:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+// Create a new song, but only if it doesn't already exist<br>
+PutItemEnhancedRequest&lt;MusicItem&gt; putRequest = PutItemEnhancedRequest<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.builder(MusicItem.class)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.item(newSong)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.conditionExpression(Expression.builder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.expression("attribute_not_exists(artist) AND attribute_not_exists(songTitle)")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.build())<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+<br>
+try {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;musicTable.putItem(putRequest);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Item added successfully");<br>
+} catch (ConditionalCheckFailedException e) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Song already exists. Cannot overwrite.");<br>
+}
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">Atomic Counters</h4>
+                <p>For numeric attributes that need to be incremented or decremented:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+// Increment the play count for a song<br>
+UpdateItemEnhancedRequest&lt;MusicItem&gt; updateCounter = UpdateItemEnhancedRequest<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.builder(MusicItem.class)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.key(key)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.updateExpression(Expression.builder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.expression("SET playCount = if_not_exists(playCount, :zero) + :increment")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.expressionValues(Map.of(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;":zero", AttributeValue.builder().n("0").build(),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;":increment", AttributeValue.builder().n("1").build()))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.build())<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+<br>
+musicTable.updateItem(updateCounter);
+                </code>
+                <p>These write operations form the basis of CRUD functionality with DynamoDB, enabling your applications to create and modify data as needed.</p>
+            </div>
+            
             <h2>Introduction to RESTful APIs</h2>
             <iframe class="wistia_embed" title="Introduction to RESTful APIs and Supporting Technologies Video" src="https://fast.wistia.net/embed/iframe/aibsbfxs03" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
             
+            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">HTTP and RESTful API Fundamentals</h3>
+                <p>HTTP (Hypertext Transfer Protocol) is the foundation of data communication on the web, and RESTful APIs are built on top of HTTP to provide standardized interfaces for systems to communicate.</p>
+                <h4 style="color: #ffffff; margin-top: 15px;">Key HTTP Concepts</h4>
+                <ul>
+                    <li><strong>IP Address</strong> - Numerical designation assigned to each device connected to a network (e.g., 192.168.1.1)</li>
+                    <li><strong>Domain Name Server (DNS)</strong> - System that translates human-readable domain names to IP addresses</li>
+                    <li><strong>Ports</strong> - Endpoints for communication within a host (e.g., 80 for HTTP, 443 for HTTPS)</li>
+                    <li><strong>URL (Uniform Resource Locator)</strong> - Complete address to a resource on the web</li>
+                </ul>
+                <p>A URL consists of several components:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+https://api.example.com:443/resources/123?filter=active<br>
+|      |               |   |         |<br>
+|      |               |   |         └── Query parameters<br>
+|      |               |   └── Resource path/endpoint<br>
+|      |               └── Port<br>
+|      └── Domain name (FQDN)<br>
+└── Protocol
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">RESTful APIs</h4>
+                <p>REST (Representational State Transfer) is an architectural style for designing networked applications. RESTful APIs use HTTP methods explicitly and follow a stateless client-server model.</p>
+                <p>A RESTful API is an interface that allows different systems to communicate using HTTP methods to perform operations on resources. Key characteristics include:</p>
+                <ul>
+                    <li><strong>Statelessness</strong> - Each request contains all information needed to process it</li>
+                    <li><strong>Resource-based</strong> - Resources are identified by URLs</li>
+                    <li><strong>Standard HTTP methods</strong> - Used for operations (GET, POST, PUT, DELETE)</li>
+                    <li><strong>Representation</strong> - Resources can be represented in different formats (JSON, XML)</li>
+                </ul>
+                <h4 style="color: #ffffff; margin-top: 15px;">HTTP Methods and Database Operations</h4>
+                <p>There's a natural mapping between HTTP methods and database CRUD operations:</p>
+                <table style="width: 100%; margin: 15px 0; border-collapse: collapse;">
+                    <tr style="background-color: #2a303c;">
+                        <th style="padding: 8px; text-align: left; border: 1px solid #333a47;">HTTP Method</th>
+                        <th style="padding: 8px; text-align: left; border: 1px solid #333a47;">Database Operation</th>
+                        <th style="padding: 8px; text-align: left; border: 1px solid #333a47;">Description</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #333a47;">GET</td>
+                        <td style="padding: 8px; border: 1px solid #333a47;">Read</td>
+                        <td style="padding: 8px; border: 1px solid #333a47;">Retrieve resources</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #333a47;">POST</td>
+                        <td style="padding: 8px; border: 1px solid #333a47;">Create</td>
+                        <td style="padding: 8px; border: 1px solid #333a47;">Create new resources</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #333a47;">PUT</td>
+                        <td style="padding: 8px; border: 1px solid #333a47;">Update</td>
+                        <td style="padding: 8px; border: 1px solid #333a47;">Update existing resources</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #333a47;">DELETE</td>
+                        <td style="padding: 8px; border: 1px solid #333a47;">Delete</td>
+                        <td style="padding: 8px; border: 1px solid #333a47;">Remove resources</td>
+                    </tr>
+                </table>
+                <p>This mapping helps design intuitive APIs that follow web standards and are easy to understand for developers.</p>
+            </div>
+            
             <h2>Writing to DynamoDB + HTTP Overview</h2>
             <iframe class="wistia_embed" title="Sprint 13 Writing to DynamoDB + HTTP Video" src="https://fast.wistia.net/embed/iframe/ifghu9qliy" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            
+            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">Combining DynamoDB and HTTP</h3>
+                <p>Building web services often involves connecting RESTful APIs with database operations. Here's how you might structure a Java application that uses both DynamoDB and HTTP:</p>
+                <h4 style="color: #ffffff; margin-top: 15px;">Architecture Overview</h4>
+                <p>A typical web service architecture includes:</p>
+                <ol>
+                    <li><strong>API Layer</strong> - Handles HTTP requests and responses</li>
+                    <li><strong>Service Layer</strong> - Contains business logic</li>
+                    <li><strong>Data Access Layer</strong> - Interfaces with DynamoDB</li>
+                </ol>
+                <p>The flow of data typically follows this pattern:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+HTTP Request → API Layer → Service Layer → Data Access Layer → DynamoDB<br>
+HTTP Response ← API Layer ← Service Layer ← Data Access Layer ← DynamoDB
+                </code>
+                <h4 style="color: #ffffff; margin-top: 15px;">Example: RESTful API with DynamoDB</h4>
+                <p>Here's a conceptual example of how a music library API might be structured:</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+// API Layer (Controller)<br>
+@RestController<br>
+@RequestMapping("/api/songs")<br>
+public class SongController {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;private final SongService songService;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;@Autowired<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public SongController(SongService songService) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.songService = songService;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;@GetMapping("/{artist}/{title}")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public ResponseEntity&lt;SongResponse&gt; getSong(@PathVariable String artist, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@PathVariable String title) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MusicItem song = songService.getSong(artist, title);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ResponseEntity.ok(convertToResponse(song));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;@PostMapping<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public ResponseEntity&lt;SongResponse&gt; createSong(@RequestBody SongRequest request) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MusicItem song = songService.createSong(convertToModel(request));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ResponseEntity.status(HttpStatus.CREATED).body(convertToResponse(song));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Other endpoints: PUT, DELETE, etc.<br>
+}<br>
+<br>
+// Service Layer<br>
+@Service<br>
+public class SongService {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;private final SongRepository songRepository;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;@Autowired<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public SongService(SongRepository songRepository) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.songRepository = songRepository;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public MusicItem getSong(String artist, String title) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return songRepository.findByArtistAndTitle(artist, title)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.orElseThrow(() -> new ResourceNotFoundException("Song not found"));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public MusicItem createSong(MusicItem song) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Validation logic<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return songRepository.save(song);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Other service methods<br>
+}<br>
+<br>
+// Data Access Layer<br>
+@Repository<br>
+public class SongRepository {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;private final DynamoDbTable&lt;MusicItem&gt; musicTable;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public SongRepository(DynamoDbEnhancedClient enhancedClient) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.musicTable = enhancedClient.table("Music", TableSchema.fromBean(MusicItem.class));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public Optional&lt;MusicItem&gt; findByArtistAndTitle(String artist, String title) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Key key = Key.builder()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.partitionValue(artist)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.sortValue(title)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MusicItem item = musicTable.getItem(key);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return Optional.ofNullable(item);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public MusicItem save(MusicItem song) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;musicTable.putItem(song);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return song;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Other repository methods<br>
+}
+                </code>
+                <p>This layered approach separates concerns and makes your code more maintainable and testable. The API layer handles HTTP-specific concerns, the service layer contains business logic, and the repository layer deals with DynamoDB operations.</p>
+            </div>
         </div>
 
         <div class="resources">

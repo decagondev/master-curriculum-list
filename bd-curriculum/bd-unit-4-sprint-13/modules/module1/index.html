@@ -119,6 +119,16 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
+                <li>Outline the role a database serves in an application</li>
+                <li>Outline some of the benefits of distributed over non-distributed data stores</li>
+                <li>Identify a unique item in a provided DynamoDB table by its partition key</li>
+                <li>Identify a unique item in a provided DynamoDB table by its partition and sort keys</li>
+                <li>Identify whether a given Java type should be represented by a DynamoDB Number</li>
+                <li>Identify whether a given Java type should be represented by a DynamoDB String</li>
+                <li>Identify whether a given Java type should be represented by a DynamoDB Boolean</li>
+                <li>Identify whether a given Java type should be represented by a DynamoDB NumberSet</li>
+                <li>Identify whether a given Java type should be represented by a DynamoDB StringSet</li>
+                <li>Outline the cases in which each of create, read, update, and delete operations of a database is used</li>
                 <li>Understand the core concepts of NoSQL databases</li>
                 <li>Learn about DynamoDB's data model, including tables, items, and attributes</li>
                 <li>Master the use of partition keys and sort keys for efficient data access</li>
@@ -131,14 +141,135 @@
             <h2>Introduction to Databases</h2>
             <iframe class="wistia_embed" title="Introduction to Databases" src="https://fast.wistia.net/embed/iframe/oce48k57cw" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
             
+            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">Key Concepts</h3>
+                <p>A database is an organized collection of data, stored and accessed electronically from a computer system. Databases are essential for storing and retrieving data reliably and efficiently. They serve critical roles in applications by:</p>
+                <ul>
+                    <li>Providing a structured way to store and organize large amounts of data</li>
+                    <li>Enabling efficient retrieval of information based on specific attributes</li>
+                    <li>Ensuring data consistency and integrity across applications</li>
+                    <li>Supporting concurrent access by multiple users</li>
+                </ul>
+                <p>In DynamoDB, data is organized into tables, items (similar to rows in relational databases), and attributes (similar to columns). Each item in a DynamoDB table can be uniquely identified by its primary key.</p>
+                <p>Consider a practical example: if you organized 30 pairs of shoes in your closet, you would create a system where each shoe has attributes like color, style, and occasion. Similarly, databases organize data with attributes that allow for easy retrieval based on specific criteria.</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+// Example of data representation in a DynamoDB table<br>
+Table: ShoeOrganizer<br>
+{<br>
+&nbsp;&nbsp;"shoe_id": "SN01",  // Partition key<br>
+&nbsp;&nbsp;"cubby_location": 1,<br>
+&nbsp;&nbsp;"color": "grey",<br>
+&nbsp;&nbsp;"style": "sneaker",<br>
+&nbsp;&nbsp;"occasion": "athletic"<br>
+}
+                </code>
+                <p>Distributed database systems like DynamoDB offer additional benefits:</p>
+                <ul>
+                    <li>Ability to store much larger datasets across multiple machines</li>
+                    <li>Higher availability with geographically distributed data storage</li>
+                    <li>Increased fault tolerance - if one server fails, others can handle requests</li>
+                    <li>Better support for concurrent requests through distributing load</li>
+                </ul>
+            </div>
+            
             <h2>Partition and Sort Keys</h2>
             <iframe class="wistia_embed" title="Partition and Sort Keys" src="https://fast.wistia.net/embed/iframe/ep4gourt0y" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            
+            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">Primary Keys in DynamoDB</h3>
+                <p>Primary keys in DynamoDB uniquely identify each item in a table. DynamoDB supports two types of primary keys:</p>
+                <ol>
+                    <li><strong>Partition Key Only</strong> - A simple primary key with a single attribute called the partition key</li>
+                    <li><strong>Composite Primary Key</strong> - A composite primary key consisting of a partition key and a sort key</li>
+                </ol>
+                <p>The <strong>partition key</strong> determines the partition where your data is stored. It's used by DynamoDB's internal hash function to distribute data across partitions for scalability. For example, in a shoe table, "shoe_id" might be a good partition key.</p>
+                <p>The <strong>sort key</strong> allows you to organize items with the same partition key. This is especially useful for related items that need to be retrieved together.</p>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+// Example of a table with composite primary key<br>
+Table: MusicLibrary<br>
+{<br>
+&nbsp;&nbsp;"artist": "Black Eyed Peas",  // Partition key<br>
+&nbsp;&nbsp;"song_title": "I Gotta Feeling",  // Sort key<br>
+&nbsp;&nbsp;"genre": "pop",<br>
+&nbsp;&nbsp;"year": 2009<br>
+}<br>
+<br>
+{<br>
+&nbsp;&nbsp;"artist": "Black Eyed Peas",  // Same partition key<br>
+&nbsp;&nbsp;"song_title": "Pump It",  // Different sort key<br>
+&nbsp;&nbsp;"genre": "pop",<br>
+&nbsp;&nbsp;"year": 2005<br>
+}
+                </code>
+                <p>With a composite key, multiple items can share the same partition key (artist), but each must have a unique sort key (song_title) within that partition. This design is ideal when:</p>
+                <ul>
+                    <li>Items naturally group together (like songs by the same artist)</li>
+                    <li>You need to query for ranges of related items</li>
+                    <li>You want to organize items within their natural group</li>
+                </ul>
+            </div>
             
             <h2>DynamoDB Scalar and Set Types</h2>
             <iframe class="wistia_embed" title="DynamoDB Scalar and Set Types" src="https://fast.wistia.net/embed/iframe/fdtyxomlcn" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
             
+            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">DynamoDB Data Types</h3>
+                <p>DynamoDB supports several data types for attributes, broadly categorized as scalar types and sets:</p>
+                <h4 style="color: #ffffff; margin-top: 15px;">Scalar Types (Single Values)</h4>
+                <ul>
+                    <li><strong>String (S)</strong> - Text or alphanumeric data. Maps to Java's <code>String</code> type.</li>
+                    <li><strong>Number (N)</strong> - Numeric data. Maps to Java's numeric types like <code>Integer</code>, <code>Long</code>, <code>Double</code>, etc.</li>
+                    <li><strong>Boolean (BOOL)</strong> - True/false values. Maps to Java's <code>boolean</code> or <code>Boolean</code> types.</li>
+                </ul>
+                <h4 style="color: #ffffff; margin-top: 15px;">Set Types (Multiple Unique Values)</h4>
+                <ul>
+                    <li><strong>String Set (SS)</strong> - A collection of unique String values. Maps to Java's <code>Set&lt;String&gt;</code>.</li>
+                    <li><strong>Number Set (NS)</strong> - A collection of unique Number values. Maps to Java's <code>Set&lt;Number&gt;</code> types.</li>
+                </ul>
+                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+// Example of different DynamoDB data types<br>
+{<br>
+&nbsp;&nbsp;"MemberId": "M123",  // String type (S)<br>
+&nbsp;&nbsp;"Active": true,  // Boolean type (BOOL)<br>
+&nbsp;&nbsp;"Age": 28,  // Number type (N)<br>
+&nbsp;&nbsp;"LastName": "Smith",  // String type (S)<br>
+&nbsp;&nbsp;"Committees": ["Finance", "Marketing"],  // String Set type (SS)<br>
+&nbsp;&nbsp;"YearsActive": [2018, 2019, 2020]  // Number Set type (NS)<br>
+}
+                </code>
+                <p>When working with Java applications and DynamoDB:</p>
+                <ul>
+                    <li>Java <code>String</code> should be stored as DynamoDB String (S)</li>
+                    <li>Java numeric types (<code>int</code>, <code>Integer</code>, <code>long</code>, <code>double</code>, etc.) should be stored as DynamoDB Number (N)</li>
+                    <li>Java <code>boolean</code>/<code>Boolean</code> should be stored as DynamoDB Boolean (BOOL)</li>
+                    <li>Java <code>Set&lt;String&gt;</code> should be stored as DynamoDB String Set (SS)</li>
+                    <li>Java <code>Set&lt;Integer&gt;</code>, <code>Set&lt;Double&gt;</code>, etc. should be stored as DynamoDB Number Set (NS)</li>
+                </ul>
+                <p>Understanding these mappings is crucial when designing your data model and implementing Java classes that interact with DynamoDB.</p>
+            </div>
+            
             <h2>Sprint 1 Intro to DynamoDB</h2>
             <iframe class="wistia_embed" title="Sprint 1 Intro to DynamoDB Video" src="https://fast.wistia.net/embed/iframe/l8fttjluvk" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            
+            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
+                <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">DynamoDB Operations and Best Practices</h3>
+                <p>DynamoDB supports the standard database CRUD operations (Create, Read, Update, Delete):</p>
+                <ul>
+                    <li><strong>Create</strong> - Adding new items to a table</li>
+                    <li><strong>Read</strong> - Retrieving items from a table using queries or scans</li>
+                    <li><strong>Update</strong> - Modifying existing items in a table</li>
+                    <li><strong>Delete</strong> - Removing items from a table</li>
+                </ul>
+                <p>When designing DynamoDB tables, consider these best practices:</p>
+                <ul>
+                    <li>Choose partition keys with high cardinality (many distinct values) for better distribution</li>
+                    <li>Keep items small for better performance and lower costs</li>
+                    <li>Use composite primary keys when items naturally group together</li>
+                    <li>Design your access patterns first, then build tables to support those patterns</li>
+                    <li>Use global secondary indexes (GSIs) for flexible querying beyond the primary key</li>
+                </ul>
+                <p>Remember that DynamoDB is a NoSQL database designed for high-scale, performance-intensive applications. Its design principles differ from traditional relational databases like MySQL or PostgreSQL.</p>
+            </div>
         </div>
 
         <div class="resources">
