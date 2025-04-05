@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Module 3: Collections Framework - BD Unit 2 Sprint 8</title>
+    <title>Module 3: Introduction to JSON - BD Unit 2 Sprint 8</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -108,34 +108,151 @@
     <div class="container">
         <a href="../../index.html" class="back-button">← Back to Home</a>
         
-        <h1>Module 3: Collections Framework</h1>
+        <h1>Module 3: Introduction to JSON</h1>
         
         <div class="module">
             <h2>Module Overview</h2>
-            <p>Deep dive into the Java Collections Framework and its components.</p>
+            <p>Learn about JSON (JavaScript Object Notation), a lightweight data interchange format that is easy for humans to read and write and easy for machines to parse and generate. Understand how to work with JSON in Java applications for data serialization and API communication.</p>
         </div>
         
         <div class="video-container">
-            <iframe class="wistia_embed" title="Collections Framework Video" src="https://fast.wistia.net/embed/iframe/92r4dqw9qx" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <iframe class="wistia_embed" title="JSON Introduction Video" src="https://fast.wistia.net/embed/iframe/f29ezhp999" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand the Java Collections Framework architecture</li>
-                <li>Learn about collection interfaces and their implementations</li>
-                <li>Explore collection utility methods and algorithms</li>
-                <li>Master working with collections in real-world scenarios</li>
+                <li>Understand what JSON is and why we use it over other data formats like XML</li>
+                <li>See API communication with JSON responses</li>
+                <li>Gain a high-level overview of using GSON as a serialization library</li>
+                <li>Understand fetching JSON data from an API, deserializing it with GSON, and displaying a formatted message in the terminal</li>
             </ul>
+        </section>
+
+        <section>
+            <h2>JSON Fundamentals</h2>
+            <p style="color: #b3b3b3;">JSON is a data format used to store and exchange data in a human-readable format. It's a text format that is language-independent but uses conventions familiar to programmers of the C-family of languages. JSON is commonly used for transmitting data in web applications and APIs.</p>
+            
+            <h3 style="margin-top: 15px;">JSON Data Types</h3>
+            <p style="color: #b3b3b3;">JSON supports the following data types:</p>
+            <ul style="color: #b3b3b3; padding-left: 20px;">
+                <li>Numbers (integers or floating-point)</li>
+                <li>Strings (enclosed in double quotes)</li>
+                <li>Booleans (true or false)</li>
+                <li>null</li>
+                <li>Arrays (ordered list of values)</li>
+                <li>Objects (unordered collection of key-value pairs)</li>
+            </ul>
+            
+            <h3 style="margin-top: 15px;">Example JSON Document</h3>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; color: #e0e0e0; overflow-x: auto;">
+{
+  "name": "John Doe",
+  "age": 43,
+  "isEmployed": true,
+  "address": {
+    "street": "123 Main St",
+    "city": "Anytown",
+    "state": "CA"
+  },
+  "children": [
+    {
+      "name": "Jane Doe",
+      "age": 12,
+      "children": null
+    },
+    {
+      "name": "Jack Doe",
+      "age": 10,
+      "children": null
+    }
+  ]
+}</pre>
+
+            <h3 style="margin-top: 15px;">Working with JSON in Java</h3>
+            <p style="color: #b3b3b3;">Java provides several libraries for working with JSON. One of the most popular is Gson, developed by Google. Here's how you might use Gson to serialize and deserialize JSON:</p>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; color: #e0e0e0; overflow-x: auto;">
+// Add Gson dependency to your project
+// implementation 'com.google.code.gson:gson:2.8.9'
+
+import com.google.gson.Gson;
+
+// Class to represent a person
+class Person {
+    private String name;
+    private int age;
+    private boolean isEmployed;
+    
+    // Constructor, getters, and setters...
+}
+
+// Serializing an object to JSON
+Person person = new Person("John Doe", 43, true);
+Gson gson = new Gson();
+String json = gson.toJson(person);
+System.out.println(json);
+// Output: {"name":"John Doe","age":43,"isEmployed":true}
+
+// Deserializing JSON to an object
+String json = "{\"name\":\"John Doe\",\"age\":43,\"isEmployed\":true}";
+Person person = gson.fromJson(json, Person.class);
+System.out.println(person.getName()); // John Doe</pre>
+
+            <h3 style="margin-top: 15px;">Fetching JSON from an API</h3>
+            <p style="color: #b3b3b3;">Here's an example of how to fetch JSON data from an API and process it with Gson:</p>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; color: #e0e0e0; overflow-x: auto;">
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+public class ApiExample {
+    public static void main(String[] args) {
+        try {
+            // Create URL object
+            URL url = new URL("https://api.example.com/data");
+            
+            // Open connection
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            
+            // Read response
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+            
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+            
+            // Parse JSON response
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(response.toString(), JsonObject.class);
+            
+            // Extract and use data
+            String name = jsonObject.get("name").getAsString();
+            int age = jsonObject.get("age").getAsInt();
+            
+            System.out.println("Name: " + name + ", Age: " + age);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}</pre>
         </section>
 
         <div class="resources">
             <h2>Resources</h2>
             <ul>
-                <li><a href="https://github.com/BloomTech-Labs/java-collections-framework-guided-project" target="_blank" rel="noopener">Module 3 Guided Project Repository</a></li>
-                <li><a href="https://github.com/BloomTech-Labs/java-collections-framework-guided-project-solution" target="_blank" rel="noopener">Module 3 Solution Repository</a></li>
-                <li><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Collections.html" target="_blank" rel="noopener">Java Collections Framework Documentation</a></li>
-                <li><a href="https://www.baeldung.com/java-collections-framework" target="_blank" rel="noopener">Guide to Collections Framework - Baeldung</a></li>
+                <li><a href="https://github.com/BloomTech-Labs/java-json-guided-project" target="_blank" rel="noopener">Module 3 Guided Project Repository</a></li>
+                <li><a href="https://github.com/BloomTech-Labs/java-json-guided-project-solution" target="_blank" rel="noopener">Module 3 Solution Repository</a></li>
+                <li><a href="https://www.json.org/json-en.html" target="_blank" rel="noopener">JSON.org - Official JSON Documentation</a></li>
+                <li><a href="https://github.com/google/gson" target="_blank" rel="noopener">Gson GitHub Repository</a></li>
+                <li><a href="https://www.baeldung.com/gson-tutorial" target="_blank" rel="noopener">Introduction to Gson - Baeldung</a></li>
             </ul>
         </div>
     </div>

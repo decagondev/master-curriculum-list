@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Module 1: Advanced Collections - BD Unit 2 Sprint 8</title>
+    <title>Module 1: Design Pattern: Observer and State - BD Unit 2 Sprint 8</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -108,34 +108,119 @@
     <div class="container">
         <a href="../../index.html" class="back-button">← Back to Home</a>
         
-        <h1>Module 1: Advanced Collections</h1>
+        <h1>Module 1: Design Pattern: Observer and State</h1>
         
         <div class="module">
             <h2>Module Overview</h2>
-            <p>Explore advanced collection types and their use cases in Java applications.</p>
+            <p>Learn about the Observer design pattern and state management in Java. The Observer pattern allows objects to notify other objects about changes in their state, which is valuable for building loosely coupled systems.</p>
         </div>
         
         <div class="video-container">
-            <iframe class="wistia_embed" title="Advanced Collections Video" src="https://fast.wistia.net/embed/iframe/f29ezhp999" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <iframe class="wistia_embed" title="Observer Pattern Video" src="https://fast.wistia.net/embed/iframe/f29ezhp999" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand advanced collection types like Set, Map, and Queue</li>
-                <li>Learn about specialized collections and their use cases</li>
-                <li>Explore collection interfaces and their implementations</li>
-                <li>Implement efficient data structures using collections</li>
+                <li>Understand the Observer Pattern
+                    <ul>
+                        <li>Understand Observers</li>
+                        <li>Understand Sources</li>
+                        <li>Understand when and how sources interact with and update observers</li>
+                    </ul>
+                </li>
+                <li>Be able to implement an observer pattern in an existing application</li>
+                <li>Understand how the observer pattern helps make fewer costly calls to a database</li>
+                <li>Understand real life examples of when you would want to use an observer pattern</li>
+                <li>Understand the utility of defining and implementing an interface</li>
             </ul>
+        </section>
+
+        <section>
+            <h2>About the Observer Pattern</h2>
+            <p style="color: #b3b3b3;">The Observer design pattern defines a dependency among cooperating objects so that when one object's state changes, all dependent objects are notified automatically. This pattern is commonly used in event handling systems, social media notifications, and many other applications where loose coupling between components is important.</p>
+            
+            <h3 style="margin-top: 15px;">Elements of the Observer Pattern</h3>
+            <p style="color: #b3b3b3;">The Observer pattern consists of four distinct elements:</p>
+            <ul style="color: #b3b3b3; padding-left: 20px;">
+                <li><strong>Subject</strong> - An interface or abstract class that defines methods for attaching, detaching, and notifying observers</li>
+                <li><strong>Observer</strong> - An interface or abstract class with an update method that gets called when the subject's state changes</li>
+                <li><strong>Concrete Subject</strong> - A class that implements the Subject interface and maintains a list of observers</li>
+                <li><strong>Concrete Observer</strong> - A class that implements the Observer interface and registers with a Concrete Subject to receive updates</li>
+            </ul>
+            
+            <h3 style="margin-top: 15px;">Example Implementation</h3>
+            <p style="color: #b3b3b3;">Here's how you might implement a simple Observer pattern in Java:</p>
+            <pre style="background-color: #333a47; padding: 15px; border-radius: 4px; color: #e0e0e0; overflow-x: auto;">
+// Subject interface
+public interface Subject {
+    void attach(Observer observer);
+    void detach(Observer observer);
+    void notifyObservers();
+}
+
+// Observer interface
+public interface Observer {
+    void update();
+}
+
+// Concrete Subject
+public class ConcreteSubject implements Subject {
+    private List&lt;Observer&gt; observers = new ArrayList&lt;&gt;();
+    private String state;
+    
+    public void setState(String state) {
+        this.state = state;
+        notifyObservers();
+    }
+    
+    public String getState() {
+        return state;
+    }
+    
+    @Override
+    public void attach(Observer observer) {
+        observers.add(observer);
+    }
+    
+    @Override
+    public void detach(Observer observer) {
+        observers.remove(observer);
+    }
+    
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update();
+        }
+    }
+}
+
+// Concrete Observer
+public class ConcreteObserver implements Observer {
+    private ConcreteSubject subject;
+    private String observerState;
+    
+    public ConcreteObserver(ConcreteSubject subject) {
+        this.subject = subject;
+        subject.attach(this);
+    }
+    
+    @Override
+    public void update() {
+        observerState = subject.getState();
+        System.out.println("Observer state updated to: " + observerState);
+    }
+}</pre>
         </section>
 
         <div class="resources">
             <h2>Resources</h2>
             <ul>
-                <li><a href="https://github.com/BloomTech-Labs/java-advanced-collections-guided-project" target="_blank" rel="noopener">Module 1 Guided Project Repository</a></li>
-                <li><a href="https://github.com/BloomTech-Labs/java-advanced-collections-guided-project-solution" target="_blank" rel="noopener">Module 1 Solution Repository</a></li>
-                <li><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Collections.html" target="_blank" rel="noopener">Java Collections Framework Documentation</a></li>
-                <li><a href="https://www.baeldung.com/java-collections" target="_blank" rel="noopener">Guide to Java Collections - Baeldung</a></li>
+                <li><a href="https://github.com/BloomTech-Labs/java-observer-pattern-guided-project" target="_blank" rel="noopener">Module 1 Guided Project Repository</a></li>
+                <li><a href="https://github.com/BloomTech-Labs/java-observer-pattern-guided-project-solution" target="_blank" rel="noopener">Module 1 Solution Repository</a></li>
+                <li><a href="https://refactoring.guru/design-patterns/observer" target="_blank" rel="noopener">Observer Pattern - Refactoring Guru</a></li>
+                <li><a href="https://www.baeldung.com/java-observer-pattern" target="_blank" rel="noopener">Observer Pattern in Java - Baeldung</a></li>
             </ul>
         </div>
     </div>
