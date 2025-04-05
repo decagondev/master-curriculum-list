@@ -122,12 +122,79 @@
         <section>
             <h2>Learning Objectives</h2>
             <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Review mocking fundamentals and advanced techniques</li>
-                <li>Apply mocks in Test Driven Development workflows</li>
-                <li>Learn strategies for testing complex interactions between components</li>
-                <li>Practice using argument captors and verifying mock interactions</li>
-                <li>Develop skills for effective test isolation using Mockito</li>
+                <li>Understand what a mocked object is and its purpose in testing</li>
+                <li>Know how to work with Mockito to create and configure mocks
+                    <ul>
+                        <li>Setting up mock objects</li>
+                        <li>Configuring return values and behaviors</li>
+                        <li>Capturing and validating arguments</li>
+                    </ul>
+                </li>
+                <li>Master techniques for working with mocks and controlling mock object behavior</li>
+                <li>Know how to verify that specific methods were called on a mocked object</li>
+                <li>Learn how to mock exceptions to test error handling</li>
+                <li>Understand the concept of a unit test and how mocking allows us to write unit tests that otherwise couldn't be written</li>
+                <li>Practice applying mocks in Test Driven Development workflows</li>
             </ul>
+        </section>
+
+        <section>
+            <h3>Code Example: Mocking with Mockito</h3>
+            <pre style="background-color: #2a303c; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// Basic mocking example
+@Test
+void shouldFetchUserAndSendNotification() {
+    // Arrange
+    UserRepository mockRepository = mock(UserRepository.class);
+    NotificationService mockNotificationService = mock(NotificationService.class);
+    
+    User testUser = new User("user123", "user@example.com");
+    when(mockRepository.findById("user123")).thenReturn(testUser);
+    
+    UserService userService = new UserService(mockRepository, mockNotificationService);
+    
+    // Act
+    userService.notifyUser("user123", "Hello!");
+    
+    // Assert
+    verify(mockRepository).findById("user123");
+    verify(mockNotificationService).sendEmail(testUser.getEmail(), "Hello!");
+}
+
+// Mocking exceptions
+@Test
+void shouldHandleUserNotFound() {
+    // Arrange
+    UserRepository mockRepository = mock(UserRepository.class);
+    when(mockRepository.findById("missing")).thenThrow(new UserNotFoundException());
+    
+    UserService userService = new UserService(mockRepository, mock(NotificationService.class));
+    
+    // Act & Assert
+    assertThrows(UserNotFoundException.class, () -> {
+        userService.notifyUser("missing", "Hello!");
+    });
+}
+
+// Using argument captors
+@Test
+void shouldCreateProperNotificationContent() {
+    // Arrange
+    NotificationService mockNotificationService = mock(NotificationService.class);
+    UserService userService = new UserService(mock(UserRepository.class), mockNotificationService);
+    
+    // Capture what gets passed to the notification service
+    ArgumentCaptor&lt;String&gt; contentCaptor = ArgumentCaptor.forClass(String.class);
+    
+    // Act
+    userService.sendSystemNotification("System maintenance");
+    
+    // Assert
+    verify(mockNotificationService).broadcast(contentCaptor.capture());
+    String capturedContent = contentCaptor.getValue();
+    assertTrue(capturedContent.contains("System maintenance"));
+    assertTrue(capturedContent.startsWith("[SYSTEM NOTIFICATION]"));
+}</pre>
         </section>
 
         <div class="resources">
