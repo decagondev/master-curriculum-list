@@ -169,6 +169,322 @@
                 <h3>Resources</h3>
                 <ul>
                     <li><a href="https://github.com/BloomTech-Labs/asylum-hrf-fe-starter/blob/main/tickets/3_thirdTicket.md" target="_blank">Access your third ticket here</a></li>
+                    <li><a href="https://github.com/BloomTech-Labs/asylum-hrf-fe-starter/blob/main/tickets/AUTH0-SETUP-GUIDE.md" target="_blank">Auth0 Setup Guide</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Auth0 Authentication Integration</h2>
+            <p>Your third ticket focuses on implementing authentication using Auth0. This popular identity management platform will enable you to add secure login functionality to your application.</p>
+            
+            <div class="video-container">
+                <h3>Ticket Objectives</h3>
+                <ul>
+                    <li>Integrate Auth0 microservice into the project</li>
+                    <li>Create a Profile Page that only appears when logged in</li>
+                    <li>Display user information on the Profile Page</li>
+                    <li>Implement Login/Logout functionality in the navigation</li>
+                </ul>
+            </div>
+
+            <h3>Setting Up Auth0</h3>
+            <p>The first step is to create an Auth0 account and configure your application:</p>
+            <ol class="steps">
+                <li>Create an Auth0 account and set up a Single Page Application
+                    <div class="code-block">
+<pre>// Key details you'll need from Auth0 dashboard:
+- Domain
+- Client ID
+- Callback URLs
+- Logout URLs
+- Web Origins</pre>
+                    </div>
+                </li>
+                <li>Install the Auth0 SDK in your project
+                    <div class="code-block">
+<pre>npm install @auth0/auth0-react
+# or
+yarn add @auth0/auth0-react</pre>
+                    </div>
+                </li>
+                <li>Configure the Auth0Provider component to wrap your application
+                    <div class="code-block">
+<pre>import { Auth0Provider } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router-dom';
+
+export const Auth0ProviderWithConfig = ({ children }) => {
+  const navigate = useNavigate();
+  const domain = import.meta.env.VITE_AUTH0_DOMAIN;
+  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+
+  const onRedirectCallback = (appState) => {
+    navigate(appState?.returnTo || window.location.pathname);
+  };
+
+  return (
+    &lt;Auth0Provider
+      domain={domain}
+      clientId={clientId}
+      authorizationParams={{
+        redirect_uri: window.location.origin
+      }}
+      onRedirectCallback={onRedirectCallback}
+    &gt;
+      {children}
+    &lt;/Auth0Provider&gt;
+  );
+};</pre>
+                    </div>
+                </li>
+                <li>Set up environment variables for your Auth0 configuration
+                    <div class="code-block">
+<pre># .env file
+VITE_AUTH0_DOMAIN=your-domain.auth0.com
+VITE_AUTH0_CLIENT_ID=your-client-id</pre>
+                    </div>
+                    <p>Note: When using Vite, environment variables must start with <code>VITE_</code> to be exposed to the client-side code.</p>
+                </li>
+            </ol>
+
+            <h3>Creating Login and Logout Components</h3>
+            <div class="code-block">
+<pre>import React from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+
+export const LoginButton = () => {
+  const { loginWithRedirect, isAuthenticated } = useAuth0();
+
+  return !isAuthenticated && (
+    &lt;button 
+      onClick={() => loginWithRedirect()}
+      className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
+    &gt;
+      Log In
+    &lt;/button&gt;
+  );
+};
+
+export const LogoutButton = () => {
+  const { logout, isAuthenticated } = useAuth0();
+
+  return isAuthenticated && (
+    &lt;button 
+      onClick={() => logout({ returnTo: window.location.origin })}
+      className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700 transition-colors"
+    &gt;
+      Log Out
+    &lt;/button&gt;
+  );
+};</pre>
+            </div>
+
+            <h3>Styling with Tailwind CSS</h3>
+            <p>Since your project is using Tailwind CSS, you can leverage its utility classes to style your Auth0 components. Here's how you might style the Profile page:</p>
+            <div class="code-block">
+<pre>import React from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+
+const Profile = () => {
+  const { user, isAuthenticated, isLoading } = useAuth0();
+
+  if (isLoading) {
+    return &lt;div className="flex justify-center items-center p-8"&gt;
+      &lt;div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"&gt;&lt;/div&gt;
+    &lt;/div&gt;;
+  }
+
+  return (
+    isAuthenticated && (
+      &lt;div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden my-4"&gt;
+        &lt;div className="flex items-center p-6 bg-gray-100"&gt;
+          &lt;img 
+            src={user.picture} 
+            alt={user.name} 
+            className="h-20 w-20 rounded-full object-cover mr-4 shadow"
+          /&gt;
+          &lt;h2 className="text-2xl font-semibold text-gray-800"&gt;{user.name}&lt;/h2&gt;
+        &lt;/div&gt;
+        &lt;div className="p-6 border-t border-gray-200"&gt;
+          &lt;p className="text-gray-700 mb-2"&gt;
+            &lt;span className="font-bold"&gt;Email:&lt;/span&gt; {user.email}
+          &lt;/p&gt;
+          {user.nickname && (
+            &lt;p className="text-gray-700 mb-2"&gt;
+              &lt;span className="font-bold"&gt;Nickname:&lt;/span&gt; {user.nickname}
+            &lt;/p&gt;
+          )}
+          {user.sub && (
+            &lt;p className="text-gray-700 mb-2"&gt;
+              &lt;span className="font-bold"&gt;Auth0 ID:&lt;/span&gt; 
+              &lt;span className="text-sm font-mono bg-gray-100 p-1 rounded"&gt;{user.sub}&lt;/span&gt;
+            &lt;/p&gt;
+          )}
+          {user.updated_at && (
+            &lt;p className="text-gray-700"&gt;
+              &lt;span className="font-bold"&gt;Last Updated:&lt;/span&gt; {new Date(user.updated_at).toLocaleDateString()}
+            &lt;/p&gt;
+          )}
+        &lt;/div&gt;
+      &lt;/div&gt;
+    )
+  );
+};</pre>
+            </div>
+
+            <p>For the navigation, you can style it with Tailwind like this:</p>
+            <div class="code-block">
+<pre>import { useAuth0 } from '@auth0/auth0-react';
+import { Link } from 'react-router-dom';
+import { LoginButton, LogoutButton } from './auth-buttons';
+
+const Navigation = () => {
+  const { isAuthenticated } = useAuth0();
+
+  return (
+    &lt;nav className="bg-gray-800 text-white p-4"&gt;
+      &lt;div className="container mx-auto flex justify-between items-center"&gt;
+        &lt;div className="text-xl font-bold"&gt;Your App&lt;/div&gt;
+        &lt;ul className="flex space-x-6"&gt;
+          &lt;li&gt;&lt;Link to="/" className="hover:text-blue-300 transition-colors"&gt;Home&lt;/Link&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;Link to="/about" className="hover:text-blue-300 transition-colors"&gt;About&lt;/Link&gt;&lt;/li&gt;
+          {isAuthenticated && (
+            &lt;li&gt;&lt;Link to="/profile" className="hover:text-blue-300 transition-colors"&gt;Profile&lt;/Link&gt;&lt;/li&gt;
+          )}
+          &lt;li&gt;
+            {isAuthenticated ? &lt;LogoutButton /&gt; : &lt;LoginButton /&gt;}
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+    &lt;/nav&gt;
+  );
+};</pre>
+            </div>
+
+            <h3>Building the Profile Page</h3>
+            <div class="code-block">
+<pre>import React from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+
+const Profile = () => {
+  const { user, isAuthenticated, isLoading } = useAuth0();
+
+  if (isLoading) {
+    return &lt;div&gt;Loading...&lt;/div&gt;;
+  }
+
+  return (
+    isAuthenticated && (
+      &lt;div className="profile-container"&gt;
+        &lt;div className="profile-header"&gt;
+          &lt;img src={user.picture} alt={user.name} /&gt;
+          &lt;h2&gt;{user.name}&lt;/h2&gt;
+        &lt;/div&gt;
+        &lt;div className="profile-details"&gt;
+          &lt;p&gt;&lt;strong&gt;Email:&lt;/strong&gt; {user.email}&lt;/p&gt;
+          {user.nickname && (
+            &lt;p&gt;&lt;strong&gt;Nickname:&lt;/strong&gt; {user.nickname}&lt;/p&gt;
+          )}
+          {user.sub && (
+            &lt;p&gt;&lt;strong&gt;Auth0 ID:&lt;/strong&gt; {user.sub}&lt;/p&gt;
+          )}
+          {user.updated_at && (
+            &lt;p&gt;&lt;strong&gt;Last Updated:&lt;/strong&gt; {new Date(user.updated_at).toLocaleDateString()}&lt;/p&gt;
+          )}
+        &lt;/div&gt;
+      &lt;/div&gt;
+    )
+  );
+};</pre>
+            </div>
+
+            <h3>Protecting Routes</h3>
+            <p>Create a wrapper component that only allows authenticated users to access certain routes:</p>
+            <div class="code-block">
+<pre>import { useAuth0 } from '@auth0/auth0-react';
+import { Navigate } from 'react-router-dom';
+
+export const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth0();
+
+  if (isLoading) {
+    return (
+      &lt;div className="flex justify-center items-center h-screen"&gt;
+        &lt;div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    );
+  }
+
+  return isAuthenticated ? children : &lt;Navigate to="/" replace /&gt;;
+};</pre>
+            </div>
+
+            <p>Use it in your route configuration:</p>
+            <div class="code-block">
+<pre>&lt;Routes&gt;
+  &lt;Route path="/" element={&lt;Home /&gt;} /&gt;
+  &lt;Route 
+    path="/profile" 
+    element={
+      &lt;ProtectedRoute&gt;
+        &lt;Profile /&gt;
+      &lt;/ProtectedRoute&gt;
+    } 
+  /&gt;
+&lt;/Routes&gt;</pre>
+            </div>
+
+            <h3>Conditional Navigation Menu</h3>
+            <p>Update your navigation menu to conditionally show options based on authentication status:</p>
+            <div class="code-block">
+<pre>import { useAuth0 } from '@auth0/auth0-react';
+import { LoginButton, LogoutButton } from './auth-buttons';
+
+const Navigation = () => {
+  const { isAuthenticated } = useAuth0();
+
+  return (
+    &lt;nav&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;Link to="/"&gt;Home&lt;/Link&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;Link to="/about"&gt;About&lt;/Link&gt;&lt;/li&gt;
+        {isAuthenticated && (
+          &lt;li&gt;&lt;Link to="/profile"&gt;Profile&lt;/Link&gt;&lt;/li&gt;
+        )}
+        &lt;li&gt;
+          {isAuthenticated ? &lt;LogoutButton /&gt; : &lt;LoginButton /&gt;}
+        &lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/nav&gt;
+  );
+};</pre>
+            </div>
+
+            <div class="warning">
+                <h4>Security Best Practices</h4>
+                <p>When implementing Auth0, remember these important security practices:</p>
+                <ul>
+                    <li>Never store sensitive tokens in localStorage (Auth0 SDK handles this safely)</li>
+                    <li>Always validate tokens on your backend before granting access to protected resources</li>
+                    <li>Set appropriate token expiration times</li>
+                    <li>Use HTTPS for all communication between your app and Auth0</li>
+                    <li>Implement proper CORS configuration on your backend</li>
+                </ul>
+            </div>
+            
+            <div class="resources">
+                <h3>Auth0 Resources</h3>
+                <ul>
+                    <li><a href="https://auth0.com/docs/quickstart/spa/react" target="_blank">Auth0 React SDK Quickstart</a></li>
+                    <li><a href="https://auth0.com/docs/libraries/auth0-react" target="_blank">Auth0 React SDK Documentation</a></li>
+                    <li><a href="https://auth0.com/docs/get-started/authentication-and-authorization-flow/add-login-using-the-authorization-code-flow-with-pkce" target="_blank">Auth0 Authorization Code Flow with PKCE</a></li>
+                    <li><a href="https://auth0.com/docs/secure/tokens" target="_blank">Auth0 Tokens Guide</a></li>
+                    <li><a href="https://auth0.com/docs/flows" target="_blank">Auth0 Authentication Flows</a></li>
+                    <li><a href="https://auth0.com/docs/customize/actions" target="_blank">Auth0 Actions and Hooks</a></li>
+                    <li><a href="https://auth0.com/docs/secure/tokens/json-web-tokens" target="_blank">JSON Web Tokens (JWT) in Auth0</a></li>
+                    <li><a href="https://tailwindcss.com/docs" target="_blank">Tailwind CSS Documentation</a></li>
+                    <li><a href="https://tailwindui.com/components" target="_blank">Tailwind UI Components</a></li>
+                    <li><a href="https://tailwindcss.com/docs/animation" target="_blank">Tailwind CSS Animations for Loading States</a></li>
                 </ul>
             </div>
         </div>
@@ -193,11 +509,11 @@ export function Accordion({ children, defaultIndex = 0 }) {
   };
   
   return (
-    <AccordionContext.Provider value={{ activeIndex, toggleItem }}>
-      <div className="accordion">
+    &lt;AccordionContext.Provider value={{ activeIndex, toggleItem }}&gt;
+      &lt;div className="accordion"&gt;
         {children}
-      </div>
-    </AccordionContext.Provider>
+      &lt;/div&gt;
+    &lt;/AccordionContext.Provider&gt;
   );
 }
 
@@ -207,47 +523,47 @@ export function AccordionItem({ children, index }) {
   const isActive = activeIndex === index;
   
   return (
-    <div className={`accordion-item ${isActive ? 'active' : ''}`}>
+    &lt;div className={`accordion-item ${isActive ? 'active' : ''}`}&gt;
       {React.Children.map(children, child => {
         return React.cloneElement(child, { isActive, index, toggleItem });
       })}
-    </div>
+    &lt;/div&gt;
   );
 }
 
 // AccordionHeader component
 export function AccordionHeader({ children, isActive, index, toggleItem }) {
   return (
-    <div 
+    &lt;div 
       className="accordion-header"
       onClick={() => toggleItem(index)}
-    >
+    &gt;
       {children}
-      <span className="accordion-icon">{isActive ? '▲' : '▼'}</span>
-    </div>
+      &lt;span className="accordion-icon"&gt;{isActive ? '▲' : '▼'}&lt;/span&gt;
+    &lt;/div&gt;
   );
 }
 
 // AccordionPanel component
 export function AccordionPanel({ children, isActive }) {
   return (
-    <div className={`accordion-panel ${isActive ? 'show' : 'hide'}`}>
+    &lt;div className={`accordion-panel ${isActive ? 'show' : 'hide'}`}&gt;
       {children}
-    </div>
+    &lt;/div&gt;
   );
 }
 
 // Usage:
-// <Accordion>
-//   <AccordionItem index={0}>
-//     <AccordionHeader>Section 1</AccordionHeader>
-//     <AccordionPanel>Content for section 1</AccordionPanel>
-//   </AccordionItem>
-//   <AccordionItem index={1}>
-//     <AccordionHeader>Section 2</AccordionHeader>
-//     <AccordionPanel>Content for section 2</AccordionPanel>
-//   </AccordionItem>
-// </Accordion></pre>
+// &lt;Accordion&gt;
+//   &lt;AccordionItem index={0}&gt;
+//     &lt;AccordionHeader&gt;Section 1&lt;/AccordionHeader&gt;
+//     &lt;AccordionPanel&gt;Content for section 1&lt;/AccordionPanel&gt;
+//   &lt;/AccordionItem&gt;
+//   &lt;AccordionItem index={1}&gt;
+//     &lt;AccordionHeader&gt;Section 2&lt;/AccordionHeader&gt;
+//     &lt;AccordionPanel&gt;Content for section 2&lt;/AccordionPanel&gt;
+//   &lt;/AccordionItem&gt;
+// &lt;/Accordion&gt;</pre>
             </div>
             
             <div class="resources">
@@ -279,10 +595,14 @@ next build && next export</pre>
                 <li>Add environment variables for different deployment environments
                     <div class="code-block">
 <pre># .env.development
-REACT_APP_API_URL=http://localhost:5000/api
+VITE_API_URL=http://localhost:5000/api
+VITE_AUTH0_DOMAIN=your-domain.auth0.com
+VITE_AUTH0_CLIENT_ID=your-development-client-id
 
 # .env.production
-REACT_APP_API_URL=https://your-production-api.com/api</pre>
+VITE_API_URL=https://your-production-api.com/api
+VITE_AUTH0_DOMAIN=your-domain.auth0.com
+VITE_AUTH0_CLIENT_ID=your-production-client-id</pre>
                     </div>
                 </li>
                 <li>Set up proper error boundaries
@@ -304,7 +624,7 @@ REACT_APP_API_URL=https://your-production-api.com/api</pre>
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback || <h1>Something went wrong.</h1>;
+      return this.props.fallback || &lt;h1&gt;Something went wrong.&lt;/h1&gt;;
     }
 
     return this.props.children;
@@ -352,6 +672,9 @@ jobs:
                     <li>Added proper error handling</li>
                     <li>Tested all main user flows</li>
                     <li>Ensured environment variables are correctly set</li>
+                    <li>Updated Auth0 application settings with production URLs (Callback, Logout, Web Origins)</li>
+                    <li>Tested the complete authentication flow in a production-like environment</li>
+                    <li>Verified token handling and protected routes work correctly</li>
                     <li>Checked for performance issues</li>
                     <li>Performed cross-browser testing</li>
                     <li>Ensured responsive design for mobile devices</li>
@@ -364,6 +687,11 @@ jobs:
                 <ul>
                     <li><a href="https://www.netlify.com/blog/2016/07/22/deploy-react-apps-in-less-than-30-seconds/" target="_blank">Deploy React Apps on Netlify</a></li>
                     <li><a href="https://vercel.com/docs/frameworks/react" target="_blank">Deploy React Apps on Vercel</a></li>
+                    <li><a href="https://www.netlify.com/docs/deploy-with-netlify-cli/" target="_blank">Deploy React Apps on Netlify with CLI</a></li>
+                    <li><a href="https://render.com/docs/" target="_blank">Deploy React Apps on Render</a></li>
+                    <li><a href="https://auth0.com/docs/deploy-monitor" target="_blank">Auth0 Deployment Best Practices</a></li>
+                    <li><a href="https://auth0.com/docs/get-started/applications/application-settings" target="_blank">Auth0 Application Settings for Deployment</a></li>
+                    <li><a href="https://auth0.com/docs/troubleshoot/authentication" target="_blank">Troubleshooting Auth0 Authentication Issues</a></li>
                     <li><a href="https://github.com/features/actions" target="_blank">GitHub Actions for CI/CD</a></li>
                     <li><a href="https://web.dev/vitals/" target="_blank">Web Vitals - Performance Metrics</a></li>
                 </ul>
@@ -379,11 +707,14 @@ jobs:
                 <ul>
                     <li>Create a comprehensive README with setup instructions</li>
                     <li>Add documentation for API endpoints</li>
+                    <li>Include Auth0 setup steps in your documentation</li>
+                    <li>Add proper error handling for authentication failures</li>
+                    <li>Implement user-friendly login/logout flows with clear feedback</li>
                     <li>Implement final UI/UX improvements</li>
                     <li>Add loading states and error messages</li>
                     <li>Ensure accessibility compliance</li>
                     <li>Add progressive enhancement where possible</li>
-                    <li>Create a demo script/video showcasing key features</li>
+                    <li>Create a demo script/video showcasing key features including authentication</li>
                 </ul>
             </div>
             
@@ -395,6 +726,9 @@ jobs:
                     <li><a href="https://web.dev/accessibility/" target="_blank">Web.dev Accessibility Guide</a></li>
                     <li><a href="https://github.com/matiassingers/awesome-readme" target="_blank">Awesome README Templates</a></li>
                     <li><a href="https://swagger.io/tools/swagger-ui/" target="_blank">Swagger for API Documentation</a></li>
+                    <li><a href="https://auth0.com/docs/design/ux-best-practices" target="_blank">Auth0 UX Best Practices</a></li>
+                    <li><a href="https://auth0.com/docs/customize/universal-login-pages" target="_blank">Customizing Auth0 Login Pages</a></li>
+                    <li><a href="https://auth0.com/blog/embedded-login-vs-universal-login/" target="_blank">Embedded vs Universal Login in Auth0</a></li>
                 </ul>
             </div>
         </div>
