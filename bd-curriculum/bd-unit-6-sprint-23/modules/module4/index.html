@@ -30,6 +30,18 @@
             border-bottom: 2px solid #ff5722;
             padding-bottom: 10px;
         }
+        pre, code {
+            background-color: #1a1d23;
+            border-radius: 4px;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
+            padding: 2px 5px;
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+            color: #e6e6e6;
+        }
         .back-button {
             display: inline-block;
             margin-bottom: 20px;
@@ -157,6 +169,29 @@
             text-decoration: underline;
             color: #ff7043;
         }
+        .learning-objectives {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 4px;
+            background-color: #333a47;
+            border-left: 4px solid #ff5722;
+        }
+        .learning-objectives h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444a57;
+        }
+        .learning-objectives ul {
+            margin-bottom: 10px;
+        }
+        .learning-objectives ul ul {
+            margin-top: 8px;
+            margin-bottom: 0;
+        }
+        .learning-objectives strong {
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -172,6 +207,36 @@
                 <li>AWS CloudWatch Metrics (Module 2)</li>
                 <li>Java Lambda Expressions (Module 3)</li>
                 <li>Integration of these concepts in real-world applications</li>
+            </ul>
+        </section>
+
+        <section class="learning-objectives">
+            <h2>Learning Objectives Review</h2>
+            <ul>
+                <li><strong>Threads and Concurrency:</strong>
+                    <ul>
+                        <li>Create and manage Java threads using both Thread subclasses and Runnable implementations</li>
+                        <li>Understand thread lifecycle states (NEW, RUNNABLE, BLOCKED, WAITING, TERMINATED)</li>
+                        <li>Implement thread synchronization to prevent race conditions</li>
+                        <li>Determine when concurrency is appropriate for performance improvements</li>
+                    </ul>
+                </li>
+                <li><strong>CloudWatch Metrics:</strong>
+                    <ul>
+                        <li>Describe CloudWatch concepts: namespace, metric, dimension, statistics, period, alarm</li>
+                        <li>Design and implement custom metrics for specific business requirements</li>
+                        <li>Select appropriate statistics and aggregation periods for different scenarios</li>
+                        <li>Work with percentile-based metrics (p50, p90, p99) for performance analysis</li>
+                    </ul>
+                </li>
+                <li><strong>Lambda Expressions:</strong>
+                    <ul>
+                        <li>Implement functional interfaces with lambda expressions</li>
+                        <li>Use built-in interfaces: Function, Consumer, Supplier, and Predicate</li>
+                        <li>Apply method references as alternatives to lambda expressions</li>
+                        <li>Process collections using the Stream API with lambda expressions</li>
+                    </ul>
+                </li>
             </ul>
         </section>
 
@@ -191,6 +256,142 @@
                 <li><strong>Functional Programming:</strong> Using lambda expressions for cleaner, more concise code in Java applications</li>
                 <li><strong>Integration:</strong> Combining these concepts to build robust, performant Java applications</li>
             </ul>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Practical Examples Review</h2>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Thread Implementation Example</h3>
+                </div>
+                <div class="card-body">
+                    <pre><code>// Creating a thread using Runnable
+public class TaskExecutor {
+    public static void main(String[] args) {
+        // Create multiple threads for concurrent execution
+        Thread downloadThread = new Thread(new DownloadTask(), "DownloadThread");
+        Thread processingThread = new Thread(new ProcessingTask(), "ProcessingThread");
+        
+        // Start threads
+        downloadThread.start();
+        processingThread.start();
+        
+        // Join threads to wait for completion
+        try {
+            downloadThread.join();
+            processingThread.join();
+        } catch (InterruptedException e) {
+            System.err.println("Thread interrupted: " + e.getMessage());
+        }
+        
+        System.out.println("All tasks completed");
+    }
+}
+
+class DownloadTask implements Runnable {
+    @Override
+    public void run() {
+        // Thread-safe code with proper synchronization
+        synchronized(this) {
+            System.out.println("Downloading data in " + Thread.currentThread().getName());
+            // Simulate work
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>CloudWatch Metrics Example</h3>
+                </div>
+                <div class="card-body">
+                    <pre><code>// Publishing metrics to CloudWatch
+private void publishMetrics(String metricName, double value) {
+    try {
+        // Create CloudWatch client
+        AmazonCloudWatch cloudWatch = AmazonCloudWatchClientBuilder.standard()
+                .withRegion(Regions.US_EAST_1)
+                .build();
+        
+        // Define metric with dimensions
+        MetricDatum datum = new MetricDatum()
+                .withMetricName(metricName)
+                .withUnit(StandardUnit.Count)
+                .withValue(value)
+                .withDimensions(
+                    new Dimension()
+                        .withName("ServiceName")
+                        .withValue("UserService"),
+                    new Dimension()
+                        .withName("Environment")
+                        .withValue("Production")
+                );
+        
+        // Create and submit request
+        PutMetricDataRequest request = new PutMetricDataRequest()
+                .withNamespace("MyApplication")
+                .withMetricData(datum);
+                
+        cloudWatch.putMetricData(request);
+        logger.info("Published metric: " + metricName + " with value: " + value);
+    } catch (Exception e) {
+        logger.error("Failed to publish CloudWatch metric", e);
+    }
+}</code></pre>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Lambda Expressions Example</h3>
+                </div>
+                <div class="card-body">
+                    <pre><code>// Processing data with Stream API and lambda expressions
+public class DataProcessor {
+    public List&lt;UserDTO&gt; processUsers(List&lt;User&gt; users) {
+        return users.stream()
+            // Filter active users using Predicate
+            .filter(user -> user.isActive() && user.getLastLogin().isAfter(LocalDate.now().minusDays(30)))
+            // Transform User to UserDTO using Function
+            .map(user -> {
+                UserDTO dto = new UserDTO();
+                dto.setId(user.getId());
+                dto.setDisplayName(user.getFirstName() + " " + user.getLastName());
+                dto.setLastLoginDays(ChronoUnit.DAYS.between(user.getLastLogin(), LocalDate.now()));
+                return dto;
+            })
+            // Sort by last login using Comparator and method reference
+            .sorted(Comparator.comparing(UserDTO::getLastLoginDays))
+            // Limit to top 10 most recent
+            .limit(10)
+            // Collect results
+            .collect(Collectors.toList());
+    }
+    
+    // Using various functional interfaces
+    public void demonstrateFunctionalInterfaces() {
+        // Supplier - provides a value
+        Supplier&lt;LocalDate&gt; dateSupplier = LocalDate::now;
+        
+        // Consumer - accepts a value
+        Consumer&lt;String&gt; logger = message -> System.out.println("[LOG]: " + message);
+        
+        // Function - transforms input to output
+        Function&lt;String, Integer&gt; wordCounter = s -> s.split("\\s+").length;
+        
+        // Predicate - tests a condition
+        Predicate&lt;Integer&gt; isEven = num -> num % 2 == 0;
+    }
+}</code></pre>
+                </div>
+            </div>
         </section>
 
         <section class="section">

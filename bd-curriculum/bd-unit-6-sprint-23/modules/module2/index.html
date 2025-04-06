@@ -30,6 +30,18 @@
             border-bottom: 2px solid #ff5722;
             padding-bottom: 10px;
         }
+        pre, code {
+            background-color: #1a1d23;
+            border-radius: 4px;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
+            padding: 2px 5px;
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+            color: #e6e6e6;
+        }
         .back-button {
             display: inline-block;
             margin-bottom: 20px;
@@ -172,6 +184,12 @@
                 <li>Implement custom metrics in Java applications</li>
                 <li>Analyze metrics data to identify performance issues and bottlenecks</li>
                 <li>Configure CloudWatch alarms based on metric thresholds</li>
+                <li>Describe the lifecycle of a metric value from emission to expiration</li>
+                <li>Implement methods that emit values for metrics and zeros for count metrics</li>
+                <li>Locate and analyze metrics in CloudWatch emitted to defined namespaces</li>
+                <li>Examine which aggregation period and statistics to use for specific scenarios</li>
+                <li>Identify percentile values (p50, p90, p99) in datasets using CloudWatch</li>
+                <li>Design and implement custom metrics to satisfy business requirements</li>
             </ul>
         </section>
 
@@ -181,6 +199,23 @@
                 <iframe class="wistia_embed" title="Introduction to Databases" src="https://fast.wistia.net/embed/iframe/2rv3rn75a2" allow="autoplay; fullscreen" allowfullscreen></iframe>
             </div>
             <p>This video introduces the concept of metrics in cloud applications and explains why they are essential for monitoring and maintaining application health.</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Understanding CloudWatch Concepts</h3>
+                </div>
+                <div class="card-body">
+                    <p>AWS CloudWatch is a monitoring and observability service that provides data and actionable insights for your applications. Key CloudWatch concepts include:</p>
+                    <ul>
+                        <li><strong>Namespace</strong>: A container for metrics that share a common purpose or source</li>
+                        <li><strong>Metric</strong>: A time-ordered set of data points representing values being measured</li>
+                        <li><strong>Dimension</strong>: A name/value pair that uniquely identifies a metric</li>
+                        <li><strong>Statistics</strong>: Aggregated data points for a specified period (sum, average, min, max, count)</li>
+                        <li><strong>Period</strong>: The time interval over which statistics are applied</li>
+                        <li><strong>Alarm</strong>: A resource that watches a single metric and performs actions based on the metric's value</li>
+                    </ul>
+                </div>
+            </div>
         </section>
 
         <section class="section">
@@ -189,6 +224,57 @@
                 <iframe class="wistia_embed" title="Sprint 23 Metrics Video" src="https://fast.wistia.net/embed/iframe/2rv3rn75a2" allow="autoplay; fullscreen" allowfullscreen></iframe>
             </div>
             <p>In this video, you'll learn how to implement and use CloudWatch metrics in your Java applications, with practical examples and best practices.</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Creating Custom Metrics</h3>
+                </div>
+                <div class="card-body">
+                    <p>Here's a basic example of creating a custom metric in Java using the AWS SDK:</p>
+                    <pre><code>// Create CloudWatch client
+AmazonCloudWatch cloudWatch = AmazonCloudWatchClientBuilder.standard()
+        .withRegion(Regions.US_WEST_2)
+        .build();
+
+// Define metric data
+MetricDatum datum = new MetricDatum()
+    .withMetricName("RequestLatency")
+    .withUnit(StandardUnit.Milliseconds)
+    .withValue(42.0)
+    .withDimensions(new Dimension()
+        .withName("ServiceName")
+        .withValue("LoginService"));
+
+// Create request and publish metric
+PutMetricDataRequest request = new PutMetricDataRequest()
+    .withNamespace("MyApplication")
+    .withMetricData(datum);
+
+PutMetricDataResult response = cloudWatch.putMetricData(request);</code></pre>
+                    <p>When implementing metrics, always consider:</p>
+                    <ul>
+                        <li>Using meaningful namespaces and dimensions for proper organization</li>
+                        <li>Selecting appropriate units for your measurements</li>
+                        <li>Emitting zeros for count metrics to enable accurate statistics calculation</li>
+                        <li>Choosing the appropriate aggregation period based on your monitoring needs</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Working with Percentiles</h3>
+                </div>
+                <div class="card-body">
+                    <p>Percentiles are powerful statistics that help understand the distribution of your metric values:</p>
+                    <ul>
+                        <li><strong>p50 (median)</strong>: 50% of the data points are below this value</li>
+                        <li><strong>p90</strong>: 90% of the data points are below this value</li>
+                        <li><strong>p99</strong>: 99% of the data points are below this value</li>
+                    </ul>
+                    <p>Percentiles are particularly useful for monitoring latency and response times, as they highlight the user experience better than averages.</p>
+                </div>
+            </div>
         </section>
 
         <section class="section">

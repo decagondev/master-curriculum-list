@@ -31,6 +31,18 @@
             border-bottom: 2px solid #ff5722;
             padding-bottom: 10px;
         }
+        pre, code {
+            background-color: #1a1d23;
+            border-radius: 4px;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
+            padding: 2px 5px;
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+            color: #e6e6e6;
+        }
         .section {
             margin-bottom: 40px;
             padding: 20px;
@@ -190,6 +202,11 @@
                 <li>Identify common threading issues and synchronization challenges</li>
                 <li>Implement basic thread synchronization techniques</li>
                 <li>Apply multi-threading concepts to improve application performance</li>
+                <li>Explain why concurrency is more likely to help an I/O-bound application than a CPU-bound application</li>
+                <li>Explain thread lifecycle states (NEW, RUNNABLE, BLOCKED, WAITING, TERMINATED) and their transitions</li>
+                <li>Examine whether a described scenario is taking advantage of concurrency</li>
+                <li>Examine whether running a given code snippet has the potential to suffer from a race condition</li>
+                <li>Design and implement a class that implements Runnable to execute functionality concurrently</li>
             </ul>
         </div>
         
@@ -198,6 +215,55 @@
             <p>Threads allow Java applications to perform multiple operations concurrently. A thread is a lightweight process that can execute independently while sharing the same resources as other threads within a process.</p>
             
             <p>In this module, we'll explore how to create and use threads in Java, understand thread lifecycle, and learn about common challenges in concurrent programming.</p>
+            
+            <p>When developing programs, you always start with one execution path (the main method). However, as applications become more complex, using a single thread can create bottlenecks. Multithreading allows you to create additional execution paths that run concurrently, improving performance particularly for I/O-bound operations.</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Creating Threads in Java</h3>
+                </div>
+                <div class="card-body">
+                    <p>There are two primary ways to create threads in Java:</p>
+                    <pre><code>// Method 1: Extending Thread class
+public class MyThread extends Thread {
+    public void run() {
+        System.out.println("Thread is running");
+    }
+}
+
+// Usage
+MyThread thread = new MyThread();
+thread.start();
+
+// Method 2: Implementing Runnable interface
+public class MyRunnable implements Runnable {
+    public void run() {
+        System.out.println("Thread is running");
+    }
+}
+
+// Usage
+Thread thread = new Thread(new MyRunnable());
+thread.start();</code></pre>
+                    <p>Remember to always call <code>start()</code> rather than <code>run()</code> directly. Calling <code>start()</code> creates a new thread that executes the <code>run()</code> method, while calling <code>run()</code> directly just executes the method in the current thread.</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Thread Lifecycle States</h3>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li><strong>NEW</strong>: Thread exists but hasn't been started yet</li>
+                        <li><strong>RUNNABLE</strong>: Thread is actively running or ready to run</li>
+                        <li><strong>BLOCKED</strong>: Thread is waiting to acquire a lock</li>
+                        <li><strong>WAITING</strong>: Thread is waiting indefinitely for another thread to perform an action</li>
+                        <li><strong>TERMINATED</strong>: Thread has completed execution or been stopped</li>
+                    </ul>
+                    <p>You can check a thread's state using <code>thread.getState()</code> method.</p>
+                </div>
+            </div>
         </section>
         
         <section class="section">
