@@ -1,23 +1,302 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Module 3: Searching</title>
 <meta name="identifier" content="gfb1a0f6fa7ea767630c01cd250fcb65c"/>
 <meta name="editing_roles" content="teachers"/>
 <meta name="workflow_state" content="active"/>
+<style>
+  .code-block {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 15px 0;
+    font-family: monospace;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  
+  .leetcode-link {
+    color: #FF8C00;
+    text-decoration: none;
+  }
+  
+  .leetcode-link:hover {
+    text-decoration: underline;
+  }
+  
+  .objectives-section {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-left: 3px solid #93005a;
+    background-color: #f9f9f9;
+  }
+  
+  .content-section {
+    margin-bottom: 20px;
+  }
+</style>
 </head>
 <body>
+<div class="objectives-section">
+  <h2>Module Objectives</h2>
+  <p>Upon completion of this module you will be able to:</p>
+  <ul>
+    <li>Implement a linear search algorithm and understand its O(n) time complexity</li>
+    <li>Implement a binary search algorithm and understand its O(log n) time complexity</li>
+    <li>Compare the efficiency of linear and binary search algorithms</li>
+    <li>Identify when to use each search algorithm based on data characteristics</li>
+    <li>Apply search algorithms to solve real-world programming problems</li>
+  </ul>
+</div>
+
 <h3><strong>Linear Search</strong></h3>
 <h3><strong><iframe class="wistia_embed" title="s18M3 JavaScript CC1 Linear Search Video" src="https://fast.wistia.net/embed/iframe/0z7ixmxct4" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe></strong></h3>
+
+<div class="content-section">
+  <h4>Understanding Linear Search</h4>
+  <p>Linear search is the simplest search algorithm. It sequentially checks each element in a collection until the target is found or the collection is exhausted.</p>
+  
+  <div class="code-block">
+// Linear search implementation
+function linearSearch(arr, target) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === target) {
+      return i; // Return the index where target is found
+    }
+  }
+  return -1; // Return -1 if target is not found
+}
+
+// Example usage
+const numbers = [10, 24, 56, 7, 89, 42, 13];
+console.log(linearSearch(numbers, 89)); // 4
+console.log(linearSearch(numbers, 100)); // -1
+  </div>
+  
+  <p><strong>Time Complexity:</strong></p>
+  <ul>
+    <li>Best Case: O(1) - Element found at the first position</li>
+    <li>Average Case: O(n) - Element found after checking half the elements</li>
+    <li>Worst Case: O(n) - Element found at the last position or not found</li>
+  </ul>
+  
+  <p><strong>Space Complexity:</strong> O(1) - Uses a constant amount of extra space</p>
+  
+  <p><strong>Advantages of Linear Search:</strong></p>
+  <ul>
+    <li>Simple to implement</li>
+    <li>Works on both sorted and unsorted arrays</li>
+    <li>No pre-processing required</li>
+    <li>Efficient for small datasets</li>
+  </ul>
+  
+  <p><strong>Disadvantages:</strong></p>
+  <ul>
+    <li>Inefficient for large datasets (O(n) time complexity)</li>
+    <li>Does not take advantage of sorted data</li>
+  </ul>
+  
+  <h4>Optimized Linear Search</h4>
+  <p>We can optimize linear search by adding early termination conditions or implementing search strategies like the sentinel search:</p>
+  
+  <div class="code-block">
+// Linear search with sentinel
+function sentinelLinearSearch(arr, target) {
+  const n = arr.length;
+  
+  // Save the last element
+  const last = arr[n - 1];
+  
+  // Place the target as sentinel at the end
+  arr[n - 1] = target;
+  
+  let i = 0;
+  // The loop will always terminate because target is in the array
+  while (arr[i] !== target) {
+    i++;
+  }
+  
+  // Restore the original last element
+  arr[n - 1] = last;
+  
+  // Check if we found the target or just the sentinel
+  if (i < n - 1 || last === target) {
+    return i;
+  }
+  return -1;
+}
+  </div>
+</div>
+
 <h3><strong>Binary Search</strong></h3>
 <p><iframe class="wistia_embed" title="s18M3 JavaScript CC2 Binary Search Video" src="https://fast.wistia.net/embed/iframe/uoiz8pkrd3" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe></p>
-<p><span>Upon completion of this module you will be able to:</span></p>
+
+<div class="content-section">
+  <h4>Understanding Binary Search</h4>
+  <p>Binary search is a divide-and-conquer algorithm that efficiently finds a target value in a <strong>sorted</strong> array. It repeatedly divides the search space in half, eliminating half of the remaining elements at each step.</p>
+  
+  <div class="code-block">
+// Binary search implementation (iterative)
+function binarySearch(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
+  
+  while (left <= right) {
+    // Calculate middle index (avoid overflow)
+    const mid = left + Math.floor((right - left) / 2);
+    
+    // Check if target is at mid
+    if (arr[mid] === target) {
+      return mid;
+    }
+    
+    // If target is greater, ignore left half
+    if (arr[mid] < target) {
+      left = mid + 1;
+    } 
+    // If target is smaller, ignore right half
+    else {
+      right = mid - 1;
+    }
+  }
+  
+  // Target not found
+  return -1;
+}
+
+// Example usage
+const sortedNumbers = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91];
+console.log(binarySearch(sortedNumbers, 23)); // 5
+console.log(binarySearch(sortedNumbers, 25)); // -1
+  </div>
+  
+  <h4>Recursive Binary Search</h4>
+  <p>Binary search can also be implemented recursively:</p>
+  
+  <div class="code-block">
+// Binary search implementation (recursive)
+function binarySearchRecursive(arr, target, left = 0, right = arr.length - 1) {
+  // Base case: element not found
+  if (left > right) {
+    return -1;
+  }
+  
+  // Calculate middle index
+  const mid = left + Math.floor((right - left) / 2);
+  
+  // Check if target is at mid
+  if (arr[mid] === target) {
+    return mid;
+  }
+  
+  // Recursive cases
+  if (arr[mid] < target) {
+    // Search right half
+    return binarySearchRecursive(arr, target, mid + 1, right);
+  } else {
+    // Search left half
+    return binarySearchRecursive(arr, target, left, mid - 1);
+  }
+}
+  </div>
+  
+  <p><strong>Time Complexity:</strong></p>
+  <ul>
+    <li>Best Case: O(1) - Element found at the middle position</li>
+    <li>Average Case: O(log n) - Logarithmic time complexity</li>
+    <li>Worst Case: O(log n) - Element not found or at the edge</li>
+  </ul>
+  
+  <p><strong>Space Complexity:</strong></p>
+  <ul>
+    <li>Iterative: O(1) - Constant extra space</li>
+    <li>Recursive: O(log n) - Call stack space proportional to recursion depth</li>
+  </ul>
+  
+  <p><strong>Advantages of Binary Search:</strong></p>
+  <ul>
+    <li>Very efficient for large datasets - O(log n) is much faster than O(n) for large n</li>
+    <li>Requires fewer comparisons than linear search</li>
+  </ul>
+  
+  <p><strong>Disadvantages:</strong></p>
+  <ul>
+    <li>Requires sorted data</li>
+    <li>Sorting may offset the advantage if data is initially unsorted</li>
+    <li>Not suitable for linked lists (requires random access)</li>
+  </ul>
+</div>
+
+<div class="content-section">
+  <h4>Comparison: Linear vs. Binary Search</h4>
+  
+  <table border="1" style="border-collapse: collapse; width: 100%;">
+    <tr>
+      <th style="padding: 8px;">Aspect</th>
+      <th style="padding: 8px;">Linear Search</th>
+      <th style="padding: 8px;">Binary Search</th>
+    </tr>
+    <tr>
+      <td style="padding: 8px;">Time Complexity</td>
+      <td style="padding: 8px;">O(n)</td>
+      <td style="padding: 8px;">O(log n)</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px;">Data Requirement</td>
+      <td style="padding: 8px;">Works on sorted or unsorted data</td>
+      <td style="padding: 8px;">Requires sorted data</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px;">Best For</td>
+      <td style="padding: 8px;">Small datasets, unsorted data</td>
+      <td style="padding: 8px;">Large datasets, sorted data</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px;">Implementation</td>
+      <td style="padding: 8px;">Simple</td>
+      <td style="padding: 8px;">More complex</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px;">Data Structure</td>
+      <td style="padding: 8px;">Works with arrays and linked lists</td>
+      <td style="padding: 8px;">Requires random access (arrays)</td>
+    </tr>
+  </table>
+  
+  <p><strong>Practical Example:</strong> Searching in a phonebook</p>
+  <ul>
+    <li><strong>Linear Search:</strong> Start with the first page and check each page one by one</li>
+    <li><strong>Binary Search:</strong> Open to the middle, decide whether to go left or right, repeat</li>
+  </ul>
+  
+  <p>For a phonebook with 1000 pages:</p>
+  <ul>
+    <li>Linear search: up to 1000 checks</li>
+    <li>Binary search: at most 10 checks (log<sub>2</sub> 1000 ≈ 10)</li>
+  </ul>
+</div>
+
+<h3>Practice with LeetCode Problems</h3>
+
+<p>Note: Previously, this course referenced the CodeSignal Arcade for practice, which is no longer available. The LeetCode problems below follow the same principles and are an excellent alternative for practicing search algorithms.</p>
+
+<h4>Linear Search Problems:</h4>
 <ul>
-<li><span>Implement a linear search</span></li>
-<li><span>Implement a binary search</span></li>
-<li><span>Understand the time complexity of binary search versus linear search</span></li>
+  <li><a href="https://leetcode.com/problems/find-numbers-with-even-number-of-digits/" class="leetcode-link" target="_blank" rel="noopener">Find Numbers with Even Number of Digits</a> - Apply linear search with filtering</li>
+  <li><a href="https://leetcode.com/problems/richest-customer-wealth/" class="leetcode-link" target="_blank" rel="noopener">Richest Customer Wealth</a> - Linear search with nested arrays</li>
+  <li><a href="https://leetcode.com/problems/check-if-n-and-its-double-exist/" class="leetcode-link" target="_blank" rel="noopener">Check If N and Its Double Exist</a> - Search problem that can be solved with linear search</li>
 </ul>
+
+<h4>Binary Search Problems:</h4>
+<ul>
+  <li><a href="https://leetcode.com/problems/binary-search/" class="leetcode-link" target="_blank" rel="noopener">Binary Search</a> - Basic implementation of binary search</li>
+  <li><a href="https://leetcode.com/problems/search-insert-position/" class="leetcode-link" target="_blank" rel="noopener">Search Insert Position</a> - Find position to insert into a sorted array</li>
+  <li><a href="https://leetcode.com/problems/first-bad-version/" class="leetcode-link" target="_blank" rel="noopener">First Bad Version</a> - Application of binary search</li>
+  <li><a href="https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/" class="leetcode-link" target="_blank" rel="noopener">Find First and Last Position of Element in Sorted Array</a> - More advanced binary search problem</li>
+</ul>
+
 <hr>
-<p>&nbsp;</p>
 </body>
 </html>
