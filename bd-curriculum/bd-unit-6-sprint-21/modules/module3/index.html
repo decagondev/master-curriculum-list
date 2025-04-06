@@ -159,10 +159,15 @@
             margin-top: 10px;
             margin-bottom: 0;
         }
-        code {
+        pre, code {
             background-color: #1a1d23;
+            border-radius: 4px;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
             padding: 2px 5px;
-            border-radius: 3px;
             font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
             color: #e6e6e6;
         }
@@ -185,17 +190,16 @@
         <div class="learning-objectives">
             <h3>Learning Objectives</h3>
             <ul>
-                <li>Understand the different methods for deleting data from DynamoDB</li>
-                <li>Implement DeleteItem operations with the AWS SDK</li>
-                <li>Apply conditional expressions to validate deletions</li>
-                <li>Manage return values to track deleted items</li>
-                <li>Understand the consistency implications of delete operations</li>
+                <li>Implement functionality that deletes an item from a provided DynamoDB table by partition key</li>
+                <li>Implement functionality that deletes an item from a provided DynamoDB table by partition and sort key</li>
+                <li>Implement functionality that conditionally deletes an item from a provided DynamoDB table</li>
+                <li>Design and implement functionality to deactivate rather than delete an item from a provided DynamoDB table in order to prevent loss of information</li>
             </ul>
         </div>
         
         <section class="section">
             <h2 class="section-title">Introduction to DynamoDB Delete Operations</h2>
-            <p>DynamoDB provides several ways to delete data from your tables. In this module, we focus on the DeleteItem operation, which is the primary method for removing individual items from a DynamoDB table. Understanding how to properly delete data is crucial for maintaining your database and ensuring data integrity throughout your application.</p>
+            <p>DynamoDB provides several ways to delete data from your tables. In this module, we focus on using the <code>DynamoDBMapper.delete()</code> method to remove items from DynamoDB tables. Understanding how to properly delete data is crucial for maintaining your database and ensuring data integrity throughout your application.</p>
             
             <p>Delete operations in DynamoDB are designed to be idempotent, which means that you can execute the same delete operation multiple times without changing the result beyond the initial application. This is important for handling retries and error recovery in distributed systems.</p>
         </section>
@@ -259,6 +263,102 @@
                     </div>
                 </div>
             </div>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">Deleting Items in DynamoDB</h2>
+            
+            <h3>Deleting Items with a Partition Key</h3>
+            <p>For DynamoDB tables that use only a partition key, you only need to specify that key value to delete an item. Let's look at an example with a <code>Shoes</code> table:</p>
+            
+            <pre><code>@DynamoDBTable(tableName = "Shoes")
+public class Shoe {
+    private String shoeId;
+    private int cubbyLocation;
+    private String color;
+    private String style;
+    private String occasion;
+
+    @DynamoDBHashKey(attributeName = "shoeId")
+    public String getShoeId() {
+        return shoeId;
+    }
+
+    public void setShoeId(String shoeId) {
+        this.shoeId = shoeId;
+    }
+
+    // Additional getters and setters...
+}</code></pre>
+            
+            <p>To delete a shoe with <code>shoeId = "SN01"</code>:</p>
+            
+            <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+Shoe shoe = new Shoe();
+shoe.setShoeId("SN01");
+mapper.delete(shoe);</code></pre>
+            
+            <p>Notice that we only need to set the partition key (<code>shoeId</code>) value. There's no need to load the complete item before deleting it.</p>
+            
+            <h3>Deleting Items with a Composite Key</h3>
+            <p>For tables that use a composite key (partition key + sort key), you must specify both key values to delete an item. Here's an example with a <code>Songs</code> table:</p>
+            
+            <pre><code>@DynamoDBTable(tableName = "Songs")
+public class Song {
+    private String artist;
+    private String songTitle;
+    private String genre;
+    private int year;
+    private boolean favorited;
+
+    @DynamoDBHashKey(attributeName = "artist")
+    public String getArtist() {
+        return artist;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
+    @DynamoDBRangeKey(attributeName = "song_title")
+    public String getSongTitle() {
+        return songTitle;
+    }
+
+    public void setSongTitle(String songTitle) {
+        this.songTitle = songTitle;
+    }
+
+    // Additional getters and setters...
+}</code></pre>
+            
+            <p>To delete a song by "Black Eyed Peas" with the title "I Gotta Feeling":</p>
+            
+            <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+Song song = new Song();
+song.setArtist("Black Eyed Peas");
+song.setSongTitle("I Gotta Feeling");
+mapper.delete(song);</code></pre>
+            
+            <h3>Idempotent Delete Operations</h3>
+            <p>An important characteristic of DynamoDB delete operations is that they are idempotent. If you try to delete an item that doesn't exist, the operation completes successfully without any error or special indication. The response remains the same whether the item existed or not.</p>
+            
+            <p>This feature is useful for handling retry scenarios where you want to ensure an item is deleted but don't need to know if it existed beforehand.</p>
+            
+            <h3>Implementing Soft Deletes</h3>
+            <p>Rather than permanently deleting data, many applications implement "soft deletes" by setting a flag or status on the item. This approach preserves the data while making it appear deleted to the application. Here's how to implement a soft delete:</p>
+            
+            <pre><code>// Load the item first
+Song song = mapper.load(Song.class, "Black Eyed Peas", "I Gotta Feeling");
+
+// Instead of deleting, mark it as inactive
+song.setActive(false);
+
+// Save the updated item
+mapper.save(song);</code></pre>
+            
+            <p>This approach allows you to filter out inactive items in your queries while maintaining the ability to restore or reference the data later if needed.</p>
+            
         </section>
         
         <section class="section">

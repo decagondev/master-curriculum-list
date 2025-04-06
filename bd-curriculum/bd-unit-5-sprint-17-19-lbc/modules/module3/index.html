@@ -163,6 +163,18 @@
             color: #ffffff;
             font-weight: bold;
         }
+        pre, code {
+            background-color: #1a1d23;
+            border-radius: 4px;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
+            padding: 2px 5px;
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+            color: #e6e6e6;
+        }
     </style>
 </head>
 <body>
@@ -178,10 +190,15 @@
         <div class="learning-objectives">
             <h3>Learning Objectives</h3>
             <ul>
-                <li>Understand DynamoDB's data model and fundamental concepts</li>
-                <li>Design efficient partition keys for DynamoDB tables</li>
-                <li>Implement best practices for NoSQL database design</li>
-                <li>Create DynamoDB tables using AWS CloudFormation</li>
+                <li>Create an entity relationship diagram to represent a data model of a simple business problem</li>
+                <li>Understand that a distributed system's components are located on different computers, which communicate to coordinate their actions</li>
+                <li>Understand how a table's partition key determines which partition an item will be stored in</li>
+                <li>Understand how a sort key determines the ordering of a table's items within a partition</li>
+                <li>Develop a DynamoDB key schema that prevents hot partitions</li>
+                <li>Provision a DynamoDB table using CloudFormation that corresponds to a provided table design</li>
+                <li>Design the attributes of a DynamoDB table given a set of use cases</li>
+                <li>Decompose a given set of use cases into a set of DynamoDB tables that provides efficient data access</li>
+                <li>Design a DynamoDB table key schema that allows items to be uniquely identified</li>
             </ul>
         </div>
         
@@ -215,9 +232,58 @@
             <h3>Primary Keys</h3>
             <p>When you create a table, you must specify its primary key. The primary key uniquely identifies each item in the table, so that no two items can have the same key. DynamoDB supports two types of primary keys:</p>
             <ul>
-                <li><strong>Partition key</strong>: A simple primary key, composed of one attribute</li>
-                <li><strong>Partition key and sort key</strong>: A composite primary key, composed of two attributes</li>
+                <li><strong>Partition key</strong>: A simple primary key, composed of one attribute. DynamoDB uses the partition key's value as input to an internal hash function. The output from the hash function determines the partition where the item will be stored.</li>
+                <li><strong>Partition key and sort key</strong>: A composite primary key, composed of two attributes. The first attribute is the partition key, and the second attribute is the sort key. All items with the same partition key are stored together, in sorted order by sort key value.</li>
             </ul>
+            
+            <h3>Understanding Partitions</h3>
+            <p>DynamoDB stores data in partitions. A partition is an allocation of storage for a table, backed by solid-state drives (SSDs) and automatically replicated across multiple Availability Zones within an AWS Region. Partition management is handled entirely by DynamoDB—you never have to manage partitions yourself.</p>
+            
+            <p>When you create a table, DynamoDB allocates enough partitions to handle your provisioned throughput requirements. As your application data and throughput requirements change, DynamoDB automatically adjusts by splitting busy partitions and distributing the data over a larger number of partitions.</p>
+            
+            <pre><code>// Example CloudFormation template for a DynamoDB table
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "UsersTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "Users",
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "userId",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "email",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "userId",
+            "KeyType": "HASH"
+          }
+        ],
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "EmailIndex",
+            "KeySchema": [
+              {
+                "AttributeName": "email",
+                "KeyType": "HASH"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            }
+          }
+        ]
+      }
+    }
+  }
+}</code></pre>
         </section>
         
         <section class="section">
@@ -231,21 +297,70 @@
                 <li>Support your most common access patterns</li>
             </ul>
             
+            <p>Good candidates for partition keys include:</p>
+            <ul>
+                <li>User ID (when data is being accessed primarily by user)</li>
+                <li>Item ID or order ID (for unique items)</li>
+                <li>Session ID (for session data)</li>
+                <li>Device ID (for IoT applications)</li>
+            </ul>
+            
+            <p>Poor candidates for partition keys include:</p>
+            <ul>
+                <li>Status codes (limited cardinality leads to hot partitions)</li>
+                <li>Date/timestamps (can create temporal hot partitions)</li>
+                <li>Boolean values (only two possible values)</li>
+            </ul>
+          
             <h3>Using Composite Keys Effectively</h3>
             <p>A composite key (partition key + sort key) allows you to:</p>
             <ul>
                 <li>Store multiple items with the same partition key</li>
                 <li>Organize related data together</li>
-                <li>Perform efficient range queries</li>
+                <li>Perform efficient range queries on the sort key</li>
             </ul>
             
-            <h3>One-to-Many Relationships</h3>
-            <p>In DynamoDB, you typically handle one-to-many relationships by:</p>
+            <p>Common patterns include:</p>
             <ul>
-                <li>Using a composite primary key with the "one" as the partition key and the "many" as the sort key</li>
-                <li>Using a Global Secondary Index (covered in Module 5)</li>
-                <li>Denormalizing your data to optimize for access patterns</li>
+                <li><strong>One-to-many relationships</strong>: Use the "one" as the partition key and identifiers for the "many" as sort keys</li>
+                <li><strong>Time-series data</strong>: Use an entity ID as the partition key and timestamps as the sort key</li>
+                <li><strong>Hierarchical data</strong>: Use parent ID as partition key and child ID as sort key</li>
             </ul>
+            
+            <h3>Design for Access Patterns</h3>
+            <p>Unlike relational databases where you can add indexes later, with DynamoDB you need to identify your access patterns upfront and design your tables accordingly:</p>
+            <ul>
+                <li>Identify all the ways your application will need to access the data</li>
+                <li>Design your primary key and any secondary indexes to support these access patterns</li>
+                <li>Consider denormalizing your data to optimize for query performance</li>
+            </ul>
+            
+            <pre><code>// Example of DynamoDB table design for a social media app
+// Primary table: UserId (partition) and ItemType#Timestamp (sort)
+
+// Example items in the table:
+// User profile:
+{
+  "UserId": "U123",
+  "ItemType": "PROFILE",
+  "Name": "John Doe",
+  "Email": "john@example.com"
+}
+
+// User post:
+{
+  "UserId": "U123",
+  "ItemType": "POST#2023-06-15T14:30:00Z",
+  "Content": "Hello world!",
+  "Likes": 42
+}
+
+// User follower:
+{
+  "UserId": "U123",
+  "ItemType": "FOLLOWER#U456",
+  "FollowerName": "Jane Smith"
+}</code></pre>
         </section>
         
         <section class="section">
@@ -311,7 +426,7 @@
                         <p>Work on the tables section of your design document, defining the DynamoDB tables needed for your project.</p>
                     </div>
                     <div class="card-footer">
-                        <a href="../../sprint-challenge/design-document-dynamodb-tables.html" class="btn">View Activity</a>
+                        <a href="../../sprint-challenge/index.html" class="btn">View Activity</a>
                     </div>
                 </div>
             </div>

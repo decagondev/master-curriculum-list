@@ -159,10 +159,15 @@
             margin-top: 10px;
             margin-bottom: 0;
         }
-        code {
+        pre, code {
             background-color: #1a1d23;
+            border-radius: 4px;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
             padding: 2px 5px;
-            border-radius: 3px;
             font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
             color: #e6e6e6;
         }
@@ -181,11 +186,11 @@
         <div class="learning-objectives">
             <h3>Learning Objectives</h3>
             <ul>
-                <li>Understand the basics of the Spring Boot framework</li>
-                <li>Create a simple RESTful web service using Spring Boot</li>
-                <li>Use Spring Boot annotations to define controllers and endpoints</li>
-                <li>Implement dependency injection with Spring's IoC container</li>
-                <li>Configure and customize Spring Boot applications</li>
+                <li>Build a REST service using Spring Boot</li>
+                <li>Use Spring Boot annotations to set up your entry points into your application</li>
+                <li>Start a Spring Boot application locally</li>
+                <li>Use Postman to manually test local APIs</li>
+                <li>Use Postman to manually test Web APIs </li>
             </ul>
         </div>
         
@@ -194,6 +199,17 @@
             <p>Spring Boot is an extension of the Spring framework that simplifies the building and development of applications. It takes an opinionated approach to configuration, automatically configuring your application based on the dependencies you've added to your project. This allows you to get started with minimal setup and configuration.</p>
             
             <p>Spring Boot makes it easier to create stand-alone, production-grade Spring based applications that you can "just run". It's designed to be fast, require minimal configuration, and provide a platform to create microservices and cloud-ready applications.</p>
+            
+            <h3>REST APIs and Spring</h3>
+            <p>REST (Representational State Transfer) APIs provide a way to expose data and business logic safely through endpoints or routes. Spring Boot is an excellent framework for building REST APIs because it provides built-in support for HTTP methods, request routing, and response handling.</p>
+            
+            <p>A REST API typically follows the CRUD (Create, Read, Update, Delete) operations through HTTP methods:</p>
+            <ul>
+                <li><strong>CREATE</strong> - POST: Creates new resources</li>
+                <li><strong>READ</strong> - GET: Retrieves data from the server</li>
+                <li><strong>UPDATE</strong> - PUT/PATCH: Updates existing resources</li>
+                <li><strong>DELETE</strong> - DELETE: Removes resources</li>
+            </ul>
         </section>
         
         <section class="section">
@@ -257,6 +273,75 @@
             </div>
         </section>
         
+        <section class="section">
+            <h2 class="section-title">Building REST Services with Spring Boot</h2>
+            
+            <h3>Setting Up a Spring Boot Application</h3>
+            <p>To create a Spring Boot application, you need to add the necessary dependencies to your build.gradle file:</p>
+            
+            <pre><code>implementation 'org.springframework.boot:spring-boot-starter-web'
+developmentOnly 'org.springframework.boot:spring-boot-devtools'
+testImplementation 'org.springframework.boot:spring-boot-starter-test'</code></pre>
+            
+            <p>Then, create your main application class with the <code>@SpringBootApplication</code> annotation:</p>
+            
+            <pre><code>package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}</code></pre>
+            
+            <h3>Creating a REST Controller</h3>
+            <p>Controllers in Spring Boot handle HTTP requests. Here's an example of a simple REST controller:</p>
+            
+            <pre><code>@RestController
+public class DogController {
+    
+    @Autowired
+    private DogRepository dogRepos;
+
+    @GetMapping(value = "/dogs/name/{findname}", produces = {"application/json"})
+    public ResponseEntity&lt;?&gt; findADogs(@PathVariable String findname) {
+        return new ResponseEntity&lt;&gt;(dogRepos.findByName(findname), HttpStatus.OK);
+    }
+}</code></pre>
+            
+            <h3>Understanding Spring Boot Annotations</h3>
+            <ul>
+                <li><code>@RestController</code>: Identifies this class as a controller where every method returns a domain object instead of a view.</li>
+                <li><code>@GetMapping</code>: Maps HTTP GET requests to specific handler methods.</li>
+                <li><code>@PathVariable</code>: Extracts values from the URI path.</li>
+                <li><code>@RequestParam</code>: Extracts query parameters from the request URL.</li>
+                <li><code>@Autowired</code>: Automatically injects dependencies.</li>
+            </ul>
+            
+            <h3>Different Types of Request Parameters</h3>
+            <p>Spring Boot supports different ways to handle request parameters:</p>
+            
+            <h4>Path Variables</h4>
+            <p>Used in URL paths like <code>/dogs/name/dottie</code>, where "dottie" is the path variable.</p>
+            
+            <pre><code>@GetMapping(value = "/dogs/name/{findname}")
+public ResponseEntity&lt;?&gt; findADogs(@PathVariable String findname) {
+    // Method implementation
+}</code></pre>
+            
+            <h4>Request Parameters</h4>
+            <p>Added to the URL with a question mark like <code>/dogs/name?name=dottie</code>.</p>
+            
+            <pre><code>@GetMapping(value = "/dogs/name")
+public ResponseEntity&lt;?&gt; findADogs(@RequestParam(name = "findname", required = false) String theName) {
+    // Method implementation
+}</code></pre>
+        </section>
+
         <section class="section">
             <h2 class="section-title">Key Benefits of Spring Boot</h2>
             <ul>
