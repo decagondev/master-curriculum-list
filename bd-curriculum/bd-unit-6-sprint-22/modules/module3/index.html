@@ -190,6 +190,14 @@
                 <li>Explain the benefits of immutability for concurrent programming</li>
                 <li>Create immutable classes that follow best practices</li>
                 <li>Identify when to use immutable data structures in application design</li>
+                <li>Implement a method parameter as final to prevent its reassignment</li>
+                <li>Implement an instance variable as final to prevent its reassignment</li>
+                <li>Given a code snippet, determine whether an object that a final variable references can be modified</li>
+                <li>Design and implement an immutable class</li>
+                <li>Explain what the final keyword means for a variable</li>
+                <li>Explain the effects of declaring an instance variable as final</li>
+                <li>Outline the characteristics of a final class</li>
+                <li>Outline the advantages of an immutable class</li>
             </ul>
         </div>
         
@@ -198,6 +206,120 @@
             <p>Immutability is a key concept in software development that refers to the inability to modify an object after it has been created. Immutable objects provide various benefits in terms of code safety, thread safety, and code simplicity.</p>
             
             <p>The final keyword in Java is one tool that helps enforce immutability when used correctly. In this module, we'll explore how to use final effectively and design immutable classes in Java.</p>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">Understanding the Final Keyword</h2>
+            
+            <p>The <code>final</code> keyword in Java can be applied to variables, methods, and classes, with different effects:</p>
+            
+            <h3>Final Variables</h3>
+            <p>When applied to a variable, <code>final</code> means that the variable cannot be reassigned after initialization:</p>
+            
+            <div class="code-example">
+                <pre><code>// Final primitive variable
+final int MAX_SIZE = 100;
+// MAX_SIZE = 200; // This would cause a compilation error
+
+// Final reference variable
+final List&lt;String&gt; namesList = new ArrayList&lt;&gt;();
+// namesList = new ArrayList&lt;&gt;(); // This would cause a compilation error
+namesList.add("John"); // This is allowed - the object's state can be changed</code></pre>
+            </div>
+            
+            <p>Important distinction: for reference variables, <code>final</code> prevents reassignment of the reference, but it doesn't make the referenced object immutable.</p>
+            
+            <h3>Final Methods</h3>
+            <p>When applied to a method, <code>final</code> prevents the method from being overridden in subclasses:</p>
+            
+            <div class="code-example">
+                <pre><code>public class Parent {
+    final void cannotBeOverridden() {
+        // Method implementation
+    }
+}
+
+public class Child extends Parent {
+    // This would cause a compilation error
+    // void cannotBeOverridden() { } 
+}</code></pre>
+            </div>
+            
+            <h3>Final Classes</h3>
+            <p>When applied to a class, <code>final</code> prevents the class from being extended:</p>
+            
+            <div class="code-example">
+                <pre><code>final class CannotBeExtended {
+    // Class implementation
+}
+
+// This would cause a compilation error
+// class Subclass extends CannotBeExtended { }</code></pre>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">Creating Immutable Classes</h2>
+            
+            <p>An immutable class is one whose state cannot be changed after instantiation. Here are the key steps to create an immutable class:</p>
+            
+            <ol>
+                <li>Declare the class as <code>final</code> to prevent extension</li>
+                <li>Make all fields private and final</li>
+                <li>Don't provide setter methods</li>
+                <li>If the class contains mutable objects:
+                    <ul>
+                        <li>Make defensive copies in the constructor</li>
+                        <li>Make defensive copies in the getter methods</li>
+                    </ul>
+                </li>
+                <li>Ensure that methods don't modify the object's state</li>
+            </ol>
+            
+            <div class="code-example">
+                <pre><code>public final class ImmutablePerson {
+    private final String name;
+    private final int age;
+    private final List&lt;String&gt; hobbies;
+    
+    public ImmutablePerson(String name, int age, List&lt;String&gt; hobbies) {
+        this.name = name;
+        this.age = age;
+        // Defensive copy to prevent the reference from being modified externally
+        this.hobbies = new ArrayList&lt;&gt;(hobbies);
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public int getAge() {
+        return age;
+    }
+    
+    public List&lt;String&gt; getHobbies() {
+        // Return a defensive copy to prevent modification
+        return new ArrayList&lt;&gt;(hobbies);
+    }
+}</code></pre>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">Benefits of Immutability</h2>
+            
+            <p>Immutable objects offer several advantages:</p>
+            
+            <ul>
+                <li><strong>Thread Safety:</strong> Immutable objects can be safely shared between multiple threads without synchronization</li>
+                <li><strong>Simplicity:</strong> Objects that don't change state are easier to reason about</li>
+                <li><strong>Security:</strong> Immutable objects cannot be modified by malicious code</li>
+                <li><strong>Hashcode Integrity:</strong> Safe to use as keys in maps as their hashcode won't change</li>
+                <li><strong>Failure Atomicity:</strong> Operations on immutable objects can't leave them in a partially modified state</li>
+                <li><strong>Easier Caching:</strong> The state won't change, making them ideal for caching</li>
+            </ul>
+            
+            <p>Many standard Java classes are immutable, including String, Integer, and other wrapper classes.</p>
         </section>
         
         <section class="section">
@@ -261,21 +383,6 @@
             </div>
         </section>
         
-        <section class="section">
-            <h2 class="section-title">Creating Immutable Classes</h2>
-            <p>To create an immutable class in Java, follow these key principles:</p>
-            
-            <ul>
-                <li><strong>Make the class final:</strong> Prevent subclassing to avoid method overriding that could compromise immutability</li>
-                <li><strong>Make all fields private and final:</strong> Ensure they cannot be accessed or modified directly</li>
-                <li><strong>Don't provide setter methods:</strong> Avoid any methods that modify object state</li>
-                <li><strong>Perform defensive copying:</strong> When accepting or returning mutable objects (like arrays or collections)</li>
-                <li><strong>Ensure exclusive access to mutable components:</strong> Don't share references to mutable objects</li>
-            </ul>
-            
-            <p>These principles work together to create robust immutable classes that can be safely used in various contexts, including multi-threaded applications.</p>
-        </section>
-
         <section class="section">
             <h2 class="section-title">Resources</h2>
             <div class="card-grid">

@@ -190,6 +190,15 @@
                 <li>Evaluate when to use caching to improve application performance</li>
                 <li>Identify cache invalidation strategies and their trade-offs</li>
                 <li>Apply caching to real-world scenarios to optimize data access</li>
+                <li>Predict if a given read will result in a hit or miss given the cache state</li>
+                <li>Implement functionality that handles cache misses by writing into the in-memory cache</li>
+                <li>Predict if a given write will result in an eviction given the cache state</li>
+                <li>Design and implement a cache's key and value structure, given a set of requirements</li>
+                <li>Design and implement functionality that prevents repeated I/O operations with an in-memory cache</li>
+                <li>Given a scenario, predict the effects of changing the time-to-live (TTL) on a cache</li>
+                <li>Given a scenario, predict the effects of changing the size of a cache</li>
+                <li>Explain what a cache is and when to use it</li>
+                <li>Define the caching terms: hit, miss, evictions, and TTL</li>
             </ul>
         </div>
         
@@ -198,6 +207,140 @@
             <p>In-memory caching is a technique that stores frequently accessed data in memory to improve application performance. By reducing the need to fetch data from slow storage systems or recompute complex calculations, caching can significantly improve response times.</p>
             
             <p>In this module, we'll explore different caching strategies, implementation techniques, and best practices for effective cache management in Java applications.</p>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">Caching Fundamentals</h2>
+            
+            <h3>Key Caching Concepts</h3>
+            <ul>
+                <li><strong>Cache Hit:</strong> When the requested data is found in the cache</li>
+                <li><strong>Cache Miss:</strong> When the requested data is not found in the cache and must be retrieved from the original source</li>
+                <li><strong>Cache Eviction:</strong> The process of removing entries from the cache, typically when the cache reaches capacity or entries expire</li>
+                <li><strong>Time-to-Live (TTL):</strong> The duration for which a cache entry is considered valid before it expires</li>
+            </ul>
+            
+            <h3>Benefits of Caching</h3>
+            <ul>
+                <li><strong>Improved Performance:</strong> Faster data access compared to original sources (database, API, etc.)</li>
+                <li><strong>Reduced Load:</strong> Decreases the burden on backend systems</li>
+                <li><strong>Better Scalability:</strong> Handles more requests without proportional increase in resource usage</li>
+                <li><strong>Cost Efficiency:</strong> Reduces computational or I/O costs for repetitive operations</li>
+            </ul>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">Implementing a Simple Cache in Java</h2>
+            
+            <p>Here's a basic implementation of an in-memory cache using Java's HashMap with time-based expiration:</p>
+            
+            <div class="code-example">
+                <pre><code>public class SimpleCache&lt;K, V&gt; {
+    private final Map&lt;K, CacheEntry&lt;V&gt;&gt; cache = new HashMap&lt;&gt;();
+    private final long defaultTtlMillis;
+    private final int maxSize;
+    
+    public SimpleCache(long defaultTtlMillis, int maxSize) {
+        this.defaultTtlMillis = defaultTtlMillis;
+        this.maxSize = maxSize;
+    }
+    
+    public V get(K key) {
+        CacheEntry&lt;V&gt; entry = cache.get(key);
+        
+        // Cache miss
+        if (entry == null) {
+            return null;
+        }
+        
+        // Entry expired
+        if (entry.isExpired()) {
+            cache.remove(key);
+            return null;
+        }
+        
+        // Cache hit
+        return entry.getValue();
+    }
+    
+    public void put(K key, V value) {
+        put(key, value, defaultTtlMillis);
+    }
+    
+    public void put(K key, V value, long ttlMillis) {
+        evictIfNeeded();
+        cache.put(key, new CacheEntry&lt;&gt;(value, ttlMillis));
+    }
+    
+    private void evictIfNeeded() {
+        // Evict if cache is at capacity
+        if (cache.size() >= maxSize) {
+            // Simple strategy: remove oldest entry
+            // More sophisticated: LRU, LFU, etc.
+            K oldestKey = findOldestEntry();
+            if (oldestKey != null) {
+                cache.remove(oldestKey);
+            }
+        }
+    }
+    
+    private K findOldestEntry() {
+        // Implementation to find oldest entry
+        // ...
+    }
+    
+    private static class CacheEntry&lt;V&gt; {
+        private final V value;
+        private final long expiryTime;
+        
+        public CacheEntry(V value, long ttlMillis) {
+            this.value = value;
+            this.expiryTime = System.currentTimeMillis() + ttlMillis;
+        }
+        
+        public boolean isExpired() {
+            return System.currentTimeMillis() &gt; expiryTime;
+        }
+        
+        public V getValue() {
+            return value;
+        }
+    }
+}</code></pre>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">Eviction Policies</h2>
+            <p>When the cache reaches capacity, an eviction policy determines which items to remove:</p>
+            
+            <ul>
+                <li><strong>Least Recently Used (LRU):</strong> Removes the entry that hasn't been accessed for the longest time</li>
+                <li><strong>Least Frequently Used (LFU):</strong> Removes the entry with the lowest access count</li>
+                <li><strong>First In, First Out (FIFO):</strong> Removes the oldest entry first</li>
+                <li><strong>Time-Based Expiration:</strong> Removes entries based on a time-to-live value</li>
+                <li><strong>Random Replacement:</strong> Removes a random entry</li>
+            </ul>
+            
+            <p>The choice of policy depends on your application's specific access patterns and requirements.</p>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">Cache Size and TTL Considerations</h2>
+            
+            <h3>Effects of Cache Size</h3>
+            <ul>
+                <li><strong>Larger Cache:</strong> Higher hit ratio but more memory consumption</li>
+                <li><strong>Smaller Cache:</strong> Lower memory usage but potentially more cache misses</li>
+            </ul>
+            
+            <h3>Effects of TTL</h3>
+            <ul>
+                <li><strong>Longer TTL:</strong> Less frequent reloading of data but potentially stale data</li>
+                <li><strong>Shorter TTL:</strong> More up-to-date data but more frequent recomputation</li>
+            </ul>
+            
+            <p>The ideal settings balance memory usage, data freshness, and performance requirements.</p>
         </section>
         
         <section class="section">
