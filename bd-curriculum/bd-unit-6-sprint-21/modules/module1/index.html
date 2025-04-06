@@ -159,10 +159,15 @@
             margin-top: 10px;
             margin-bottom: 0;
         }
-        code {
+        pre, code {
             background-color: #1a1d23;
+            border-radius: 4px;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
             padding: 2px 5px;
-            border-radius: 3px;
             font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
             color: #e6e6e6;
         }
@@ -185,11 +190,12 @@
         <div class="learning-objectives">
             <h3>Learning Objectives</h3>
             <ul>
-                <li>Understand the Iterator pattern in Java</li>
-                <li>Implement custom Iterators for your own data structures</li>
-                <li>Use Iterator methods like hasNext() and next()</li>
-                <li>Understand the differences between Iterator and Iterable</li>
-                <li>Apply Iterators in real-world programming scenarios</li>
+                <li>Use a Collection's Iterator to safely insert objects into the Collection during iteration</li>
+                <li>Use a Collection's Iterator to safely remove objects from the Collection during iteration</li>
+                <li>Explain when to use Iterators</li>
+                <li>Outline how to traverse a collection using the Java iterator methods hasNext() and next()</li>
+                <li>Recall that ListIterator is an iterator that provides additional functionality when working with List classes</li>
+                <li>Discuss how to use ListIterator to manipulate the elements of a List</li>
             </ul>
         </div>
         
@@ -198,6 +204,26 @@
             <p>Iterators are a fundamental design pattern in Java that provide a way to access elements of a collection sequentially without exposing its underlying representation. The Iterator pattern allows for different traversal techniques and provides a common interface for traversing different types of collections.</p>
             
             <p>In Java, the Iterator interface is part of the Java Collections Framework and provides methods to iterate through a collection, check if there are more elements, and retrieve the next element.</p>
+            
+            <p>Iterators are particularly useful because they give you the ability to safely add and remove elements <em>while</em> iterating through a collection. Without iterators, attempting to modify a collection during a for-each loop would result in a <code>ConcurrentModificationException</code>.</p>
+            
+            <h3>Iterator Methods</h3>
+            <p>The Iterator interface includes three key methods that help you traverse a collection:</p>
+            <ul>
+                <li><code>boolean hasNext()</code>: Returns <code>true</code> if the iterator has at least one more element to iterate through.</li>
+                <li><code>E next()</code>: Returns the next element in the collection as long as <code>hasNext()</code> is <code>true</code>. Throws a <code>NoSuchElementException</code> if <code>hasNext()</code> is <code>false</code>.</li>
+                <li><code>void remove()</code>: Removes the current element in the collection and throws an <code>IllegalStateException</code> if called again before calling <code>next()</code>.</li>
+            </ul>
+            
+            <h3>ListIterator</h3>
+            <p>The <code>ListIterator&lt;E&gt;</code> extends the functionality of <code>Iterator&lt;E&gt;</code> when working with <code>List&lt;E&gt;</code> classes. It provides bidirectional traversal and the ability to add and update elements in addition to the standard iterator operations.</p>
+            
+            <p>Additional methods in ListIterator include:</p>
+            <ul>
+                <li><code>void add(E element)</code>: Inserts an object immediately before the current cursor position.</li>
+                <li><code>void set(E element)</code>: Replaces the last element returned by <code>next()</code>.</li>
+                <li><code>hasPrevious()</code> and <code>previous()</code>: Support traversing backwards through a list.</li>
+            </ul>
         </section>
         
         <section class="section">
@@ -259,6 +285,58 @@
                     </div>
                 </div>
             </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Practical Iterator Examples</h2>
+            
+            <h3>Traversing Collections with Iterators</h3>
+            <p>You can iterate over a list using either a for loop or a while loop. Here's what it looks like:</p>
+            
+            <pre><code>// Using a for loop with ListIterator
+for (ListIterator&lt;String&gt; iterator = list.listIterator(); iterator.hasNext();) {
+    System.out.println(iterator.next() + " ");
+}
+
+// Using a while loop with ListIterator
+ListIterator&lt;String&gt; iterator = list.listIterator();
+while (iterator.hasNext()) {
+    System.out.print(iterator.next() + " ");
+}</code></pre>
+            
+            <h3>Manipulating Lists with ListIterator</h3>
+            <p>Here are examples of using ListIterator to add, update, and remove elements from a list:</p>
+            
+            <h4>Adding Elements</h4>
+            <pre><code>List&lt;String&gt; groceryList = new ArrayList&lt;&gt;();
+ListIterator&lt;String&gt; groceryIterator = groceryList.listIterator();
+groceryIterator.add("apples");
+groceryIterator.add("bananas");
+// List now contains: apples bananas</code></pre>
+            
+            <h4>Updating Elements</h4>
+            <pre><code>ListIterator&lt;String&gt; groceryIterator = groceryList.listIterator();
+if (groceryIterator.hasNext()) {
+    groceryIterator.next();      // returns "apples"
+    groceryIterator.set("oranges");
+}
+// List now contains: oranges bananas</code></pre>
+            
+            <h4>Removing Elements</h4>
+            <pre><code>ListIterator&lt;String&gt; groceryIterator = groceryList.listIterator();
+if (groceryIterator.hasNext()) {
+    groceryIterator.next();      // returns the first element
+    groceryIterator.remove();
+}
+// First element has been removed</code></pre>
+            
+            <h3>Common Pitfalls to Avoid</h3>
+            <ul>
+                <li>Calling <code>remove()</code> without first calling <code>next()</code> will throw an <code>IllegalStateException</code></li>
+                <li>Calling <code>remove()</code> twice in a row without calling <code>next()</code> in between will throw an <code>IllegalStateException</code></li>
+                <li>Calling <code>set()</code> before calling <code>next()</code> or after calling <code>remove()</code> will throw an <code>IllegalStateException</code></li>
+                <li>Attempting to modify a collection directly during iteration (without using an iterator) will throw a <code>ConcurrentModificationException</code></li>
+            </ul>
         </section>
 
         <section class="section">

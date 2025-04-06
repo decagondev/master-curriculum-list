@@ -159,10 +159,15 @@
             margin-top: 10px;
             margin-bottom: 0;
         }
-        code {
+        pre, code {
             background-color: #1a1d23;
+            border-radius: 4px;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
             padding: 2px 5px;
-            border-radius: 3px;
             font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
             color: #e6e6e6;
         }
@@ -185,11 +190,20 @@
         <div class="learning-objectives">
             <h3>Learning Objectives</h3>
             <ul>
-                <li>Understand the DynamoDB Query operation and its capabilities</li>
-                <li>Implement efficient queries using the AWS SDK</li>
-                <li>Apply key condition expressions and filter expressions</li>
-                <li>Control query result pagination and sorting</li>
-                <li>Optimize query performance for different access patterns</li>
+                <li>Design and implement functionality that uses a query to retrieve items with a given partition key from a provided DynamoDB table</li>
+                <li>Design and implement functionality that uses a paginated query to retrieve items with a given partition key from a provided DynamoDB table</li>
+                <li>Design and implement functionality that uses a comparison operator to narrow the scope of a query on a provided DynamoDB table</li>
+                <li>Design and implement functionality that uses a comparison operator to narrow the scope of a paginated query on a provided DynamoDB table</li>
+                <li>Design and implement functionality that retrieves a specific number of items from a provided DynamoDB table</li>
+                <li>Explain when to query a DynamoDB table</li>
+                <li>Recall that only DynamoDB tables that use a composite primary key can be queried</li>
+                <li>Define pagination</li>
+                <li>Compare and contrast using query() and queryPage() on DynamoDB tables</li>
+                <li>Explain how to retrieve the results of a paginated query that come after a given item in a DynamoDB table using exclusiveStartKey</li>
+                <li>Explain how to limit the number of items retrieved from a query of a DynamoDB table using withLimit</li>
+                <li>Explain how to query a DynamoDB table using the comparison operators = , &lt; , &lt;= , &gt; , &gt;=, begins_with, and between in order to retrieve a more specific output</li>
+                <li>Explain the impacts of eventual consistency in DynamoDB</li>
+                <li>Define eventual consistency</li>
             </ul>
         </div>
         
@@ -198,6 +212,8 @@
             <p>The Query operation is one of the most powerful features of Amazon DynamoDB. It allows you to retrieve multiple items from a table or secondary index using the primary key attributes. Query provides fast, efficient access to data by leveraging the table's structure, making it essential for applications that need to access data in specific patterns.</p>
             
             <p>Unlike the Scan operation, which examines every item in a table, Query only looks at items with the specified partition key value, making it much more efficient for large tables. Query operations can be further refined using sort key conditions, allowing for precise data retrieval based on your application's needs.</p>
+            
+            <p>It's important to note that <strong>only tables with a composite primary key</strong> (partition key + sort key) can be queried effectively. This is one of the benefits of using a composite key structure in your database design.</p>
         </section>
         
         <section class="section">
@@ -261,6 +277,111 @@
             </div>
         </section>
         
+        <section class="section">
+            <h2 class="section-title">DynamoDB Query Implementation</h2>
+            
+            <h3>Basic Query for Items with the Same Partition Key</h3>
+            <p>Here's how to query a DynamoDB table to retrieve all items with a specific partition key value:</p>
+            
+            <pre><code>public List&lt;Song&gt; getSongsByArtist(String artist) {
+    Song song = new Song();
+    song.setArtist(artist);
+
+    DynamoDBQueryExpression&lt;Song&gt; queryExpression = new DynamoDBQueryExpression&lt;Song&gt;()
+        .withHashKeyValues(song);
+    
+    DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+    PaginatedQueryList&lt;Song&gt; songList = mapper.query(Song.class, queryExpression);
+    
+    return songList;
+}</code></pre>
+            
+            <p>In this example, if we call <code>getSongsByArtist("Black Eyed Peas")</code>, it would return all songs by that artist from our table.</p>
+            
+            <h3>Paginated Queries</h3>
+            <p>For large datasets, DynamoDB uses pagination to divide query results into manageable chunks of up to 1MB each. The <code>query()</code> method handles pagination automatically, but sometimes we need more control.</p>
+            
+            <p>Using <code>queryPage()</code> with limits:</p>
+            
+            <pre><code>public QueryResultPage&lt;Song&gt; getLimitedSongsByArtist(String artist, int limit) {
+    Song song = new Song();
+    song.setArtist(artist);
+
+    DynamoDBQueryExpression&lt;Song&gt; queryExpression = new DynamoDBQueryExpression&lt;Song&gt;()
+        .withHashKeyValues(song)
+        .withLimit(limit);
+    
+    DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+    QueryResultPage&lt;Song&gt; queryResultPage = mapper.queryPage(Song.class, queryExpression);
+    
+    return queryResultPage;
+}</code></pre>
+            
+            <p>This method returns only the specified number of items, which is useful for implementing features like "Load More" in user interfaces.</p>
+            
+            <h3>Using Comparison Operators for Sort Keys</h3>
+            <p>We can use comparison operators to create more specific queries based on the sort key. For example, to find songs released after a certain year:</p>
+            
+            <pre><code>public List&lt;Song&gt; getSongsByArtistAfterYear(String artist, int year) {
+    Song song = new Song();
+    song.setArtist(artist);
+
+    Map&lt;String, AttributeValue&gt; expressionAttributeValues = new HashMap&lt;&gt;();
+    expressionAttributeValues.put(":year", new AttributeValue().withN(String.valueOf(year)));
+
+    DynamoDBQueryExpression&lt;Song&gt; queryExpression = new DynamoDBQueryExpression&lt;Song&gt;()
+        .withHashKeyValues(song)
+        .withRangeKeyCondition("year", new Condition()
+            .withComparisonOperator(ComparisonOperator.GT)
+            .withAttributeValueList(new AttributeValue().withN(String.valueOf(year))))
+        .withConsistentRead(false);
+    
+    DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+    PaginatedQueryList&lt;Song&gt; songList = mapper.query(Song.class, queryExpression);
+    
+    return songList;
+}</code></pre>
+            
+            <h3>Handling Pagination with ExclusiveStartKey</h3>
+            <p>For implementing pagination across multiple requests, we use the <code>ExclusiveStartKey</code> parameter:</p>
+            
+            <pre><code>public QueryResultPage&lt;Song&gt; getNextPageOfSongsByArtist(
+        String artist, 
+        int limit, 
+        Map&lt;String, AttributeValue&gt; lastEvaluatedKey) {
+    
+    Song song = new Song();
+    song.setArtist(artist);
+
+    DynamoDBQueryExpression&lt;Song&gt; queryExpression = new DynamoDBQueryExpression&lt;Song&gt;()
+        .withHashKeyValues(song)
+        .withLimit(limit);
+    
+    if (lastEvaluatedKey != null) {
+        queryExpression.setExclusiveStartKey(lastEvaluatedKey);
+    }
+    
+    DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+    QueryResultPage&lt;Song&gt; queryResultPage = mapper.queryPage(Song.class, queryExpression);
+    
+    // The LastEvaluatedKey can be used for the next page request
+    Map&lt;String, AttributeValue&gt; lastKey = queryResultPage.getLastEvaluatedKey();
+    
+    return queryResultPage;
+}</code></pre>
+            
+            <p>This approach allows for efficient navigation through large result sets by providing a continuation point for subsequent queries.</p>
+            
+            <h3>Eventual Consistency</h3>
+            <p>DynamoDB provides two consistency options for reads: eventually consistent and strongly consistent. By default, queries use eventually consistent reads, which means you might get slightly outdated data but with higher throughput and lower latency.</p>
+            
+            <p>For cases where you need the most up-to-date data, you can specify consistent reads:</p>
+            
+            <pre><code>queryExpression.setConsistentRead(true);</code></pre>
+            
+            <p>However, consistent reads consume twice the read capacity units and may have higher latency.</p>
+        </section>
+
         <section class="section">
             <h2 class="section-title">Best Practices for DynamoDB Queries</h2>
             <ul>

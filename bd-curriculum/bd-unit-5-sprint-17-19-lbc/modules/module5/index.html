@@ -31,6 +31,18 @@
             border-bottom: 2px solid #ff5722;
             padding-bottom: 10px;
         }
+        pre, code {
+            background-color: #1a1d23;
+            border-radius: 4px;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
+            padding: 2px 5px;
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+            color: #e6e6e6;
+        }
         .section {
             margin-bottom: 40px;
             padding: 20px;
@@ -185,10 +197,11 @@
         <div class="learning-objectives">
             <h3>Learning Objectives</h3>
             <ul>
-                <li>Understand and implement Global Secondary Indexes (GSIs) in DynamoDB</li>
-                <li>Design effective GSIs for common access patterns</li>
-                <li>Optimize query performance using indexes</li>
-                <li>Implement complex data retrieval patterns using GSIs</li>
+                <li>Recall that an index can improve the speed of accessing data at the cost of additional writes and storage requirements</li>
+                <li>Recall that a Global Secondary Index (GSI) is a separate table containing a selection of attributes from its base table, organized by a different key, and kept in sync with its base table automatically</li>
+                <li>Design a GSI key schema and attribute projection that optimizes queries not supported by a provided DynamoDB table</li>
+                <li>Provision a DynamoDB GSI using CloudFormation</li>
+                <li>Implement functionality that uses query() to retrieve items from a provided DynamoDB's GSI</li>
             </ul>
         </div>
         
@@ -211,6 +224,8 @@
             <h3>What is a GSI?</h3>
             <p>A Global Secondary Index (GSI) is a data structure that contains a subset of attributes from a table, along with an alternate key to support Query operations. The index is "global" because queries on the index can span all of the data in the base table, across all partitions.</p>
             
+            <p>You can think of a GSI as a separate table that is automatically maintained by DynamoDB. When you add, update, or delete an item in the base table, DynamoDB automatically propagates these changes to any GSIs on that table.</p>
+            
             <h3>Key Features of GSIs</h3>
             <ul>
                 <li>Can have different partition and sort keys than the base table</li>
@@ -218,6 +233,16 @@
                 <li>GSIs are eventually consistent (unlike the base table, which can be strongly consistent)</li>
                 <li>You can project attributes from the base table into the index</li>
                 <li>GSIs have their own provisioned throughput settings</li>
+                <li>You can create up to 20 GSIs per table</li>
+            </ul>
+            
+            <h3>Benefits of Using GSIs</h3>
+            <p>GSIs provide several advantages:</p>
+            <ul>
+                <li><strong>Flexible querying</strong>: Query your data by different attributes</li>
+                <li><strong>Improved performance</strong>: Queries using indexes are generally faster than scans</li>
+                <li><strong>Multiple access patterns</strong>: Support different application access patterns with a single table</li>
+                <li><strong>Automatic maintenance</strong>: DynamoDB keeps indexes in sync with the base table</li>
             </ul>
             
             <h3>When to Use GSIs</h3>
@@ -226,13 +251,28 @@
                 <li>You need to query data using attributes that aren't part of the table's primary key</li>
                 <li>You have multiple access patterns that require different key structures</li>
                 <li>You need to optimize specific query patterns for performance</li>
+                <li>You want to avoid expensive scan operations</li>
             </ul>
         </section>
         
         <section class="section">
-            <h2 class="section-title">GSI Design Patterns</h2>
+            <h2 class="section-title">Designing Effective GSIs</h2>
             
-            <h3>Overloading GSIs</h3>
+            <h3>Attribute Projections</h3>
+            <p>When creating a GSI, you must specify which attributes from the base table should be "projected" (copied) into the index. You have three projection options:</p>
+            <ul>
+                <li><strong>KEYS_ONLY</strong>: Only the index and primary key attributes are projected</li>
+                <li><strong>INCLUDE</strong>: The index and primary keys plus specific attributes you specify</li>
+                <li><strong>ALL</strong>: All attributes from the base table are projected</li>
+            </ul>
+            
+            <p>Choosing the right projection type involves balancing storage costs and query performance:</p>
+            <ul>
+                <li>More projected attributes = higher storage costs but fewer need for additional queries</li>
+                <li>Fewer projected attributes = lower storage costs but potentially more queries needed</li>
+            </ul>
+            
+            <h3>GSI Overloading</h3>
             <p>One powerful technique with GSIs is "overloading" them to support multiple access patterns. This involves using a GSI for multiple purposes by carefully designing your attribute values.</p>
             
             <p>For example, consider a social media application where you need to:</p>
@@ -252,8 +292,106 @@
             <h3>GSI Write Sharding</h3>
             <p>When you have a "hot" partition key (one that receives a disproportionate amount of traffic), you can use write sharding to distribute the load across multiple partitions. This involves adding a random suffix to your partition key to spread the writes across partitions.</p>
             
-            <h3>Sparse Indexes</h3>
-            <p>A sparse index contains only a subset of items from the base table. This happens when the index's key attributes are not present in all table items. Sparse indexes can be useful for queries that target a small subset of data.</p>
+            <h3>Common GSI Design Patterns</h3>
+            <p>Here are some common patterns for using GSIs effectively:</p>
+            <ul>
+                <li><strong>Inverted indexes</strong>: Swapping the table's sort key as the GSI's partition key</li>
+                <li><strong>Sparse indexes</strong>: Creating indexes that only contain items with specific attributes</li>
+                <li><strong>Aggregation</strong>: Using GSIs to support aggregations like counts or summaries</li>
+                <li><strong>Time-based access patterns</strong>: Using time attributes as GSI sort keys</li>
+            </ul>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">Creating GSIs with CloudFormation</h2>
+            <p>In your project, you'll use AWS CloudFormation to create and configure GSIs. Here's an example of how to define a GSI in a CloudFormation template:</p>
+            
+            <pre><code>{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "MyTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "MyTable",
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "PK",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "SK",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "GSI1PK",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "GSI1SK",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "PK",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "SK",
+            "KeyType": "RANGE"
+          }
+        ],
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "GSI1",
+            "KeySchema": [
+              {
+                "AttributeName": "GSI1PK",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "GSI1SK",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            }
+          }
+        ]
+      }
+    }
+  }
+}</code></pre>
+            
+            <p>In this example, we've defined a table with a composite primary key (PK and SK) and a GSI with its own composite key (GSI1PK and GSI1SK). The GSI projects all attributes from the base table.</p>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">Querying GSIs</h2>
+            <p>To query a GSI in Java, you use the DynamoDB <code>query()</code> operation with the index name specified. Here's an example:</p>
+            
+            <pre><code>QueryRequest queryRequest = new QueryRequest()
+    .withTableName("MyTable")
+    .withIndexName("GSI1")
+    .withKeyConditionExpression("GSI1PK = :pk")
+    .withExpressionAttributeValues(Map.of(":pk", new AttributeValue("USER#johndoe")));
+
+QueryResult result = dynamoDbClient.query(queryRequest);
+List&lt;Map&lt;String, AttributeValue&gt;&gt; items = result.getItems();</code></pre>
+            
+            <p>This query retrieves all items from the GSI1 index where the GSI1PK is "USER#johndoe". The query will return all attributes that were projected into the index.</p>
+            
+            <h3>Query Best Practices</h3>
+            <p>When querying GSIs, keep these best practices in mind:</p>
+            <ul>
+                <li>Always try to use key conditions to filter data at the database level</li>
+                <li>Only project the attributes you need to minimize storage costs</li>
+                <li>Be aware of eventual consistency in GSIs</li>
+                <li>Monitor GSI performance and adjust as needed</li>
+                <li>Use query pagination for large result sets</li>
+            </ul>
         </section>
         
         <section class="section">
