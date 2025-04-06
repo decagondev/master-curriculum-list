@@ -107,6 +107,36 @@
             color: #b3b3b3;
             padding-left: 20px;
         }
+        /* New class for content section under video */
+        .video-content {
+            background-color: #2a303c;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            color: #b3b3b3;
+        }
+        .video-content h3 {
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        .video-content p {
+            margin-bottom: 15px;
+        }
+        .code-example {
+            background-color: #1a1d23;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+            color: #e6e6e6;
+        }
+        .design-pattern {
+            border-left: 3px solid #ff5722;
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -124,18 +154,154 @@
             <iframe class="wistia_embed" title="Introduction to Service Design" src="https://fast.wistia.net/embed/iframe/wr8y9nq7p8" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
+        <div class="video-content">
+            <h3>Service Design Principles</h3>
+            <p>Service design is the process of applying your technical knowledge to build services that solve business problems. It involves selecting the right technologies, balancing requirements, and researching potential solutions.</p>
+            
+            <h4>The Service Design Process</h4>
+            <ol>
+                <li><strong>Gather Requirements:</strong> Collect the functional and non-functional requirements for the problem you aim to solve.</li>
+                <li><strong>Break Down Components:</strong> Divide the system into smaller, manageable subsystems and services.</li>
+                <li><strong>Compare Alternatives:</strong> Evaluate multiple potential solutions by weighing their pros and cons.</li>
+                <li><strong>Document and Review:</strong> Create a design document and get feedback through design reviews.</li>
+            </ol>
+            
+            <h4>Practical Service Design Principles</h4>
+            <ul>
+                <li><strong>Don't Reinvent the Wheel:</strong> Reuse existing components rather than building from scratch when possible.</li>
+                <li><strong>Simplicity Over Complexity:</strong> Follow standard patterns rather than creating overly complex solutions upfront.</li>
+                <li><strong>Limit Access to Data Stores:</strong> Create "gatekeeper" components that control access to data stores to prevent conflicts.</li>
+                <li><strong>Build in Layers:</strong> Design components to add complexity in layers, keeping each component simpler and more modular.</li>
+            </ul>
+            
+            <p>When comparing technologies like AWS Lambda vs. other AWS Compute options (ECS, EC2), consider factors such as operational maintenance, flexibility, and specific requirements like statelessness, execution time limits, and memory constraints.</p>
+        </div>
+
         <div class="video-container">
             <iframe class="wistia_embed" title="Service Architecture Patterns" src="https://fast.wistia.net/embed/iframe/s5dj2d4lqm" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+
+        <div class="video-content">
+            <h3>Service Design Patterns</h3>
+            <p>Throughout software development history, design patterns have evolved to solve common problems. These patterns implement specific pieces of logic and serve as building blocks for your designs.</p>
+            
+            <div class="design-pattern">
+                <h4>Adapter Pattern</h4>
+                <p>The adapter pattern improves compatibility by bridging incompatible interfaces to work together. It translates between different interfaces or data formats.</p>
+                <p><strong>Example:</strong> Translating between different ID formats (e.g., converting SKUs to UUIDs) when integrating with other services.</p>
+                <div class="code-example">
+                    public class InventoryServiceAdapter {<br>
+                    &nbsp;&nbsp;private InventoryService inventoryService;<br>
+                    <br>
+                    &nbsp;&nbsp;public InventoryServiceAdapter(InventoryService inventoryService) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;this.inventoryService = inventoryService;<br>
+                    &nbsp;&nbsp;}<br>
+                    <br>
+                    &nbsp;&nbsp;public MovieInfo getMovieInfo(UUID movieId) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;// Convert our UUID to the SKU format the inventory service expects<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;String sku = convertToSku(movieId);<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;// Call the inventory service<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;InventoryItem item = inventoryService.getItemBySku(sku);<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;// Convert the response to our internal format<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;return convertToMovieInfo(item);<br>
+                    &nbsp;&nbsp;}<br>
+                    <br>
+                    &nbsp;&nbsp;private String convertToSku(UUID id) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;// Conversion logic<br>
+                    &nbsp;&nbsp;}<br>
+                    <br>
+                    &nbsp;&nbsp;private MovieInfo convertToMovieInfo(InventoryItem item) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;// Conversion logic<br>
+                    &nbsp;&nbsp;}<br>
+                    }
+                </div>
+            </div>
+            
+            <div class="design-pattern">
+                <h4>Facade Pattern</h4>
+                <p>The facade pattern provides a simplified interface to a complex system. It makes a system easier to use by hiding its complexities.</p>
+                <p><strong>Example:</strong> Creating a read-only client for external users while maintaining full CRUD functionality internally.</p>
+                <div class="code-example">
+                    public class MovieServiceReadOnlyFacade {<br>
+                    &nbsp;&nbsp;private MovieService movieService;<br>
+                    <br>
+                    &nbsp;&nbsp;public MovieServiceReadOnlyFacade(MovieService movieService) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;this.movieService = movieService;<br>
+                    &nbsp;&nbsp;}<br>
+                    <br>
+                    &nbsp;&nbsp;// Only expose read operations<br>
+                    &nbsp;&nbsp;public MovieInfo getMovie(String id) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;return movieService.getMovie(id);<br>
+                    &nbsp;&nbsp;}<br>
+                    <br>
+                    &nbsp;&nbsp;public List&lt;MovieInfo&gt; searchMovies(String query) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;return movieService.searchMovies(query);<br>
+                    &nbsp;&nbsp;}<br>
+                    <br>
+                    &nbsp;&nbsp;// No create, update, or delete methods exposed<br>
+                    }
+                </div>
+            </div>
+            
+            <div class="design-pattern">
+                <h4>Proxy Pattern</h4>
+                <p>The proxy pattern creates a substitute or placeholder for another object to control access to it. It's commonly used to isolate changes in external services.</p>
+                <p><strong>Example:</strong> Creating a proxy for third-party services to isolate your system from their changes.</p>
+                <div class="code-example">
+                    public class MovieInfoServiceProxy {<br>
+                    &nbsp;&nbsp;private ThirdPartyMovieInfoService thirdPartyService;<br>
+                    &nbsp;&nbsp;private Cache cache;<br>
+                    <br>
+                    &nbsp;&nbsp;public MovieInfoServiceProxy(ThirdPartyMovieInfoService service, Cache cache) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;this.thirdPartyService = service;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;this.cache = cache;<br>
+                    &nbsp;&nbsp;}<br>
+                    <br>
+                    &nbsp;&nbsp;public MovieDetails getMovieDetails(String movieId) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;// Check cache first<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;MovieDetails cachedDetails = cache.get(movieId);<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;if (cachedDetails != null) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return cachedDetails;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;// Not in cache, call the third-party service<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;try {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MovieDetails details = thirdPartyService.getDetails(movieId);<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cache.put(movieId, details);<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return details;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;} catch (Exception e) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Handle service errors gracefully<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;log.error("Third-party service error", e);<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return getFallbackDetails(movieId);<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                    &nbsp;&nbsp;}<br>
+                    }
+                </div>
+            </div>
+            
+            <div class="design-pattern">
+                <h4>Notifier Pattern</h4>
+                <p>The notifier pattern provides a way for components to register for and receive notifications about events. It decouples event occurrence from notification handling.</p>
+                <p><strong>Example:</strong> A service that notifies multiple systems when a movie's inventory status changes.</p>
+            </div>
+            
+            <div class="design-pattern">
+                <h4>Aggregator Pattern</h4>
+                <p>The aggregator pattern combines data from multiple sources into a single response. It simplifies client logic by centralizing data retrieval and combination.</p>
+                <p><strong>Example:</strong> A service that combines movie details, pricing, availability, and user reviews from different systems into a single comprehensive view.</p>
+            </div>
+            
+            <p>Remember that while these patterns are useful, they should only be applied when needed to solve a specific problem. Overengineering by applying too many patterns can lead to unnecessary complexity.</p>
         </div>
 
         <section>
             <h2>Learning Objectives</h2>
             <ul class="learning-objectives-list">
-                <li>Understand the principles of service-oriented architecture</li>
-                <li>Design services with clear boundaries and responsibilities</li>
-                <li>Implement effective communication between services</li>
-                <li>Apply scalability and reliability patterns</li>
-                <li>Structure applications for maintainability and extensibility</li>
+                <li>Identify whether AWS Lambda should not be used as the architecture for a set of business requirements</li>
+                <li>Identify trade-offs of using each of a set of alternative technologies in a provided design document to solve a specified business problem</li>
+                <li>Make a service design recommendation based on a trade-off analysis</li>
+                <li>Compare Lambda against other AWS Compute options</li>
+                <li>Outline the use case for the adapter, facade, proxy, notifier, and aggregator service design patterns</li>
             </ul>
         </section>
 

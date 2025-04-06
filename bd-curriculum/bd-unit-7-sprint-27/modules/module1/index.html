@@ -107,6 +107,32 @@
             color: #b3b3b3;
             padding-left: 20px;
         }
+        /* New class for content section under video */
+        .video-content {
+            background-color: #2a303c;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            color: #b3b3b3;
+        }
+        .video-content h3 {
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        .video-content p {
+            margin-bottom: 15px;
+        }
+        .code-example {
+            background-color: #1a1d23;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            border-radius: 4px;
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+            color: #e6e6e6;
+        }
     </style>
 </head>
 <body>
@@ -124,18 +150,127 @@
             <iframe class="wistia_embed" title="Introduction to Graphs" src="https://fast.wistia.net/embed/iframe/ak6q61h69g" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
+        <div class="video-content">
+            <h3>Understanding Graphs</h3>
+            <p>A graph data structure is constructed of a set of <em>nodes</em> (also called vertices) connected by <em>edges</em>. Unlike trees, edges don't represent a parent-child relationship between nodes. Instead, they connect nodes to create a <em>neighbor</em> relationship.</p>
+            
+            <p>Key graph concepts:</p>
+            <ul>
+                <li><strong>Nodes/Vertices:</strong> Individual elements in the graph</li>
+                <li><strong>Edges:</strong> Connections between nodes</li>
+                <li><strong>Neighbors:</strong> Nodes that are directly connected by an edge</li>
+                <li><strong>Path:</strong> A sequence of nodes where each pair of nodes in the sequence are neighbors</li>
+                <li><strong>Cycle:</strong> A path that starts and ends at the same node</li>
+                <li><strong>Connected Graph:</strong> A graph where all nodes are connected</li>
+                <li><strong>Directed Graph:</strong> A graph where edges have direction (one-way connections)</li>
+                <li><strong>Weighted Graph:</strong> A graph where edges have associated weights (costs, distances, etc.)</li>
+            </ul>
+            
+            <p>Graphs are used in many real-world scenarios like:</p>
+            <ul>
+                <li>Social networks (people as nodes, connections as edges)</li>
+                <li>Road maps (cities as nodes, roads as edges)</li>
+                <li>Recommendation systems (products as nodes, relationships as edges)</li>
+                <li>Workflow diagrams (process steps as nodes, transitions as edges)</li>
+            </ul>
+        </div>
+
         <div class="video-container">
             <iframe class="wistia_embed" title="Graph Traversal Algorithms" src="https://fast.wistia.net/embed/iframe/8ukob5m11s" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+
+        <div class="video-content">
+            <h3>Graph Traversal Algorithms</h3>
+            <p>There are two primary methods for traversing (searching) graphs:</p>
+            
+            <h4>Breadth-First Search (BFS)</h4>
+            <p>BFS explores a graph level by level, visiting all immediate neighbors before moving to the next level. It's useful for finding the shortest path between nodes in an unweighted graph.</p>
+            
+            <p>BFS uses a queue to keep track of nodes to visit:</p>
+            <div class="code-example">
+                // Pseudocode for BFS<br>
+                function BFS(graph, startNode, targetNode) {<br>
+                &nbsp;&nbsp;let queue = new Queue();<br>
+                &nbsp;&nbsp;let visited = new Set();<br>
+                <br>
+                &nbsp;&nbsp;queue.enqueue(startNode);<br>
+                <br>
+                &nbsp;&nbsp;while (!queue.isEmpty()) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;let currentNode = queue.dequeue();<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;if (currentNode === targetNode) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true; // Found the target<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;if (!visited.has(currentNode)) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visited.add(currentNode);<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Add all unvisited neighbors to queue<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (let neighbor of graph.getNeighbors(currentNode)) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!visited.has(neighbor)) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;queue.enqueue(neighbor);<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                &nbsp;&nbsp;}<br>
+                <br>
+                &nbsp;&nbsp;return false; // Target not found<br>
+                }
+            </div>
+            
+            <h4>Depth-First Search (DFS)</h4>
+            <p>DFS explores as far as possible along a branch before backtracking. It's useful for detecting cycles and exploring all possible paths.</p>
+            
+            <p>DFS uses a stack (or recursion) to track nodes to visit:</p>
+            <div class="code-example">
+                // Pseudocode for DFS<br>
+                function DFS(graph, startNode, targetNode) {<br>
+                &nbsp;&nbsp;let stack = new Stack();<br>
+                &nbsp;&nbsp;let visited = new Set();<br>
+                <br>
+                &nbsp;&nbsp;stack.push(startNode);<br>
+                <br>
+                &nbsp;&nbsp;while (!stack.isEmpty()) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;let currentNode = stack.pop();<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;if (currentNode === targetNode) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true; // Found the target<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;if (!visited.has(currentNode)) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visited.add(currentNode);<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Add all unvisited neighbors to stack<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (let neighbor of graph.getNeighbors(currentNode)) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!visited.has(neighbor)) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stack.push(neighbor);<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                &nbsp;&nbsp;}<br>
+                <br>
+                &nbsp;&nbsp;return false; // Target not found<br>
+                }
+            </div>
+            
+            <p>When implementing graphs, there are two common representations:</p>
+            <ul>
+                <li><strong>Adjacency Matrix:</strong> A 2D array where matrix[i][j] indicates if nodes i and j are connected</li>
+                <li><strong>Adjacency List:</strong> An array of lists where each list contains the neighbors of the corresponding node</li>
+            </ul>
         </div>
 
         <section>
             <h2>Learning Objectives</h2>
             <ul class="learning-objectives-list">
-                <li>Understand the structure and properties of graph data structures</li>
-                <li>Implement graph representations using adjacency lists and matrices</li>
-                <li>Master graph traversal algorithms (BFS and DFS)</li>
-                <li>Apply graph algorithms to solve real-world problems</li>
-                <li>Build recommendation systems using graph-based approaches</li>
+                <li>Assemble a graph from provided relationships</li>
+                <li>Analyze whether a graph models a provided business problem</li>
+                <li>Identify cycles in a provided graph</li>
+                <li>Analyze whether a directed or undirected graph models a provided business problem</li>
+                <li>Manually perform a breadth-first traversal of a graph to find the shortest path from one node to any node that satisfies a given condition</li>
+                <li>Manually perform a depth-first traversal on a graph to perform an operation on each node</li>
+                <li>Outline the purpose of a Graph</li>
+                <li>Compare and contrast the Graph and Tree data structures</li>
             </ul>
         </section>
 

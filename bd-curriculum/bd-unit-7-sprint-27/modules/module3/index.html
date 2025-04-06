@@ -107,6 +107,44 @@
             color: #b3b3b3;
             padding-left: 20px;
         }
+        /* New class for content section under video */
+        .video-content {
+            background-color: #2a303c;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            color: #b3b3b3;
+        }
+        .video-content h3 {
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        .video-content p {
+            margin-bottom: 15px;
+        }
+        .code-example {
+            background-color: #1a1d23;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+        .example-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .example-table th, .example-table td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #333a47;
+        }
+        .example-table th {
+            background-color: #1a1d23;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -124,23 +162,254 @@
             <iframe class="wistia_embed" title="Introduction to Relational Databases" src="https://fast.wistia.net/embed/iframe/qkdnk1f5we" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
+        <div class="video-content">
+            <h3>Introduction to Relational Databases</h3>
+            <p>A relational database stores an item's data across multiple related tables, unlike key-value databases like DynamoDB that store all information for an item in a single table.</p>
+            
+            <h4>Key RDB Concepts</h4>
+            <ul>
+                <li><strong>Records:</strong> Rows in a table (similar to DynamoDB items)</li>
+                <li><strong>Columns:</strong> Record attributes with fixed structure and data types</li>
+                <li><strong>Primary Key:</strong> Unique identifier for each record</li>
+                <li><strong>Schema:</strong> Fixed structure that defines the columns and their data types</li>
+                <li><strong>NULL:</strong> Special value indicating that a record doesn't have a value for a specific column</li>
+            </ul>
+            
+            <h4>Common Data Types in Relational Databases</h4>
+            <ul>
+                <li><strong>numeric:</strong> For storing numbers</li>
+                <li><strong>date:</strong> For storing formatted dates</li>
+                <li><strong>varchar(x):</strong> Variable characters with a maximum length of x (similar to String)</li>
+                <li><strong>boolean:</strong> For storing true/false values</li>
+            </ul>
+            
+            <p>Here's an example of an <code>Employees</code> table in a relational database:</p>
+            <table class="example-table">
+                <thead>
+                    <tr>
+                        <th><strong>id</strong></th>
+                        <th>leave</th>
+                        <th>level</th>
+                        <th>officeCode</th>
+                        <th>officeName</th>
+                        <th>dateJoined</th>
+                        <th>state</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>dac041be</td>
+                        <td>true</td>
+                        <td>5</td>
+                        <td>SEA24</td>
+                        <td>Fiona</td>
+                        <td>2016-07-23</td>
+                        <td>WA</td>
+                    </tr>
+                    <tr>
+                        <td>dac04434</td>
+                        <td>false</td>
+                        <td>6</td>
+                        <td>SEA41</td>
+                        <td>Day 1</td>
+                        <td>2019-12-03</td>
+                        <td>WA</td>
+                    </tr>
+                    <tr>
+                        <td>dac045a6</td>
+                        <td>true</td>
+                        <td>4</td>
+                        <td>SEA32</td>
+                        <td>Nessie</td>
+                        <td>2015-09-15</td>
+                        <td>WA</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>Unlike DynamoDB, adding a new column to an RDB table requires modifying the table schema and backfilling data, making careful upfront design important.</p>
+        </div>
+
         <div class="video-container">
             <iframe class="wistia_embed" title="Database Normalization" src="https://fast.wistia.net/embed/iframe/cqhh38azn0" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+
+        <div class="video-content">
+            <h3>Database Normalization</h3>
+            <p>Normalization is the process of organizing data to minimize redundancy by dividing it into tables with each containing information about only one type of entity.</p>
+            
+            <h4>Why Normalize Data?</h4>
+            <p>Redundant data not only takes up unnecessary space but causes three specific anomalies:</p>
+            <ol>
+                <li><strong>Insertion Anomaly:</strong> Can't insert new information until you have all the data for the record</li>
+                <li><strong>Update Anomaly:</strong> Need to update the same information in several records to maintain consistency</li>
+                <li><strong>Deletion Anomaly:</strong> Deleting a record removes more facts than intended, potentially losing important information</li>
+            </ol>
+            
+            <h4>Normalization Example</h4>
+            <p>To normalize the employee/office example from the previous section, we would isolate employee data in one table and office data in another:</p>
+            
+            <p><strong>Employees (Normalized):</strong></p>
+            <table class="example-table">
+                <thead>
+                    <tr>
+                        <th><strong>id</strong></th>
+                        <th>leave</th>
+                        <th>level</th>
+                        <th>dateJoined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>dac041be</td>
+                        <td>true</td>
+                        <td>5</td>
+                        <td>2016-07-23</td>
+                    </tr>
+                    <tr>
+                        <td>dac04434</td>
+                        <td>false</td>
+                        <td>6</td>
+                        <td>2019-12-03</td>
+                    </tr>
+                    <tr>
+                        <td>dac045a6</td>
+                        <td>true</td>
+                        <td>4</td>
+                        <td>2015-09-15</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p><strong>Offices (Normalized):</strong></p>
+            <table class="example-table">
+                <thead>
+                    <tr>
+                        <th><strong>id</strong></th>
+                        <th>name</th>
+                        <th>state</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>SEA24</td>
+                        <td>Fiona</td>
+                        <td>WA</td>
+                    </tr>
+                    <tr>
+                        <td>SEA41</td>
+                        <td>Day 1</td>
+                        <td>WA</td>
+                    </tr>
+                    <tr>
+                        <td>SEA32</td>
+                        <td>Nessie</td>
+                        <td>WA</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p><strong>EmployeeOffice (Relationship Table):</strong></p>
+            <table class="example-table">
+                <thead>
+                    <tr>
+                        <th>employee</th>
+                        <th>office</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>dac041be</td>
+                        <td>SEA24</td>
+                    </tr>
+                    <tr>
+                        <td>dac04434</td>
+                        <td>SEA41</td>
+                    </tr>
+                    <tr>
+                        <td>dac045a6</td>
+                        <td>SEA32</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>This approach allows adding new employees or offices independently and updates to office information only need to happen in one place.</p>
         </div>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="RDBMS Associations" src="https://fast.wistia.net/embed/iframe/ihmavfy0iv" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
+        <div class="video-content">
+            <h3>RDBMS Associations</h3>
+            <p>Associations define relationships between tables in a relational database. The primary mechanism for creating associations is through foreign keys.</p>
+            
+            <h4>Foreign Keys and Referential Integrity</h4>
+            <p>A foreign key is a column (or set of columns) in one table that refers to the primary key in another table. It enforces referential integrity, ensuring that relationships between tables remain consistent.</p>
+            
+            <p>For example, in the <code>EmployeeOffice</code> table above:</p>
+            <ul>
+                <li>The <code>employee</code> column is a foreign key referencing the <code>id</code> column in the <code>Employees</code> table</li>
+                <li>The <code>office</code> column is a foreign key referencing the <code>id</code> column in the <code>Offices</code> table</li>
+            </ul>
+            
+            <p>Referential integrity enforces rules like:</p>
+            <ul>
+                <li>You cannot add an employee-office relationship for an employee or office that doesn't exist</li>
+                <li>If you try to delete an office that has employees assigned to it, the operation will fail unless you specify a cascading action</li>
+            </ul>
+            
+            <h4>Types of Associations</h4>
+            <ol>
+                <li><strong>One-to-One:</strong> One record in a table is associated with exactly one record in another table</li>
+                <li><strong>One-to-Many:</strong> One record in a table can be associated with multiple records in another table (e.g., one office can have many employees)</li>
+                <li><strong>Many-to-Many:</strong> Multiple records in a table can be associated with multiple records in another table (requires a junction/relationship table)</li>
+            </ol>
+            
+            <h4>Basic SQL for Querying Data</h4>
+            <div class="code-example">
+                -- Select all employees<br>
+                SELECT * FROM Employees;<br>
+                <br>
+                -- Select specific columns<br>
+                SELECT id, level FROM Employees;<br>
+                <br>
+                -- Filter with conditions<br>
+                SELECT * FROM Employees WHERE level > 5;<br>
+                <br>
+                -- Count employees<br>
+                SELECT COUNT(*) FROM Employees;<br>
+                <br>
+                -- Join tables<br>
+                SELECT e.id, e.level, o.name, o.state<br>
+                FROM Employees e<br>
+                INNER JOIN EmployeeOffice eo ON e.id = eo.employee<br>
+                INNER JOIN Offices o ON eo.office = o.id;<br>
+            </div>
+        </div>
+
         <section>
             <h2>Learning Objectives</h2>
             <ul class="learning-objectives-list">
-                <li>Understand the principles of relational database design</li>
-                <li>Apply normalization techniques to reduce data redundancy</li>
-                <li>Design efficient database schemas with appropriate relationships</li>
-                <li>Implement one-to-one, one-to-many, and many-to-many associations</li>
-                <li>Use JDBC to connect Java applications with relational databases</li>
-                <li>Write efficient SQL queries to retrieve and manipulate data</li>
+                <li>Recall that tables in a relational database have a fixed schema that every record must satisfy</li>
+                <li>Recall that relational databases use NULL to specify that a record does not have a value for a specific column</li>
+                <li>Recall that relational databases include numeric, date, varchar, and boolean representations of data</li>
+                <li>Identify a unique record in a provided table by its primary key's value</li>
+                <li>Recall that normalization reduces redundant data while enabling data consistency</li>
+                <li>Recall that relational databases use foreign keys to enforce referential integrity</li>
+                <li>Outline when an insert will fail in a relational database due to referential integrity constraints</li>
+                <li>Recall that relational databases, unlike non-relational databases, have a fixed schema, maintain referential integrity, and enable joining across tables</li>
+                <li>Outline referential integrity in relational databases</li>
+                <li>Identify foreign and primary key pairs from a given entity relationship diagram</li>
+                <li>Write an SQL statement that retrieves rows satisfying specified conditions from a single table</li>
+                <li>Write an SQL statement that counts the number of rows satisfying specified conditions in a table</li>
+                <li>Write an SQL statement that describes a table's columns</li>
+                <li>Determine the results of executing a provided SQL select statement on a given table</li>
+                <li>Write an inner join SQL statement that retrieves rows satisfying specified conditions</li>
+                <li>Predict the results of executing a provided inner join SQL statement on a set of given tables</li>
+                <li>Implement an SQL statement to answer a provided business question, given an entity relationship diagram</li>
+                <li>Write an SQL statement that retrieves only specified columns from a single table</li>
+                <li>Explain inner join in relational databases</li>
             </ul>
         </section>
 
