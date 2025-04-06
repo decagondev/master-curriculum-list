@@ -12,6 +12,7 @@
             padding: 20px;
             background-color: #1a1d23;
             color: #ffffff;
+            transition: background-color 0.3s;
         }
         .container {
             max-width: 1000px;
@@ -19,7 +20,12 @@
             background-color: #222831;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         h1, h2, h3, h4 {
             color: #ffffff;
@@ -30,37 +36,101 @@
             margin-bottom: 30px;
             border-bottom: 2px solid #ff5722;
             padding-bottom: 10px;
+            position: relative;
+        }
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #ff5722;
+            animation: expandWidth 1.5s ease-in-out forwards;
+        }
+        @keyframes expandWidth {
+            from { width: 50px; }
+            to { width: 100%; }
         }
         p {
             color: #b3b3b3;
+            line-height: 1.7;
         }
         a {
             color: #ff5722;
             text-decoration: none;
             transition: color 0.2s;
+            position: relative;
         }
         a:hover {
             color: #ff7043;
+        }
+        a:not(.back-link):not(.button):after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: #ff7043;
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+        }
+        a:not(.back-link):not(.button):hover:after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
         }
         .back-link {
             display: inline-flex;
             align-items: center;
             margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .back-link:hover {
+            transform: translateX(-5px);
         }
         .back-link svg {
             margin-right: 8px;
+            transition: transform 0.2s;
+        }
+        .back-link:hover svg {
+            transform: translateX(-3px);
         }
         .card {
             margin-bottom: 20px;
             padding: 20px;
             border: 1px solid #333a47;
             background-color: #2a303c;
-            border-radius: 4px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .card:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        .card:hover:after {
+            transform: scaleX(1);
         }
         .card h3 {
             color: #ffffff;
@@ -68,16 +138,44 @@
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid #333a47;
+            display: flex;
+            align-items: center;
+        }
+        .card h3:before {
+            content: '●';
+            color: #ff5722;
+            margin-right: 8px;
+            font-size: 10px;
         }
         .section {
             margin-bottom: 30px;
         }
         ul {
-            color: #b3b3b3;
-            padding-left: 20px;
+            list-style: none;
+            padding: 0;
         }
         li {
             margin-bottom: 10px;
+            color: #b3b3b3;
+            transition: transform 0.2s, background-color 0.3s;
+            padding: 8px 10px;
+            border-radius: 4px;
+            display: flex;
+            align-items: flex-start;
+        }
+        li:hover {
+            transform: translateX(5px);
+            background-color: #333a47;
+        }
+        li:before {
+            content: '>';
+            color: #ff5722;
+            font-weight: bold;
+            margin-right: 10px;
+            transition: transform 0.2s;
+        }
+        li:hover:before {
+            transform: translateX(3px);
         }
         .note {
             background-color: rgba(255, 87, 34, 0.1);
@@ -85,41 +183,242 @@
             padding: 15px;
             margin: 20px 0;
             border-radius: 0 4px 4px 0;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .note:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .note:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, #ff5722, transparent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        .note:hover:after {
+            transform: scaleX(1);
         }
         .button {
             display: inline-block;
-            background-color: #ff5722;
+            background: linear-gradient(135deg, #ff5722, #ff9800);
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 4px;
             font-weight: 500;
-            margin-top: 10px;
-            transition: background-color 0.2s;
+            margin-top: 15px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transition: transform 0.5s;
+            transform-origin: 0 0;
+            transition-timing-function: cubic-bezier(0.5,1.6,0.4,0.7);
+            transform: scaleX(0);
+            z-index: -1;
         }
         .button:hover {
-            background-color: #ff7043;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
             color: white;
+        }
+        .button:hover:before {
+            transform: scaleX(1);
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         th {
             background-color: #333a47;
             color: #ffffff;
             text-align: left;
-            padding: 10px;
+            padding: 12px 15px;
+            font-weight: 600;
+            position: relative;
+        }
+        th:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, #ff5722, transparent);
         }
         td {
-            padding: 10px;
+            padding: 12px 15px;
             border-top: 1px solid #333a47;
             color: #b3b3b3;
+            transition: background-color 0.2s;
+        }
+        tr {
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        tr:hover {
+            background-color: #333a47 !important;
+            transform: translateX(5px);
         }
         tr:nth-child(even) {
             background-color: #2f3642;
         }
+        
+        /* Section styles */
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #ff5722;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background-color: #ff5722;
+            transition: width 0.3s;
+        }
+        .section-title:hover:after {
+            width: 100%;
+        }
+        
+        /* Progress indicator */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #2a303c;
+            border-radius: 4px;
+            margin: 40px 0 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        /* Feature list */
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .feature-item:hover {
+            background-color: #333a47;
+            transform: translateX(5px);
+        }
+        .feature-item svg {
+            margin-right: 10px;
+            flex-shrink: 0;
+            color: #ff5722;
+            transition: transform 0.3s;
+        }
+        .feature-item:hover svg {
+            transform: scale(1.2);
+        }
+        .feature-content {
+            flex: 1;
+        }
+        .feature-title {
+            font-weight: 500;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+        
+        /* Dashboard preview */
+        .preview-container {
+            border: 1px dashed #ff5722;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .preview-container:before {
+            content: 'PREVIEW';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ff5722;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .dashboard-preview {
+            width: 100%;
+            height: 200px;
+            background-image: url('https://via.placeholder.com/800x400/2a303c/666666?text=Job+Search+Dashboard+Preview');
+            background-size: cover;
+            background-position: center;
+            border-radius: 4px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .dashboard-preview:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Progress bar animation
+            setTimeout(function() {
+                document.querySelector('.progress-bar').style.width = '70%';
+            }, 500);
+            
+            // Add animation classes to items as they appear in viewport
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            document.querySelectorAll('.card, .section, .note').forEach(item => {
+                observer.observe(item);
+                // Add animation delay based on position
+                const index = Array.from(document.querySelectorAll('.card, .section, .note')).indexOf(item);
+                item.style.animationDelay = `${0.1 * index}s`;
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -136,29 +435,73 @@
         <p>
             Effectively managing and tracking your job search efforts is crucial for a successful career transition. This guide will help you stay organized and focused during your job search journey.
         </p>
+        
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        <p style="text-align: right; font-size: 14px; margin-top: -15px; color: #666;">Job Search Progress: 70% Complete</p>
 
         <!-- Why Track Section -->
         <div class="section">
+            <h2 class="section-title">Why Track Your Job Search Efforts?</h2>
             <div class="card">
-                <h3>Why Track Your Job Search Efforts?</h3>
-                <ul>
-                    <li>Maintain accountability and momentum</li>
-                    <li>Identify which strategies are yielding the best results</li>
-                    <li>Easily follow up on applications and opportunities</li>
-                    <li>Recognize patterns in the types of roles you're applying for</li>
-                    <li>Keep accurate records for networking and future reference</li>
-                </ul>
+                <div class="feature-item">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div class="feature-content">
+                        <div class="feature-title">Maintain accountability and momentum</div>
+                        <p>Tracking creates structure and helps you stay disciplined in your daily job search activities.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div class="feature-content">
+                        <div class="feature-title">Identify which strategies yield the best results</div>
+                        <p>Discover which job boards, networking approaches, or application methods are most effective for you.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div class="feature-content">
+                        <div class="feature-title">Easily follow up on applications and opportunities</div>
+                        <p>Never miss a follow-up opportunity with a detailed record of all your applications and interactions.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div class="feature-content">
+                        <div class="feature-title">Recognize patterns in the types of roles you're applying for</div>
+                        <p>Identify trends and adjust your strategy to focus on positions that align with your skills and goals.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div class="feature-content">
+                        <div class="feature-title">Keep accurate records for networking and future reference</div>
+                        <p>Maintain a comprehensive database of contacts, companies, and conversations for ongoing networking.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Tracking Tools Section -->
         <div class="section">
+            <h2 class="section-title">Recommended Tracking Tools</h2>
             <div class="card">
-                <h3>Recommended Tracking Tools</h3>
                 <p>Choose a tracking method that works best for your style. Here are some popular options:</p>
                 
                 <div class="card">
-                    <h4>Spreadsheet Tracking</h4>
+                    <h3>Spreadsheet Tracking</h3>
                     <p>Create a detailed spreadsheet with the following columns:</p>
                     <table>
                         <thead>
@@ -198,41 +541,110 @@
                             </tr>
                         </tbody>
                     </table>
+                    
+                    <!-- Preview of tracking spreadsheet -->
+                    <div class="preview-container">
+                        <p>Click to view a sample tracking spreadsheet:</p>
+                        <div class="dashboard-preview"></div>
+                    </div>
                 </div>
                 
                 <div class="card">
-                    <h4>Job Board Tracking</h4>
+                    <h3>Job Board Tracking</h3>
                     <p>Many job boards offer built-in application tracking:</p>
-                    <ul>
-                        <li>LinkedIn Jobs - "My Jobs" section</li>
-                        <li>Indeed - "My Jobs" dashboard</li>
-                        <li>Glassdoor - "Applications" tab</li>
-                    </ul>
+                    <div class="feature-item">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span>LinkedIn Jobs - "My Jobs" section</span>
+                    </div>
+                    <div class="feature-item">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span>Indeed - "My Jobs" dashboard</span>
+                    </div>
+                    <div class="feature-item">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span>Glassdoor - "Applications" tab</span>
+                    </div>
                 </div>
                 
                 <div class="card">
-                    <h4>Dedicated Job Search Tools</h4>
-                    <ul>
-                        <li>Huntr.co - Visual job search board</li>
-                        <li>Trello - Create cards for each application</li>
-                        <li>Notion - Customizable workspace for job search</li>
-                    </ul>
+                    <h3>Dedicated Job Search Tools</h3>
+                    <div class="feature-item">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <div class="feature-content">
+                            <div class="feature-title">Huntr.co</div>
+                            <p>Visual kanban-style job board for tracking applications through each stage</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <div class="feature-content">
+                            <div class="feature-title">Trello</div>
+                            <p>Create cards for each application and move them through your pipeline</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <div class="feature-content">
+                            <div class="feature-title">Notion</div>
+                            <p>Customizable workspace with templates designed for job search tracking</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Best Practices Section -->
         <div class="section">
+            <h2 class="section-title">Best Practices for Job Search Tracking</h2>
             <div class="card">
-                <h3>Best Practices for Job Search Tracking</h3>
-                <ul>
-                    <li>Update your tracking system daily or after each application</li>
-                    <li>Set aside dedicated time each week to review and follow up</li>
-                    <li>Record all interactions, including phone calls and emails</li>
-                    <li>Track the source of each job lead (referral, job board, etc.)</li>
-                    <li>Note the specific keywords or skills mentioned in job descriptions</li>
-                    <li>Document which resume version and cover letter you used</li>
-                </ul>
+                <div class="feature-item">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Update your tracking system daily or after each application</span>
+                </div>
+                <div class="feature-item">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Set aside dedicated time each week to review and follow up</span>
+                </div>
+                <div class="feature-item">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Record all interactions, including phone calls and emails</span>
+                </div>
+                <div class="feature-item">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Track the source of each job lead (referral, job board, etc.)</span>
+                </div>
+                <div class="feature-item">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Note the specific keywords or skills mentioned in job descriptions</span>
+                </div>
+                <div class="feature-item">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Document which resume version and cover letter you used</span>
+                </div>
                 
                 <div class="note">
                     <p><strong>Important:</strong> Regularly back up your tracking system to avoid losing valuable information about your job search progress.</p>
@@ -242,10 +654,15 @@
 
         <!-- Template Resource Section -->
         <div class="section">
+            <h2 class="section-title">Job Search Tracking Template</h2>
             <div class="card">
-                <h3>Job Search Tracking Template</h3>
                 <p>We've created a customizable job search tracking template you can use to get started:</p>
-                <a href="#" class="button">Download Tracking Template</a>
+                <a href="#" class="button">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right: 8px; vertical-align: text-bottom;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                    Download Tracking Template
+                </a>
             </div>
         </div>
     </div>

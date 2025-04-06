@@ -12,6 +12,7 @@
             padding: 20px;
             background-color: #1a1d23;
             color: #ffffff;
+            transition: background-color 0.3s;
         }
         .container {
             max-width: 1000px;
@@ -19,7 +20,12 @@
             background-color: #222831;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         h1, h2, h3, h4 {
             color: #ffffff;
@@ -30,30 +36,77 @@
             margin-bottom: 30px;
             border-bottom: 2px solid #ff5722;
             padding-bottom: 10px;
+            position: relative;
+        }
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #ff5722;
+            animation: expandWidth 1.5s ease-in-out forwards;
+        }
+        @keyframes expandWidth {
+            from { width: 50px; }
+            to { width: 100%; }
         }
         p {
             color: #b3b3b3;
+            line-height: 1.7;
         }
         a {
             color: #ff5722;
             text-decoration: none;
             transition: color 0.2s;
+            position: relative;
         }
         a:hover {
             color: #ff7043;
+        }
+        a:not(.back-link):after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: #ff7043;
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+        }
+        a:not(.back-link):hover:after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
         }
         .back-link {
             display: inline-flex;
             align-items: center;
             margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .back-link:hover {
+            transform: translateX(-5px);
         }
         .back-link svg {
             margin-right: 8px;
+            transition: transform 0.2s;
+        }
+        .back-link:hover svg {
+            transform: translateX(-3px);
         }
         .tab-navigation {
             display: flex;
             border-bottom: 1px solid #333a47;
             margin-bottom: 20px;
+            position: relative;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .tab-navigation::-webkit-scrollbar {
+            display: none;
         }
         .tab-button {
             padding: 10px 15px;
@@ -64,14 +117,16 @@
             font-size: 16px;
             position: relative;
             margin-right: 10px;
-            transition: color 0.3s;
+            transition: all 0.3s;
             outline: none;
+            white-space: nowrap;
         }
         .tab-button:hover {
             color: #ffffff;
         }
         .tab-button.active {
             color: #ff5722;
+            font-weight: 500;
         }
         .tab-button.active::after {
             content: '';
@@ -81,9 +136,19 @@
             width: 100%;
             height: 2px;
             background-color: #ff5722;
+            animation: slideIn 0.3s ease-in-out;
+        }
+        @keyframes slideIn {
+            from { width: 0; }
+            to { width: 100%; }
         }
         .tab-content {
             display: none;
+            animation: fadeContent 0.4s ease-in-out;
+        }
+        @keyframes fadeContent {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .tab-content.active {
             display: block;
@@ -93,12 +158,29 @@
             padding: 20px;
             border: 1px solid #333a47;
             background-color: #2a303c;
-            border-radius: 4px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
         }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .card:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        .card:hover:after {
+            transform: scaleX(1);
         }
         .card h3 {
             color: #ffffff;
@@ -106,11 +188,25 @@
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid #333a47;
+            display: flex;
+            align-items: center;
+        }
+        .card h3:before {
+            content: '●';
+            color: #ff5722;
+            margin-right: 8px;
+            font-size: 10px;
         }
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
+            animation: fadeUp 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         ul {
             list-style: none;
@@ -120,15 +216,30 @@
         li {
             margin-bottom: 10px;
             color: #b3b3b3;
+            transition: transform 0.2s;
+        }
+        li:hover {
+            transform: translateX(5px);
         }
         .feature-item {
             display: flex;
             align-items: flex-start;
             margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .feature-item:hover {
+            background-color: #333a47;
+            transform: translateX(5px);
         }
         .feature-item svg {
             margin-right: 10px;
             flex-shrink: 0;
+            transition: transform 0.3s;
+        }
+        .feature-item:hover svg {
+            transform: scale(1.2);
         }
         .feature-item-secondary svg {
             color: #4fa8dc;
@@ -150,6 +261,50 @@
         .section-title {
             color: #ffffff;
             margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background-color: #ff5722;
+            transition: width 0.3s;
+        }
+        .section-title:hover:after {
+            width: 100%;
+        }
+        
+        /* Progress indicator */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #2a303c;
+            border-radius: 4px;
+            margin: 40px 0 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        /* Info box */
+        .info-box {
+            background-color: rgba(255, 87, 34, 0.1);
+            border-left: 4px solid #ff5722;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+            position: relative;
+            overflow: hidden;
         }
     </style>
     <script>
@@ -169,6 +324,38 @@
         window.addEventListener('DOMContentLoaded', function() {
             // Set initial active tab
             switchTab('hardware');
+            
+            // Progress bar animation
+            setTimeout(function() {
+                document.querySelector('.progress-bar').style.width = '33%';
+            }, 500);
+            
+            // Add scroll to tab navigation
+            const tabNav = document.querySelector('.tab-navigation');
+            if (tabNav) {
+                tabNav.addEventListener('wheel', function(e) {
+                    if (e.deltaY !== 0) {
+                        e.preventDefault();
+                        this.scrollLeft += e.deltaY;
+                    }
+                });
+            }
+            
+            // Add animation classes to items as they appear in viewport
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            document.querySelectorAll('.card, .grid, .feature-item').forEach(item => {
+                observer.observe(item);
+            });
         });
     </script>
 </head>
@@ -187,6 +374,12 @@
         <p>
             Essential hardware, software, and system requirements for successful participation in the program.
         </p>
+        
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        <p style="text-align: right; font-size: 14px; margin-top: -15px; color: #666;">Setup Progress: 33% Complete</p>
 
         <!-- Main Navigation Tabs -->
         <div class="tab-navigation">
@@ -210,6 +403,10 @@
             <div id="hardware" class="tab-content active">
                 <div class="card">
                     <h2 class="section-title">Hardware Requirements</h2>
+                    
+                    <div class="info-box">
+                        <p><strong>Note:</strong> Your hardware specifications directly impact your development experience. While minimum requirements allow you to participate, recommended specifications will provide a smoother experience, especially when running multiple applications simultaneously.</p>
+                    </div>
                     
                     <div class="grid">
                         <div class="card">
@@ -285,6 +482,10 @@
             <div id="software" class="tab-content">
                 <div class="card">
                     <h2 class="section-title">Required Software</h2>
+                    
+                    <div class="info-box">
+                        <p><strong>Pro Tip:</strong> Install these tools before your first class. This will save you time and allow you to focus on learning rather than setting up your environment.</p>
+                    </div>
                     
                     <div class="grid">
                         <div class="card">
@@ -397,6 +598,10 @@
             <div id="network" class="tab-content">
                 <div class="card">
                     <h2 class="section-title">Network Requirements</h2>
+                    
+                    <div class="info-box">
+                        <p><strong>Important:</strong> A stable internet connection is crucial for attending live sessions, submitting assignments, and accessing course materials. Consider having a backup connection option if possible.</p>
+                    </div>
                     
                     <div class="grid">
                         <div class="card">

@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Important Information</title>
+    <meta name="identifier" content="gdab6d1c5855bc18a2a7cc10b7fe04e3d"/>
+    <meta name="editing_roles" content="teachers"/>
+    <meta name="workflow_state" content="unpublished"/>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -23,23 +26,35 @@
         }
         h1, h2, h3, h4 {
             color: #ffffff;
-            margin: 0;
+            margin-top: 0;
         }
         h1 {
-            color: #ffffff;
             margin-bottom: 30px;
             border-bottom: 2px solid #ff5722;
             padding-bottom: 10px;
+            text-align: center;
+        }
+        h2 {
+            color: #ff5722;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #ff5722;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333a47;
         }
         p {
             color: #b3b3b3;
         }
-        .tab-navigation {
+        .tabs {
             display: flex;
+            flex-wrap: wrap;
             border-bottom: 1px solid #333a47;
             margin-bottom: 20px;
         }
-        .tab-button {
+        .tab {
             padding: 10px 15px;
             background-color: transparent;
             border: none;
@@ -51,13 +66,13 @@
             transition: color 0.3s;
             outline: none;
         }
-        .tab-button:hover {
+        .tab:hover {
             color: #ffffff;
         }
-        .tab-button.active {
+        .tab.active {
             color: #ff5722;
         }
-        .tab-button.active::after {
+        .tab.active::after {
             content: '';
             position: absolute;
             bottom: -1px;
@@ -77,24 +92,18 @@
             padding: 20px;
             border: 1px solid #333a47;
             background-color: #2a303c;
-            border-radius: 4px;
+            border-radius: 8px;
             transition: transform 0.2s, box-shadow 0.2s;
         }
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
-        .card h3 {
-            color: #ffffff;
-            margin-top: 0;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #333a47;
-        }
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
+            margin-top: 20px;
         }
         ul {
             list-style: none;
@@ -108,7 +117,7 @@
         .feature-item {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         .feature-item svg {
             margin-right: 10px;
@@ -122,6 +131,7 @@
         }
         a:hover {
             color: #ff7043;
+            text-decoration: underline;
         }
         .back-link {
             display: inline-flex;
@@ -131,7 +141,7 @@
         .back-link svg {
             margin-right: 8px;
         }
-        .note {
+        .highlight-box {
             background-color: rgba(255, 87, 34, 0.1);
             border-left: 4px solid #ff5722;
             padding: 15px;
@@ -144,7 +154,7 @@
             background-color: rgba(255, 87, 34, 0.1);
             padding: 15px;
             margin: 20px 0;
-            border-radius: 4px;
+            border-radius: 8px;
         }
         .warning svg {
             color: #ff5722;
@@ -157,12 +167,12 @@
         }
         .footer-content {
             display: inline-block;
-            background-color: #ff5722;
+            background-color: #2a303c;
             color: white;
-            padding: 15px 30px;
-            border-radius: 4px;
+            padding: 20px 30px;
+            border-radius: 8px;
+            border: 1px solid #333a47;
         }
-        /* New classes for extracted inline styles */
         .note-spacing-top {
             margin-top: 15px;
         }
@@ -173,28 +183,96 @@
             margin: 0;
         }
         .card-subsection-title {
-            margin: 10px 0;
+            margin: 10px 0 15px 0;
             color: #ffffff;
+            font-weight: bold;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #333a47;
+            border-radius: 4px;
+            margin: 20px 0;
+            height: 8px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #ff5722;
+            width: 0;
+            transition: width 1s ease;
+        }
+        .requirement-badge {
+            display: inline-block;
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+        .btn:hover {
+            background-color: #ff7043;
+            color: white;
+            text-decoration: none;
+        }
+        .highlight-title {
+            color: #ff5722;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 10px;
         }
     </style>
     <script>
-        function switchTab(tabId) {
-            document.querySelectorAll('[data-tab-content]').forEach(content => {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial active tab
+            showTab('tech-requirements');
+            
+            // Add event listeners to tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    showTab(tabId);
+                });
+            });
+            
+            // Animate progress bar
+            setTimeout(function() {
+                document.querySelector('.progress-fill').style.width = '40%';
+            }, 300);
+        });
+        
+        function showTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
             
-            document.querySelectorAll('[data-tab]').forEach(tab => {
+            // Remove active state from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             
-            document.querySelector(`[data-tab-content="${tabId}"]`).classList.add('active');
+            // Show selected tab content
+            document.querySelector(`#${tabId}`).classList.add('active');
+            
+            // Set active state on selected tab
             document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set initial active tab
-            switchTab('tech-requirements');
-        });
     </script>
 </head>
 <body>
@@ -209,42 +287,29 @@
 
         <!-- Header Section -->
         <h1>Important Information</h1>
-        <p>
-            Essential information about technical requirements, expectations, and resources for success in the program.
-        </p>
+        
+        <div class="highlight-box">
+            <p style="margin-bottom: 0;">
+                Essential information about technical requirements, expectations, and resources for success in the program.
+            </p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
 
         <!-- Main Navigation Tabs -->
-        <div class="tab-navigation">
-            <button 
-                data-tab="tech-requirements"
-                onclick="switchTab('tech-requirements')"
-                class="tab-button active">
-                Technical Requirements
-            </button>
-            <button 
-                data-tab="expectations"
-                onclick="switchTab('expectations')"
-                class="tab-button">
-                Program Expectations
-            </button>
-            <button 
-                data-tab="support"
-                onclick="switchTab('support')"
-                class="tab-button">
-                Support Resources
-            </button>
-            <button 
-                data-tab="success"
-                onclick="switchTab('success')"
-                class="tab-button">
-                Success Guidelines
-            </button>
+        <div class="tabs">
+            <div class="tab active" data-tab="tech-requirements">Technical Requirements</div>
+            <div class="tab" data-tab="expectations">Program Expectations</div>
+            <div class="tab" data-tab="support">Support Resources</div>
+            <div class="tab" data-tab="success">Success Guidelines</div>
         </div>
 
         <!-- Tab Contents -->
         <div>
             <!-- Technical Requirements Tab -->
-            <div data-tab-content="tech-requirements" class="tab-content active">
+            <div id="tech-requirements" class="tab-content active">
                 <div class="card">
                     <h2>Technical Requirements</h2>
                     
@@ -274,7 +339,7 @@
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
-                                    <span>Webcam and Microphone</span>
+                                    <span>Webcam and Microphone for live sessions</span>
                                 </li>
                             </ul>
                         </div>
@@ -301,14 +366,17 @@
                                     <span>Ubuntu Linux</span>
                                 </li>
                             </ul>
-                            <p class="note note-spacing-top">Note: Chromebooks are not supported as coursework requires local software installation.</p>
+                            <div class="highlight-box note-spacing-top">
+                                <p class="highlight-title">Important Note</p>
+                                <p style="margin-bottom: 0;">Chromebooks are not supported as coursework requires local software installation.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Program Expectations Tab -->
-            <div data-tab-content="expectations" class="tab-content">
+            <div id="expectations" class="tab-content">
                 <div class="card">
                     <h2>Program Expectations</h2>
                     
@@ -321,27 +389,28 @@
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>Active participation in live instruction sessions</span>
+                                    <span>Active participation in live instruction sessions and discussions</span>
                                 </li>
                                 <li class="feature-item">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>Completion of module projects and sprint challenges</span>
+                                    <span>Completion of module projects and sprint challenges on time</span>
                                 </li>
                                 <li class="feature-item">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>Regular engagement with learning materials</span>
+                                    <span>Regular engagement with learning materials and resources</span>
                                 </li>
                                 <li class="feature-item">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>Consistent progress through the curriculum</span>
+                                    <span>Consistent progress through the curriculum at the expected pace</span>
                                 </li>
                             </ul>
+                            <a href="engagement-expectations.html" class="btn">View Detailed Expectations</a>
                         </div>
 
                         <div class="card">
@@ -350,20 +419,21 @@
                                 <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                                 </svg>
-                                <p class="warning-text">Students who are inactive for more than seven (7) consecutive days will be contacted to verify enrollment status.</p>
+                                <p class="warning-text">Students who are inactive for more than seven (7) consecutive days will be contacted to verify enrollment status. Continued inactivity may affect your standing in the program.</p>
                             </div>
                         </div>
 
                         <div class="card">
                             <h3>Leave of Absence</h3>
                             <p>If you are unable to maintain engagement due to extenuating circumstances, you may need to request a leave of absence. Contact your advisor to discuss your options.</p>
+                            <p>A leave of absence can help protect your progress and enrollment status when you're dealing with unexpected life events.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Support Resources Tab -->
-            <div data-tab-content="support" class="tab-content">
+            <div id="support" class="tab-content">
                 <div class="card">
                     <h2>Support Resources</h2>
                     
@@ -377,27 +447,28 @@
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>Real-world coding examples</span>
+                                    <span>Real-world coding examples and patterns</span>
                                 </li>
                                 <li class="feature-item">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>Problem-solving strategies</span>
+                                    <span>Problem-solving strategies and approaches</span>
                                 </li>
                                 <li class="feature-item">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>Technical interview preparation</span>
+                                    <span>Technical interview preparation and practice</span>
                                 </li>
                                 <li class="feature-item">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>Code review and best practices</span>
+                                    <span>Code review and programming best practices</span>
                                 </li>
                             </ul>
+                            <a href="attend-get-it-done.html" class="btn">View Sessions Schedule</a>
                         </div>
 
                         <div class="card">
@@ -407,28 +478,35 @@
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>Access to comprehensive knowledge base</span>
+                                    <span>Access to comprehensive knowledge base with tutorials and guides</span>
                                 </li>
                                 <li class="feature-item">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>Direct assistance from Learning Assistants</span>
+                                    <span>Direct assistance from Learning Assistants with technical questions</span>
                                 </li>
                                 <li class="feature-item">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>Technical and non-technical support</span>
+                                    <span>Technical and non-technical support through Slack channels</span>
+                                </li>
+                                <li class="feature-item">
+                                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span>Career coaching and professional development resources</span>
                                 </li>
                             </ul>
+                            <a href="academic-support.html" class="btn">Academic Support</a>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Success Guidelines Tab -->
-            <div data-tab-content="success" class="tab-content">
+            <div id="success" class="tab-content">
                 <div class="card">
                     <h2>Success Guidelines</h2>
                     
@@ -440,21 +518,23 @@
                                     <svg width="20" height="20" fill="none" stroke="#4ade80" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
-                                    <span>Submit all required career artifacts</span>
+                                    <span>Submit all required career artifacts (resume, LinkedIn, GitHub)</span>
                                 </li>
                                 <li class="feature-item">
                                     <svg width="20" height="20" fill="none" stroke="#4ade80" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
-                                    <span>Pass career artifact review process</span>
+                                    <span>Pass career artifact review process with professional quality</span>
                                 </li>
                                 <li class="feature-item">
                                     <svg width="20" height="20" fill="none" stroke="#4ade80" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
-                                    <span>Achieve 100% completion on all artifacts</span>
+                                    <span>Achieve 100% completion on all artifacts before graduation</span>
                                 </li>
                             </ul>
+                            <div class="requirement-badge">Required for Graduation</div>
+                            <a href="career-artifacts-submission-process.html" class="btn">Submission Process</a>
                         </div>
 
                         <div class="card">
@@ -465,24 +545,33 @@
                                     <svg width="20" height="20" fill="none" stroke="#4ade80" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
-                                    <span>Minimum score of 295 required</span>
+                                    <span>Minimum score of 295 required to pass the assessment</span>
                                 </li>
                                 <li class="feature-item">
                                     <svg width="20" height="20" fill="none" stroke="#4ade80" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
-                                    <span>Complete all sprint challenges</span>
+                                    <span>Complete all sprint challenges with satisfactory quality</span>
                                 </li>
                                 <li class="feature-item">
                                     <svg width="20" height="20" fill="none" stroke="#4ade80" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
-                                    <span>Demonstrate proficiency in core concepts</span>
+                                    <span>Demonstrate proficiency in core programming concepts</span>
                                 </li>
                             </ul>
+                            <div class="requirement-badge">Required for Graduation</div>
+                            <a href="how-to-pass-the-sprints.html" class="btn">Sprint Success Guide</a>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Footer Section -->
+        <div class="footer">
+            <div class="footer-content">
+                <p style="margin: 0; font-weight: bold; font-size: 1.1rem;">Your success is our priority. Don't hesitate to reach out for help!</p>
             </div>
         </div>
     </div>

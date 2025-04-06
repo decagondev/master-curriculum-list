@@ -12,6 +12,7 @@
             padding: 20px;
             background-color: #1a1d23;
             color: #ffffff;
+            transition: background-color 0.3s;
         }
         .container {
             max-width: 1000px;
@@ -19,7 +20,12 @@
             background-color: #222831;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         h1, h2, h3, h4 {
             color: #ffffff;
@@ -30,73 +36,308 @@
             margin-bottom: 30px;
             border-bottom: 2px solid #ff5722;
             padding-bottom: 10px;
+            position: relative;
+        }
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #ff5722;
+            animation: expandWidth 1.5s ease-in-out forwards;
+        }
+        @keyframes expandWidth {
+            from { width: 50px; }
+            to { width: 100%; }
         }
         h4 {
             margin-top: 20px;
             margin-bottom: 10px;
             color: #ff5722;
+            display: flex;
+            align-items: center;
+        }
+        h4:before {
+            content: '●';
+            color: #ff5722;
+            margin-right: 8px;
+            font-size: 10px;
         }
         .back-button {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             margin-bottom: 20px;
             padding: 8px 16px;
             background-color: #2a303c;
             color: #ffffff;
             text-decoration: none;
             border-radius: 4px;
-            transition: background-color 0.2s;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .back-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
         }
         .back-button:hover {
             background-color: #333a47;
+            transform: translateX(-5px);
+        }
+        .back-button:hover:before {
+            transform: translateX(0);
+        }
+        .back-button:after {
+            content: '←';
+            margin-right: 8px;
+            transition: transform 0.3s;
+        }
+        .back-button:hover:after {
+            transform: translateX(-3px);
         }
         .section {
             margin-bottom: 30px;
             padding: 20px;
             border: 1px solid #333a47;
             background-color: #2a303c;
-            border-radius: 4px;
+            border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .section:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        .section:hover:after {
+            transform: scaleX(1);
         }
         p {
             color: #b3b3b3;
             margin-bottom: 16px;
+            line-height: 1.7;
         }
         hr {
             border: none;
             border-top: 1px solid #333a47;
             margin: 20px 0;
+            position: relative;
+        }
+        hr:before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 0;
+            width: 50px;
+            height: 1px;
+            background-color: #ff5722;
         }
         ol, ul {
             color: #b3b3b3;
             padding-left: 20px;
             margin-bottom: 20px;
+            list-style-position: outside;
         }
         li {
             margin-bottom: 10px;
+            padding-left: 5px;
+            position: relative;
+            transition: transform 0.2s;
+        }
+        li:hover {
+            transform: translateX(5px);
+        }
+        ol li {
+            padding-left: 10px;
+        }
+        ol li::marker {
+            color: #ff5722;
+            font-weight: bold;
         }
         a {
             color: #ff5722;
             text-decoration: none;
+            position: relative;
+            transition: color 0.2s;
         }
         a:hover {
             color: #ff7043;
-            text-decoration: underline;
+        }
+        a:not(.back-button):after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: #ff7043;
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+        }
+        a:not(.back-button):hover:after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
         }
         strong {
             color: #ffffff;
         }
+        
+        /* Call-to-action button */
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff5722, #ff9800);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: 500;
+            margin-top: 20px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            text-decoration: none;
+        }
+        .cta-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transition: transform 0.5s;
+            transform-origin: 0 0;
+            transition-timing-function: cubic-bezier(0.5,1.6,0.4,0.7);
+            transform: scaleX(0);
+            z-index: -1;
+        }
+        .cta-button:hover {
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        .cta-button:hover:before {
+            transform: scaleX(1);
+        }
+        
+        /* Highlight box */
+        .highlight-box {
+            background-color: rgba(255, 87, 34, 0.1);
+            border-left: 4px solid #ff5722;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .highlight-box:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,87,34,0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .highlight-box:hover:before {
+            opacity: 1;
+        }
+        
+        /* Progress indicator */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #2a303c;
+            border-radius: 4px;
+            margin: 40px 0 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Progress bar animation
+            setTimeout(function() {
+                document.querySelector('.progress-bar').style.width = '75%';
+            }, 500);
+            
+            // Add animation classes to items as they appear in viewport
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            document.querySelectorAll('.section, li').forEach(item => {
+                observer.observe(item);
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-button">← Back to Home</a>
+        <a href="index.html" class="back-button">Back to Home</a>
         
         <h1>Sprint 30 - Take Practice GCA Test</h1>
+        
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        <p style="text-align: right; font-size: 14px; margin-top: -15px; color: #666;">GCA Preparation: 75% Complete</p>
         
         <div class="section">
             <h4><strong>Overview</strong></h4>
             <p>Now that you have completed the practice activities, you are ready to take the practice General Code Assessment (GCA) test. You should take this test as often as permitted.</p>
-            <p><span>The more you practice and feel comfortable taking this type of test, the better chance you have to achieve a score of 650 or higher.</span></p>
+            
+            <div class="highlight-box">
+                <p><strong>Pro Tip:</strong> The more you practice and feel comfortable taking this type of test, the better chance you have to achieve a score of 650 or higher.</p>
+            </div>
+            
             <hr>
+            
             <h4><strong>Instructions</strong></h4>
             <ol>
                 <li>Login to CodeSignal</li>
@@ -105,12 +346,16 @@
                 <li>Agree to the Terms and Pledges. Click START</li>
                 <li>Complete the questions. Click on FINISH TEST</li>
             </ol>
+            
             <hr>
+            
             <h4><strong>For your reference</strong></h4>
             <ul>
                 <li><span>You should have already created your Code Signal account. If you have not done so yet, please follow these instructions&nbsp;<a title="What is CodeSignal and How to Create Your Account" href="what-is-codesignal-and-how-to-create-your-account.html">What is CodeSignal and How to Create Your Account</a></span></li>
                 <li><span>Become familiar with the&nbsp;<a title="CodeSignal User Interface Overview" href="codesignal-user-interface-overview.html">CodeSignal User Interface Overview</a></span></li>
             </ul>
+            
+            <a href="https://app.codesignal.com/public-test/JiGN69C4zxqC545Qe/F8M8uHNcGgYNAa" target="_blank" rel="noopener" class="cta-button">Start Practice GCA Test</a>
         </div>
     </div>
 </body>
