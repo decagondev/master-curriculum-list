@@ -107,6 +107,42 @@
             color: #b3b3b3;
             padding-left: 20px;
         }
+        .content-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333a47;
+            background-color: #2a303c;
+            border-radius: 4px;
+        }
+        .content-section h3 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .content-section p {
+            color: #b3b3b3;
+            margin-bottom: 15px;
+        }
+        .content-section ul {
+            list-style-type: none;
+            padding: 0;
+            color: #b3b3b3;
+        }
+        .content-section li {
+            margin-bottom: 10px;
+        }
+        pre, code {
+            background-color: #1a1d23;
+            border-radius: 4px;
+            color: #e6e6e6;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
+            padding: 2px 5px;
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+        }
     </style>
 </head>
 <body>
@@ -124,22 +160,95 @@
             <iframe class="wistia_embed" title="Introduction to Callable Interfaces" src="https://fast.wistia.net/embed/iframe/q12345abcd" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
+        <div class="content-section">
+            <h3>Understanding the Callable Interface</h3>
+            <p>The Callable interface represents a task that returns a result and can throw an exception. This makes it more powerful than Runnable, which cannot return a value or throw checked exceptions.</p>
+            <p>Key differences between Callable and Runnable:</p>
+            <ul>
+                <li>Callable can return results while Runnable cannot</li>
+                <li>Callable can throw checked exceptions while Runnable cannot</li>
+                <li>Callable is more suitable for tasks that compute values</li>
+            </ul>
+            <pre><code>// Implementing Callable using lambda syntax
+Callable&lt;String&gt; task = () -> {
+    // Some computation that returns a value
+    return "Task completed successfully";
+};
+
+// Submitting a Callable to an ExecutorService
+ExecutorService executor = Executors.newCachedThreadPool();
+Future&lt;String&gt; future = executor.submit(task);</code></pre>
+        </div>
+
         <div class="video-container">
             <iframe class="wistia_embed" title="Working with Future Objects" src="https://fast.wistia.net/embed/iframe/e67890fghi" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+
+        <div class="content-section">
+            <h3>Working with Future Objects</h3>
+            <p>A Future represents the result of an asynchronous computation. It provides methods to check if the computation is complete, wait for its completion, and retrieve the computation result.</p>
+            <p>When working with Future objects, remember:</p>
+            <ul>
+                <li>The Future doesn't immediately contain the result</li>
+                <li>Calling get() will block until the result is available</li>
+                <li>You can use isDone() to check if a task is complete without blocking</li>
+            </ul>
+            <pre><code>// Retrieving results from a Future with exception handling
+Future&lt;String&gt; future = executor.submit(task);
+try {
+    // Block until the result is available
+    String result = future.get();
+    System.out.println("Task result: " + result);
+} catch (InterruptedException e) {
+    // Handle thread interruption
+    Thread.currentThread().interrupt();
+} catch (ExecutionException e) {
+    // Handle exceptions thrown by the task
+    Throwable cause = e.getCause();
+    System.err.println("Task failed: " + cause.getMessage());
+}</code></pre>
         </div>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="Sprint 26 Futures Video" src="https://fast.wistia.net/embed/iframe/jc32kddmna" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
+        <div class="content-section">
+            <h3>Minimizing Blocking with Future</h3>
+            <p>Waiting for a Future result can block your thread, but there are techniques to minimize blocking time.</p>
+            <p>Strategies include:</p>
+            <ul>
+                <li>Using timeouts to limit waiting time</li>
+                <li>Polling with isDone() instead of immediately calling get()</li>
+                <li>Structuring your code to perform other work while waiting</li>
+            </ul>
+            <pre><code>// Using a timeout to limit blocking time
+Future&lt;String&gt; future = executor.submit(task);
+try {
+    // Wait for at most 2 seconds
+    String result = future.get(2, TimeUnit.SECONDS);
+    System.out.println("Task result: " + result);
+} catch (TimeoutException e) {
+    // Handle the timeout
+    System.out.println("Task took too long, cancelling");
+    future.cancel(true);
+} catch (InterruptedException | ExecutionException e) {
+    // Handle other exceptions
+}</code></pre>
+        </div>
+
         <section>
             <h2>Learning Objectives</h2>
             <ul class="learning-objectives-list">
-                <li>Understand the Callable interface and how it differs from Runnable</li>
-                <li>Learn to create and submit tasks that return results</li>
-                <li>Master working with Future objects to handle asynchronous results</li>
-                <li>Explore CompletableFuture for advanced asynchronous programming</li>
-                <li>Implement effective exception handling in asynchronous operations</li>
+                <li>Use Future's get method to retrieve the result of an asynchronous task</li>
+                <li>Implement code to handle exceptions thrown while retrieving the result of an asynchronous task from a Future</li>
+                <li>Implement a method that retrieves the result of an asynchronous task from a Future with minimal blocking time</li>
+                <li>Recall that the Future object represents the eventual result of a concurrent task and will not immediately contain a result</li>
+                <li>Summarize the Callable interface</li>
+                <li>Outline the differences between the Callable and Runnable interfaces</li>
+                <li>Implement the Callable interface using lambda syntax</li>
+                <li>Implement functionality that executes a task asynchronously by submitting a Callable to an ExecutorService</li>
+                <li>Design and implement a class that implements Callable to execute functionality concurrently</li>
             </ul>
         </section>
 

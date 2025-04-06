@@ -107,6 +107,42 @@
             color: #b3b3b3;
             padding-left: 20px;
         }
+        .content-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333a47;
+            background-color: #2a303c;
+            border-radius: 4px;
+        }
+        .content-section h3 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .content-section p {
+            color: #b3b3b3;
+            margin-bottom: 15px;
+        }
+        .content-section ul {
+            list-style-type: none;
+            padding: 0;
+            color: #b3b3b3;
+        }
+        .content-section li {
+            margin-bottom: 10px;
+        }
+        pre, code {
+            background-color: #1a1d23;
+            border-radius: 4px;
+            color: #e6e6e6;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
+            padding: 2px 5px;
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+        }
     </style>
 </head>
 <body>
@@ -124,22 +160,89 @@
             <iframe class="wistia_embed" title="Introduction to ExecutorService" src="https://fast.wistia.net/embed/iframe/3gmd8xk2dv" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
+        <div class="content-section">
+            <h3>Introduction to ExecutorService</h3>
+            <p>The ExecutorService provides a higher-level replacement for working with threads directly. It separates task submission from execution details, allowing you to focus on <i>what</i> needs to be run rather than <i>how</i> it should be run.</p>
+            <p>Key benefits of ExecutorService include:</p>
+            <ul>
+                <li>Thread pooling and reuse</li>
+                <li>Task queuing for efficient resource management</li>
+                <li>Simple API for submitting and executing tasks</li>
+            </ul>
+            <pre><code>// Creating a basic ExecutorService with a cached thread pool
+ExecutorService executor = Executors.newCachedThreadPool();
+
+// Submitting a task with a Runnable
+executor.submit(() -> {
+    System.out.println("Task executed by " + Thread.currentThread().getName());
+});
+
+// Don't forget to shut down your executor when finished
+executor.shutdown();</code></pre>
+        </div>
+
         <div class="video-container">
             <iframe class="wistia_embed" title="Introduction to Thread Pools" src="https://fast.wistia.net/embed/iframe/71nkbgxrof" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+
+        <div class="content-section">
+            <h3>Understanding Thread Pools</h3>
+            <p>Thread pools manage a collection of worker threads that efficiently execute submitted tasks. The cached thread pool dynamically adjusts its size based on workload, reusing idle threads when possible and creating new ones when needed.</p>
+            <p>Benefits of cached thread pools:</p>
+            <ul>
+                <li>Reduced overhead from thread creation and destruction</li>
+                <li>Better resource management with thread reuse</li>
+                <li>Automatic scaling based on demand</li>
+            </ul>
+            <pre><code>// Example showing cached thread pool reuse
+ExecutorService executor = Executors.newCachedThreadPool();
+
+for (int i = 0; i < 10; i++) {
+    final int taskId = i;
+    executor.submit(() -> {
+        System.out.println("Task " + taskId + " running on " + 
+                           Thread.currentThread().getName());
+        // Thread will be reused for subsequent tasks
+    });
+}</code></pre>
         </div>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="Sprint 26 Executor Services Video" src="https://fast.wistia.net/embed/iframe/343atpmgl8" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
+        <div class="content-section">
+            <h3>ExecutorService Best Practices</h3>
+            <p>Properly managing the lifecycle of an ExecutorService is critical to prevent resource leaks. When you're done with an executor, you should always shut it down properly to release its resources.</p>
+            <p>Types of shutdown:</p>
+            <ul>
+                <li><code>shutdown()</code> - Graceful shutdown that allows already submitted tasks to complete</li>
+                <li><code>shutdownNow()</code> - Attempts to stop all executing tasks and returns a list of tasks that were awaiting execution</li>
+            </ul>
+            <pre><code>// Proper ExecutorService shutdown pattern
+ExecutorService executor = Executors.newCachedThreadPool();
+try {
+    // Submit tasks to the executor
+    executor.submit(() -> performTask());
+    // ... more task submissions ...
+} finally {
+    // Ensure executor is shut down even if exceptions occur
+    executor.shutdown();
+}</code></pre>
+        </div>
+
         <section>
             <h2>Learning Objectives</h2>
             <ul class="learning-objectives-list">
-                <li>Understand the benefits of using ExecutorService over manual thread management</li>
-                <li>Learn to work with different types of thread pools</li>
-                <li>Master thread lifecycle management with ExecutorService</li>
-                <li>Implement efficient task submission and execution</li>
-                <li>Apply best practices for thread pool sizing and configuration</li>
+                <li>Design and implement functionality that uses an ExecutorService to complete independent tasks asynchronously</li>
+                <li>Implement functionality that executes a task asynchronously by submitting a Runnable to an ExecutorService</li>
+                <li>Implement code that terminates an ExecutorService without interrupting its executing threads</li>
+                <li>Recall that an ExecutorService with a cached thread pool will reuse threads that have completed</li>
+                <li>Recall that an ExecutorService uses a queue to hold tasks that haven't been assigned to a thread yet</li>
+                <li>Implement code to instantiate an ExecutorService that uses a cached thread pool</li>
+                <li>Explain the purpose of using an ExecutorService</li>
+                <li>Outline when to use the newCachedThreadPool(), submit(), and shutdown() methods of the ExecutorService class</li>
+                <li>Explain the benefits of using a cached thread pool</li>
             </ul>
         </section>
 

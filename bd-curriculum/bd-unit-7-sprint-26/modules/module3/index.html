@@ -107,6 +107,42 @@
             color: #b3b3b3;
             padding-left: 20px;
         }
+        .content-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333a47;
+            background-color: #2a303c;
+            border-radius: 4px;
+        }
+        .content-section h3 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .content-section p {
+            color: #b3b3b3;
+            margin-bottom: 15px;
+        }
+        .content-section ul {
+            list-style-type: none;
+            padding: 0;
+            color: #b3b3b3;
+        }
+        .content-section li {
+            margin-bottom: 10px;
+        }
+        pre, code {
+            background-color: #1a1d23;
+            border-radius: 4px;
+            color: #e6e6e6;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
+            padding: 2px 5px;
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+        }
     </style>
 </head>
 <body>
@@ -124,22 +160,133 @@
             <iframe class="wistia_embed" title="Introduction to Thread Safety" src="https://fast.wistia.net/embed/iframe/1a2b3c4d5e" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
+        <div class="content-section">
+            <h3>Thread Safety Fundamentals</h3>
+            <p>Thread safety ensures that your code works correctly when accessed by multiple threads simultaneously. Understanding memory architecture is key to thread safety.</p>
+            <p>Key concepts:</p>
+            <ul>
+                <li>Each thread has its own stack for local variables</li>
+                <li>All threads share the same heap for objects</li>
+                <li>Race conditions occur when multiple threads access shared data and at least one modifies it</li>
+            </ul>
+            <pre><code>// Thread-unsafe counter example
+public class Counter {
+    private int count = 0;
+    
+    public void increment() {
+        count++; // This is not atomic!
+    }
+    
+    public int getCount() {
+        return count;
+    }
+}</code></pre>
+        </div>
+
         <div class="video-container">
             <iframe class="wistia_embed" title="Synchronization Techniques" src="https://fast.wistia.net/embed/iframe/5e4d3c2b1a" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+
+        <div class="content-section">
+            <h3>Synchronization and Locks</h3>
+            <p>Java provides synchronization mechanisms to prevent race conditions. The synchronized keyword ensures that only one thread can execute a method or block at a time.</p>
+            <p>Important synchronization concepts:</p>
+            <ul>
+                <li>Every object in Java has an intrinsic lock (monitor)</li>
+                <li>The synchronized keyword uses this lock to prevent concurrent access</li>
+                <li>Only one thread can hold an object's lock at a time</li>
+            </ul>
+            <pre><code>// Thread-safe counter using synchronized methods
+public class ThreadSafeCounter {
+    private int count = 0;
+    
+    public synchronized void increment() {
+        count++;
+    }
+    
+    public synchronized int getCount() {
+        return count;
+    }
+}
+
+// Thread-safe counter using synchronized block
+public class AnotherThreadSafeCounter {
+    private int count = 0;
+    private final Object lock = new Object();
+    
+    public void increment() {
+        synchronized(lock) {
+            count++;
+        }
+    }
+    
+    public int getCount() {
+        synchronized(lock) {
+            return count;
+        }
+    }
+}</code></pre>
         </div>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="Working with Atomic Classes" src="https://fast.wistia.net/embed/iframe/6f7g8h9i0j" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
+        <div class="content-section">
+            <h3>Atomic Classes and Immutability</h3>
+            <p>Java provides atomic classes for common operations that need to be thread-safe. Additionally, immutable objects are inherently thread-safe because their state cannot change after creation.</p>
+            <p>Thread-safe strategies:</p>
+            <ul>
+                <li>Use atomic classes for simple variables that need thread safety</li>
+                <li>Design immutable classes when possible</li>
+                <li>Avoid exposing internal mutable state</li>
+            </ul>
+            <pre><code>// Using atomic classes
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class AtomicCounter {
+    private AtomicInteger count = new AtomicInteger(0);
+    
+    public void increment() {
+        count.incrementAndGet();
+    }
+    
+    public int getCount() {
+        return count.get();
+    }
+}
+
+// Immutable class example
+public final class ImmutablePoint {
+    private final int x;
+    private final int y;
+    
+    public ImmutablePoint(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+    
+    public int getX() { return x; }
+    public int getY() { return y; }
+    
+    // No setters - state cannot be changed
+}</code></pre>
+        </div>
+
         <section>
             <h2>Learning Objectives</h2>
             <ul class="learning-objectives-list">
-                <li>Identify and prevent race conditions in multi-threaded applications</li>
-                <li>Understand how to use the synchronized keyword effectively</li>
-                <li>Learn to work with Java's Atomic classes for thread-safe operations</li>
-                <li>Master locking strategies using Lock objects</li>
-                <li>Implement thread-safe collections in your applications</li>
+                <li>Identify whether a given method executes atomically</li>
+                <li>Recall that each thread has its own stack, but all threads share the heap</li>
+                <li>Recall that Java uses locks to support synchronized code</li>
+                <li>Explain the conditions that will cause a deadlock</li>
+                <li>Design and implement a class that prevents race conditions by declaring one or more of its methods as synchronized</li>
+                <li>Use atomic types to develop consistent read and write functionality across threads</li>
+                <li>Use immutable objects to share consistent state across threads</li>
+                <li>Design and implement functionality that shares a consistent state across threads</li>
+                <li>Recall that synchronized code can only be called by one thread at a time</li>
+                <li>Recall that a deadlock is a condition where two or more threads can never continue because they are waiting for each other to finish</li>
+                <li>Explain that the JVM blocks threads that try to execute a synchronized method on an object that is already locked</li>
             </ul>
         </section>
 
