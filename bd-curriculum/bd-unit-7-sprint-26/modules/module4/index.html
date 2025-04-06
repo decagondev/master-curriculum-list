@@ -107,6 +107,42 @@
             color: #b3b3b3;
             padding-left: 20px;
         }
+        .content-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333a47;
+            background-color: #2a303c;
+            border-radius: 4px;
+        }
+        .content-section h3 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .content-section p {
+            color: #b3b3b3;
+            margin-bottom: 15px;
+        }
+        .content-section ul {
+            list-style-type: none;
+            padding: 0;
+            color: #b3b3b3;
+        }
+        .content-section li {
+            margin-bottom: 10px;
+        }
+        pre, code {
+            background-color: #1a1d23;
+            border-radius: 4px;
+            color: #e6e6e6;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
+            padding: 2px 5px;
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+        }
     </style>
 </head>
 <body>
@@ -124,22 +160,117 @@
             <iframe class="wistia_embed" title="Introduction to Executor Service" src="https://fast.wistia.net/embed/iframe/n3n2pdtoa6" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
+        <div class="content-section">
+            <h3>Tree Data Structures</h3>
+            <p>Trees are hierarchical data structures that represent parent-child relationships. They're essential in many areas of programming and computer science.</p>
+            <p>Key characteristics of trees:</p>
+            <ul>
+                <li>Trees consist of nodes connected by edges</li>
+                <li>Each node can have zero or more child nodes</li>
+                <li>There is exactly one path from the root to any node</li>
+            </ul>
+            <pre><code>// Basic tree node implementation
+public class TreeNode&lt;T&gt; {
+    private T data;
+    private List&lt;TreeNode&lt;T&gt;&gt; children;
+    
+    public TreeNode(T data) {
+        this.data = data;
+        this.children = new ArrayList&lt;&gt;();
+    }
+    
+    public void addChild(TreeNode&lt;T&gt; child) {
+        children.add(child);
+    }
+    
+    public T getData() { return data; }
+    public List&lt;TreeNode&lt;T&gt;&gt; getChildren() { return children; }
+}</code></pre>
+        </div>
+
         <div class="video-container">
             <iframe class="wistia_embed" title="Implementing Thread Pools" src="https://fast.wistia.net/embed/iframe/v9xw40xfse" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+
+        <div class="content-section">
+            <h3>Tree Traversal Techniques</h3>
+            <p>Trees can be traversed in different ways depending on your needs. The two primary traversal methods are depth-first and breadth-first.</p>
+            <p>Key traversal approaches:</p>
+            <ul>
+                <li>Depth-first traversal explores as far as possible along each branch</li>
+                <li>Breadth-first traversal explores all nodes at the present depth before moving deeper</li>
+                <li>Each approach is suited for different problems</li>
+            </ul>
+            <pre><code>// Breadth-first traversal to find a node closest to root
+public &lt;T&gt; TreeNode&lt;T&gt; findNodeBFS(TreeNode&lt;T&gt; root, Predicate&lt;T&gt; condition) {
+    if (root == null) return null;
+    
+    Queue&lt;TreeNode&lt;T&gt;&gt; queue = new LinkedList&lt;&gt;();
+    queue.add(root);
+    
+    while (!queue.isEmpty()) {
+        TreeNode&lt;T&gt; current = queue.poll();
+        
+        if (condition.test(current.getData())) {
+            return current; // Found a node matching the condition
+        }
+        
+        // Add all children to the queue
+        queue.addAll(current.getChildren());
+    }
+    
+    return null; // No matching node found
+}</code></pre>
         </div>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="Advanced Executor Service Features" src="https://fast.wistia.net/embed/iframe/8u84jgtwpr" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
 
+        <div class="content-section">
+            <h3>Java TreeMap and TreeSet</h3>
+            <p>Java provides tree-based implementations of Map and Set interfaces that maintain their elements in sorted order. These collections are backed by a balanced binary search tree.</p>
+            <p>Benefits of tree-based collections:</p>
+            <ul>
+                <li>Elements are always kept in sorted order</li>
+                <li>Search operations run in logarithmic time O(log n)</li>
+                <li>No need to manually implement a binary search tree</li>
+            </ul>
+            <pre><code>// Using TreeMap to maintain sorted key-value pairs
+import java.util.TreeMap;
+
+public class SortedProductCatalog {
+    private TreeMap&lt;String, Double&gt; products = new TreeMap&lt;&gt;();
+    
+    public void addProduct(String name, double price) {
+        products.put(name, price);
+    }
+    
+    public Double getPrice(String productName) {
+        return products.get(productName); // O(log n) lookup
+    }
+    
+    public Map.Entry&lt;String, Double&gt; getCheapestProduct() {
+        return products.firstEntry(); // O(1) operation once the tree is built
+    }
+    
+    public Map.Entry&lt;String, Double&gt; getMostExpensiveProduct() {
+        return products.lastEntry(); // O(1) operation once the tree is built
+    }
+}</code></pre>
+        </div>
+
         <section>
             <h2>Learning Objectives</h2>
             <ul class="learning-objectives-list">
-                <li>Understand the benefits of using ExecutorService over manual thread management</li>
-                <li>Create and configure different types of thread pools for various scenarios</li>
-                <li>Work with Callable tasks and Future objects to get results from asynchronous operations</li>
-                <li>Implement proper shutdown procedures for executor services</li>
-                <li>Explore advanced features like scheduled execution and completion services</li>
+                <li>Assemble a tree from provided hierarchical data</li>
+                <li>Analyze whether a tree models a provided business problem</li>
+                <li>Perform a manual breadth-first traversal of a tree to find a node closest to the root that satisfies a condition</li>
+                <li>Perform a manual depth-first traversal of a tree to perform an operation on each node</li>
+                <li>Recall that a binary search tree keeps its keys in sorted order to allow for faster searching</li>
+                <li>Explain why checking for the existence of an item in a TreeMap or TreeSet runs in logarithmic O(log n) time</li>
+                <li>Design and implement a class that uses a TreeMap to maintain the ordering of key:value pairs</li>
+                <li>Explain what a tree is and outline its characteristics</li>
             </ul>
         </section>
 
