@@ -336,6 +336,38 @@
                     </div>
 
                     <div class="feature-box">
+                        <h3>Graph Representations</h3>
+                        <p>There are two common ways to represent a graph in code:</p>
+                        
+                        <h4>1. Adjacency List</h4>
+                        <p>A collection of lists or maps where each vertex stores its neighboring vertices.</p>
+                        <pre><code>// Using HashMap for adjacency list
+Map<String, List<String>> adjacencyList = new HashMap<>();
+
+// Example of a simple graph:
+//   A --- B
+//   |     |
+//   |     |
+//   C --- D
+
+adjacencyList.put("A", Arrays.asList("B", "C"));
+adjacencyList.put("B", Arrays.asList("A", "D"));
+adjacencyList.put("C", Arrays.asList("A", "D"));
+adjacencyList.put("D", Arrays.asList("B", "C"));</code></pre>
+                        
+                        <h4>2. Adjacency Matrix</h4>
+                        <p>A 2D matrix where cell [i][j] indicates if vertex i is connected to vertex j.</p>
+                        <pre><code>// Using a 2D array for adjacency matrix
+// 1 indicates an edge, 0 indicates no edge
+int[][] adjacencyMatrix = {
+    {0, 1, 1, 0}, // A's connections: B, C
+    {1, 0, 0, 1}, // B's connections: A, D
+    {1, 0, 0, 1}, // C's connections: A, D
+    {0, 1, 1, 0}  // D's connections: B, C
+};</code></pre>
+                    </div>
+
+                    <div class="feature-box">
                         <h3>Implementation Steps</h3>
                         <ol>
                             <li class="step-item">
@@ -343,6 +375,28 @@
                                 <div class="step-content">
                                     <h4>Create Graph Structure</h4>
                                     <p>Define the basic graph class with vertex and edge management</p>
+                                    <pre><code>public class Graph {
+    private Map<String, List<String>> adjacencyList;
+    
+    public Graph() {
+        adjacencyList = new HashMap<>();
+    }
+    
+    // Add a vertex to the graph
+    public void addVertex(String vertex) {
+        if (!adjacencyList.containsKey(vertex)) {
+            adjacencyList.put(vertex, new ArrayList<>());
+        }
+    }
+    
+    // Print the adjacency list (for debugging)
+    public void printGraph() {
+        for (String vertex : adjacencyList.keySet()) {
+            System.out.print(vertex + " -> ");
+            System.out.println(String.join(", ", adjacencyList.get(vertex)));
+        }
+    }
+}</code></pre>
                                 </div>
                             </li>
                             <li class="step-item">
@@ -350,6 +404,39 @@
                                 <div class="step-content">
                                     <h4>Implement Graph Operations</h4>
                                     <p>Add methods for adding/removing vertices and edges</p>
+                                    <pre><code>// Add an edge between two vertices (undirected graph)
+public void addEdge(String source, String destination) {
+    // Ensure both vertices exist
+    addVertex(source);
+    addVertex(destination);
+    
+    // Add edge in both directions (for undirected graph)
+    adjacencyList.get(source).add(destination);
+    adjacencyList.get(destination).add(source);
+}
+
+// Remove an edge between two vertices
+public void removeEdge(String source, String destination) {
+    if (adjacencyList.containsKey(source) && adjacencyList.containsKey(destination)) {
+        adjacencyList.get(source).remove(destination);
+        adjacencyList.get(destination).remove(source);
+    }
+}
+
+// Remove a vertex and all its edges
+public void removeVertex(String vertex) {
+    if (!adjacencyList.containsKey(vertex)) {
+        return;
+    }
+    
+    // Remove all edges to this vertex from other vertices
+    for (String adjacentVertex : adjacencyList.get(vertex)) {
+        adjacencyList.get(adjacentVertex).remove(vertex);
+    }
+    
+    // Remove the vertex itself
+    adjacencyList.remove(vertex);
+}</code></pre>
                                 </div>
                             </li>
                             <li class="step-item">
@@ -357,9 +444,154 @@
                                 <div class="step-content">
                                     <h4>Add Traversal Methods</h4>
                                     <p>Implement depth-first and breadth-first traversals</p>
+                                    <pre><code>// Depth-First Search (DFS)
+public void depthFirstSearch(String startVertex) {
+    if (!adjacencyList.containsKey(startVertex)) {
+        return;
+    }
+    
+    Set<String> visited = new HashSet<>();
+    dfsHelper(startVertex, visited);
+}
+
+private void dfsHelper(String vertex, Set<String> visited) {
+    // Mark current vertex as visited and print it
+    visited.add(vertex);
+    System.out.print(vertex + " ");
+    
+    // Recursively visit all adjacent vertices
+    for (String adjacentVertex : adjacencyList.get(vertex)) {
+        if (!visited.contains(adjacentVertex)) {
+            dfsHelper(adjacentVertex, visited);
+        }
+    }
+}
+
+// Breadth-First Search (BFS)
+public void breadthFirstSearch(String startVertex) {
+    if (!adjacencyList.containsKey(startVertex)) {
+        return;
+    }
+    
+    Set<String> visited = new HashSet<>();
+    Queue<String> queue = new LinkedList<>();
+    
+    // Start with the given vertex
+    visited.add(startVertex);
+    queue.add(startVertex);
+    
+    while (!queue.isEmpty()) {
+        // Dequeue a vertex and print it
+        String currentVertex = queue.poll();
+        System.out.print(currentVertex + " ");
+        
+        // Visit all adjacent vertices
+        for (String adjacentVertex : adjacencyList.get(currentVertex)) {
+            if (!visited.contains(adjacentVertex)) {
+                visited.add(adjacentVertex);
+                queue.add(adjacentVertex);
+            }
+        }
+    }
+}</code></pre>
                                 </div>
                             </li>
                         </ol>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Visual Example: Graph Traversal</h3>
+                        <p>Consider the following graph:</p>
+                        <pre><code>    A --- B
+    |     |
+    |     |
+    C --- D</code></pre>
+                        
+                        <h4>Depth-First Search (DFS) starting from A:</h4>
+                        <p>Traversal order: <strong>A → B → D → C</strong></p>
+                        <p>Explanation:</p>
+                        <ol>
+                            <li>Start at A, mark as visited</li>
+                            <li>Visit first neighbor B, mark as visited</li>
+                            <li>Visit B's first unvisited neighbor D, mark as visited</li>
+                            <li>Visit D's first unvisited neighbor C, mark as visited</li>
+                            <li>All vertices visited, DFS complete</li>
+                        </ol>
+                        
+                        <h4>Breadth-First Search (BFS) starting from A:</h4>
+                        <p>Traversal order: <strong>A → B → C → D</strong></p>
+                        <p>Explanation:</p>
+                        <ol>
+                            <li>Start at A, mark as visited, add to queue</li>
+                            <li>Dequeue A, visit all its neighbors (B, C), mark as visited, add to queue</li>
+                            <li>Dequeue B, visit unvisited neighbor D, mark as visited, add to queue</li>
+                            <li>Dequeue C, all neighbors already visited</li>
+                            <li>Dequeue D, all neighbors already visited</li>
+                            <li>Queue empty, BFS complete</li>
+                        </ol>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Advanced Features: Weighted Graphs</h3>
+                        <p>To represent a weighted graph, we can modify our adjacency list to store both the destination vertex and the weight of the edge:</p>
+                        <pre><code>public class WeightedGraph {
+    // Map of vertex to list of its edges (destination and weight)
+    private Map<String, List<Edge>> adjacencyList;
+    
+    // Inner class to represent an edge
+    private class Edge {
+        String destination;
+        int weight;
+        
+        public Edge(String destination, int weight) {
+            this.destination = destination;
+            this.weight = weight;
+        }
+    }
+    
+    public WeightedGraph() {
+        adjacencyList = new HashMap<>();
+    }
+    
+    public void addVertex(String vertex) {
+        if (!adjacencyList.containsKey(vertex)) {
+            adjacencyList.put(vertex, new ArrayList<>());
+        }
+    }
+    
+    public void addEdge(String source, String destination, int weight) {
+        addVertex(source);
+        addVertex(destination);
+        
+        // Add edge in both directions (for undirected graph)
+        adjacencyList.get(source).add(new Edge(destination, weight));
+        adjacencyList.get(destination).add(new Edge(source, weight));
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Performance Considerations</h3>
+                        <ul>
+                            <li><strong>Adjacency List:</strong>
+                                <ul>
+                                    <li>Space Complexity: O(V + E) where V is number of vertices and E is number of edges</li>
+                                    <li>Time Complexity for Adding Vertex: O(1)</li>
+                                    <li>Time Complexity for Adding Edge: O(1)</li>
+                                    <li>Time Complexity for Checking if two vertices are connected: O(V) in worst case</li>
+                                    <li>Good for sparse graphs (few edges)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Adjacency Matrix:</strong>
+                                <ul>
+                                    <li>Space Complexity: O(V²) regardless of number of edges</li>
+                                    <li>Time Complexity for Adding Vertex: O(V²) (need to resize matrix)</li>
+                                    <li>Time Complexity for Adding Edge: O(1)</li>
+                                    <li>Time Complexity for Checking if two vertices are connected: O(1)</li>
+                                    <li>Good for dense graphs (many edges)</li>
+                                </ul>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -374,7 +606,8 @@
                             Implement a Graph class with methods to add vertices and edges.
                         </p>
                         <pre><code>public class Graph {
-    // Your implementation here
+    // Your adjacency list implementation here
+    
     public void addVertex(String vertex) {
         // Add implementation
     }
@@ -392,6 +625,7 @@
                         </p>
                         <pre><code>public void depthFirstSearch(String startVertex) {
     // Your implementation here
+    // Remember to use a set to track visited vertices
 }</code></pre>
                     </div>
 
@@ -402,6 +636,40 @@
                         </p>
                         <pre><code>public boolean hasPath(String source, String destination) {
     // Your implementation here
+    // Use either DFS or BFS approach
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 4: Connected Components</h3>
+                        <p>
+                            Find all connected components in an undirected graph.
+                        </p>
+                        <pre><code>public List<List<String>> findConnectedComponents() {
+    // Your implementation here
+    // Hint: Perform DFS or BFS starting from each unvisited vertex
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 5: Cycle Detection</h3>
+                        <p>
+                            Implement a method to detect if the graph contains a cycle.
+                        </p>
+                        <pre><code>public boolean hasCycle() {
+    // Your implementation here
+    // Hint: Modify DFS to detect back edges
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 6: Advanced - Bipartite Graph Check</h3>
+                        <p>
+                            Determine if a graph is bipartite (can be divided into two sets where no vertices in the same set are adjacent).
+                        </p>
+                        <pre><code>public boolean isBipartite() {
+    // Your implementation here
+    // Hint: Try coloring the graph with two colors
 }</code></pre>
                     </div>
                 </div>

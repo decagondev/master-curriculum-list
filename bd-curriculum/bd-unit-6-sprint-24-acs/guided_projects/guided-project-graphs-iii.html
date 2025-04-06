@@ -348,6 +348,17 @@
                     </div>
 
                     <div class="feature-box">
+                        <h3>What is Floodfill?</h3>
+                        <p>Floodfill is an algorithm that determines and modifies the area connected to a given node in a multi-dimensional array. It's commonly used in:</p>
+                        <ul>
+                            <li>Image editing software's "bucket fill" tool</li>
+                            <li>Game development for territory capture</li>
+                            <li>Maze solving algorithms</li>
+                            <li>Connected component analysis</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-box">
                         <h3>Implementation Steps</h3>
                         <ol>
                             <li class="step-item">
@@ -355,6 +366,18 @@
                                 <div class="step-content">
                                     <h4>Set Up Grid Structure</h4>
                                     <p>Initialize 2D array and define boundary conditions</p>
+                                    <pre><code>// Example 2D grid representation
+int[][] grid = {
+    {1, 1, 1, 1, 1},
+    {1, 0, 0, 0, 1},
+    {1, 0, 1, 0, 1},
+    {1, 0, 0, 0, 1},
+    {1, 1, 1, 1, 1}
+};
+
+// Define directions for adjacent cells (up, right, down, left)
+int[] dx = {-1, 0, 1, 0};
+int[] dy = {0, 1, 0, -1};</code></pre>
                                 </div>
                             </li>
                             <li class="step-item">
@@ -362,6 +385,72 @@
                                 <div class="step-content">
                                     <h4>Implement Floodfill Logic</h4>
                                     <p>Create recursive or iterative fill algorithm</p>
+                                    <h5>Recursive Implementation</h5>
+                                    <pre><code>public void floodFillRecursive(int[][] grid, int row, int col, int originalColor, int newColor) {
+    // Check boundary conditions
+    if (row < 0 || row >= grid.length || col < 0 || col >= grid[0].length) {
+        return;
+    }
+    
+    // Check if current cell needs to be filled
+    if (grid[row][col] != originalColor) {
+        return;
+    }
+    
+    // Fill current cell
+    grid[row][col] = newColor;
+    
+    // Recursively fill adjacent cells
+    floodFillRecursive(grid, row - 1, col, originalColor, newColor); // Up
+    floodFillRecursive(grid, row, col + 1, originalColor, newColor); // Right
+    floodFillRecursive(grid, row + 1, col, originalColor, newColor); // Down
+    floodFillRecursive(grid, row, col - 1, originalColor, newColor); // Left
+}</code></pre>
+                                    
+                                    <h5>Iterative Implementation (Using Queue)</h5>
+                                    <pre><code>public void floodFillIterative(int[][] grid, int row, int col, int originalColor, int newColor) {
+    // Check if starting point is valid
+    if (row < 0 || row >= grid.length || col < 0 || col >= grid[0].length) {
+        return;
+    }
+    
+    // If starting cell is not the target color or already the new color
+    if (grid[row][col] != originalColor || grid[row][col] == newColor) {
+        return;
+    }
+    
+    // Create queue for BFS
+    Queue<int[]> queue = new LinkedList<>();
+    queue.add(new int[]{row, col});
+    grid[row][col] = newColor;
+    
+    // Define directions (up, right, down, left)
+    int[] dx = {-1, 0, 1, 0};
+    int[] dy = {0, 1, 0, -1};
+    
+    // BFS to fill connected cells
+    while (!queue.isEmpty()) {
+        int[] current = queue.poll();
+        int r = current[0];
+        int c = current[1];
+        
+        // Check all four adjacent cells
+        for (int i = 0; i < 4; i++) {
+            int newRow = r + dx[i];
+            int newCol = c + dy[i];
+            
+            // Check if adjacent cell is valid and has the original color
+            if (newRow >= 0 && newRow < grid.length && 
+                newCol >= 0 && newCol < grid[0].length && 
+                grid[newRow][newCol] == originalColor) {
+                
+                // Fill and add to queue
+                grid[newRow][newCol] = newColor;
+                queue.add(new int[]{newRow, newCol});
+            }
+        }
+    }
+}</code></pre>
                                 </div>
                             </li>
                             <li class="step-item">
@@ -369,9 +458,207 @@
                                 <div class="step-content">
                                     <h4>Optimize Performance</h4>
                                     <p>Implement efficient array traversal techniques</p>
+                                    <ul>
+                                        <li><strong>Use a visited array</strong> to avoid revisiting cells (especially for large grids)</li>
+                                        <li><strong>Early termination</strong> when the target is found (for pathfinding)</li>
+                                        <li><strong>Direction arrays</strong> to simplify adjacent cell iteration</li>
+                                        <li><strong>Precompute grid boundaries</strong> to reduce boundary checks</li>
+                                    </ul>
+                                    <pre><code>// Optimized using a visited array
+public void floodFillOptimized(int[][] grid, int row, int col, int newColor) {
+    int originalColor = grid[row][col];
+    if (originalColor == newColor) return; // No need to fill
+    
+    int rows = grid.length;
+    int cols = grid[0].length;
+    boolean[][] visited = new boolean[rows][cols];
+    
+    Queue<int[]> queue = new LinkedList<>();
+    queue.add(new int[]{row, col});
+    visited[row][col] = true;
+    
+    int[] dx = {-1, 0, 1, 0};
+    int[] dy = {0, 1, 0, -1};
+    
+    while (!queue.isEmpty()) {
+        int[] current = queue.poll();
+        int r = current[0];
+        int c = current[1];
+        
+        // Fill the current cell
+        grid[r][c] = newColor;
+        
+        for (int i = 0; i < 4; i++) {
+            int newRow = r + dx[i];
+            int newCol = c + dy[i];
+            
+            if (newRow >= 0 && newRow < rows && 
+                newCol >= 0 && newCol < cols && 
+                !visited[newRow][newCol] && 
+                grid[newRow][newCol] == originalColor) {
+                
+                visited[newRow][newCol] = true;
+                queue.add(new int[]{newRow, newCol});
+            }
+        }
+    }
+}</code></pre>
                                 </div>
                             </li>
                         </ol>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Visual Example: Floodfill Process</h3>
+                        <p>Let's visualize a floodfill operation on a 5x5 grid, starting at position (1,1) changing value 0 to 2:</p>
+
+                        <h4>Initial Grid</h4>
+                        <pre><code>1 1 1 1 1
+1 0 0 0 1
+1 0 1 0 1
+1 0 0 0 1
+1 1 1 1 1</code></pre>
+
+                        <h4>Step 1: Fill (1,1)</h4>
+                        <pre><code>1 1 1 1 1
+1 2 0 0 1
+1 0 1 0 1
+1 0 0 0 1
+1 1 1 1 1</code></pre>
+
+                        <h4>Step 2: Fill (1,2)</h4>
+                        <pre><code>1 1 1 1 1
+1 2 2 0 1
+1 0 1 0 1
+1 0 0 0 1
+1 1 1 1 1</code></pre>
+
+                        <h4>Step 3: Fill (1,3)</h4>
+                        <pre><code>1 1 1 1 1
+1 2 2 2 1
+1 0 1 0 1
+1 0 0 0 1
+1 1 1 1 1</code></pre>
+
+                        <h4>Continue process...</h4>
+                        <p>The floodfill algorithm continues until all connected cells with value 0 are filled.</p>
+
+                        <h4>Final Grid</h4>
+                        <pre><code>1 1 1 1 1
+1 2 2 2 1
+1 2 1 2 1
+1 2 2 2 1
+1 1 1 1 1</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Common Applications</h3>
+                        
+                        <h4>1. Finding Connected Components</h4>
+                        <pre><code>public int countConnectedComponents(int[][] grid) {
+    int rows = grid.length;
+    int cols = grid[0].length;
+    boolean[][] visited = new boolean[rows][cols];
+    int count = 0;
+    
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (grid[i][j] == 1 && !visited[i][j]) {
+                // New component found
+                count++;
+                floodFillVisit(grid, i, j, visited);
+            }
+        }
+    }
+    
+    return count;
+}
+
+private void floodFillVisit(int[][] grid, int row, int col, boolean[][] visited) {
+    int rows = grid.length;
+    int cols = grid[0].length;
+    
+    // Check if out of bounds or already visited or not part of a component
+    if (row < 0 || row >= rows || col < 0 || col >= cols || 
+        visited[row][col] || grid[row][col] != 1) {
+        return;
+    }
+    
+    // Mark as visited
+    visited[row][col] = true;
+    
+    // Visit all adjacent cells
+    int[] dx = {-1, 0, 1, 0};
+    int[] dy = {0, 1, 0, -1};
+    
+    for (int i = 0; i < 4; i++) {
+        floodFillVisit(grid, row + dx[i], col + dy[i], visited);
+    }
+}</code></pre>
+
+                        <h4>2. Maze Solving</h4>
+                        <pre><code>public List<int[]> solveMaze(int[][] maze, int[] start, int[] end) {
+    int rows = maze.length;
+    int cols = maze[0].length;
+    boolean[][] visited = new boolean[rows][cols];
+    
+    // Path reconstruction - store parent cell for each visited cell
+    Map<String, int[]> parent = new HashMap<>();
+    
+    // BFS to find shortest path
+    Queue<int[]> queue = new LinkedList<>();
+    queue.add(start);
+    visited[start[0]][start[1]] = true;
+    
+    int[] dx = {-1, 0, 1, 0};
+    int[] dy = {0, 1, 0, -1};
+    
+    boolean foundPath = false;
+    
+    while (!queue.isEmpty() && !foundPath) {
+        int[] current = queue.poll();
+        
+        // Check if we've reached the end
+        if (current[0] == end[0] && current[1] == end[1]) {
+            foundPath = true;
+            break;
+        }
+        
+        // Try all four directions
+        for (int i = 0; i < 4; i++) {
+            int newRow = current[0] + dx[i];
+            int newCol = current[1] + dy[i];
+            
+            // Check if valid move
+            if (newRow >= 0 && newRow < rows && 
+                newCol >= 0 && newCol < cols && 
+                !visited[newRow][newCol] && 
+                maze[newRow][newCol] == 0) { // 0 represents an open path
+                
+                // Mark as visited and add to queue
+                visited[newRow][newCol] = true;
+                queue.add(new int[]{newRow, newCol});
+                
+                // Store parent for path reconstruction
+                parent.put(newRow + "," + newCol, current);
+            }
+        }
+    }
+    
+    // Reconstruct path if found
+    List<int[]> path = new ArrayList<>();
+    if (foundPath) {
+        int[] current = end;
+        while (current[0] != start[0] || current[1] != start[1]) {
+            path.add(current);
+            current = parent.get(current[0] + "," + current[1]);
+        }
+        path.add(start);
+        Collections.reverse(path);
+    }
+    
+    return path;
+}</code></pre>
                     </div>
                 </div>
             </div>
@@ -387,6 +674,8 @@
                         </p>
                         <pre><code>public void floodFill(int[][] grid, int row, int col, int newColor) {
     // Your implementation here
+    // Hint: Use either recursive DFS or iterative BFS approach
+    // Don't forget to check boundary conditions!
 }</code></pre>
                     </div>
 
@@ -397,6 +686,8 @@
                         </p>
                         <pre><code>public int countIslands(int[][] grid) {
     // Your implementation here
+    // Hint: Iterate through the grid, when you find a land cell (1),
+    // increment counter and use floodfill to mark the entire island as visited
 }</code></pre>
                     </div>
 
@@ -407,6 +698,40 @@
                         </p>
                         <pre><code>public List<Point> solveMaze(int[][] maze, Point start, Point end) {
     // Your implementation here
+    // Hint: Use BFS to find the shortest path, and track the path using a parent map
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 4: Calculate Area</h3>
+                        <p>
+                            Use floodfill to calculate the area of a connected region in a grid.
+                        </p>
+                        <pre><code>public int calculateArea(int[][] grid, int row, int col) {
+    // Your implementation here
+    // Hint: Count the number of cells filled during floodfill
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 5: Boundary Fill</h3>
+                        <p>
+                            Implement a boundary fill algorithm that fills a region until it reaches a specified boundary color.
+                        </p>
+                        <pre><code>public void boundaryFill(int[][] grid, int row, int col, int fillColor, int boundaryColor) {
+    // Your implementation here
+    // Hint: Similar to floodfill, but stop when you hit the boundary color
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 6: Advanced - Diagonal Floodfill</h3>
+                        <p>
+                            Implement a floodfill algorithm that considers 8 directions (including diagonals) instead of just 4.
+                        </p>
+                        <pre><code>public void diagonalFloodFill(int[][] grid, int row, int col, int newColor) {
+    // Your implementation here
+    // Hint: Use 8 directions instead of 4 (add the 4 diagonal directions)
 }</code></pre>
                     </div>
                 </div>

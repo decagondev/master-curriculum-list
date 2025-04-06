@@ -336,6 +336,109 @@
                     </div>
 
                     <div class="feature-box">
+                        <h3>Shortest Path Algorithms</h3>
+                        
+                        <h4>Dijkstra's Algorithm</h4>
+                        <p>Dijkstra's algorithm finds the shortest path from a source vertex to all other vertices in a weighted graph with non-negative edge weights.</p>
+                        
+                        <pre><code>public class WeightedGraph {
+    private Map<String, List<Edge>> adjacencyList;
+    
+    private class Edge {
+        String destination;
+        int weight;
+        
+        public Edge(String destination, int weight) {
+            this.destination = destination;
+            this.weight = weight;
+        }
+    }
+    
+    // ... Constructor and basic methods ...
+    
+    public Map<String, Integer> dijkstra(String start) {
+        // Track distances from start to each vertex
+        Map<String, Integer> distances = new HashMap<>();
+        
+        // Priority queue to select the vertex with min distance
+        PriorityQueue<Node> queue = new PriorityQueue<>(
+            Comparator.comparingInt(node -> node.distance)
+        );
+        
+        // Initialize distances
+        for (String vertex : adjacencyList.keySet()) {
+            if (vertex.equals(start)) {
+                distances.put(vertex, 0);
+            } else {
+                distances.put(vertex, Integer.MAX_VALUE);
+            }
+        }
+        
+        // Add start vertex to the queue
+        queue.add(new Node(start, 0));
+        
+        // Process all vertices
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+            String currentVertex = current.vertex;
+            int currentDistance = current.distance;
+            
+            // Skip if we've already found a better path
+            if (currentDistance > distances.get(currentVertex)) {
+                continue;
+            }
+            
+            // Process all neighbors
+            for (Edge edge : adjacencyList.get(currentVertex)) {
+                String neighbor = edge.destination;
+                int weight = edge.weight;
+                int distance = currentDistance + weight;
+                
+                // If we found a better path, update and enqueue
+                if (distance < distances.get(neighbor)) {
+                    distances.put(neighbor, distance);
+                    queue.add(new Node(neighbor, distance));
+                }
+            }
+        }
+        
+        return distances;
+    }
+    
+    // Helper class for priority queue
+    private class Node {
+        String vertex;
+        int distance;
+        
+        public Node(String vertex, int distance) {
+            this.vertex = vertex;
+            this.distance = distance;
+        }
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Visual Example: Dijkstra's Algorithm</h3>
+                        <p>Consider this weighted graph (numbers on edges represent weights):</p>
+                        <pre><code>    A --- 2 --- B
+    |           |
+    4           3
+    |           |
+    C --- 1 --- D</code></pre>
+                        
+                        <h4>Steps to find shortest paths from A:</h4>
+                        <ol>
+                            <li>Initialize distances: A=0, B=∞, C=∞, D=∞</li>
+                            <li>Process A, update neighbors: B=2, C=4</li>
+                            <li>Process B (nearest to A), update neighbors: D=5 (via B)</li>
+                            <li>Process C, update neighbors: D=5 (already found via B)</li>
+                            <li>Process D, no updates needed</li>
+                        </ol>
+                        <p>Final distances from A: B=2, C=4, D=5</p>
+                    </div>
+
+                    <div class="feature-box">
                         <h3>Implementation Steps</h3>
                         <ol>
                             <li class="step-item">
@@ -343,13 +446,59 @@
                                 <div class="step-content">
                                     <h4>Implement Dijkstra's Algorithm</h4>
                                     <p>Create a shortest path finder using priority queues</p>
+                                    <p>Key components:</p>
+                                    <ul>
+                                        <li>Distance map to track shortest known distance to each vertex</li>
+                                        <li>Priority queue to process vertices in order of current shortest distance</li>
+                                        <li>Edge relaxation - constantly update distances when shorter paths are found</li>
+                                    </ul>
                                 </div>
                             </li>
                             <li class="step-item">
                                 <div class="step-number">2</div>
                                 <div class="step-content">
                                     <h4>Build Minimum Spanning Tree</h4>
-                                    <p>Implement Prim's or Kruskal's algorithm</p>
+                                    <p>Implement Prim's algorithm for finding a minimum spanning tree</p>
+                                    <pre><code>public Set<Edge> primMST(String start) {
+    Set<Edge> mst = new HashSet<>();
+    Set<String> visited = new HashSet<>();
+    
+    // Priority queue to select minimum weight edge
+    PriorityQueue<Edge> pq = new PriorityQueue<>(
+        Comparator.comparingInt(edge -> edge.weight)
+    );
+    
+    // Start with the given vertex
+    visited.add(start);
+    
+    // Add all edges from start vertex
+    for (Edge edge : adjacencyList.get(start)) {
+        pq.add(edge);
+    }
+    
+    // Process until all vertices are visited or queue is empty
+    while (!pq.isEmpty() && visited.size() < adjacencyList.size()) {
+        Edge minEdge = pq.poll();
+        
+        // Skip if destination already visited
+        if (visited.contains(minEdge.destination)) {
+            continue;
+        }
+        
+        // Add to MST and mark as visited
+        mst.add(minEdge);
+        visited.add(minEdge.destination);
+        
+        // Add all edges from the new vertex
+        for (Edge edge : adjacencyList.get(minEdge.destination)) {
+            if (!visited.contains(edge.destination)) {
+                pq.add(edge);
+            }
+        }
+    }
+    
+    return mst;
+}</code></pre>
                                 </div>
                             </li>
                             <li class="step-item">
@@ -357,9 +506,139 @@
                                 <div class="step-content">
                                     <h4>Optimize Performance</h4>
                                     <p>Improve algorithm efficiency using appropriate data structures</p>
+                                    <ul>
+                                        <li>Use indexed priority queues for faster decrease-key operations</li>
+                                        <li>Early stopping when possible</li>
+                                        <li>Path reconstruction using a predecessor map</li>
+                                    </ul>
+                                    <pre><code>// Add predecessor tracking to Dijkstra's algorithm
+public Map<String, String> findShortestPathPredecessors(String start) {
+    Map<String, Integer> distances = new HashMap<>();
+    Map<String, String> predecessors = new HashMap<>();
+    
+    // ... similar to regular Dijkstra's ...
+    
+    // When updating distances, also update predecessors
+    if (distance < distances.get(neighbor)) {
+        distances.put(neighbor, distance);
+        predecessors.put(neighbor, currentVertex); // Track path
+        queue.add(new Node(neighbor, distance));
+    }
+    
+    return predecessors;
+}
+
+// Reconstruct the shortest path from predecessors
+public List<String> reconstructPath(String start, String end, Map<String, String> predecessors) {
+    List<String> path = new ArrayList<>();
+    
+    // Start from the end and work backwards
+    for (String at = end; at != null; at = predecessors.get(at)) {
+        path.add(at);
+    }
+    
+    // Reverse to get start-to-end path
+    Collections.reverse(path);
+    
+    // Check if there is a valid path
+    if (path.get(0).equals(start)) {
+        return path;
+    } else {
+        return Collections.emptyList(); // No path exists
+    }
+}</code></pre>
                                 </div>
                             </li>
                         </ol>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Bellman-Ford Algorithm: Handling Negative Weights</h3>
+                        <p>Unlike Dijkstra's, the Bellman-Ford algorithm can handle graphs with negative edge weights, as long as there are no negative cycles.</p>
+                        
+                        <pre><code>public Map<String, Integer> bellmanFord(String start) {
+    Map<String, Integer> distances = new HashMap<>();
+    List<Edge> allEdges = new ArrayList<>();
+    
+    // Initialize distances
+    for (String vertex : adjacencyList.keySet()) {
+        distances.put(vertex, Integer.MAX_VALUE);
+    }
+    distances.put(start, 0);
+    
+    // Collect all edges
+    for (String source : adjacencyList.keySet()) {
+        for (Edge edge : adjacencyList.get(source)) {
+            allEdges.add(new Edge(source, edge.destination, edge.weight));
+        }
+    }
+    
+    // Relax all edges |V| - 1 times
+    int vertexCount = adjacencyList.size();
+    for (int i = 0; i < vertexCount - 1; i++) {
+        for (Edge edge : allEdges) {
+            String source = edge.source;
+            String dest = edge.destination;
+            int weight = edge.weight;
+            
+            if (distances.get(source) != Integer.MAX_VALUE && 
+                distances.get(source) + weight < distances.get(dest)) {
+                distances.put(dest, distances.get(source) + weight);
+            }
+        }
+    }
+    
+    // Check for negative cycles
+    for (Edge edge : allEdges) {
+        String source = edge.source;
+        String dest = edge.destination;
+        int weight = edge.weight;
+        
+        if (distances.get(source) != Integer.MAX_VALUE && 
+            distances.get(source) + weight < distances.get(dest)) {
+            System.out.println("Graph contains a negative weight cycle");
+            return new HashMap<>(); // Return empty if negative cycle
+        }
+    }
+    
+    return distances;
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Comparison of Graph Algorithms</h3>
+                        <table style="width:100%; border-collapse: collapse; margin: 15px 0;">
+                            <tr style="background-color: #333a47; border-bottom: 1px solid #555;">
+                                <th style="padding: 8px; text-align: left;">Algorithm</th>
+                                <th style="padding: 8px; text-align: left;">Use Case</th>
+                                <th style="padding: 8px; text-align: left;">Time Complexity</th>
+                                <th style="padding: 8px; text-align: left;">Limitations</th>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #444;">
+                                <td style="padding: 8px;">Dijkstra's</td>
+                                <td style="padding: 8px;">Single-source shortest path</td>
+                                <td style="padding: 8px;">O(E log V) with binary heap</td>
+                                <td style="padding: 8px;">Cannot handle negative weights</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #444;">
+                                <td style="padding: 8px;">Bellman-Ford</td>
+                                <td style="padding: 8px;">Single-source shortest path with negative weights</td>
+                                <td style="padding: 8px;">O(VE)</td>
+                                <td style="padding: 8px;">Slower than Dijkstra's</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #444;">
+                                <td style="padding: 8px;">Prim's</td>
+                                <td style="padding: 8px;">Minimum spanning tree</td>
+                                <td style="padding: 8px;">O(E log V) with binary heap</td>
+                                <td style="padding: 8px;">Only works on connected graphs</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px;">Kruskal's</td>
+                                <td style="padding: 8px;">Minimum spanning tree</td>
+                                <td style="padding: 8px;">O(E log E) or O(E log V)</td>
+                                <td style="padding: 8px;">Requires union-find data structure</td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -374,8 +653,20 @@
                             Implement Dijkstra's algorithm to find the shortest path between two vertices in a weighted graph.
                         </p>
                         <pre><code>public List<String> findShortestPath(String start, String end) {
-    // Your implementation here
+    // Step 1: Run Dijkstra's to get distances and predecessors
+    Map<String, Integer> distances = new HashMap<>();
+    Map<String, String> predecessors = new HashMap<>();
+    
+    // ... your Dijkstra's implementation here ...
+    
+    // Step 2: Reconstruct the path from start to end
+    List<String> path = new ArrayList<>();
+    
+    // ... path reconstruction logic here ...
+    
+    return path;
 }</code></pre>
+                        <p>Hint: Remember to track predecessor vertices during Dijkstra's so you can reconstruct the full path.</p>
                     </div>
 
                     <div class="feature-box">
@@ -383,19 +674,57 @@
                         <p>
                             Implement Prim's algorithm to find the minimum spanning tree of a weighted graph.
                         </p>
-                        <pre><code>public Graph findMinimumSpanningTree() {
+                        <pre><code>public Set<Edge> findMinimumSpanningTree() {
     // Your implementation here
+    // Remember to use a priority queue to select minimum-weight edges
+}</code></pre>
+                        <p>Hint: Start from any vertex, grow the MST by always adding the minimum-weight edge that connects a visited vertex to an unvisited one.</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 3: Negative Cycle Detection</h3>
+                        <p>
+                            Implement a modified Bellman-Ford algorithm to detect negative cycles in a graph.
+                        </p>
+                        <pre><code>public boolean hasNegativeCycle() {
+    // Your implementation here
+    // Hint: After |V|-1 iterations of Bellman-Ford, any further
+    // distance improvements indicate a negative cycle
 }</code></pre>
                     </div>
 
                     <div class="feature-box">
-                        <h3>Exercise 3: Network Flow</h3>
+                        <h3>Exercise 4: Multi-Source Shortest Path</h3>
                         <p>
-                            Implement the Ford-Fulkerson algorithm to find the maximum flow in a network.
+                            Implement the Floyd-Warshall algorithm to find shortest paths between all pairs of vertices.
+                        </p>
+                        <pre><code>public int[][] floydWarshall() {
+    // Your implementation here
+    // Hint: Use a distance matrix and consider all vertices as intermediates
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 5: Maximum Flow</h3>
+                        <p>
+                            Implement the Ford-Fulkerson algorithm to find the maximum flow in a network from a source to a sink.
                         </p>
                         <pre><code>public int findMaxFlow(String source, String sink) {
     // Your implementation here
+    // Hint: Repeatedly find augmenting paths and update residual capacities
 }</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 6: Advanced - Traveling Salesman Problem</h3>
+                        <p>
+                            Implement a solution to the Traveling Salesman Problem using dynamic programming.
+                        </p>
+                        <pre><code>public List<String> solveTSP() {
+    // Your implementation here
+    // Hint: Use bit manipulation to represent visited sets efficiently
+}</code></pre>
+                        <p>Note: This is an NP-hard problem, so exact solutions are exponential. For large graphs, consider using approximation algorithms instead.</p>
                     </div>
                 </div>
             </div>
