@@ -1,20 +1,247 @@
-<html>
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>Practice:  Sorting and Hash Tables</title>
-<meta name="identifier" content="g4aa48a8a5fb30d975c56aa39c7d99046"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Sorting and Hash Tables</title>
+<meta name="identifier" content="gbc8b85acb52b066a82daaf52f2a8d731"/>
 <meta name="editing_roles" content="teachers"/>
 <meta name="workflow_state" content="active"/>
+<style>
+  .objectives-section {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-left: 3px solid #93005a;
+    background-color: #f9f9f9;
+  }
+  
+  .content-section {
+    margin-bottom: 20px;
+  }
+  
+  .code-block {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 15px 0;
+    font-family: monospace;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  
+  .leetcode-link {
+    color: #FF8C00;
+    text-decoration: none;
+  }
+  
+  .leetcode-link:hover {
+    text-decoration: underline;
+  }
+</style>
 </head>
 <body>
+<div class="objectives-section">
+  <h2>Module Objectives</h2>
+  <h3>Sorting Algorithms</h3>
+  <p>Upon completion of the sorting module, you will be able to:</p>
+  <ul>
+    <li>Understand and implement basic O(n²) sorting algorithms</li>
+    <li>Compare different sorting algorithms and their performance characteristics</li>
+    <li>Implement Bubble Sort and Insertion Sort</li>
+    <li>Analyze time and space complexity of sorting algorithms</li>
+  </ul>
+  
+  <h3>Hash Tables</h3>
+  <p>Upon completion of the hash tables module, you will be able to:</p>
+  <ul>
+    <li>Understand how hash tables work internally</li>
+    <li>Use hash tables to speed up algorithm performance</li>
+    <li>Identify problems that can be efficiently solved using hash tables</li>
+    <li>Implement hash table-based solutions</li>
+  </ul>
+</div>
+
+<div class="content-section">
+  <h3>Sorting Fundamentals</h3>
+  <p>Sorting is the process of arranging elements in a specific order (usually ascending or descending). Efficient sorting is crucial for optimizing search operations and making data easier to process.</p>
+  
+  <h4>Bubble Sort</h4>
+  <p>Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order.</p>
+  
+  <div class="code-block">
+// Bubble Sort implementation
+function bubbleSort(arr) {
+  const n = arr.length;
+  
+  for (let i = 0; i &lt; n; i++) {
+    // Flag to optimize if array becomes sorted
+    let swapped = false;
+    
+    // Last i elements are already in place
+    for (let j = 0; j &lt; n - i - 1; j++) {
+      // Compare adjacent elements
+      if (arr[j] > arr[j + 1]) {
+        // Swap them if they are in wrong order
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+        swapped = true;
+      }
+    }
+    
+    // If no swapping occurred in this pass, array is sorted
+    if (!swapped) break;
+  }
+  
+  return arr;
+}
+
+// Time Complexity: 
+// - Best Case: O(n) when array is already sorted
+// - Average Case: O(n²)
+// - Worst Case: O(n²)
+// Space Complexity: O(1)
+  </div>
+  
+  <h4>Insertion Sort</h4>
+  <p>Insertion Sort builds the final sorted array one item at a time. It's efficient for small data sets and nearly sorted arrays.</p>
+  
+  <div class="code-block">
+// Insertion Sort implementation
+function insertionSort(arr) {
+  const n = arr.length;
+  
+  for (let i = 1; i &lt; n; i++) {
+    // Store current element
+    let current = arr[i];
+    
+    // Find position for current element in the sorted part
+    let j = i - 1;
+    while (j >= 0 && arr[j] > current) {
+      arr[j + 1] = arr[j]; // Move elements forward
+      j--;
+    }
+    
+    // Place current element in its correct position
+    arr[j + 1] = current;
+  }
+  
+  return arr;
+}
+
+// Time Complexity:
+// - Best Case: O(n) when array is already sorted
+// - Average Case: O(n²)
+// - Worst Case: O(n²)
+// Space Complexity: O(1)
+  </div>
+</div>
+
+<div class="content-section">
+  <h3>Hash Tables</h3>
+  <p>A hash table is a data structure that implements an associative array, mapping keys to values. It uses a hash function to compute an index into an array of buckets or slots, from which the desired value can be found.</p>
+  
+  <h4>Hash Table Concepts</h4>
+  <ul>
+    <li><strong>Hash Function:</strong> Converts keys into array indices</li>
+    <li><strong>Collision:</strong> When two keys hash to the same index</li>
+    <li><strong>Collision Resolution:</strong> Techniques like chaining or open addressing</li>
+    <li><strong>Load Factor:</strong> Ratio of elements to buckets</li>
+  </ul>
+  
+  <div class="code-block">
+// Simple Hash Table implementation with chaining
+class HashTable {
+  constructor(size = 53) {
+    this.keyMap = new Array(size);
+  }
+  
+  _hash(key) {
+    let total = 0;
+    const PRIME = 31;
+    
+    // Hash only the first 100 characters for better performance
+    for (let i = 0; i &lt; Math.min(key.length, 100); i++) {
+      const char = key[i];
+      const value = char.charCodeAt(0) - 96;
+      total = (total * PRIME + value) % this.keyMap.length;
+    }
+    
+    return total;
+  }
+  
+  set(key, value) {
+    const index = this._hash(key);
+    
+    if (!this.keyMap[index]) {
+      this.keyMap[index] = [];
+    }
+    
+    // Check if key already exists to update
+    for (let i = 0; i &lt; this.keyMap[index].length; i++) {
+      if (this.keyMap[index][i][0] === key) {
+        this.keyMap[index][i][1] = value;
+        return;
+      }
+    }
+    
+    // Key doesn't exist, add new key-value pair
+    this.keyMap[index].push([key, value]);
+  }
+  
+  get(key) {
+    const index = this._hash(key);
+    
+    if (!this.keyMap[index]) return undefined;
+    
+    for (let i = 0; i &lt; this.keyMap[index].length; i++) {
+      if (this.keyMap[index][i][0] === key) {
+        return this.keyMap[index][i][1];
+      }
+    }
+    
+    return undefined;
+  }
+}
+
+// Time Complexity:
+// - Average Case for get/set: O(1)
+// - Worst Case (hash collisions): O(n)
+  </div>
+  
+  <h4>Using Hash Tables to Solve Problems</h4>
+  <p>Hash tables are excellent for quick lookups and can optimize many algorithms:</p>
+  
+  <div class="code-block">
+// Find the first non-repeating character in a string
+function firstNonRepeatingChar(str) {
+  const charCount = {};
+  
+  // Count occurrences of each character
+  for (let char of str) {
+    charCount[char] = (charCount[char] || 0) + 1;
+  }
+  
+  // Find first character with count 1
+  for (let i = 0; i &lt; str.length; i++) {
+    if (charCount[str[i]] === 1) {
+      return str[i];
+    }
+  }
+  
+  return null; // No non-repeating character found
+}
+
+// Time Complexity: O(n)
+// Space Complexity: O(k) where k is the size of the character set
+  </div>
+</div>
+
 <p><strong>Now it's time to practice what you learned!</strong></p>
-<p><span>You should have already created your Code Signal account. If you have not done so yet, please follow these instructions <a title="What is CodeSignal and How to Create Your Account" href="$WIKI_REFERENCE$/pages/g0f9edee9d9bad727f053555cc74965dd" data-api-endpoint="https://bloomtech.instructure.com/api/v1/courses/2482/pages/what-is-codesignal-and-how-to-create-your-account" data-api-returntype="Page">What is CodeSignal and How To Create Your Account</a>.</span></p>
+<p><span>You should have already created your Code Signal account. If you have not done so yet, please follow these instructions <a title="What is CodeSignal and How to Create Your Account" href="$WIKI_REFERENCE$/pages/g0f9edee9d9bad727f053555cc74965dd" data-api-endpoint="https://bloomtech.instructure.com/api/v1/courses/2482/pages/what-is-codesignal-and-how-to-create-your-account" data-api-returntype="Page">What is CodeSignal and How to Create Your Account</a>.</span></p>
 <p><span><em>Tip:&nbsp; Before you dive into the practice tasks, revisit the core competency and guided project videos in this sprint.</em></span></p>
 <hr>
-<p><span>Complete these tasks in CodeSignal:</span></p>
-<p><a class="inline_disabled" href="https://app.codesignal.com/public-test/xSRcgGDgv9dRPBARp/YnYJPaaRxP8Csc" target="_blank"><span>ACS2M7</span></a></p>
-<p><a class="inline_disabled" href="https://app.codesignal.com/public-test/npJ6tqdDnmJjsdLLu/G7k2HAMGEppcGr" target="_blank"><span>ACS2M8</span></a></p>
-<p><a class="inline_disabled" href="https://app.codesignal.com/public-test/gTiL4mEPKEhxWR87o/hSg7A8RBw56Mtk" target="_blank"><span>ACS2M9</span></a></p>
+<p>Complete these tasks in CodeSignal:</p>
+<p><a class="inline_disabled leetcode-link" href="https://app.codesignal.com/public-test/azqEu2QDZfBwsuakz/EJsRhkstAmZuDQ" target="_blank" rel="noopener">ACS2M4</a></p>
+<p><a class="inline_disabled leetcode-link" href="https://app.codesignal.com/public-test/dfGtZxm6289jjD8ns/snHo2H5N2PMKi8" target="_blank" rel="noopener">ACS2M5</a></p>
+<p><a class="inline_disabled leetcode-link" href="https://app.codesignal.com/public-test/d8ZaBTiF7PPmG8oNB/Spk5zCuFnKN3Kh" target="_blank" rel="noopener">ACS2M6</a></p>
 <hr>
 <ol>
 <li>Login to CodeSignal</li>
