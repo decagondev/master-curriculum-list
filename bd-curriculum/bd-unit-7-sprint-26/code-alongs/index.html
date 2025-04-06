@@ -78,6 +78,34 @@
         .back-button:hover {
             background-color: #333a47;
         }
+        .code-details {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #333a47;
+            border-radius: 4px;
+        }
+        .code-details h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #ff5722;
+        }
+        .code-details p {
+            color: #b3b3b3;
+            margin-bottom: 15px;
+        }
+        pre, code {
+            background-color: #1a1d23;
+            border-radius: 4px;
+            color: #e6e6e6;
+            overflow-x: auto;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
+            padding: 2px 5px;
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+        }
     </style>
 </head>
 <body>
@@ -90,24 +118,197 @@
             <h2>Multi-Threading Code-Along</h2>
             <p>Practice creating and managing multiple threads in Java applications. You'll learn how to initialize threads, run tasks concurrently, and understand thread lifecycle.</p>
             <a href="https://github.com/BloomTechBackend/bd-multithreading-code-along" target="_blank" rel="noopener">View on GitHub</a>
+            
+            <div class="code-details">
+                <h3>Creating Threads</h3>
+                <p>Learn how to create threads using both the Thread class directly and by implementing the Runnable interface.</p>
+                <pre><code>// Creating a thread by extending Thread class
+public class MyThread extends Thread {
+    @Override
+    public void run() {
+        System.out.println("Thread running: " + getName());
+    }
+}
+
+// Usage
+MyThread thread = new MyThread();
+thread.start();
+
+// Creating a thread using Runnable
+Runnable task = () -> {
+    System.out.println("Task running in thread: " + Thread.currentThread().getName());
+};
+
+Thread thread2 = new Thread(task);
+thread2.start();</code></pre>
+            </div>
         </div>
         
         <div class="code-along">
             <h2>Thread Safety Code-Along</h2>
             <p>Learn techniques to ensure thread safety in your concurrent applications. This code-along focuses on synchronization mechanisms and preventing race conditions.</p>
             <a href="https://github.com/BloomTechBackend/bd-thread-safety-code-along" target="_blank" rel="noopener">View on GitHub</a>
+            
+            <div class="code-details">
+                <h3>Thread Safety Mechanisms</h3>
+                <p>Explore different techniques to make your code thread-safe, including synchronization, locks, and atomic variables.</p>
+                <pre><code>// Using synchronized methods
+public class BankAccount {
+    private double balance;
+    
+    public synchronized void deposit(double amount) {
+        balance += amount;
+    }
+    
+    public synchronized void withdraw(double amount) {
+        if (balance >= amount) {
+            balance -= amount;
+        }
+    }
+    
+    public synchronized double getBalance() {
+        return balance;
+    }
+}
+
+// Using synchronized blocks for finer control
+public class BankAccountWithLock {
+    private double balance;
+    private final Object lock = new Object();
+    
+    public void deposit(double amount) {
+        synchronized(lock) {
+            balance += amount;
+        }
+    }
+    
+    public boolean withdraw(double amount) {
+        synchronized(lock) {
+            if (balance >= amount) {
+                balance -= amount;
+                return true;
+            }
+            return false;
+        }
+    }
+}</code></pre>
+            </div>
         </div>
         
         <div class="code-along">
             <h2>Executor Service Weather Reports</h2>
             <p>Build a weather reporting system using Java's Executor Service. Learn to manage thread pools, submit tasks, and handle responses efficiently.</p>
             <a href="https://github.com/BloomTechBackend/bd-executor-service-weather-reports" target="_blank" rel="noopener">View on GitHub</a>
+            
+            <div class="code-details">
+                <h3>Working with ExecutorService</h3>
+                <p>Learn how to use ExecutorService to manage thread pools for efficient asynchronous task execution.</p>
+                <pre><code>// Setting up an ExecutorService
+ExecutorService executor = Executors.newFixedThreadPool(4);
+
+// Creating a weather service task
+class WeatherService implements Callable&lt;WeatherReport&gt; {
+    private final String location;
+    
+    public WeatherService(String location) {
+        this.location = location;
+    }
+    
+    @Override
+    public WeatherReport call() throws Exception {
+        // Simulate API call to get weather data
+        Thread.sleep(1000); // Simulating network delay
+        return new WeatherReport(location, getRandomTemperature(), getRandomCondition());
+    }
+    
+    private double getRandomTemperature() {
+        return 60 + Math.random() * 40; // Random temp between 60-100F
+    }
+    
+    private String getRandomCondition() {
+        String[] conditions = {"Sunny", "Cloudy", "Rainy", "Windy"};
+        return conditions[(int)(Math.random() * conditions.length)];
+    }
+}
+
+// Submitting tasks and handling results
+List&lt;String&gt; locations = Arrays.asList("New York", "Los Angeles", "Chicago", "Miami");
+List&lt;Future&lt;WeatherReport&gt;&gt; futures = new ArrayList&lt;&gt;();
+
+// Submit all tasks
+for (String location : locations) {
+    Future&lt;WeatherReport&gt; future = executor.submit(new WeatherService(location));
+    futures.add(future);
+}
+
+// Process results as they complete
+for (Future&lt;WeatherReport&gt; future : futures) {
+    try {
+        WeatherReport report = future.get();
+        System.out.println(report);
+    } catch (Exception e) {
+        System.err.println("Error getting weather: " + e.getMessage());
+    }
+}
+
+// Shutdown executor
+executor.shutdown();</code></pre>
+            </div>
         </div>
         
         <div class="code-along">
             <h2>Future Tasks Code-Along</h2>
             <p>Explore asynchronous programming using Future objects in Java. Learn how to retrieve results from concurrent tasks and handle exceptions properly.</p>
             <a href="https://github.com/BloomTechBackend/bd-future-tasks-code-along" target="_blank" rel="noopener">View on GitHub</a>
+            
+            <div class="code-details">
+                <h3>Managing Future Results</h3>
+                <p>Discover advanced techniques for working with Future objects to handle asynchronous computation results.</p>
+                <pre><code>// Creating a service that returns Futures
+public class DataProcessingService {
+    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    
+    public Future&lt;Integer&gt; processDataAsync(List&lt;Integer&gt; data) {
+        return executor.submit(() -> {
+            // Simulate intensive processing
+            Thread.sleep(500);
+            return data.stream().mapToInt(Integer::intValue).sum();
+        });
+    }
+    
+    public void shutdown() {
+        executor.shutdown();
+    }
+}
+
+// Using the service with timeout and error handling
+DataProcessingService service = new DataProcessingService();
+List&lt;List&lt;Integer&gt;&gt; dataBatches = getDataBatches(); // Method to get data
+List&lt;Future&lt;Integer&gt;&gt; results = new ArrayList&lt;&gt;();
+
+// Submit all processing tasks
+for (List&lt;Integer&gt; batch : dataBatches) {
+    results.add(service.processDataAsync(batch));
+}
+
+// Collect results with timeout
+List&lt;Integer&gt; processedResults = new ArrayList&lt;&gt;();
+for (Future&lt;Integer&gt; result : results) {
+    try {
+        // Wait up to 2 seconds for each result
+        Integer value = result.get(2, TimeUnit.SECONDS);
+        processedResults.add(value);
+    } catch (TimeoutException e) {
+        System.out.println("Processing took too long, skipping batch");
+        result.cancel(true); // Attempt to cancel the task
+    } catch (Exception e) {
+        System.err.println("Error processing batch: " + e.getMessage());
+    }
+}
+
+// Clean shutdown
+service.shutdown();</code></pre>
+            </div>
         </div>
     </div>
 </body>
