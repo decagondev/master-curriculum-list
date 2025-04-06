@@ -172,6 +172,12 @@
                 <li>Use lambda expressions with collection operations</li>
                 <li>Apply lambda expressions with the Stream API</li>
                 <li>Implement common functional interfaces like Predicate, Consumer, and Function</li>
+                <li>Determine which Java functional interface is implemented by a given lambda expression</li>
+                <li>Design and implement lambda expressions for Supplier, Consumer, Predicate, and Function interfaces</li>
+                <li>Use method references to specify instance methods and static methods</li>
+                <li>Explain what qualifies a Java interface as a functional interface</li>
+                <li>Define method signatures for various functional interfaces</li>
+                <li>Handle checked exceptions thrown inside functional interface implementations</li>
             </ul>
         </section>
 
@@ -181,6 +187,37 @@
                 <iframe class="wistia_embed" title="Introduction to Databases" src="https://fast.wistia.net/embed/iframe/2rv3rn75a2" allow="autoplay; fullscreen" allowfullscreen></iframe>
             </div>
             <p>This video introduces the concept of lambda expressions in Java and their relationship to functional programming concepts.</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Understanding Functional Interfaces</h3>
+                </div>
+                <div class="card-body">
+                    <p>A functional interface in Java is an interface that contains exactly one abstract method. Lambda expressions provide a way to implement these interfaces concisely.</p>
+                    <p>Here's an example of a functional interface and its implementation using lambda expression:</p>
+                    <pre><code>// Functional interface definition
+@FunctionalInterface
+interface StringProcessor {
+    String process(String input);
+}
+
+// Implementation using a lambda expression
+StringProcessor reverser = (String s) -> {
+    StringBuilder sb = new StringBuilder(s);
+    return sb.reverse().toString();
+};
+
+// Usage
+String result = reverser.process("Hello");  // Returns "olleH"</code></pre>
+                    <p>The key built-in functional interfaces in the java.util.function package include:</p>
+                    <ul>
+                        <li><strong>Function&lt;T,R&gt;</strong>: Takes a T argument and returns an R result. Method: <code>R apply(T t)</code></li>
+                        <li><strong>Consumer&lt;T&gt;</strong>: Takes a T argument and returns no result. Method: <code>void accept(T t)</code></li>
+                        <li><strong>Supplier&lt;T&gt;</strong>: Takes no arguments and returns a T result. Method: <code>T get()</code></li>
+                        <li><strong>Predicate&lt;T&gt;</strong>: Takes a T argument and returns a boolean. Method: <code>boolean test(T t)</code></li>
+                    </ul>
+                </div>
+            </div>
         </section>
 
         <section class="section">
@@ -189,6 +226,60 @@
                 <iframe class="wistia_embed" title="Sprint 23 Java Lambda Expressions Video" src="https://fast.wistia.net/embed/iframe/2rv3rn75a2" allow="autoplay; fullscreen" allowfullscreen></iframe>
             </div>
             <p>In this video, you'll learn advanced techniques for using lambda expressions with the Stream API and other functional programming patterns in Java.</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Method References</h3>
+                </div>
+                <div class="card-body">
+                    <p>Method references provide an even more concise way to express lambda expressions that simply call an existing method.</p>
+                    <p>There are four types of method references:</p>
+                    <pre><code>// 1. Reference to a static method
+Function&lt;String, Integer&gt; parser = Integer::parseInt;
+
+// 2. Reference to an instance method of a particular object
+String str = "Hello";
+Supplier&lt;Integer&gt; lengthSupplier = str::length;
+
+// 3. Reference to an instance method of an arbitrary object of a particular type
+Function&lt;String, Integer&gt; lengthFunc = String::length;
+
+// 4. Reference to a constructor
+Supplier&lt;List&lt;String&gt;&gt; listSupplier = ArrayList::new;</code></pre>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Lambda Expressions with Streams</h3>
+                </div>
+                <div class="card-body">
+                    <p>Java's Stream API works seamlessly with lambda expressions to process collections of objects:</p>
+                    <pre><code>List&lt;String&gt; names = Arrays.asList("Alice", "Bob", "Charlie", "Dave");
+
+// Filter names starting with 'A'
+List&lt;String&gt; filteredNames = names.stream()
+    .filter(name -> name.startsWith("A"))
+    .collect(Collectors.toList());
+
+// Transform names to uppercase
+List&lt;String&gt; upperNames = names.stream()
+    .map(String::toUpperCase)
+    .collect(Collectors.toList());
+
+// Find any name longer than 5 characters
+Optional&lt;String&gt; longName = names.stream()
+    .filter(name -> name.length() > 5)
+    .findAny();
+
+// Combine multiple operations
+double averageLength = names.stream()
+    .filter(name -> name.length() > 3)
+    .mapToInt(String::length)
+    .average()
+    .orElse(0);</code></pre>
+                </div>
+            </div>
         </section>
 
         <section class="section">
