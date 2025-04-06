@@ -12,6 +12,7 @@
             padding: 20px;
             background-color: #1a1d23;
             color: #ffffff;
+            transition: background-color 0.3s;
         }
         .container {
             max-width: 1000px;
@@ -19,7 +20,12 @@
             background-color: #222831;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         h1, h2, h3, h4 {
             color: #ffffff;
@@ -31,16 +37,51 @@
             margin-bottom: 30px;
             border-bottom: 2px solid #ff5722;
             padding-bottom: 10px;
+            position: relative;
+        }
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #ff5722;
+            animation: expandWidth 1.5s ease-in-out forwards;
+        }
+        @keyframes expandWidth {
+            from { width: 50px; }
+            to { width: 100%; }
         }
         h2 {
             font-size: 1.8rem;
             color: #ffffff;
             margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        h2:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background-color: #ff5722;
+            transition: width 0.3s;
+        }
+        h2:hover:after {
+            width: 100%;
         }
         h3 {
             font-size: 1.3rem;
             color: #ff5722;
             margin-bottom: 15px;
+            transition: transform 0.3s;
+        }
+        h3:hover {
+            transform: translateX(5px);
         }
         h4 {
             font-size: 1.1rem;
@@ -49,6 +90,7 @@
         p {
             color: #b3b3b3;
             margin-bottom: 16px;
+            line-height: 1.7;
         }
         .intro-text {
             text-align: center;
@@ -56,32 +98,77 @@
             margin: 0 auto 30px;
             color: #b3b3b3;
             font-size: 1.1rem;
+            animation: fadeUp 0.8s ease-out;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .back-button {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             margin-bottom: 20px;
             padding: 8px 16px;
             background-color: #2a303c;
             color: #ffffff;
             text-decoration: none;
             border-radius: 4px;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
+            transition: all 0.3s;
             width: fit-content;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        .back-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transition: transform 0.3s;
+            transform-origin: right;
+            transform: scaleX(0);
+            z-index: -1;
         }
         .back-button:hover {
             background-color: #333a47;
+            transform: translateX(-5px);
+        }
+        .back-button:hover:before {
+            transform: scaleX(1);
+            transform-origin: left;
         }
         .back-button svg {
             margin-right: 5px;
             width: 16px;
             height: 16px;
+            transition: transform 0.3s;
+        }
+        .back-button:hover svg {
+            transform: translateX(-3px);
         }
         .tabs {
             display: flex;
             border-bottom: 1px solid #333a47;
             margin-bottom: 30px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            position: relative;
+        }
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+        .tabs:after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 30px;
+            background: linear-gradient(to right, transparent, #222831);
+            pointer-events: none;
         }
         .tab {
             padding: 12px 20px;
@@ -89,22 +176,51 @@
             border-bottom: 2px solid transparent;
             color: #b3b3b3;
             font-weight: 500;
-            transition: all 0.2s;
+            transition: all 0.3s;
             background: none;
             border-top: none;
             border-left: none;
             border-right: none;
             font-size: 0.9rem;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        .tab:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.05);
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.3s;
+            z-index: -1;
         }
         .tab:hover {
             color: #ffffff;
         }
+        .tab:hover:before {
+            transform: scaleY(1);
+        }
         .tab.active {
             color: #ff5722;
             border-bottom: 2px solid #ff5722;
+            font-weight: 600;
+        }
+        .tab.active:before {
+            background: rgba(255, 87, 34, 0.05);
+            transform: scaleY(1);
         }
         .tab-content {
             display: none;
+            animation: fadeContent 0.4s ease-in-out;
+        }
+        @keyframes fadeContent {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .tab-content.active {
             display: block;
@@ -114,17 +230,67 @@
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .card:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        .card:hover:after {
+            transform: scaleX(1);
         }
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin: 20px 0;
+            animation: gridFadeIn 0.6s ease-out;
+        }
+        @keyframes gridFadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .item {
             background-color: #333a47;
             padding: 15px;
             border-radius: 6px;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background-color: #3a4356;
+        }
+        .item:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #ff5722, transparent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        .item:hover:after {
+            transform: scaleX(1);
         }
         .item-header {
             display: flex;
@@ -134,16 +300,44 @@
             background-color: #333a47;
             border-radius: 4px;
             margin-bottom: 8px;
+            transition: background-color 0.3s, transform 0.3s;
+            cursor: pointer;
+        }
+        .item-header:hover {
+            background-color: #3a4356;
+            transform: translateX(5px);
         }
         .item-header span:last-child {
             color: #ff5722;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        .item-header:hover span:last-child {
+            transform: scale(1.1);
         }
         ul {
             padding-left: 20px;
             color: #b3b3b3;
+            list-style-type: none;
         }
         li {
             margin-bottom: 8px;
+            position: relative;
+            padding-left: 15px;
+            transition: transform 0.2s;
+        }
+        li:before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            color: #ff5722;
+            transition: transform 0.2s;
+        }
+        li:hover {
+            transform: translateX(5px);
+        }
+        li:hover:before {
+            transform: translateX(3px);
         }
         .video-container {
             position: relative;
@@ -153,6 +347,12 @@
             margin-bottom: 20px;
             background-color: #333a47;
             border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .video-container:hover {
+            transform: scale(1.01);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
         .video-container iframe {
             position: absolute;
@@ -161,6 +361,111 @@
             width: 100%;
             height: 100%;
             border: 0;
+        }
+        
+        /* Module card styles */
+        .module-card {
+            background-color: #2a303c;
+            border-radius: 8px;
+            padding: 0;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .module-header {
+            background: linear-gradient(135deg, #333a47, #2a303c);
+            padding: 15px 20px;
+            border-bottom: 1px solid #333a47;
+            position: relative;
+        }
+        .module-header h3 {
+            margin: 0;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+        }
+        .module-header h3:before {
+            content: '●';
+            color: #ff5722;
+            margin-right: 8px;
+            font-size: 10px;
+        }
+        .module-content {
+            padding: 15px 20px;
+        }
+        
+        /* Progress indicator */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #2a303c;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        /* Topic pill */
+        .topic-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: rgba(255, 87, 34, 0.1);
+            color: #ff5722;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        .topic-pill:hover {
+            transform: translateY(-3px);
+            background-color: rgba(255, 87, 34, 0.2);
+        }
+        
+        /* New classes to replace inline styles */
+        .text-right {
+            text-align: right;
+        }
+        .text-sm {
+            font-size: 14px;
+        }
+        .mt-n15 {
+            margin-top: -15px;
+        }
+        .text-muted {
+            color: #666;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .mb-15 {
+            margin-bottom: 15px;
+        }
+        .progress-sm {
+            height: 5px;
+            margin: 10px 0;
+        }
+        .progress-30 {
+            width: 30%;
+        }
+        .progress-50 {
+            width: 50%;
+        }
+        .progress-80 {
+            width: 80%;
+        }
+        .topic-container {
+            margin-bottom: 15px;
         }
     </style>
     <script>
@@ -176,6 +481,43 @@
             document.getElementById(tabId).classList.add('active');
             document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
         }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Progress bar animation
+            setTimeout(function() {
+                document.querySelector('.progress-bar').style.width = '75%';
+            }, 500);
+            
+            // Add animation classes to items as they appear in viewport
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            document.querySelectorAll('.card, .module-card, .item').forEach(item => {
+                observer.observe(item);
+                // Add animation delay based on position
+                const index = Array.from(document.querySelectorAll('.card, .module-card, .item')).indexOf(item);
+                item.style.animationDelay = `${0.1 * index}s`;
+            });
+            
+            // Add scroll to tab navigation
+            const tabNav = document.querySelector('.tabs');
+            if (tabNav) {
+                tabNav.addEventListener('wheel', function(e) {
+                    if (e.deltaY !== 0) {
+                        e.preventDefault();
+                        this.scrollLeft += e.deltaY;
+                    }
+                });
+            }
+        });
     </script>
 </head>
 <body>
@@ -194,6 +536,12 @@
             Welcome to Applied Computer Science! This comprehensive overview will guide you through
             the course structure, learning objectives, and key concepts you'll master.
         </p>
+        
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        <p class="text-right text-sm mt-n15 text-muted">Course Progress: 75% Complete</p>
 
         <!-- Main Navigation Tabs -->
         <div class="tabs">
@@ -231,44 +579,83 @@
                     <h2>Course Structure</h2>
                     <div class="grid">
                         <!-- Module 1 -->
-                        <div>
-                            <h3>Module 1: Data Structures Foundations</h3>
-                            <ul>
-                                <li>Linked Lists and Advanced Operations</li>
-                                <li>Stacks and Queues Implementation</li>
-                                <li>Introduction to Recursion</li>
-                                <li>Time and Space Complexity Analysis</li>
-                            </ul>
+                        <div class="module-card">
+                            <div class="module-header">
+                                <h3>Module 1: Data Structures Foundations</h3>
+                            </div>
+                            <div class="module-content">
+                                <div class="topic-container">
+                                    <span class="topic-pill">Linked Lists</span>
+                                    <span class="topic-pill">Stacks</span>
+                                    <span class="topic-pill">Queues</span>
+                                    <span class="topic-pill">Recursion</span>
+                                </div>
+                                <ul>
+                                    <li>Linked Lists and Advanced Operations</li>
+                                    <li>Stacks and Queues Implementation</li>
+                                    <li>Introduction to Recursion</li>
+                                    <li>Time and Space Complexity Analysis</li>
+                                </ul>
+                            </div>
                         </div>
                         <!-- Module 2 -->
-                        <div>
-                            <h3>Module 2: Tree Structures</h3>
-                            <ul>
-                                <li>Binary Trees Fundamentals</li>
-                                <li>Tree Traversal Algorithms</li>
-                                <li>Binary Search Trees</li>
-                                <li>Tree Balancing Techniques</li>
-                            </ul>
+                        <div class="module-card">
+                            <div class="module-header">
+                                <h3>Module 2: Tree Structures</h3>
+                            </div>
+                            <div class="module-content">
+                                <div class="topic-container">
+                                    <span class="topic-pill">Binary Trees</span>
+                                    <span class="topic-pill">Traversal</span>
+                                    <span class="topic-pill">BST</span>
+                                    <span class="topic-pill">Balancing</span>
+                                </div>
+                                <ul>
+                                    <li>Binary Trees Fundamentals</li>
+                                    <li>Tree Traversal Algorithms</li>
+                                    <li>Binary Search Trees</li>
+                                    <li>Tree Balancing Techniques</li>
+                                </ul>
+                            </div>
                         </div>
                         <!-- Module 3 -->
-                        <div>
-                            <h3>Module 3: Advanced Data Structures</h3>
-                            <ul>
-                                <li>Hash Tables and Collision Resolution</li>
-                                <li>Sorting Algorithms</li>
-                                <li>Algorithm Analysis</li>
-                                <li>Performance Optimization</li>
-                            </ul>
+                        <div class="module-card">
+                            <div class="module-header">
+                                <h3>Module 3: Advanced Data Structures</h3>
+                            </div>
+                            <div class="module-content">
+                                <div class="topic-container">
+                                    <span class="topic-pill">Hash Tables</span>
+                                    <span class="topic-pill">Sorting</span>
+                                    <span class="topic-pill">Analysis</span>
+                                    <span class="topic-pill">Optimization</span>
+                                </div>
+                                <ul>
+                                    <li>Hash Tables and Collision Resolution</li>
+                                    <li>Sorting Algorithms</li>
+                                    <li>Algorithm Analysis</li>
+                                    <li>Performance Optimization</li>
+                                </ul>
+                            </div>
                         </div>
                         <!-- Module 4 -->
-                        <div>
-                            <h3>Module 4: Graph Theory</h3>
-                            <ul>
-                                <li>Graph Representations</li>
-                                <li>Graph Traversal Algorithms</li>
-                                <li>Shortest Path Algorithms</li>
-                                <li>Real-world Applications</li>
-                            </ul>
+                        <div class="module-card">
+                            <div class="module-header">
+                                <h3>Module 4: Graph Theory</h3>
+                            </div>
+                            <div class="module-content">
+                                <div class="topic-container">
+                                    <span class="topic-pill">Graph Representation</span>
+                                    <span class="topic-pill">Traversal</span>
+                                    <span class="topic-pill">Shortest Path</span>
+                                </div>
+                                <ul>
+                                    <li>Graph Representations</li>
+                                    <li>Graph Traversal Algorithms</li>
+                                    <li>Shortest Path Algorithms</li>
+                                    <li>Real-world Applications</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -286,14 +673,23 @@
                             <div class="item">
                                 <h4>Lecture Videos</h4>
                                 <p>2-3 hours per week</p>
+                                <div class="progress-container progress-sm">
+                                    <div class="progress-bar progress-30"></div>
+                                </div>
                             </div>
                             <div class="item">
                                 <h4>Practice Exercises</h4>
                                 <p>4-6 hours per week</p>
+                                <div class="progress-container progress-sm">
+                                    <div class="progress-bar progress-50"></div>
+                                </div>
                             </div>
                             <div class="item">
                                 <h4>Projects</h4>
                                 <p>6-8 hours per week</p>
+                                <div class="progress-container progress-sm">
+                                    <div class="progress-bar progress-80"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -326,7 +722,7 @@
                     
                     <div class="grid">
                         <!-- Core Resources -->
-                        <div>
+                        <div class="item">
                             <h3>Core Learning Materials</h3>
                             <ul>
                                 <li>Video lectures and tutorials</li>
@@ -337,7 +733,7 @@
                         </div>
 
                         <!-- Support Resources -->
-                        <div>
+                        <div class="item">
                             <h3>Support Services</h3>
                             <ul>
                                 <li>One-on-one mentoring</li>
@@ -348,7 +744,7 @@
                         </div>
 
                         <!-- Additional Materials -->
-                        <div>
+                        <div class="item">
                             <h3>Supplementary Materials</h3>
                             <ul>
                                 <li>Reference implementations</li>
@@ -359,7 +755,7 @@
                         </div>
 
                         <!-- Tools -->
-                        <div>
+                        <div class="item">
                             <h3>Development Tools</h3>
                             <ul>
                                 <li>IDE setup guides</li>

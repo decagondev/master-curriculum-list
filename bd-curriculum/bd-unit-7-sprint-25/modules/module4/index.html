@@ -107,6 +107,30 @@
             color: #b3b3b3;
             padding-left: 20px;
         }
+        .learning-objective-description {
+            color: #9e9e9e;
+            margin-left: 10px;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        .code-example {
+            background-color: #2d3748;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            color: #e2e8f0;
+        }
+        .video-description {
+            color: #b3b3b3;
+            font-size: 1em;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #2a303c;
+            border-radius: 4px;
+            border-left: 2px solid #ff5722;
+        }
     </style>
 </head>
 <body>
@@ -123,19 +147,97 @@
         <div class="video-container">
             <iframe class="wistia_embed" title="DynamoDB Scan Operations" src="https://fast.wistia.net/embed/iframe/uozlbjn63m" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
+        <div class="video-description">
+            This video introduces DynamoDB Scan operations and how they differ from Query operations. You'll learn about the fundamental concepts of scanning a DynamoDB table, including how to use the DynamoDBMapper for scan operations in Java applications. The video explains scan filters, expression attributes, and how to retrieve specific data from your tables using scan operations.
+        </div>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="DynamoDB Scan Best Practices" src="https://fast.wistia.net/embed/iframe/k05s7e6t5w" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+        <div class="video-description">
+            This advanced video covers best practices and optimization techniques for DynamoDB Scan operations. You'll learn how to implement efficient pagination through large result sets using the scan() method with limits and last evaluated keys. The video also discusses parallel scans for improved performance, strategies to minimize throughput consumption, and when to use scan versus alternative access patterns in DynamoDB.
         </div>
 
         <section>
             <h2>Learning Objectives</h2>
             <ul class="learning-objectives-list">
-                <li>Understand the purpose and limitations of DynamoDB Scan operations</li>
-                <li>Learn how to perform basic and filtered scans</li>
-                <li>Master efficient pagination of large result sets</li>
-                <li>Explore parallel scan techniques for improved performance</li>
-                <li>Apply best practices to minimize throughput consumption</li>
+                <li>Design and implement functionality that uses scan with a filter to retrieve a subset of items from a provided DynamoDB table
+                    <div class="learning-objective-description">
+                        Learn how to use scan operations with filter expressions to selectively retrieve items from a DynamoDB table based on specific criteria.
+                        <div class="code-example">
+                        // Create ScanExpression with filter<br>
+                        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();<br>
+                        <br>
+                        // Create filter condition (products with price > 100)<br>
+                        Map&lt;String, AttributeValue&gt; expressionValues = new HashMap&lt;&gt;();<br>
+                        expressionValues.put(":priceValue", new AttributeValue().withN("100"));<br>
+                        <br>
+                        scanExpression.setFilterExpression("price > :priceValue");<br>
+                        scanExpression.setExpressionAttributeValues(expressionValues);<br>
+                        <br>
+                        // Execute scan with filter<br>
+                        PaginatedScanList&lt;Product&gt; productList = mapper.scan(Product.class, scanExpression);<br>
+                        <br>
+                        // Process filtered results<br>
+                        for (Product product : productList) {<br>
+                            &nbsp;&nbsp;System.out.println("Product: " + product.getName() + ", Price: " + product.getPrice());<br>
+                        }<br>
+                        </div>
+                    </div>
+                </li>
+                <li>Design and implement functionality that uses paginated scan with a limit to retrieve a subset of items from a provided DynamoDB table
+                    <div class="learning-objective-description">
+                        Learn how to implement efficient pagination for scan operations to process large datasets in manageable chunks, reducing memory usage and improving application responsiveness.
+                        <div class="code-example">
+                        // Create scan expression with limit<br>
+                        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()<br>
+                            &nbsp;&nbsp;.withLimit(10); // Retrieve 10 items per page<br>
+                        <br>
+                        Map&lt;String, AttributeValue&gt; lastKeyEvaluated = null;<br>
+                        <br>
+                        do {<br>
+                            &nbsp;&nbsp;// Set exclusive start key (for pagination)<br>
+                            &nbsp;&nbsp;scanExpression.setExclusiveStartKey(lastKeyEvaluated);<br>
+                            <br>
+                            &nbsp;&nbsp;// Execute scan<br>
+                            &nbsp;&nbsp;ScanResultPage&lt;Product&gt; scanResult = mapper.scanPage(Product.class, scanExpression);<br>
+                            <br>
+                            &nbsp;&nbsp;// Process current page of results<br>
+                            &nbsp;&nbsp;for (Product product : scanResult.getResults()) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Processing: " + product.getId());<br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;// Get last evaluated key for next page<br>
+                            &nbsp;&nbsp;lastKeyEvaluated = scanResult.getLastEvaluatedKey();<br>
+                            <br>
+                            &nbsp;&nbsp;// Continue until no more pages<br>
+                        } while (lastKeyEvaluated != null);<br>
+                        </div>
+                    </div>
+                </li>
+                <li>Outline when to scan a DynamoDB table
+                    <div class="learning-objective-description">
+                        Understand the appropriate use cases for scan operations, including full table exports, infrequent operations on small tables, or when you need to query data without a known partition key.
+                    </div>
+                </li>
+                <li>Outline how to use DynamoDBMapper's scan() method
+                    <div class="learning-objective-description">
+                        Learn the different methods and options available in DynamoDBMapper for scan operations, including basic scans, filtered scans, and paginated scans.
+                        <div class="code-example">
+                        // Basic scan (all items)<br>
+                        PaginatedScanList&lt;User&gt; allUsers = mapper.scan(User.class, new DynamoDBScanExpression());<br>
+                        <br>
+                        // Scan with attribute projection (specific attributes only)<br>
+                        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()<br>
+                            &nbsp;&nbsp;.withProjectionExpression("id, username, email");<br>
+                        <br>
+                        // Parallel scan (for large tables)<br>
+                        DynamoDBScanExpression parallelScanExpression = new DynamoDBScanExpression()<br>
+                            &nbsp;&nbsp;.withSegment(0)      // Current segment<br>
+                            &nbsp;&nbsp;.withTotalSegments(4); // Total segments<br>
+                        </div>
+                    </div>
+                </li>
             </ul>
         </section>
 

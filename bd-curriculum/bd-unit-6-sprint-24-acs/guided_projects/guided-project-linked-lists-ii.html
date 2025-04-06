@@ -384,6 +384,92 @@ size++;</code></pre>
                             </li>
                         </ol>
                     </div>
+
+                    <div class="feature-box">
+                        <h3>Critical Considerations for Linked List Operations</h3>
+                        <p>When implementing linked list operations, keep these important points in mind:</p>
+                        
+                        <h4>Order of Operations</h4>
+                        <p>The sequence of operations is crucial, especially when modifying references:</p>
+                        <ul>
+                            <li>Always set new nodes' next pointers <strong>before</strong> changing existing pointers</li>
+                            <li>When deleting nodes, ensure you don't lose access to parts of the list</li>
+                        </ul>
+                        <pre><code>// CORRECT order for insertion
+newNode.next = current.next;  // Set new node's reference first
+current.next = newNode;       // Then update the current node's reference
+
+// INCORRECT order would lose the rest of the list
+// current.next = newNode;       // DON'T do this first
+// newNode.next = current.next;  // This would point to itself!</code></pre>
+
+                        <h4>Edge Cases That Must Be Handled</h4>
+                        <ul>
+                            <li><strong>Empty List:</strong> Always check if head is null</li>
+                            <li><strong>Single Element List:</strong> Special handling when size is 1</li>
+                            <li><strong>Invalid Positions:</strong> Validate index bounds (0 to size inclusive for insertion, 0 to size-1 for deletion)</li>
+                            <li><strong>Head/Tail Operations:</strong> Treat beginning/end operations as special cases</li>
+                        </ul>
+
+                        <h4>Visualizing Pointer Changes</h4>
+                        <p>Imagine insertion at position 2 in a list:</p>
+                        <pre><code>// Before: head -> A -> B -> C -> null
+//                       0    1    2
+// Insert X at position 2
+// After:  head -> A -> B -> X -> C -> null
+//                       0    1    2    3</code></pre>
+                        
+                        <p>Steps to achieve this:</p>
+                        <ol>
+                            <li>Validate position (2 is valid if size >= 2)</li>
+                            <li>Create new node X</li>
+                            <li>Traverse to B (position-1)</li>
+                            <li>Store B's next (C) in a temporary reference or directly use in assignment</li>
+                            <li>Set X's next to point to C</li>
+                            <li>Set B's next to point to X</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Common Implementation Mistakes</h2>
+                    
+                    <div class="feature-box">
+                        <h3>Off-by-One Errors</h3>
+                        <p>When traversing to nodes for insertion or deletion, be careful with zero-based indexing:</p>
+                        <pre><code>// To insert at position 2, we need to stop at position 1
+Node current = head;
+// Loop stops when i equals position-1
+for (int i = 0; i < position - 1; i++) {
+    current = current.next;
+}
+// Now current is at position 1, and we insert after it</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Null Pointer Exceptions</h3>
+                        <p>Always check for null before dereferencing:</p>
+                        <pre><code>// INCORRECT - might cause NullPointerException
+current.next = newNode;
+
+// CORRECT - check first
+if (current != null) {
+    current.next = newNode;
+} else {
+    // Handle the error case
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Memory Leaks</h3>
+                        <p>In Java, detached nodes are automatically garbage-collected. However, in other languages, you might need to explicitly free memory.</p>
+                        <p>To ensure clean removal in any language:</p>
+                        <pre><code>// When removing node B in: A -> B -> C
+// First update references
+A.next = C;
+// Then ensure B has no lingering references (important in some languages)
+B.next = null; // In Java, this isn't strictly necessary but is good practice</code></pre>
+                    </div>
                 </div>
             </div>
 
@@ -399,6 +485,39 @@ size++;</code></pre>
                         <pre><code>public boolean insert(int value, int position) {
     // Your implementation here
 }</code></pre>
+                        
+                        <div class="card">
+                            <h4>Implementation Hints</h4>
+                            <ol>
+                                <li>Create a new node with the given value</li>
+                                <li>Validate that position is between 0 and the list's size</li>
+                                <li>Handle special cases:
+                                    <ul>
+                                        <li>Empty list (head == null)</li>
+                                        <li>Insertion at beginning (position == 0)</li>
+                                        <li>Insertion at end (position == size)</li>
+                                    </ul>
+                                </li>
+                                <li>For insertion in the middle:
+                                    <ul>
+                                        <li>Traverse to the node at position-1</li>
+                                        <li>Set new node's next to current node's next</li>
+                                        <li>Set current node's next to the new node</li>
+                                    </ul>
+                                </li>
+                                <li>Increment the size counter</li>
+                                <li>Return true to indicate successful insertion</li>
+                            </ol>
+                            
+                            <h4>Test Cases to Consider</h4>
+                            <ul>
+                                <li>Insert into empty list</li>
+                                <li>Insert at beginning of non-empty list</li>
+                                <li>Insert in middle of list</li>
+                                <li>Insert at end of list</li>
+                                <li>Insert with invalid position (negative or > size)</li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="feature-box">
@@ -409,6 +528,39 @@ size++;</code></pre>
                         <pre><code>public void insertSorted(int value) {
     // Your implementation here
 }</code></pre>
+                        
+                        <div class="card">
+                            <h4>Implementation Hints</h4>
+                            <ol>
+                                <li>Create a new node with the given value</li>
+                                <li>Handle special cases:
+                                    <ul>
+                                        <li>Empty list (head == null)</li>
+                                        <li>Insert before head if value < head.value</li>
+                                    </ul>
+                                </li>
+                                <li>Traverse the list to find the correct position:
+                                    <ul>
+                                        <li>Stop when current.next is null or current.next.value > value</li>
+                                    </ul>
+                                </li>
+                                <li>Insert the new node between current and current.next</li>
+                                <li>Increment the size counter</li>
+                            </ol>
+                            
+                            <h4>Example Walkthrough</h4>
+                            <pre><code>// Given sorted list: 10 -> 20 -> 30 -> 40
+// Insert value: 25
+
+// After insertion: 10 -> 20 -> 25 -> 30 -> 40
+//                           ^-- insert here
+
+// Implementation logic:
+// 1. Start at head (10)
+// 2. Check: 10 < 25, move to next (20)
+// 3. Check: 20 < 25, move to next (30)
+// 4. Check: 30 > 25, found position! Insert between 20 and 30</code></pre>
+                        </div>
                     </div>
 
                     <div class="feature-box">
@@ -419,6 +571,105 @@ size++;</code></pre>
                         <pre><code>public void removeDuplicates() {
     // Your implementation here
 }</code></pre>
+                        
+                        <div class="card">
+                            <h4>Implementation Hints</h4>
+                            <ol>
+                                <li>If the list is empty or has only one node, return immediately</li>
+                                <li>Use two pointers: one to iterate through the list, and another to check for duplicates ahead</li>
+                                <li>For each node:
+                                    <ul>
+                                        <li>Use the second pointer to check all nodes ahead</li>
+                                        <li>If a duplicate is found, remove it by updating references</li>
+                                        <li>Don't forget to update the size counter for each removal</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                            
+                            <h4>Example Walkthrough</h4>
+                            <pre><code>// Given list: 1 -> 2 -> 2 -> 3 -> 1 -> 4
+// After removing duplicates: 1 -> 2 -> 3 -> 4
+
+// Implementation logic:
+// 1. Start with first node (1)
+//    a. Check all nodes ahead for duplicates of 1
+//    b. Find duplicate at position 4, remove it
+// 2. Move to second node (2)
+//    a. Check all nodes ahead for duplicates of 2
+//    b. Find duplicate at position 2, remove it
+// 3. Continue with remaining nodes...</code></pre>
+                            
+                            <h4>Optimization (Optional Challenge)</h4>
+                            <p>For a more efficient solution, use a hash set to track seen values:</p>
+                            <pre><code>public void removeDuplicatesWithHashSet() {
+    if (head == null) return;
+    
+    HashSet&lt;Integer&gt; seenValues = new HashSet<>();
+    Node current = head;
+    Node previous = null;
+    
+    while (current != null) {
+        // If value has been seen before, remove node
+        if (seenValues.contains(current.value)) {
+            previous.next = current.next;
+            size--;
+        } else {
+            // Add to set and move previous pointer
+            seenValues.add(current.value);
+            previous = current;
+        }
+        current = current.next;
+    }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Bonus Exercise: Reverse a Linked List</h3>
+                        <p>
+                            Implement a function to reverse a linked list in-place.
+                        </p>
+                        <pre><code>public void reverse() {
+    // Your implementation here
+}</code></pre>
+                        
+                        <div class="card">
+                            <h4>Implementation Hints</h4>
+                            <ol>
+                                <li>Use three pointers: previous, current, and next</li>
+                                <li>Initialize previous to null and current to head</li>
+                                <li>Iterate through the list:
+                                    <ul>
+                                        <li>Save the next node before changing current.next</li>
+                                        <li>Reverse the current node's pointer (current.next = previous)</li>
+                                        <li>Move previous and current pointers one step forward</li>
+                                    </ul>
+                                </li>
+                                <li>Update head to point to the new first node (previously the last)</li>
+                            </ol>
+                            
+                            <h4>Example Walkthrough</h4>
+                            <pre><code>// Given list: 1 -> 2 -> 3 -> 4 -> null
+// After reversal: 4 -> 3 -> 2 -> 1 -> null
+
+// Implementation logic:
+// Initial state:
+// prev=null, current=1, next=null
+// Step 1:
+// next = current.next = 2
+// current.next = prev = null, so 1 -> null
+// prev = current = 1
+// current = next = 2
+// State: null <- 1, 2 -> 3 -> 4
+// Step 2:
+// next = current.next = 3
+// current.next = prev = 1, so 2 -> 1
+// prev = current = 2
+// current = next = 3
+// State: null <- 1 <- 2, 3 -> 4
+// Continue until current is null
+// Final step: update head = prev (which is 4)</code></pre>
+                        </div>
                     </div>
                 </div>
             </div>

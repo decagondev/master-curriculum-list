@@ -343,23 +343,207 @@
                                 <div class="step-content">
                                     <h4>Implement Search Method</h4>
                                     <p>Create a recursive search method that leverages the BST property</p>
+                                    <pre><code>public boolean search(int value) {
+    return searchRecursive(root, value);
+}
+
+private boolean searchRecursive(Node node, int value) {
+    // Base case: Empty tree or value found
+    if (node == null) {
+        return false;
+    }
+    
+    if (node.getValue() == value) {
+        return true;
+    }
+    
+    // Recursive case: Search left or right subtree
+    if (value < node.getValue()) {
+        return searchRecursive(node.getLeft(), value);
+    } else {
+        return searchRecursive(node.getRight(), value);
+    }
+}</code></pre>
                                 </div>
                             </li>
                             <li class="step-item">
                                 <div class="step-number">2</div>
                                 <div class="step-content">
-                                    <h4>Add Traversal Methods</h4>
-                                    <p>Implement in-order, pre-order, and post-order traversals</p>
+                                    <h4>Implement In-Order Traversal</h4>
+                                    <p>Create a method to traverse the tree in-order (left, root, right)</p>
+                                    <pre><code>public void inOrderTraversal() {
+    inOrderTraversalHelper(root);
+}
+
+private void inOrderTraversalHelper(Node node) {
+    if (node == null) {
+        return;
+    }
+    
+    // Visit left subtree
+    inOrderTraversalHelper(node.getLeft());
+    
+    // Visit current node
+    System.out.print(node.getValue() + " ");
+    
+    // Visit right subtree
+    inOrderTraversalHelper(node.getRight());
+}</code></pre>
                                 </div>
                             </li>
                             <li class="step-item">
                                 <div class="step-number">3</div>
                                 <div class="step-content">
-                                    <h4>Optimize Performance</h4>
-                                    <p>Consider iterative implementations for better space complexity</p>
+                                    <h4>Implement Pre-Order and Post-Order Traversals</h4>
+                                    <p>Create methods for the other common traversal patterns</p>
+                                    <pre><code>public void preOrderTraversal() {
+    preOrderTraversalHelper(root);
+}
+
+private void preOrderTraversalHelper(Node node) {
+    if (node == null) {
+        return;
+    }
+    
+    // Visit current node first
+    System.out.print(node.getValue() + " ");
+    
+    // Then visit subtrees
+    preOrderTraversalHelper(node.getLeft());
+    preOrderTraversalHelper(node.getRight());
+}
+
+public void postOrderTraversal() {
+    postOrderTraversalHelper(root);
+}
+
+private void postOrderTraversalHelper(Node node) {
+    if (node == null) {
+        return;
+    }
+    
+    // Visit subtrees first
+    postOrderTraversalHelper(node.getLeft());
+    postOrderTraversalHelper(node.getRight());
+    
+    // Visit current node last
+    System.out.print(node.getValue() + " ");
+}</code></pre>
                                 </div>
                             </li>
                         </ol>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Visual Explanation: Search Process</h3>
+                        <p>Let's visualize how search works in a BST. Consider searching for the value 7 in this tree:</p>
+
+                        <pre><code>       10
+       / \
+      5   15
+     / \  / \
+    3   7 12 17</code></pre>
+
+                        <h4>Step 1: Start at the Root (10)</h4>
+                        <p>7 < 10, so go left</p>
+
+                        <h4>Step 2: Examine Node 5</h4>
+                        <p>7 > 5, so go right</p>
+
+                        <h4>Step 3: Examine Node 7</h4>
+                        <p>7 == 7, found the target value! Return true.</p>
+
+                        <h4>Traversal Patterns</h4>
+                        <p>For the tree above:</p>
+                        <ul>
+                            <li><strong>In-Order:</strong> 3, 5, 7, 10, 12, 15, 17 (sorted order!)</li>
+                            <li><strong>Pre-Order:</strong> 10, 5, 3, 7, 15, 12, 17 (root first, then children)</li>
+                            <li><strong>Post-Order:</strong> 3, 7, 5, 12, 17, 15, 10 (children first, then root)</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Iterative Implementation</h3>
+                        <p>For better space efficiency, you can implement search and traversals iteratively using a stack:</p>
+
+                        <h4>Iterative Search</h4>
+                        <pre><code>public boolean searchIterative(int value) {
+    Node current = root;
+    
+    while (current != null) {
+        if (current.getValue() == value) {
+            return true;
+        }
+        
+        if (value < current.getValue()) {
+            current = current.getLeft();
+        } else {
+            current = current.getRight();
+        }
+    }
+    
+    return false;
+}</code></pre>
+
+                        <h4>Iterative In-Order Traversal</h4>
+                        <pre><code>public void inOrderIterative() {
+    if (root == null) return;
+    
+    Stack<Node> stack = new Stack<>();
+    Node current = root;
+    
+    while (current != null || !stack.isEmpty()) {
+        // Go left as far as possible
+        while (current != null) {
+            stack.push(current);
+            current = current.getLeft();
+        }
+        
+        // Process the node
+        current = stack.pop();
+        System.out.print(current.getValue() + " ");
+        
+        // Go right
+        current = current.getRight();
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Advanced Operations: Finding Predecessor and Successor</h3>
+                        <p>In a BST, finding the in-order predecessor or successor of a node can be useful for many operations:</p>
+
+                        <h4>Finding Successor</h4>
+                        <pre><code>public Node findSuccessor(Node node) {
+    // If right subtree exists, find the minimum value in it
+    if (node.getRight() != null) {
+        return findMin(node.getRight());
+    }
+    
+    // Otherwise, find the nearest ancestor where node is in its left subtree
+    Node successor = null;
+    Node current = root;
+    
+    while (current != null) {
+        if (node.getValue() < current.getValue()) {
+            successor = current;
+            current = current.getLeft();
+        } else if (node.getValue() > current.getValue()) {
+            current = current.getRight();
+        } else {
+            break; // Found the node
+        }
+    }
+    
+    return successor;
+}
+
+private Node findMin(Node node) {
+    while (node.getLeft() != null) {
+        node = node.getLeft();
+    }
+    return node;
+}</code></pre>
                     </div>
                 </div>
             </div>
@@ -389,12 +573,60 @@
                     </div>
 
                     <div class="feature-box">
-                        <h3>Exercise 3: Advanced Challenge</h3>
+                        <h3>Exercise 3: Level Order Traversal</h3>
                         <p>
-                            Implement an iterative version of the search method using a stack or queue.
+                            Implement level-order (breadth-first) traversal to visit all nodes level by level.
                         </p>
-                        <pre><code>public boolean searchIterative(int value) {
+                        <pre><code>public void levelOrderTraversal() {
+    if (root == null) return;
+    
+    Queue<Node> queue = new LinkedList<>();
+    queue.add(root);
+    
+    while (!queue.isEmpty()) {
+        // Your implementation here
+        // Hint: Use a queue data structure
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 4: Count Nodes</h3>
+                        <p>
+                            Write a method to count the total number of nodes in the BST.
+                        </p>
+                        <pre><code>public int countNodes() {
     // Your implementation here
+    // Hint: Can use any traversal method
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 5: Advanced - Lowest Common Ancestor</h3>
+                        <p>
+                            Implement a method to find the lowest common ancestor (LCA) of two nodes in the BST.
+                        </p>
+                        <pre><code>public Node findLCA(int value1, int value2) {
+    // Your implementation here
+    // Hint: Use the BST property to determine which subtree to search
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 6: Delete Node</h3>
+                        <p>
+                            Implement the delete operation for a BST. This is more complex than insertion or search.
+                        </p>
+                        <pre><code>public void delete(int value) {
+    root = deleteRecursive(root, value);
+}
+
+private Node deleteRecursive(Node root, int value) {
+    // Your implementation here
+    // Cases to handle:
+    // 1. Node is a leaf
+    // 2. Node has one child
+    // 3. Node has two children (find in-order successor)
 }</code></pre>
                     </div>
                 </div>

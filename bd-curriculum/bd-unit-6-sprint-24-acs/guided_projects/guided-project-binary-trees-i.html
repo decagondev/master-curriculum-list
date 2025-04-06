@@ -343,23 +343,168 @@
                                 <div class="step-content">
                                     <h4>Create Node Class</h4>
                                     <p>Define a Node class with value, left, and right properties</p>
+                                    <pre><code>public class Node {
+    private int value;
+    private Node left;
+    private Node right;
+    
+    public Node(int value) {
+        this.value = value;
+        this.left = null;
+        this.right = null;
+    }
+    
+    // Getters and setters
+    public int getValue() { return value; }
+    public Node getLeft() { return left; }
+    public Node getRight() { return right; }
+    public void setLeft(Node left) { this.left = left; }
+    public void setRight(Node right) { this.right = right; }
+}</code></pre>
                                 </div>
                             </li>
                             <li class="step-item">
                                 <div class="step-number">2</div>
                                 <div class="step-content">
-                                    <h4>Implement Insert Method</h4>
-                                    <p>Compare values and recursively traverse left or right</p>
+                                    <h4>Implement BST Class</h4>
+                                    <p>Create a Binary Search Tree class with a root node reference</p>
+                                    <pre><code>public class BinarySearchTree {
+    private Node root;
+    
+    public BinarySearchTree() {
+        this.root = null;
+    }
+    
+    // Public insert method
+    public void insert(int value) {
+        root = insertRecursive(root, value);
+    }
+    
+    // Private recursive helper
+    private Node insertRecursive(Node current, int value) {
+        // Base case: If current is null, create a new node
+        if (current == null) {
+            return new Node(value);
+        }
+        
+        // Recursive case: Traverse left or right
+        if (value < current.getValue()) {
+            current.setLeft(insertRecursive(current.getLeft(), value));
+        } else if (value > current.getValue()) {
+            current.setRight(insertRecursive(current.getRight(), value));
+        }
+        
+        // Return the (possibly modified) node reference
+        return current;
+    }
+}</code></pre>
                                 </div>
                             </li>
                             <li class="step-item">
                                 <div class="step-number">3</div>
                                 <div class="step-content">
                                     <h4>Handle Edge Cases</h4>
-                                    <p>Consider empty tree and duplicate values</p>
+                                    <p>Consider how to handle duplicates, depending on your requirements:</p>
+                                    <pre><code>// Option 1: Ignore duplicates (shown above)
+// Option 2: Allow duplicates (e.g., go to the right)
+if (value >= current.getValue()) {
+    current.setRight(insertRecursive(current.getRight(), value));
+}
+
+// Option 3: Track frequency with a count field
+if (value == current.getValue()) {
+    current.incrementCount(); // Assuming a count field exists
+    return current;
+}</code></pre>
                                 </div>
                             </li>
                         </ol>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Visual Explanation: Insertion Process</h3>
+                        <p>Let's visualize how insertion works by inserting values [10, 5, 15, 3, 7, 12, 17] in order:</p>
+                        
+                        <h4>1. Insert 10 (root)</h4>
+                        <pre><code>       10</code></pre>
+                        
+                        <h4>2. Insert 5 (less than 10, go left)</h4>
+                        <pre><code>       10
+       /
+      5</code></pre>
+                        
+                        <h4>3. Insert 15 (greater than 10, go right)</h4>
+                        <pre><code>       10
+       / \
+      5   15</code></pre>
+                        
+                        <h4>4. Insert 3 (less than 10, go left; less than 5, go left)</h4>
+                        <pre><code>       10
+       / \
+      5   15
+     /
+    3</code></pre>
+                        
+                        <h4>5. Insert 7 (less than 10, go left; greater than 5, go right)</h4>
+                        <pre><code>       10
+       / \
+      5   15
+     / \
+    3   7</code></pre>
+                        
+                        <h4>6. Final tree after inserting 12 and 17</h4>
+                        <pre><code>       10
+       / \
+      5   15
+     / \  / \
+    3   7 12 17</code></pre>
+                        
+                        <p>Notice how each insertion follows the BST property: values less than a node go to its left, values greater go to its right.</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Performance Considerations</h3>
+                        <ul>
+                            <li><strong>Time Complexity:</strong> O(log n) for balanced trees, but can degrade to O(n) in worst case (when tree becomes a linked list)</li>
+                            <li><strong>Space Complexity:</strong> O(h) where h is the height of the tree (due to recursion stack)</li>
+                            <li><strong>Balancing:</strong> Standard BSTs can become unbalanced. Consider self-balancing trees like AVL or Red-Black trees for guaranteed O(log n) operations.</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Implementation Variations</h3>
+                        <h4>Iterative Insert (Non-Recursive)</h4>
+                        <pre><code>public void insertIterative(int value) {
+    Node newNode = new Node(value);
+    
+    // If tree is empty, set new node as root
+    if (root == null) {
+        root = newNode;
+        return;
+    }
+    
+    // Traverse to find the insertion point
+    Node current = root;
+    Node parent = null;
+    
+    while (true) {
+        parent = current;
+        
+        if (value < current.getValue()) {
+            current = current.getLeft();
+            if (current == null) {
+                parent.setLeft(newNode);
+                return;
+            }
+        } else {
+            current = current.getRight();
+            if (current == null) {
+                parent.setRight(newNode);
+                return;
+            }
+        }
+    }
+}</code></pre>
                     </div>
                 </div>
             </div>
@@ -384,7 +529,58 @@
                             Write a method to verify if a binary tree satisfies the BST property.
                         </p>
                         <pre><code>public boolean isValidBST() {
+    return isValidBSTHelper(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+}
+
+private boolean isValidBSTHelper(Node node, int min, int max) {
     // Your implementation here
+    // Hint: Each node's value must be within the valid range for its position
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 3: Tree Traversal</h3>
+                        <p>
+                            Implement in-order traversal to print all values in sorted order.
+                        </p>
+                        <pre><code>public void inOrderTraversal() {
+    inOrderTraversalHelper(root);
+}
+
+private void inOrderTraversalHelper(Node node) {
+    // Your implementation here
+    // Hint: Visit left subtree, then node, then right subtree
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 4: Find Min and Max Values</h3>
+                        <p>
+                            Implement methods to find the minimum and maximum values in the BST.
+                        </p>
+                        <pre><code>public int findMin() {
+    // Your implementation here
+    // Hint: Keep going left until you can't go anymore
+}
+
+public int findMax() {
+    // Your implementation here
+    // Hint: Keep going right until you can't go anymore
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 5: Advanced - Tree Height</h3>
+                        <p>
+                            Implement a method to calculate the height of the tree (the length of the longest path from root to leaf).
+                        </p>
+                        <pre><code>public int height() {
+    return heightHelper(root);
+}
+
+private int heightHelper(Node node) {
+    // Your implementation here
+    // Hint: Use recursion to find the maximum height of the left and right subtrees
 }</code></pre>
                     </div>
                 </div>

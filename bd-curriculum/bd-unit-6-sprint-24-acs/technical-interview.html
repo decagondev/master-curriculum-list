@@ -12,6 +12,7 @@
             padding: 20px;
             background-color: #1a1d23;
             color: #ffffff;
+            transition: background-color 0.3s;
         }
         .container {
             max-width: 1000px;
@@ -19,7 +20,12 @@
             background-color: #222831;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         h1, h2, h3, h4 {
             color: #ffffff;
@@ -32,37 +38,101 @@
             padding-bottom: 10px;
             font-size: 2rem;
             text-align: center;
+            position: relative;
+        }
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #ff5722;
+            animation: expandWidth 1.5s ease-in-out forwards;
+        }
+        @keyframes expandWidth {
+            from { width: 50px; }
+            to { width: 100%; }
         }
         p {
             color: #b3b3b3;
+            line-height: 1.7;
         }
         a {
             color: #ff5722;
             text-decoration: none;
             transition: color 0.2s;
+            position: relative;
         }
         a:hover {
             color: #ff7043;
+        }
+        a:not(.back-link):not(.cta-button):after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: #ff7043;
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+        }
+        a:not(.back-link):not(.cta-button):hover:after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
         }
         .back-link {
             display: inline-flex;
             align-items: center;
             margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .back-link:hover {
+            transform: translateX(-5px);
         }
         .back-link svg {
             margin-right: 8px;
+            transition: transform 0.2s;
+        }
+        .back-link:hover svg {
+            transform: translateX(-3px);
         }
         .card {
             margin-bottom: 20px;
             padding: 20px;
             border: 1px solid #333a47;
             background-color: #2a303c;
-            border-radius: 4px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .card:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        .card:hover:after {
+            transform: scaleX(1);
         }
         .card h3 {
             color: #ffffff;
@@ -70,6 +140,14 @@
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid #333a47;
+            display: flex;
+            align-items: center;
+        }
+        .card h3:before {
+            content: '●';
+            color: #ff5722;
+            margin-right: 8px;
+            font-size: 10px;
         }
         .section {
             margin-bottom: 30px;
@@ -90,11 +168,22 @@
             align-items: flex-start;
             margin-bottom: 15px;
             color: #b3b3b3;
+            transition: transform 0.3s, background-color 0.3s;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .checklist li:hover {
+            transform: translateX(10px);
+            background-color: #333a47;
         }
         .checklist-icon {
             color: #ff5722;
             margin-right: 10px;
             flex-shrink: 0;
+            transition: transform 0.3s;
+        }
+        .checklist li:hover .checklist-icon {
+            transform: scale(1.2);
         }
         .questions-list {
             list-style: none;
@@ -105,14 +194,40 @@
             counter-increment: question-counter;
             padding: 15px;
             background-color: #333a47;
-            border-radius: 4px;
+            border-radius: 8px;
             margin-bottom: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .question-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        .question-item:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #ff5722, transparent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        .question-item:hover:after {
+            transform: scaleX(1);
         }
         .question-item h3 {
             position: relative;
             padding-left: 30px;
             margin-bottom: 10px;
             border-bottom: none;
+            display: block;
+        }
+        .question-item h3:before {
+            content: none;
         }
         .question-item h3::before {
             content: counter(question-counter) ".";
@@ -124,6 +239,22 @@
             font-size: 1.5rem;
             margin-bottom: 20px;
             color: #ff5722;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background-color: #ff5722;
+            transition: width 0.3s;
+        }
+        .section-title:hover:after {
+            width: 100%;
         }
         .cta-section {
             background-color: rgba(255, 87, 34, 0.1);
@@ -131,31 +262,83 @@
             padding: 30px;
             border-radius: 8px;
             margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-section:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255, 87, 34, 0.2) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .cta-section:hover:before {
+            opacity: 1;
         }
         .cta-button {
             display: inline-block;
-            background-color: #ff5722;
+            background: linear-gradient(135deg, #ff5722, #ff9800);
             color: white;
             padding: 12px 25px;
             border-radius: 4px;
             font-weight: 500;
             margin-top: 15px;
-            transition: background-color 0.2s;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .cta-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transition: transform 0.5s;
+            transform-origin: 0 0;
+            transition-timing-function: cubic-bezier(0.5,1.6,0.4,0.7);
+            transform: scaleX(0);
+            z-index: -1;
         }
         .cta-button:hover {
-            background-color: #ff7043;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
             color: white;
+        }
+        .cta-button:hover:before {
+            transform: scaleX(1);
         }
         .requirements-section {
             background-color: #2a303c;
             padding: 20px;
-            border-radius: 4px;
+            border-radius: 8px;
             margin-bottom: 20px;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .requirements-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         }
         .requirements-title {
             color: #ffffff;
             margin-bottom: 15px;
             font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+        .requirements-title:before {
+            content: '●';
+            color: #ff5722;
+            margin-right: 8px;
+            font-size: 10px;
         }
         .requirements-list {
             list-style-type: disc;
@@ -164,8 +347,64 @@
         }
         .requirements-list li {
             margin-bottom: 8px;
+            transition: transform 0.2s;
+        }
+        .requirements-list li:hover {
+            transform: translateX(5px);
+        }
+        
+        /* Progress indicator */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #2a303c;
+            border-radius: 4px;
+            margin: 40px 0 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        .progress-status {
+            text-align: right;
+            font-size: 14px;
+            margin-top: -15px;
+            color: #666;
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Progress bar animation
+            setTimeout(function() {
+                document.querySelector('.progress-bar').style.width = '65%';
+            }, 500);
+            
+            // Add animation classes to items as they appear in viewport
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            document.querySelectorAll('.card, .question-item, .requirements-section').forEach(item => {
+                observer.observe(item);
+            });
+            
+            // Animate question items with delay
+            document.querySelectorAll('.question-item').forEach((item, index) => {
+                item.style.animationDelay = `${0.1 * index}s`;
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -182,6 +421,12 @@
         <p class="header-description">
             Prepare and record your responses to technical interview questions to demonstrate your expertise and problem-solving abilities.
         </p>
+        
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        <p class="progress-status">Interview Preparation: 65% Complete</p>
 
         <!-- Main Content -->
         <div class="section">

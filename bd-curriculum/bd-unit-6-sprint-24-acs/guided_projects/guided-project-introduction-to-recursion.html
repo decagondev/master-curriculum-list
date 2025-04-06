@@ -336,6 +336,16 @@
                     </div>
 
                     <div class="feature-box">
+                        <h3>Key Components of Recursion</h3>
+                        <p>Every recursive solution consists of two essential parts:</p>
+                        <ul>
+                            <li><strong>Base Case:</strong> The condition that stops the recursion</li>
+                            <li><strong>Recursive Case:</strong> The self-referential call that makes progress toward the base case</li>
+                        </ul>
+                        <p>Without a proper base case, your recursion will continue indefinitely, causing a stack overflow error.</p>
+                    </div>
+
+                    <div class="feature-box">
                         <h3>Implementation Steps</h3>
                         <ol>
                             <li class="step-item">
@@ -360,10 +370,124 @@ return n * factorial(n - 1);</code></pre>
                                 <div class="step-number">3</div>
                                 <div class="step-content">
                                     <h4>Ensure Progress</h4>
-                                    <p>Verify the problem size decreases</p>
+                                    <p>Verify the problem size decreases with each recursive call</p>
+                                    <pre><code>// Example: Each call reduces n by 1
+factorial(n) → factorial(n-1) → factorial(n-2) → ... → factorial(0)</code></pre>
                                 </div>
                             </li>
                         </ol>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Example: Factorial Implementation</h3>
+                        <pre><code>public int factorial(int n) {
+    // Base case: factorial of 0 is 1
+    if (n == 0) {
+        return 1;
+    }
+    
+    // Recursive case: n! = n * (n-1)!
+    return n * factorial(n - 1);
+}</code></pre>
+
+                        <h4>Visual Execution Trace for factorial(4):</h4>
+                        <pre><code>factorial(4)
+└── 4 * factorial(3)
+    └── 4 * (3 * factorial(2))
+        └── 4 * (3 * (2 * factorial(1)))
+            └── 4 * (3 * (2 * (1 * factorial(0))))
+                └── 4 * (3 * (2 * (1 * 1)))
+                └── 4 * (3 * (2 * 1))
+                └── 4 * (3 * 2)
+                └── 4 * 6
+                └── 24</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Example: Fibonacci Implementation</h3>
+                        <pre><code>public int fibonacci(int n) {
+    // Base cases: F(0) = 0, F(1) = 1
+    if (n <= 0) {
+        return 0;
+    } else if (n == 1) {
+        return 1;
+    }
+    
+    // Recursive case: F(n) = F(n-1) + F(n-2)
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}</code></pre>
+
+                        <h4>Visual Execution Trace for fibonacci(4):</h4>
+                        <pre><code>fibonacci(4)
+├── fibonacci(3) + fibonacci(2)
+│   ├── fibonacci(2) + fibonacci(1) + fibonacci(1) + fibonacci(0)
+│   │   ├── fibonacci(1) + fibonacci(0) + 1 + 0
+│   │   │   ├── 1 + 0 + 1 + 0
+│   │   │   └── 2
+└── 3</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Recursion vs. Iteration</h3>
+                        <p>Any recursive solution can be rewritten as an iterative solution, but recursive solutions are often more elegant and easier to understand for certain problems.</p>
+                        
+                        <h4>Factorial: Recursive vs. Iterative</h4>
+                        <pre><code>// Recursive factorial
+public int factorialRecursive(int n) {
+    if (n == 0) return 1;
+    return n * factorialRecursive(n - 1);
+}
+
+// Iterative factorial
+public int factorialIterative(int n) {
+    int result = 1;
+    for (int i = 1; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}</code></pre>
+
+                        <h4>When to Use Recursion</h4>
+                        <ul>
+                            <li>When the problem naturally breaks down into similar subproblems</li>
+                            <li>When working with recursive data structures (trees, graphs)</li>
+                            <li>When the solution is cleaner and more intuitive with recursion</li>
+                        </ul>
+
+                        <h4>When to Avoid Recursion</h4>
+                        <ul>
+                            <li>When the recursion depth could be very large (risk of stack overflow)</li>
+                            <li>When performance is critical (recursive calls have overhead)</li>
+                            <li>When the solution can be easily expressed iteratively</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Advanced Technique: Memoization</h3>
+                        <p>Improve recursive solutions by caching previously computed results to avoid redundant calculations.</p>
+                        
+                        <h4>Fibonacci with Memoization</h4>
+                        <pre><code>public int fibonacciMemoized(int n) {
+    Map<Integer, Integer> memo = new HashMap<>();
+    return fibMemo(n, memo);
+}
+
+private int fibMemo(int n, Map<Integer, Integer> memo) {
+    // Check if already computed
+    if (memo.containsKey(n)) {
+        return memo.get(n);
+    }
+    
+    // Base cases
+    if (n <= 0) return 0;
+    if (n == 1) return 1;
+    
+    // Compute and store result
+    int result = fibMemo(n - 1, memo) + fibMemo(n - 2, memo);
+    memo.put(n, result);
+    
+    return result;
+}</code></pre>
                     </div>
                 </div>
             </div>
@@ -380,6 +504,7 @@ return n * factorial(n - 1);</code></pre>
                         <pre><code>public int factorial(int n) {
     // Your implementation here
     // Remember: factorial(n) = n * factorial(n-1)
+    // Base case: factorial(0) = 1
 }</code></pre>
                     </div>
 
@@ -391,6 +516,7 @@ return n * factorial(n - 1);</code></pre>
                         <pre><code>public int fibonacci(int n) {
     // Your implementation here
     // Remember: F(n) = F(n-1) + F(n-2)
+    // Base cases: F(0) = 0, F(1) = 1
 }</code></pre>
                     </div>
 
@@ -401,7 +527,65 @@ return n * factorial(n - 1);</code></pre>
                         </p>
                         <pre><code>public String reverseString(String str) {
     // Your implementation here
-    // Hint: Use substring and concatenation
+    // Base case: Empty string or single character
+    // Recursive case: First character goes to the end
+}</code></pre>
+                        <p>Hint: For a string "hello", think of it as the first character 'h' plus the rest "ello". The reversed string would be the reversed "ello" plus 'h'.</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 4: Power Function</h3>
+                        <p>
+                            Implement a recursive function to calculate x raised to the power of n (x^n).
+                        </p>
+                        <pre><code>public double power(double x, int n) {
+    // Your implementation here
+    // Handle negative exponents too!
+    // Consider that x^n = x * x^(n-1)
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 5: Sum of Array</h3>
+                        <p>
+                            Write a recursive function to find the sum of all elements in an array.
+                        </p>
+                        <pre><code>public int sumArray(int[] arr) {
+    return sumArrayHelper(arr, 0);
+}
+
+private int sumArrayHelper(int[] arr, int index) {
+    // Your implementation here
+    // Base case: index reaches the end of array
+    // Recursive case: current element + sum of rest
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 6: Advanced - Binary Search</h3>
+                        <p>
+                            Implement a recursive binary search algorithm to find an element in a sorted array.
+                        </p>
+                        <pre><code>public int binarySearch(int[] arr, int target) {
+    return binarySearchHelper(arr, target, 0, arr.length - 1);
+}
+
+private int binarySearchHelper(int[] arr, int target, int low, int high) {
+    // Your implementation here
+    // Base case: element not found or found
+    // Recursive case: search in left or right half
+}</code></pre>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>Exercise 7: Challenge - Tower of Hanoi</h3>
+                        <p>
+                            Implement the classic Tower of Hanoi problem using recursion. Move n disks from source to destination using an auxiliary tower.
+                        </p>
+                        <pre><code>public void towerOfHanoi(int n, char source, char auxiliary, char destination) {
+    // Your implementation here
+    // Base case: Move one disk directly
+    // Recursive case: Move n-1 disks to auxiliary, then one to destination, then n-1 from auxiliary to destination
 }</code></pre>
                     </div>
                 </div>

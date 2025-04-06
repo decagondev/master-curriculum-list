@@ -12,6 +12,7 @@
             padding: 20px;
             background-color: #1a1d23;
             color: #ffffff;
+            transition: background-color 0.3s;
         }
         .container {
             max-width: 1000px;
@@ -19,7 +20,12 @@
             background-color: #222831;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         h1, h2, h3, h4 {
             color: #ffffff;
@@ -30,53 +36,325 @@
             margin-bottom: 30px;
             border-bottom: 2px solid #ff5722;
             padding-bottom: 10px;
+            position: relative;
+        }
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #ff5722;
+            animation: expandWidth 1.5s ease-in-out forwards;
+        }
+        @keyframes expandWidth {
+            from { width: 50px; }
+            to { width: 100%; }
+        }
+        h4 {
+            margin-top: 20px;
+            margin-bottom: 15px;
+            color: #ff5722;
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+        h4:before {
+            content: '●';
+            color: #ff5722;
+            margin-right: 8px;
+            font-size: 10px;
         }
         p {
             color: #b3b3b3;
+            line-height: 1.7;
+            margin-bottom: 16px;
         }
         a {
             color: #ff5722;
             text-decoration: none;
             transition: color 0.2s;
+            position: relative;
         }
         a:hover {
             color: #ff7043;
+        }
+        a:not(.back-link):not(.action-button):after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: #ff7043;
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+        }
+        a:not(.back-link):not(.action-button):hover:after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
         }
         .back-link {
             display: inline-flex;
             align-items: center;
             margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .back-link:hover {
+            transform: translateX(-5px);
         }
         .back-link svg {
             margin-right: 8px;
+            transition: transform 0.2s;
+        }
+        .back-link:hover svg {
+            transform: translateX(-3px);
         }
         hr {
             border: none;
             border-top: 1px solid #333a47;
             margin: 25px 0;
+            position: relative;
+        }
+        hr:before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 0;
+            width: 50px;
+            height: 1px;
+            background-color: #ff5722;
         }
         ol, ul {
             color: #b3b3b3;
             padding-left: 20px;
+            margin-bottom: 20px;
         }
         li {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            padding-left: 5px;
+            position: relative;
+            transition: transform 0.2s;
+        }
+        li:hover {
+            transform: translateX(5px);
+        }
+        ol li {
+            padding-left: 10px;
+        }
+        ol li::marker {
+            color: #ff5722;
+            font-weight: bold;
         }
         .action-button {
             display: inline-block;
-            background-color: #ff5722;
+            background: linear-gradient(135deg, #ff5722, #ff9800);
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 4px;
             font-weight: 500;
             margin-top: 20px;
-            transition: background-color 0.2s;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .action-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transition: transform 0.5s;
+            transform-origin: 0 0;
+            transition-timing-function: cubic-bezier(0.5,1.6,0.4,0.7);
+            transform: scaleX(0);
+            z-index: -1;
         }
         .action-button:hover {
-            background-color: #ff7043;
             color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        .action-button:hover:before {
+            transform: scaleX(1);
+        }
+        
+        /* Progress indicator */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #2a303c;
+            border-radius: 4px;
+            margin: 40px 0 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        .progress-status {
+            text-align: right;
+            font-size: 14px;
+            margin-top: -15px;
+            color: #666;
+        }
+        
+        /* Content card */
+        .content-card {
+            background-color: #2a303c;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .content-card:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        .content-card:hover:after {
+            transform: scaleX(1);
+        }
+        
+        /* Highlight box */
+        .highlight-box {
+            background-color: rgba(255, 87, 34, 0.1);
+            border-left: 4px solid #ff5722;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .highlight-box:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,87,34,0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .highlight-box:hover:before {
+            opacity: 1;
+        }
+        
+        /* Steps section */
+        .steps-container {
+            position: relative;
+            margin: 30px 0;
+        }
+        .step-line {
+            position: absolute;
+            left: 15px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background-color: #333a47;
+            z-index: 1;
+        }
+        .step-item {
+            position: relative;
+            padding-left: 45px;
+            margin-bottom: 25px;
+            z-index: 2;
+        }
+        .step-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ff5722, #ff9800);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(255, 87, 34, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .step-item:hover .step-number {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(255, 87, 34, 0.4);
+        }
+        .step-content {
+            background-color: #2a303c;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .step-item:hover .step-content {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .step-title {
+            color: #ffffff;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        .step-description {
+            color: #b3b3b3;
+            margin: 0;
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Progress bar animation
+            setTimeout(function() {
+                document.querySelector('.progress-bar').style.width = '83%';
+            }, 500);
+            
+            // Add animation classes to items as they appear in viewport
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            document.querySelectorAll('.content-card, .step-item').forEach(item => {
+                observer.observe(item);
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -90,32 +368,80 @@
 
         <!-- Header Section -->
         <h1>Sprint 31 - Take Practice GCA Test</h1>
+        
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        <p class="progress-status">GCA Preparation: 83% Complete</p>
 
         <!-- Overview Section -->
-        <h4><strong>Overview</strong></h4>
-        <p>Now that you have completed the practice activities, you are ready to take the practice General Code Assessment (GCA) test. You should take this test as often as permitted.</p>
-        <p>The more you practice and feel comfortable taking this type of test, the better chance you have to achieve a score of 650 or higher.</p>
-        
-        <hr>
+        <div class="content-card">
+            <h4><strong>Overview</strong></h4>
+            <p>Now that you have completed the practice activities, you are ready to take the practice General Code Assessment (GCA) test. You should take this test as often as permitted.</p>
+            
+            <div class="highlight-box">
+                <p><strong>Pro Tip:</strong> The more you practice and feel comfortable taking this type of test, the better chance you have to achieve a score of 650 or higher.</p>
+            </div>
+        </div>
         
         <!-- Instructions Section -->
-        <h4><strong>Instructions</strong></h4>
-        <ol>
-            <li>Login to CodeSignal</li>
-            <li>Click on this link to take the practice GCA <a href="https://app.codesignal.com/public-test/XzMcEcWgqLzwPK26p/jYETGrhkqcbNwY" target="_blank" rel="noopener">HERE</a></li>
-            <li>Once logged into CodeSignal, select your preferred language and click NEXT</li>
-            <li>Agree to the Terms and Pledges. Click START</li>
-            <li>Complete the questions. Click on FINISH TEST</li>
-        </ol>
-        
-        <hr>
+        <div class="content-card">
+            <h4><strong>Instructions</strong></h4>
+            
+            <div class="steps-container">
+                <div class="step-line"></div>
+                
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">Login to CodeSignal</div>
+                        <div class="step-description">Make sure you're logged into your CodeSignal account</div>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">Access the Practice GCA</div>
+                        <div class="step-description">Click on <a href="https://app.codesignal.com/public-test/XzMcEcWgqLzwPK26p/jYETGrhkqcbNwY" target="_blank" rel="noopener">this link</a> to take the practice GCA</div>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">Select Your Language</div>
+                        <div class="step-description">Choose your preferred programming language and click NEXT</div>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-title">Accept Terms</div>
+                        <div class="step-description">Agree to the Terms and Pledges, then click START</div>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <div class="step-title">Complete the Test</div>
+                        <div class="step-description">Solve all the problems, then click on FINISH TEST</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <!-- Reference Section -->
-        <h4><strong>For your reference</strong></h4>
-        <ul>
-            <li>You should have already created your Code Signal account. If you have not done so yet, please follow these instructions <a href="what-is-codesignal-and-how-to-create-your-account.html">What is CodeSignal and How to Create Your Account</a></li>
-            <li>Become familiar with the <a href="codesignal-user-interface-overview.html">CodeSignal User Interface Overview</a></li>
-        </ul>
+        <div class="content-card">
+            <h4><strong>For your reference</strong></h4>
+            <ul>
+                <li>You should have already created your Code Signal account. If you have not done so yet, please follow these instructions <a href="what-is-codesignal-and-how-to-create-your-account.html">What is CodeSignal and How to Create Your Account</a></li>
+                <li>Become familiar with the <a href="codesignal-user-interface-overview.html">CodeSignal User Interface Overview</a></li>
+            </ul>
+        </div>
         
         <a href="https://app.codesignal.com/public-test/XzMcEcWgqLzwPK26p/jYETGrhkqcbNwY" target="_blank" rel="noopener" class="action-button">Start Practice GCA Test</a>
     </div>

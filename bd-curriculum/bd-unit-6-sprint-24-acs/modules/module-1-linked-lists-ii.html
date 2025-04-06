@@ -50,6 +50,18 @@
             color: #b3b3b3;
             margin-bottom: 16px;
         }
+        pre, code {
+            background-color: #1a1d23;
+            border-radius: 4px;
+        }
+        pre {
+            padding: 10px;
+        }
+        code {
+            padding: 2px 5px;
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+            color: #e6e6e6;
+        }
         .intro-text {
             text-align: center;
             max-width: 800px;
@@ -258,6 +270,62 @@
                             <li>Time complexity analysis</li>
                         </ul>
                     </div>
+                    
+                    <div class="card">
+                        <h3>Detailed Explanation: Linked List Search</h3>
+                        <p>Searching a linked list involves traversing the list from the head node until either finding the target value or reaching the end of the list. Since nodes in a linked list aren't stored in contiguous memory locations, you must follow the references from one node to the next.</p>
+                        
+                        <h4>Algorithm Steps:</h4>
+                        <ol>
+                            <li>Start at the head node</li>
+                            <li>For each node, check if its value matches the target</li>
+                            <li>If a match is found, return that node</li>
+                            <li>If no match is found after reaching the end (null), return null</li>
+                        </ol>
+                        
+                        <h4>Implementation Example:</h4>
+                        <pre><code>/**
+ * Searches for a value in the linked list
+ * @param value the value to search for
+ * @return the first node containing the value, or null if not found
+ */
+public Node&lt;T&gt; search(T value) {
+    // Handle edge case: empty list
+    if (head == null) {
+        return null;
+    }
+    
+    // Start at the head
+    Node&lt;T&gt; current = head;
+    
+    // Traverse the list
+    while (current != null) {
+        // Check if current node contains the value
+        if (current.getValue().equals(value)) {
+            return current; // Value found
+        }
+        // Move to the next node
+        current = current.getNext();
+    }
+    
+    // Value not found in the list
+    return null;
+}
+</code></pre>
+
+                        <h4>Time and Space Complexity:</h4>
+                        <ul>
+                            <li><strong>Time Complexity:</strong> O(n) in the worst case, when the element is at the end or not present</li>
+                            <li><strong>Space Complexity:</strong> O(1), as we only use a single pointer regardless of list size</li>
+                        </ul>
+                        
+                        <h4>Optimization Techniques:</h4>
+                        <ul>
+                            <li><strong>Early Return:</strong> Return as soon as the value is found</li>
+                            <li><strong>Special Handling:</strong> Implement special checks for common values or frequently accessed items</li>
+                            <li><strong>Sorted Lists:</strong> If the list is sorted, you can stop searching once you've passed where the value would be</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- Video Section 2: Insert -->
@@ -275,6 +343,120 @@
                             <li>Memory management in Java</li>
                         </ul>
                     </div>
+                    
+                    <div class="card">
+                        <h3>Detailed Explanation: Linked List Insertion</h3>
+                        <p>Insertion in a linked list requires creating a new node and adjusting the references of existing nodes to maintain the list structure. There are three main insertion scenarios: at the beginning, in the middle, or at the end.</p>
+                        
+                        <h4>Insertion Scenarios:</h4>
+                        
+                        <h5>1. Insertion at the Beginning:</h5>
+                        <pre><code>/**
+ * Inserts a new node at the beginning of the list
+ * @param value the value to insert
+ */
+public void insertAtBeginning(T value) {
+    // Create a new node
+    Node&lt;T&gt; newNode = new Node&lt;&gt;(value);
+    
+    // Set the new node's next pointer to the current head
+    newNode.setNext(head);
+    
+    // Update the head to be the new node
+    head = newNode;
+    
+    // Increment the length
+    length++;
+}
+</code></pre>
+
+                        <h5>2. Insertion at the End:</h5>
+                        <pre><code>/**
+ * Inserts a new node at the end of the list
+ * @param value the value to insert
+ */
+public void insertAtEnd(T value) {
+    // Create a new node
+    Node&lt;T&gt; newNode = new Node&lt;&gt;(value);
+    
+    // If the list is empty, make the new node the head
+    if (head == null) {
+        head = newNode;
+    } else {
+        // Traverse to the last node
+        Node&lt;T&gt; current = head;
+        while (current.getNext() != null) {
+            current = current.getNext();
+        }
+        
+        // Link the last node to the new node
+        current.setNext(newNode);
+    }
+    
+    // Increment the length
+    length++;
+}
+</code></pre>
+
+                        <h5>3. Insertion at a Specific Position:</h5>
+                        <pre><code>/**
+ * Inserts a new node at a specific position
+ * @param value the value to insert
+ * @param index the position at which to insert (0-based)
+ * @return true if insertion was successful, false otherwise
+ */
+public boolean insertAtPosition(T value, int index) {
+    // Validate the index
+    if (index < 0 || index > length) {
+        return false;
+    }
+    
+    // Handle insertion at the beginning
+    if (index == 0) {
+        insertAtBeginning(value);
+        return true;
+    }
+    
+    // Handle insertion at the end
+    if (index == length) {
+        insertAtEnd(value);
+        return true;
+    }
+    
+    // Handle insertion in the middle
+    Node&lt;T&gt; newNode = new Node&lt;&gt;(value);
+    Node&lt;T&gt; current = head;
+    
+    // Traverse to the node just before the insertion point
+    for (int i = 0; i < index - 1; i++) {
+        current = current.getNext();
+    }
+    
+    // Insert the new node
+    newNode.setNext(current.getNext());
+    current.setNext(newNode);
+    
+    // Increment the length
+    length++;
+    return true;
+}
+</code></pre>
+
+                        <h4>Common Mistakes and Pitfalls:</h4>
+                        <ul>
+                            <li><strong>Order of Operations:</strong> Always set the new node's next pointer before updating the previous node's pointer</li>
+                            <li><strong>Edge Cases:</strong> Always handle empty lists and boundary conditions (insertion at beginning/end)</li>
+                            <li><strong>Index Validation:</strong> Always validate the insertion index to prevent out-of-bounds operations</li>
+                        </ul>
+                        
+                        <h4>Time and Space Complexity:</h4>
+                        <ul>
+                            <li><strong>Insertion at Beginning:</strong> O(1) time - constant time operation</li>
+                            <li><strong>Insertion at End:</strong> O(n) time - we must traverse the entire list</li>
+                            <li><strong>Insertion at Position:</strong> O(n) time - worst case when inserting at the end</li>
+                            <li><strong>Space Complexity:</strong> O(1) for all cases - only creating one new node</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- Video Section 3: Delete -->
@@ -290,6 +472,158 @@
                             <li>Handling special cases</li>
                             <li>Garbage collection in Java</li>
                             <li>Maintaining list connections</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Detailed Explanation: Linked List Deletion</h3>
+                        <p>Deletion in a linked list involves removing a node and reconnecting the list to maintain the chain. This requires adjusting pointers and handling several edge cases.</p>
+                        
+                        <h4>Deletion Scenarios:</h4>
+                        
+                        <h5>1. Deleting the Head Node:</h5>
+                        <pre><code>/**
+ * Deletes the first node in the list
+ * @return true if deletion was successful, false if the list was empty
+ */
+public boolean deleteFirst() {
+    // Check if the list is empty
+    if (head == null) {
+        return false;
+    }
+    
+    // Update the head to the second node
+    head = head.getNext();
+    
+    // Decrement the length
+    length--;
+    return true;
+}
+</code></pre>
+
+                        <h5>2. Deleting the Last Node:</h5>
+                        <pre><code>/**
+ * Deletes the last node in the list
+ * @return true if deletion was successful, false if the list was empty
+ */
+public boolean deleteLast() {
+    // Check if the list is empty
+    if (head == null) {
+        return false;
+    }
+    
+    // If there's only one node, delete the head
+    if (head.getNext() == null) {
+        head = null;
+        length--;
+        return true;
+    }
+    
+    // Traverse to the second-to-last node
+    Node&lt;T&gt; current = head;
+    while (current.getNext().getNext() != null) {
+        current = current.getNext();
+    }
+    
+    // Remove the last node by updating second-to-last's next pointer
+    current.setNext(null);
+    
+    // Decrement the length
+    length--;
+    return true;
+}
+</code></pre>
+
+                        <h5>3. Deleting a Node at a Specific Position:</h5>
+                        <pre><code>/**
+ * Deletes a node at a specific position
+ * @param index the position of the node to delete (0-based)
+ * @return true if deletion was successful, false otherwise
+ */
+public boolean deleteAtPosition(int index) {
+    // Validate the index
+    if (index < 0 || index >= length || head == null) {
+        return false;
+    }
+    
+    // Handle deletion of the head
+    if (index == 0) {
+        return deleteFirst();
+    }
+    
+    // Handle deletion of the last node
+    if (index == length - 1) {
+        return deleteLast();
+    }
+    
+    // Traverse to the node just before the one to delete
+    Node&lt;T&gt; current = head;
+    for (int i = 0; i < index - 1; i++) {
+        current = current.getNext();
+    }
+    
+    // Update references to skip over the node to be deleted
+    current.setNext(current.getNext().getNext());
+    
+    // Decrement the length
+    length--;
+    return true;
+}
+</code></pre>
+
+                        <h5>4. Deleting a Node by Value:</h5>
+                        <pre><code>/**
+ * Deletes the first occurrence of a node with the specified value
+ * @param value the value to find and delete
+ * @return true if a node was deleted, false if the value wasn't found
+ */
+public boolean deleteByValue(T value) {
+    // Check if the list is empty
+    if (head == null) {
+        return false;
+    }
+    
+    // Check if the head contains the value
+    if (head.getValue().equals(value)) {
+        head = head.getNext();
+        length--;
+        return true;
+    }
+    
+    // Traverse the list looking for the value
+    Node&lt;T&gt; current = head;
+    while (current.getNext() != null) {
+        if (current.getNext().getValue().equals(value)) {
+            // Found the value in the next node, so skip over it
+            current.setNext(current.getNext().getNext());
+            length--;
+            return true;
+        }
+        current = current.getNext();
+    }
+    
+    // Value not found
+    return false;
+}
+</code></pre>
+
+                        <h4>Memory Management Considerations:</h4>
+                        <p>In Java, the garbage collector automatically reclaims memory for nodes that are no longer referenced. When you remove a node from the list by updating references to bypass it, and no other references to that node exist, it becomes eligible for garbage collection.</p>
+                        
+                        <h4>Common Edge Cases:</h4>
+                        <ul>
+                            <li><strong>Empty List:</strong> Always check if the list is empty before attempting deletion</li>
+                            <li><strong>Single Node List:</strong> Special handling required when the list has only one node</li>
+                            <li><strong>Deleting the Head:</strong> Requires updating the head reference</li>
+                            <li><strong>Deleting the Tail:</strong> Requires finding the second-to-last node</li>
+                        </ul>
+                        
+                        <h4>Time and Space Complexity:</h4>
+                        <ul>
+                            <li><strong>Deletion at Beginning:</strong> O(1) time - constant time operation</li>
+                            <li><strong>Deletion at End:</strong> O(n) time - must traverse the list to find the second-to-last node</li>
+                            <li><strong>Deletion at Position:</strong> O(n) time - worst case when deleting near the end</li>
+                            <li><strong>Space Complexity:</strong> O(1) for all cases - no additional storage needed</li>
                         </ul>
                     </div>
                 </div>
@@ -403,6 +737,14 @@
                 <div class="card">
                     <h2>Practice Exercises</h2>
                     <div class="space-y-6">
+                        <div>
+                            <h3>Guided Practice</h3>
+                            <p>For additional hands-on practice and advanced exercises on linked lists, check out our comprehensive guided project:</p>
+                            <ul>
+                                <li><a href="../guided_projects/guided-project-linked-lists.html">Guided Project: Linked Lists</a></li>
+                            </ul>
+                        </div>
+                        
                         <div class="space-y-4">
                             <h3>Exercise 1: Implement Search</h3>
                             <p>Implement a search method that finds the first occurrence of a value in the linked list and returns its index.</p>

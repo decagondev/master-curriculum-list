@@ -12,6 +12,7 @@
             padding: 20px;
             background-color: #1a1d23;
             color: #ffffff;
+            transition: background-color 0.3s;
         }
         .container {
             max-width: 1000px;
@@ -19,7 +20,12 @@
             background-color: #222831;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         h1, h2, h3, h4 {
             color: #ffffff;
@@ -30,37 +36,101 @@
             margin-bottom: 30px;
             border-bottom: 2px solid #ff5722;
             padding-bottom: 10px;
+            position: relative;
+        }
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #ff5722;
+            animation: expandWidth 1.5s ease-in-out forwards;
+        }
+        @keyframes expandWidth {
+            from { width: 50px; }
+            to { width: 100%; }
         }
         p {
             color: #b3b3b3;
+            line-height: 1.7;
         }
         a {
             color: #ff5722;
             text-decoration: none;
             transition: color 0.2s;
+            position: relative;
         }
         a:hover {
             color: #ff7043;
+        }
+        a:not(.back-link):after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: #ff7043;
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+        }
+        a:not(.back-link):hover:after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
         }
         .back-link {
             display: inline-flex;
             align-items: center;
             margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .back-link:hover {
+            transform: translateX(-5px);
         }
         .back-link svg {
             margin-right: 8px;
+            transition: transform 0.2s;
+        }
+        .back-link:hover svg {
+            transform: translateX(-3px);
         }
         .card {
             margin-bottom: 20px;
             padding: 20px;
             border: 1px solid #333a47;
             background-color: #2a303c;
-            border-radius: 4px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .card:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        .card:hover:after {
+            transform: scaleX(1);
         }
         .card h3 {
             color: #ffffff;
@@ -68,6 +138,14 @@
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid #333a47;
+            display: flex;
+            align-items: center;
+        }
+        .card h3:before {
+            content: '●';
+            color: #ff5722;
+            margin-right: 8px;
+            font-size: 10px;
         }
         .section {
             margin-bottom: 30px;
@@ -75,9 +153,26 @@
         ul {
             color: #b3b3b3;
             padding-left: 20px;
+            list-style-type: none;
         }
         li {
             margin-bottom: 10px;
+            position: relative;
+            padding-left: 15px;
+            transition: transform 0.2s;
+        }
+        li:before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            color: #ff5722;
+            transition: transform 0.2s;
+        }
+        li:hover {
+            transform: translateX(5px);
+        }
+        li:hover:before {
+            transform: translateX(3px);
         }
         .note {
             background-color: rgba(255, 87, 34, 0.1);
@@ -85,15 +180,44 @@
             padding: 15px;
             margin: 20px 0;
             border-radius: 0 4px 4px 0;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .note:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .note:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, #ff5722, transparent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        .note:hover:after {
+            transform: scaleX(1);
         }
         .code-block {
             background-color: #1e1e1e;
             color: #d4d4d4;
             padding: 15px;
             margin: 15px 0;
-            border-radius: 4px;
+            border-radius: 8px;
             overflow-x: auto;
             font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        .code-block:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
         }
         .code-comment {
             color: #6a9955;
@@ -111,6 +235,12 @@
             display: flex;
             border-bottom: 1px solid #333a47;
             margin-bottom: 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            position: relative;
+        }
+        .tab-navigation::-webkit-scrollbar {
+            display: none;
         }
         .tab-button {
             padding: 10px 15px;
@@ -121,14 +251,16 @@
             font-size: 16px;
             position: relative;
             margin-right: 10px;
-            transition: color 0.3s;
+            transition: all 0.3s;
             outline: none;
+            white-space: nowrap;
         }
         .tab-button:hover {
             color: #ffffff;
         }
         .tab-button.active {
             color: #ff5722;
+            font-weight: 500;
         }
         .tab-button.active::after {
             content: '';
@@ -138,12 +270,56 @@
             width: 100%;
             height: 2px;
             background-color: #ff5722;
+            animation: slideIn 0.3s ease-in-out;
+        }
+        @keyframes slideIn {
+            from { width: 0; }
+            to { width: 100%; }
         }
         .tab-content {
             display: none;
+            animation: fadeContent 0.4s ease-in-out;
+        }
+        @keyframes fadeContent {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .tab-content.active {
             display: block;
+        }
+        
+        /* Progress indicator */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #2a303c;
+            border-radius: 4px;
+            margin: 40px 0 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        /* Added classes to replace inline styles */
+        .text-right {
+            text-align: right;
+        }
+        .text-sm {
+            font-size: 14px;
+        }
+        .mt-n15 {
+            margin-top: -15px;
+        }
+        .text-muted {
+            color: #666;
+        }
+        .progress-text {
+            font-weight: normal;
         }
     </style>
     <script>
@@ -158,11 +334,42 @@
             
             document.querySelector(`#${tabId}`).classList.add('active');
             document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            
+            // Update progress based on tab
+            let progressValue = 0;
+            switch(tabId) {
+                case 'overview': progressValue = 25; break;
+                case 'insertion': progressValue = 50; break;
+                case 'deletion': progressValue = 75; break;
+                case 'practice': progressValue = 100; break;
+            }
+            
+            document.querySelector('.progress-bar').style.width = `${progressValue}%`;
+            document.querySelector('.progress-text').textContent = `${progressValue}%`;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             // Set initial active tab
             switchTab('overview');
+            
+            // Add animation classes to items as they appear in viewport
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            document.querySelectorAll('.card, .code-block, .note').forEach(item => {
+                observer.observe(item);
+                // Add animation delay based on position
+                const index = Array.from(document.querySelectorAll('.card, .code-block, .note')).indexOf(item);
+                item.style.animationDelay = `${0.1 * index}s`;
+            });
         });
     </script>
 </head>
@@ -181,6 +388,12 @@
         <p>
             Understanding how to implement insertion and deletion operations in linked lists is a fundamental skill in data structures. This guide will walk you through the code and concepts for these operations.
         </p>
+        
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        <p class="text-right text-sm mt-n15 text-muted">Completion: <span class="progress-text">25</span>%</p>
 
         <!-- Tab Navigation -->
         <div class="tab-navigation">
@@ -238,7 +451,7 @@
                     <p>There are three key places to insert a node in a linked list:</p>
                     
                     <div class="card">
-                        <h4>1. Insert at Beginning</h4>
+                        <h3>1. Insert at Beginning</h3>
                         <p>Time Complexity: O(1)</p>
                         <div class="code-block">
                             <span class="code-keyword">public void</span> insertAtBeginning(<span class="code-keyword">int</span> data) {<br>
@@ -255,7 +468,7 @@
                     </div>
                     
                     <div class="card">
-                        <h4>2. Insert at End</h4>
+                        <h3>2. Insert at End</h3>
                         <p>Time Complexity: O(n) or O(1) if we maintain a tail pointer</p>
                         <div class="code-block">
                             <span class="code-keyword">public void</span> insertAtEnd(<span class="code-keyword">int</span> data) {<br>
@@ -281,7 +494,7 @@
                     </div>
                     
                     <div class="card">
-                        <h4>3. Insert After a Given Node</h4>
+                        <h3>3. Insert After a Given Node</h3>
                         <p>Time Complexity: O(1) if we have a reference to the node, O(n) if we need to search for it</p>
                         <div class="code-block">
                             <span class="code-keyword">public void</span> insertAfter(<span class="code-type">Node</span> prevNode, <span class="code-keyword">int</span> data) {<br>
@@ -312,7 +525,7 @@
                     <p>There are several key ways to delete a node from a linked list:</p>
                     
                     <div class="card">
-                        <h4>1. Delete the First Node</h4>
+                        <h3>1. Delete the First Node</h3>
                         <p>Time Complexity: O(1)</p>
                         <div class="code-block">
                             <span class="code-keyword">public void</span> deleteFirst() {<br>
@@ -329,7 +542,7 @@
                     </div>
                     
                     <div class="card">
-                        <h4>2. Delete the Last Node</h4>
+                        <h3>2. Delete the Last Node</h3>
                         <p>Time Complexity: O(n)</p>
                         <div class="code-block">
                             <span class="code-keyword">public void</span> deleteLast() {<br>
@@ -358,7 +571,7 @@
                     </div>
                     
                     <div class="card">
-                        <h4>3. Delete a Node at a Given Position</h4>
+                        <h3>3. Delete a Node at a Given Position</h3>
                         <p>Time Complexity: O(n)</p>
                         <div class="code-block">
                             <span class="code-keyword">public void</span> deleteAtPosition(<span class="code-keyword">int</span> position) {<br>
@@ -401,7 +614,7 @@
                     <p>Test your understanding with these practice problems:</p>
                     
                     <div class="card">
-                        <h4>Problem 1: Implement a Singly Linked List</h4>
+                        <h3>Problem 1: Implement a Singly Linked List</h3>
                         <p>Implement a complete singly linked list class with the following methods:</p>
                         <ul>
                             <li>insertAtBeginning(data)</li>
@@ -415,12 +628,12 @@
                     </div>
                     
                     <div class="card">
-                        <h4>Problem 2: Remove Duplicates</h4>
+                        <h3>Problem 2: Remove Duplicates</h3>
                         <p>Write a method to remove duplicates from an unsorted linked list.</p>
                     </div>
                     
                     <div class="card">
-                        <h4>Problem 3: Find the Middle</h4>
+                        <h3>Problem 3: Find the Middle</h3>
                         <p>Implement a method to find the middle element of a linked list. If the list has an even number of elements, return the second middle element.</p>
                     </div>
                     

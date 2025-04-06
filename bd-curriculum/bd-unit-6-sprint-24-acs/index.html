@@ -12,6 +12,7 @@
             padding: 20px;
             background-color: #1a1d23;
             color: #ffffff;
+            transition: background-color 0.3s;
         }
         .container {
             max-width: 1000px;
@@ -19,7 +20,12 @@
             background-color: #222831;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         h1, h2, h3, h4 {
             color: #ffffff;
@@ -30,11 +36,32 @@
             margin-bottom: 30px;
             border-bottom: 2px solid #ff5722;
             padding-bottom: 10px;
+            position: relative;
+        }
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #ff5722;
+            animation: expandWidth 1.5s ease-in-out forwards;
+        }
+        @keyframes expandWidth {
+            from { width: 50px; }
+            to { width: 100%; }
         }
         .tab-navigation {
             display: flex;
             border-bottom: 1px solid #333a47;
             margin-bottom: 20px;
+            position: relative;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .tab-navigation::-webkit-scrollbar {
+            display: none;
         }
         .tab-button {
             padding: 10px 15px;
@@ -47,12 +74,14 @@
             margin-right: 10px;
             transition: color 0.3s;
             outline: none;
+            white-space: nowrap;
         }
         .tab-button:hover {
             color: #ffffff;
         }
         .tab-button.active {
             color: #ff5722;
+            font-weight: 500;
         }
         .tab-button.active::after {
             content: '';
@@ -62,9 +91,19 @@
             width: 100%;
             height: 2px;
             background-color: #ff5722;
+            animation: slideIn 0.3s ease-in-out;
+        }
+        @keyframes slideIn {
+            from { width: 0; }
+            to { width: 100%; }
         }
         .tab-content {
             display: none;
+            animation: fadeContent 0.4s ease-in-out;
+        }
+        @keyframes fadeContent {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .tab-content.active {
             display: grid;
@@ -76,12 +115,29 @@
             padding: 20px;
             border: 1px solid #333a47;
             background-color: #2a303c;
-            border-radius: 4px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
         }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .card:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        .card:hover:after {
+            transform: scaleX(1);
         }
         .card h3 {
             color: #ffffff;
@@ -89,6 +145,14 @@
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid #333a47;
+            display: flex;
+            align-items: center;
+        }
+        .card h3::before {
+            content: '●';
+            color: #ff5722;
+            margin-right: 8px;
+            font-size: 10px;
         }
         .card ul {
             list-style: none;
@@ -99,28 +163,61 @@
             margin-bottom: 10px;
         }
         .card a {
-            color: #ff5722;
+            color: #b3b3b3;
             text-decoration: none;
             display: block;
-            padding: 8px;
+            padding: 8px 10px;
             border-radius: 4px;
-            transition: background-color 0.2s, color 0.2s;
+            transition: all 0.2s;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .card a:before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #333a47;
+            transform: scaleX(0);
+            transform-origin: 0 50%;
+            transition: transform 0.3s ease-out;
+            border-radius: 4px;
+        }
+        .card a:hover:before {
+            transform: scaleX(1);
         }
         .card a:hover {
-            background-color: #333a47;
-            color: #ff7043;
+            color: #ff5722;
+            padding-left: 15px;
         }
         .resources {
             margin-top: 40px;
             padding: 20px;
             background-color: #2a303c;
-            border-radius: 4px;
+            border-radius: 8px;
             border-left: 4px solid #ff5722;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .resources:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
         }
         .resources h2 {
             color: #ffffff;
             margin-top: 0;
             margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .resources h2::before {
+            content: '★';
+            color: #ff5722;
+            margin-right: 10px;
         }
         .resources ul {
             list-style-type: none;
@@ -128,14 +225,44 @@
         }
         .resources li {
             margin-bottom: 10px;
+            position: relative;
+            padding-left: 20px;
+        }
+        .resources li:before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #ff5722;
         }
         .resources a {
             color: #ff5722;
             text-decoration: none;
+            transition: all 0.2s;
         }
         .resources a:hover {
-            text-decoration: underline;
             color: #ff7043;
+            text-decoration: underline;
+        }
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            z-index: 10;
+            transition: transform 0.2s;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
         }
     </style>
     <script>
@@ -150,6 +277,17 @@
                     showTab(tabId);
                 });
             });
+            
+            // Add scroll to tab navigation
+            const tabNav = document.querySelector('.tab-navigation');
+            if (tabNav) {
+                tabNav.addEventListener('wheel', function(e) {
+                    if (e.deltaY !== 0) {
+                        e.preventDefault();
+                        this.scrollLeft += e.deltaY;
+                    }
+                });
+            }
         });
         
         function showTab(tabId) {
@@ -168,6 +306,20 @@
             
             // Set active state on selected tab
             document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            
+            // Animate cards entry
+            setTimeout(() => {
+                const cards = document.querySelectorAll(`#${tabId} .card`);
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }, 50);
         }
     </script>
 </head>
@@ -317,7 +469,6 @@
             <h2>Additional Resources</h2>
             <ul>
                 <li><a href="what-is-codesignal-and-how-to-create-your-account.html">What is CodeSignal and How to Create Your Account</a></li>
-                <li><a href="codesignal-arcade.html">CodeSignal Arcade</a></li>
                 <li><a href="https://app.codesignal.com/" target="_blank" rel="noopener">CodeSignal Platform</a></li>
                 <li><a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a></li>
                 <li><a href="next-step.html">Next Steps</a></li>

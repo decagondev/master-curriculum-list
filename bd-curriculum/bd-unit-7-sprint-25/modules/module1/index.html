@@ -107,6 +107,30 @@
             color: #b3b3b3;
             padding-left: 20px;
         }
+        .learning-objective-description {
+            color: #9e9e9e;
+            margin-left: 10px;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        .code-example {
+            background-color: #2d3748;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            color: #e2e8f0;
+        }
+        .video-description {
+            color: #b3b3b3;
+            font-size: 1em;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #2a303c;
+            border-radius: 4px;
+            border-left: 2px solid #ff5722;
+        }
     </style>
 </head>
 <body>
@@ -123,19 +147,92 @@
         <div class="video-container">
             <iframe class="wistia_embed" title="Introduction to Databases" src="https://fast.wistia.net/embed/iframe/mzfd356mcn" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
+        <div class="video-description">
+            This video introduces the concept of Optionals in Java as a solution to the common issues associated with null values. You'll learn why null references are problematic in Java applications and how the Optional class was designed to provide a more elegant alternative for representing the absence of a value.
+        </div>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="Sprint 25 Optionals Video" src="https://fast.wistia.net/embed/iframe/2g0z7qw2xo" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+        <div class="video-description">
+            This deep dive into Java Optionals covers practical examples of creating, using, and manipulating Optional objects. The video demonstrates common patterns and best practices that help you leverage Optionals effectively in your code to handle nullable values safely.
         </div>
 
         <section>
             <h2>Learning Objectives</h2>
             <ul class="learning-objectives-list">
-                <li>Understand the purpose and benefits of using Optionals in Java</li>
-                <li>Learn to create and use Optional objects</li>
-                <li>Master Optional methods like orElse(), orElseGet(), and orElseThrow()</li>
-                <li>Explore functional operations with Optionals</li>
-                <li>Apply best practices for Optional usage in real-world code</li>
+                <li>Understand the purpose and benefits of using Optionals in Java
+                    <div class="learning-objective-description">
+                        Optionals provide a type-level solution to represent the presence or absence of a value, helping to avoid NullPointerExceptions and making code more readable and expressive.
+                    </div>
+                </li>
+                <li>Implement a method that returns an empty Optional when it has no result
+                    <div class="learning-objective-description">
+                        When a method cannot produce a meaningful result, returning Optional.empty() is safer than returning null.
+                        <div class="code-example">
+                        public Optional&lt;User&gt; findUserById(String id) {<br>
+                            &nbsp;&nbsp;// If user not found<br>
+                            &nbsp;&nbsp;return Optional.empty();<br>
+                        }
+                        </div>
+                    </div>
+                </li>
+                <li>Implement a method that wraps its return value in an Optional
+                    <div class="learning-objective-description">
+                        Learn to use Optional.of() and Optional.ofNullable() to create Optional instances that may contain values.
+                        <div class="code-example">
+                        public Optional&lt;Product&gt; findProduct(String sku) {<br>
+                            &nbsp;&nbsp;Product product = database.lookup(sku);<br>
+                            &nbsp;&nbsp;return Optional.ofNullable(product);<br>
+                        }
+                        </div>
+                    </div>
+                </li>
+                <li>Implement code to access the wrapped value of an Optional
+                    <div class="learning-objective-description">
+                        Discover safe ways to extract values from Optionals using methods like get(), orElse(), orElseGet(), and orElseThrow().
+                        <div class="code-example">
+                        Optional&lt;String&gt; optional = getOptionalValue();<br>
+                        <br>
+                        // Safe access with default value<br>
+                        String value = optional.orElse("default");<br>
+                        <br>
+                        // With supplier for lazy evaluation<br>
+                        String computed = optional.orElseGet(() -> computeDefault());<br>
+                        <br>
+                        // Throwing custom exception if empty<br>
+                        String required = optional.orElseThrow(() -> <br>
+                            &nbsp;&nbsp;new IllegalStateException("Value must be present"));<br>
+                        </div>
+                    </div>
+                </li>
+                <li>Explain the dangers of having a method return null
+                    <div class="learning-objective-description">
+                        Returning null requires callers to remember null checks, leads to NullPointerExceptions, and creates ambiguity about whether null is a valid return value or indicates an error condition.
+                    </div>
+                </li>
+                <li>Outline how to use the filter, map, and flatMap methods of the Optional class
+                    <div class="learning-objective-description">
+                        These methods allow functional-style operations on Optional values, enabling powerful transformations and conditionals.
+                        <div class="code-example">
+                        Optional&lt;User&gt; user = findUser(id);<br>
+                        <br>
+                        // Filter: keeps value only if predicate is true<br>
+                        Optional&lt;User&gt; activeUser = user.filter(u -> u.isActive());<br>
+                        <br>
+                        // Map: transforms the value if present<br>
+                        Optional&lt;String&gt; username = user.map(User::getUsername);<br>
+                        <br>
+                        // FlatMap: for when the mapper returns an Optional<br>
+                        Optional&lt;Address&gt; address = user.flatMap(User::getAddress);<br>
+                        </div>
+                    </div>
+                </li>
+                <li>Outline when Optionals shouldn't be used
+                    <div class="learning-objective-description">
+                        Optionals aren't suitable for class fields, method parameters, or collections of optional elements. They should primarily be used as method return types when a value might be absent.
+                    </div>
+                </li>
             </ul>
         </section>
 

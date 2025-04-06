@@ -348,6 +348,54 @@
     }
 }</code></pre>
                     </div>
+                    
+                    <div class="feature-box">
+                        <h3>Understanding the Algorithm</h3>
+                        <p>The bracket validation algorithm leverages a stack's Last-In-First-Out (LIFO) property to track and validate nested brackets.</p>
+                        
+                        <h4>Key Concepts:</h4>
+                        <ul>
+                            <li><strong>Bracket Pairing:</strong> Each opening bracket must match with its corresponding closing bracket type</li>
+                            <li><strong>Proper Nesting:</strong> Brackets opened last must be closed first (LIFO order)</li>
+                            <li><strong>Complete Matching:</strong> Every opening bracket must have a matching closing bracket</li>
+                        </ul>
+                        
+                        <h4>Visual Walkthrough:</h4>
+                        <pre><code>// Input: "{[()]}"
+// Tracing the algorithm step by step:
+
+// Process '{': Push to stack
+// Stack: ['{']
+
+// Process '[': Push to stack
+// Stack: ['{', '[']
+
+// Process '(': Push to stack
+// Stack: ['{', '[', '(']
+
+// Process ')': Compare with top of stack
+// Pop '(' from stack, matches with ')'
+// Stack: ['{', '[']
+
+// Process ']': Compare with top of stack
+// Pop '[' from stack, matches with ']'
+// Stack: ['{']
+
+// Process '}': Compare with top of stack
+// Pop '{' from stack, matches with '}'
+// Stack: []
+
+// Stack is empty after processing all characters
+// Result: Valid bracket sequence</code></pre>
+                        
+                        <h4>Edge Cases to Handle:</h4>
+                        <ul>
+                            <li><strong>Empty Input:</strong> An empty string is considered valid</li>
+                            <li><strong>Unmatched Closing Bracket:</strong> Closing bracket without matching opening bracket (stack is empty)</li>
+                            <li><strong>Mismatched Bracket Types:</strong> Opening and closing brackets of different types</li>
+                            <li><strong>Unclosed Brackets:</strong> Opening brackets without matching closing brackets (stack not empty at end)</li>
+                        </ul>
+                    </div>
 
                     <!-- Step 2: Test Cases -->
                     <div class="feature-box">
@@ -376,6 +424,192 @@ public class BracketValidatorTest {
         assertFalse(validator.isValid("{[}"));
         assertFalse(validator.isValid("((()"));
     }
+}</code></pre>
+                    </div>
+                    
+                    <div class="feature-box">
+                        <h3>Implementation Variations</h3>
+                        
+                        <h4>1. Using Java's Deque Interface</h4>
+                        <p>For better performance and flexibility, use <code>Deque</code> instead of the legacy <code>Stack</code> class:</p>
+                        <pre><code>import java.util.Deque;
+import java.util.ArrayDeque;
+
+public boolean isValidWithDeque(String input) {
+    if (input == null || input.isEmpty()) {
+        return true;
+    }
+    
+    Deque&lt;Character&gt; stack = new ArrayDeque&lt;&gt;();
+    
+    for (char c : input.toCharArray()) {
+        if (openBrackets.contains(c)) {
+            stack.push(c);
+        } else if (closeBrackets.contains(c)) {
+            if (stack.isEmpty()) {
+                return false;
+            }
+            
+            char lastOpen = stack.pop();
+            if (bracketPairs.get(lastOpen) != c) {
+                return false;
+            }
+        }
+    }
+    
+    return stack.isEmpty();
+}</code></pre>
+                        
+                        <h4>2. Without Using Collections</h4>
+                        <p>For environments with limited resources, implement using a basic array-based stack:</p>
+                        <pre><code>public boolean isValidWithArray(String input) {
+    if (input == null || input.isEmpty()) {
+        return true;
+    }
+    
+    char[] stack = new char[input.length()];
+    int top = -1;
+    
+    for (char c : input.toCharArray()) {
+        if (c == '(' || c == '{' || c == '[') {
+            stack[++top] = c;
+        } else if (c == ')' || c == '}' || c == ']') {
+            if (top == -1) {
+                return false;
+            }
+            
+            char lastOpen = stack[top--];
+            if ((lastOpen == '(' && c != ')') || 
+                (lastOpen == '{' && c != '}') || 
+                (lastOpen == '[' && c != ']')) {
+                return false;
+            }
+        }
+    }
+    
+    return top == -1;
+}</code></pre>
+                        
+                        <h4>3. With Detailed Error Reporting</h4>
+                        <p>For applications needing better diagnostics:</p>
+                        <pre><code>public ValidationResult validateWithDetails(String input) {
+    if (input == null || input.isEmpty()) {
+        return new ValidationResult(true, "Empty input is valid", -1);
+    }
+    
+    Deque&lt;BracketPosition&gt; stack = new ArrayDeque&lt;&gt;();
+    
+    for (int i = 0; i < input.length(); i++) {
+        char c = input.charAt(i);
+        
+        if (openBrackets.contains(c)) {
+            stack.push(new BracketPosition(c, i));
+        } else if (closeBrackets.contains(c)) {
+            if (stack.isEmpty()) {
+                return new ValidationResult(
+                    false, 
+                    "Closing bracket '" + c + "' at position " + i + " without matching opening bracket", 
+                    i
+                );
+            }
+            
+            BracketPosition lastOpen = stack.pop();
+            if (bracketPairs.get(lastOpen.bracket) != c) {
+                return new ValidationResult(
+                    false,
+                    "Mismatched brackets: '" + lastOpen.bracket + "' at position " + 
+                    lastOpen.position + " and '" + c + "' at position " + i,
+                    i
+                );
+            }
+        }
+    }
+    
+    if (!stack.isEmpty()) {
+        BracketPosition unmatched = stack.peek();
+        return new ValidationResult(
+            false,
+            "Unclosed bracket '" + unmatched.bracket + "' at position " + unmatched.position,
+            unmatched.position
+        );
+    }
+    
+    return new ValidationResult(true, "Valid bracket sequence", -1);
+}
+
+static class BracketPosition {
+    final char bracket;
+    final int position;
+    
+    BracketPosition(char bracket, int position) {
+        this.bracket = bracket;
+        this.position = position;
+    }
+}</code></pre>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Performance Considerations</h2>
+                    
+                    <div class="feature-box">
+                        <h3>Time and Space Complexity</h3>
+                        <ul>
+                            <li><strong>Time Complexity:</strong> O(n) - We process each character exactly once</li>
+                            <li><strong>Space Complexity:</strong> O(n) - In the worst case, the stack could hold all characters (e.g., all opening brackets)</li>
+                        </ul>
+                        
+                        <h4>Optimization Tips:</h4>
+                        <ul>
+                            <li><strong>Early Validation:</strong> If the string length is odd, it cannot be balanced</li>
+                            <li><strong>Fixed Maps:</strong> Use fixed-size arrays instead of Map for known bracket pairs</li>
+                            <li><strong>Character Checks:</strong> Use switch statements for character comparisons instead of collections lookups</li>
+                        </ul>
+                        
+                        <pre><code>// Optimized implementation with early validation
+public boolean isValidOptimized(String input) {
+    if (input == null) {
+        return true;
+    }
+    
+    int length = input.length();
+    
+    // Quick validation - if odd length, cannot be balanced
+    if (length % 2 != 0) {
+        return false;
+    }
+    
+    if (length == 0) {
+        return true;
+    }
+    
+    Deque&lt;Character&gt; stack = new ArrayDeque&lt;&gt;(length / 2);
+    
+    for (int i = 0; i < length; i++) {
+        char c = input.charAt(i);
+        
+        switch (c) {
+            case '(':
+            case '{':
+            case '[':
+                stack.push(c);
+                break;
+            case ')':
+                if (stack.isEmpty() || stack.pop() != '(') return false;
+                break;
+            case '}':
+                if (stack.isEmpty() || stack.pop() != '{') return false;
+                break;
+            case ']':
+                if (stack.isEmpty() || stack.pop() != '[') return false;
+                break;
+            default:
+                // Ignore non-bracket characters
+                break;
+        }
+    }
+    
+    return stack.isEmpty();
 }</code></pre>
                     </div>
                 </div>
@@ -416,6 +650,14 @@ public class BracketValidatorTest {
         // Constructor and getters
     }
 }</code></pre>
+
+                        <h4>Implementation Hints:</h4>
+                        <ol>
+                            <li>Add angle brackets to your bracket pairs map: <code>bracketPairs.put('<', '>')</code></li>
+                            <li>Use a boolean flag to track when you're inside a string: <code>inString</code></li>
+                            <li>Check for escape characters <code>\\</code> to skip the next character</li>
+                            <li>Use a separate state for tracking comments (both inline and block comments)</li>
+                        </ol>
                     </div>
 
                     <!-- Challenge 2 -->
@@ -427,6 +669,152 @@ public class BracketValidatorTest {
                             <li>Calculate nesting depth</li>
                             <li>Detect unbalanced blocks</li>
                             <li>Report statistics on code structure</li>
+                        </ul>
+                        
+                        <h4>Implementation Approach:</h4>
+                        <pre><code>public class CodeBlockAnalyzer {
+    private final Stack<BlockInfo> blockStack = new Stack<>();
+    private int maxDepth = 0;
+    private int currentDepth = 0;
+    
+    public CodeAnalysis analyze(String code) {
+        // Reset state
+        blockStack.clear();
+        maxDepth = 0;
+        currentDepth = 0;
+        
+        // Track blocks, depths, and statistics
+        for (int i = 0; i < code.length(); i++) {
+            char c = code.charAt(i);
+            
+            if (isOpeningBlock(c)) {
+                blockStack.push(new BlockInfo(c, i, currentDepth));
+                currentDepth++;
+                maxDepth = Math.max(maxDepth, currentDepth);
+            }
+            else if (isClosingBlock(c)) {
+                if (blockStack.isEmpty()) {
+                    return new CodeAnalysis(false, "Unmatched closing block at position " + i, 
+                                          currentDepth, maxDepth, Collections.emptyList());
+                }
+                
+                BlockInfo opening = blockStack.pop();
+                if (!isMatchingPair(opening.blockType, c)) {
+                    return new CodeAnalysis(false, "Mismatched block types at positions " + 
+                                          opening.position + " and " + i, 
+                                          currentDepth, maxDepth, Collections.emptyList());
+                }
+                
+                currentDepth--;
+            }
+        }
+        
+        if (!blockStack.isEmpty()) {
+            BlockInfo unmatched = blockStack.peek();
+            return new CodeAnalysis(false, "Unclosed block at position " + unmatched.position, 
+                                 currentDepth, maxDepth, Collections.emptyList());
+        }
+        
+        return new CodeAnalysis(true, "Valid code structure", 
+                             0, maxDepth, generateBlockStatistics());
+    }
+    
+    // Helper methods and inner classes
+}</code></pre>
+                    </div>
+                    
+                    <!-- Challenge 3: New challenge -->
+                    <div class="feature-box">
+                        <h3>3. Expression Evaluator</h3>
+                        <p>Build a calculator that evaluates mathematical expressions using stacks:</p>
+                        <ul>
+                            <li>Support basic operations (+, -, *, /)</li>
+                            <li>Handle parentheses for precedence</li>
+                            <li>Support functions (sin, cos, sqrt)</li>
+                            <li>Provide detailed error reporting</li>
+                        </ul>
+                        
+                        <h4>Implementation Approach:</h4>
+                        <pre><code>public class ExpressionEvaluator {
+    // Two stacks: one for operators, one for operands
+    private final Stack<Character> operators = new Stack<>();
+    private final Stack<Double> values = new Stack<>();
+    
+    // Maps for operator precedence and functions
+    private final Map<Character, Integer> precedence = Map.of(
+        '+', 1, '-', 1, '*', 2, '/', 2, '^', 3
+    );
+    
+    public double evaluate(String expression) {
+        operators.clear();
+        values.clear();
+        
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
+            
+            if (Character.isDigit(c) || c == '.') {
+                // Parse number
+                StringBuilder numBuilder = new StringBuilder();
+                while (i < expression.length() && 
+                       (Character.isDigit(expression.charAt(i)) || expression.charAt(i) == '.')) {
+                    numBuilder.append(expression.charAt(i++));
+                }
+                i--; // Back up one character
+                values.push(Double.parseDouble(numBuilder.toString()));
+            }
+            else if (c == '(') {
+                operators.push(c);
+            }
+            else if (c == ')') {
+                while (!operators.isEmpty() && operators.peek() != '(') {
+                    values.push(applyOperator(operators.pop(), values.pop(), values.pop()));
+                }
+                operators.pop(); // Remove the '('
+            }
+            else if (isOperator(c)) {
+                while (!operators.isEmpty() && hasPrecedence(c, operators.peek())) {
+                    values.push(applyOperator(operators.pop(), values.pop(), values.pop()));
+                }
+                operators.push(c);
+            }
+        }
+        
+        while (!operators.isEmpty()) {
+            values.push(applyOperator(operators.pop(), values.pop(), values.pop()));
+        }
+        
+        return values.pop();
+    }
+    
+    private boolean isOperator(char c) {
+        return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
+    }
+    
+    private boolean hasPrecedence(char op1, char op2) {
+        if (op2 == '(' || op2 == ')') {
+            return false;
+        }
+        return precedence.getOrDefault(op1, 0) <= precedence.getOrDefault(op2, 0);
+    }
+    
+    private double applyOperator(char operator, double b, double a) {
+        switch (operator) {
+            case '+': return a + b;
+            case '-': return a - b;
+            case '*': return a * b;
+            case '/': return a / b;
+            case '^': return Math.pow(a, b);
+            default: throw new IllegalArgumentException("Unknown operator: " + operator);
+        }
+    }
+}</code></pre>
+                        
+                        <h4>Test Cases:</h4>
+                        <ul>
+                            <li><code>"3 + 4"</code> should output <code>7.0</code></li>
+                            <li><code>"3 * (4 + 2)"</code> should output <code>18.0</code></li>
+                            <li><code>"10 / 2 - 3"</code> should output <code>2.0</code></li>
+                            <li><code>"2 ^ 3 + 1"</code> should output <code>9.0</code></li>
                         </ul>
                     </div>
                 </div>
