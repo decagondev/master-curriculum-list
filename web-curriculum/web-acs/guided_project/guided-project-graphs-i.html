@@ -145,6 +145,20 @@
                             </div>
                         </div>
 
+                        <!-- Implementation Overview -->
+                        <div class="bg-gray-50 p-5 rounded-lg mb-8">
+                            <h3 class="text-xl font-medium text-secondary mb-3">Understanding Cycle Detection</h3>
+                            <p class="text-gray-600 mb-4">
+                                A cycle in a graph is a path where the first and last vertices are the same. Cycle detection is a fundamental graph problem with applications in deadlock detection, dependency resolution, and circuit design verification.
+                            </p>
+                            <p class="text-gray-600 mb-4">
+                                For directed graphs, we use a recursive DFS approach with a "recursion stack" to keep track of vertices being processed in the current path. If a vertex is visited again and it's in the recursion stack, we've found a cycle.
+                            </p>
+                            <p class="text-gray-600">
+                                For undirected graphs, we use a simpler approach: if we encounter a vertex that has already been visited and it's not the parent of the current vertex, we've found a cycle.
+                            </p>
+                        </div>
+
                         <!-- Implementation Steps -->
                         <div class="space-y-6 mt-8">
                             <h3 class="text-xl font-medium text-secondary">Implementation Steps</h3>
@@ -171,15 +185,21 @@
     }
 }</code></pre>
                                     </div>
+                                    <div class="bg-gray-50 p-3 rounded">
+                                        <p class="text-gray-600 text-sm">
+                                            This basic Graph class uses an adjacency list to represent the graph. For a directed graph, we add an edge in one direction only. For an undirected graph, we would add the edge in both directions.
+                                        </p>
+                                    </div>
                                 </div>
 
                                 <div class="space-y-4">
-                                    <h4 class="text-lg font-medium text-gray-900">Step 2: Cycle Detection</h4>
+                                    <h4 class="text-lg font-medium text-gray-900">Step 2: Cycle Detection Method</h4>
                                     <div class="bg-gray-800 rounded-lg p-4">
                                         <pre class="text-gray-100"><code>hasCycle() {
     const visited = {};
     const recStack = {};
 
+    // Check all vertices (for disconnected graphs)
     for (let vertex in this.adjacencyList) {
         if (this.hasCycleUtil(vertex, visited, recStack)) {
             return true;
@@ -188,31 +208,170 @@
     return false;
 }</code></pre>
                                     </div>
+                                    <div class="bg-gray-50 p-3 rounded">
+                                        <p class="text-gray-600 text-sm">
+                                            The main cycle detection method initializes two objects:
+                                            <ul class="list-disc list-inside text-sm mt-2">
+                                                <li><strong>visited</strong>: Tracks all vertices that have been visited</li>
+                                                <li><strong>recStack</strong>: Tracks vertices in the current recursion path</li>
+                                            </ul>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="space-y-4">
-                                <h4 class="text-lg font-medium text-gray-900">Step 3: Helper Method</h4>
+                                <h4 class="text-lg font-medium text-gray-900">Step 3: Helper Method for Cycle Detection</h4>
                                 <div class="bg-gray-800 rounded-lg p-4">
                                     <pre class="text-gray-100"><code>hasCycleUtil(vertex, visited, recStack) {
+    // If not visited, mark as visited
     if (!visited[vertex]) {
         visited[vertex] = true;
-        recStack[vertex] = true;
+        recStack[vertex] = true;  // Add to recursion stack
 
+        // Check all neighbors
         for (let neighbor of this.adjacencyList[vertex]) {
+            // If neighbor not visited and has cycle
             if (!visited[neighbor] && 
                 this.hasCycleUtil(neighbor, visited, recStack)) {
                 return true;
-            } else if (recStack[neighbor]) {
+            } 
+            // If neighbor is in recursion stack, cycle found
+            else if (recStack[neighbor]) {
                 return true;
             }
         }
     }
+    
+    // Remove from recursion stack when backtracking
     recStack[vertex] = false;
     return false;
 }</code></pre>
                                 </div>
+                                <div class="bg-gray-50 p-3 rounded">
+                                    <p class="text-gray-600 text-sm">
+                                        The helper method recursively checks for cycles:
+                                        <ol class="list-decimal list-inside text-sm mt-2 space-y-1">
+                                            <li>Mark the current vertex as visited and add it to the recursion stack</li>
+                                            <li>Recursively visit all unvisited neighbors</li>
+                                            <li>If a neighbor is already in the recursion stack, we've found a cycle</li>
+                                            <li>When backtracking, remove the vertex from the recursion stack</li>
+                                        </ol>
+                                    </p>
+                                </div>
                             </div>
+                            
+                            <!-- Cycle Detection for Undirected Graphs -->
+                            <div class="space-y-4 mt-6">
+                                <h4 class="text-lg font-medium text-gray-900">Cycle Detection for Undirected Graphs</h4>
+                                <div class="bg-gray-800 rounded-lg p-4">
+                                    <pre class="text-gray-100"><code>hasCycleUndirected() {
+    const visited = {};
+    
+    // Helper function
+    const hasCycleUtil = (vertex, parent) => {
+        // Mark current node as visited
+        visited[vertex] = true;
+        
+        // Visit all adjacent vertices
+        for (let neighbor of this.adjacencyList[vertex]) {
+            // If neighbor is not visited, recursively check
+            if (!visited[neighbor]) {
+                if (hasCycleUtil(neighbor, vertex)) {
+                    return true;
+                }
+            } 
+            // If neighbor is visited and not the parent,
+            // then there is a cycle
+            else if (neighbor !== parent) {
+                return true;
+            }
+        }
+        return false;
+    };
+    
+    // Check all vertices (for disconnected graphs)
+    for (let vertex in this.adjacencyList) {
+        if (!visited[vertex]) {
+            if (hasCycleUtil(vertex, null)) {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}</code></pre>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded">
+                                    <p class="text-gray-600 text-sm">
+                                        For undirected graphs, we don't need a recursion stack. Instead, we track the parent vertex:
+                                        <ul class="list-disc list-inside text-sm mt-2">
+                                            <li>If we encounter a visited vertex that is not the parent, we've found a cycle</li>
+                                            <li>This ensures we don't consider the edge between a vertex and its parent as a cycle</li>
+                                        </ul>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Example Usage -->
+                        <div class="mt-8 space-y-4">
+                            <h3 class="text-xl font-medium text-secondary">Example Usage</h3>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <pre class="text-gray-100"><code>// Create a directed graph
+const graph = new Graph();
+
+// Add vertices
+graph.addVertex("A");
+graph.addVertex("B");
+graph.addVertex("C");
+graph.addVertex("D");
+
+// Add edges (directed)
+graph.addEdge("A", "B");
+graph.addEdge("B", "C");
+graph.addEdge("C", "A");  // Creates a cycle A -> B -> C -> A
+graph.addEdge("D", "C");
+
+// Check for cycles
+console.log(graph.hasCycle());  // Output: true
+
+// Visualize the graph structure
+console.log(graph.adjacencyList);
+/*
+{
+  A: ["B"],
+  B: ["C"],
+  C: ["A"],
+  D: ["C"]
+}
+*/</code></pre>
+                            </div>
+                        </div>
+                        
+                        <!-- Practice with LeetCode -->
+                        <div class="mt-8 p-5 bg-gray-50 rounded-lg">
+                            <h3 class="text-xl font-medium text-secondary mb-3">Practice with LeetCode</h3>
+                            <p class="text-gray-600 mb-4">
+                                Cycle detection is a common interview question and appears in many practical problems. Practice with these LeetCode problems:
+                            </p>
+                            <ul class="space-y-2">
+                                <li>
+                                    <a href="https://leetcode.com/problems/course-schedule/" class="text-[#FF8C00] hover:underline font-medium">Course Schedule</a>
+                                    <span class="text-gray-600 ml-2">- Determine if you can finish all courses (cycle detection in directed graph)</span>
+                                </li>
+                                <li>
+                                    <a href="https://leetcode.com/problems/redundant-connection/" class="text-[#FF8C00] hover:underline font-medium">Redundant Connection</a>
+                                    <span class="text-gray-600 ml-2">- Find an edge that can be removed to make a tree (cycle detection in undirected graph)</span>
+                                </li>
+                                <li>
+                                    <a href="https://leetcode.com/problems/find-eventual-safe-states/" class="text-[#FF8C00] hover:underline font-medium">Find Eventual Safe States</a>
+                                    <span class="text-gray-600 ml-2">- Find all vertices that don't belong to a cycle</span>
+                                </li>
+                            </ul>
+                            <p class="text-gray-700 mt-4">
+                                Note: Previously, this course referenced the CodeSignal Arcade, which is no longer available. The LeetCode problems above follow the same principles and are an excellent alternative for practicing graph algorithms and preparing for technical interviews.
+                            </p>
                         </div>
                     </div>
                 </div>
