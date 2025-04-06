@@ -107,6 +107,30 @@
             color: #b3b3b3;
             padding-left: 20px;
         }
+        .learning-objective-description {
+            color: #9e9e9e;
+            margin-left: 10px;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        .code-example {
+            background-color: #2d3748;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            color: #e2e8f0;
+        }
+        .video-description {
+            color: #b3b3b3;
+            font-size: 1em;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #2a303c;
+            border-radius: 4px;
+            border-left: 2px solid #ff5722;
+        }
     </style>
 </head>
 <body>
@@ -123,19 +147,71 @@
         <div class="video-container">
             <iframe class="wistia_embed" title="JSON Serialization Introduction" src="https://fast.wistia.net/embed/iframe/7x4e1tg42f" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
         </div>
+        <div class="video-description">
+            This introduction covers the basics of JSON serialization and why it's important in modern application development. You'll learn about the JSON format structure, its advantages over other data exchange formats, and common use cases including API communication, configuration files, and data storage. The video also explains the serialization process from Java objects to JSON and vice versa.
+        </div>
 
         <div class="video-container">
             <iframe class="wistia_embed" title="Jackson Library Deep Dive" src="https://fast.wistia.net/embed/iframe/g0vq6c2x0n" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+        </div>
+        <div class="video-description">
+            This deep dive focuses on the Jackson library, the most popular JSON processing tool for Java. The video walks through setting up Jackson in your project, configuring the ObjectMapper, and implementing both basic and advanced serialization scenarios. You'll learn how to use annotations to control the serialization process, handle complex object graphs, and customize the JSON output to meet specific requirements.
         </div>
 
         <section>
             <h2>Learning Objectives</h2>
             <ul class="learning-objectives-list">
-                <li>Understand the JSON format structure and use cases</li>
-                <li>Learn about Jackson library for Java JSON processing</li>
-                <li>Master serialization of Java objects to JSON</li>
-                <li>Explore deserialization of JSON to Java objects</li>
-                <li>Apply custom serialization/deserialization strategies</li>
+                <li>Define the terms serialization and deserialization
+                    <div class="learning-objective-description">
+                        Serialization is the process of converting an object into a format that can be easily stored or transmitted, while deserialization is the reverse process of reconstructing an object from the serialized format.
+                    </div>
+                </li>
+                <li>Explain why serialization is used to transfer data
+                    <div class="learning-objective-description">
+                        Serialization enables data exchange between different systems, platforms, or programming languages by converting objects into a standardized format that can be transmitted over networks or stored persistently. This facilitates interoperability and is essential for web services, microservices, and distributed systems.
+                    </div>
+                </li>
+                <li>Implement code that serializes a class to JSON
+                    <div class="learning-objective-description">
+                        Using Jackson's ObjectMapper, you can convert Java objects into JSON strings with simple method calls, with options for formatting and customization.
+                        <div class="code-example">
+                        // Create a Java object<br>
+                        User user = new User("john.doe", "John Doe", 30);<br>
+                        <br>
+                        // Create ObjectMapper instance<br>
+                        ObjectMapper mapper = new ObjectMapper();<br>
+                        <br>
+                        // Serialize to JSON string<br>
+                        String jsonString = mapper.writeValueAsString(user);<br>
+                        <br>
+                        // Serialize to JSON file<br>
+                        mapper.writerWithDefaultPrettyPrinter()<br>
+                            &nbsp;&nbsp;.writeValue(new File("user.json"), user);<br>
+                        </div>
+                    </div>
+                </li>
+                <li>Implement code that deserializes a provided JSON string to an object of the class it represents
+                    <div class="learning-objective-description">
+                        Deserializing JSON strings back into Java objects involves using the ObjectMapper's readValue methods with the appropriate type information.
+                        <div class="code-example">
+                        // JSON string to deserialize<br>
+                        String json = "{\"username\":\"john.doe\",\"name\":\"John Doe\",\"age\":30}";<br>
+                        <br>
+                        // Create ObjectMapper<br>
+                        ObjectMapper mapper = new ObjectMapper();<br>
+                        <br>
+                        // Deserialize to User object<br>
+                        User user = mapper.readValue(json, User.class);<br>
+                        <br>
+                        // Deserialize from file<br>
+                        User userFromFile = mapper.readValue(new File("user.json"), User.class);<br>
+                        <br>
+                        // Deserialize to collection<br>
+                        List&lt;User&gt; users = mapper.readValue(usersJson,<br>
+                            &nbsp;&nbsp;mapper.getTypeFactory().constructCollectionType(List.class, User.class));<br>
+                        </div>
+                    </div>
+                </li>
             </ul>
         </section>
 
