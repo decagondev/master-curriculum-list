@@ -56,15 +56,165 @@
             </ul>
         </section>
         
+        <!-- Detailed Objectives -->
+        <section class="content-section">
+            <h2>Detailed Objective: Exploratory Data Analysis (EDA)</h2>
+            <p>Exploratory data analysis (EDA) is an essential part of learning to be a data scientist. And something that experienced data scientists do regularly.</p>
+            <p>We'll be using some of the numerous tools available in the pandas library. Earlier in the module, we learned how to load datasets into notebooks. So now that we have all this data, what do we do with it?</p>
+            
+            <h3>Basic Information Methods</h3>
+            <p>We can use a few methods to quickly look at your DataFrame and get an idea of what's inside. Here are some of the most common descriptions of what each method does:</p>
+            
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><strong>Method</strong></th>
+                            <th><strong>Description</strong></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>df.shape</code></td>
+                            <td>Display the size (rows, columns)</td>
+                        </tr>
+                        <tr>
+                            <td><code>df.head()</code></td>
+                            <td>Display the first 5 rows (we can display first n rows by including the number in parenthesis)</td>
+                        </tr>
+                        <tr>
+                            <td><code>df.tail()</code></td>
+                            <td>Display the last 5 rows (we can display last n rows by including the number in parenthesis)</td>
+                        </tr>
+                        <tr>
+                            <td><code>df.describe()</code></td>
+                            <td>Display the statistics of numerical data types</td>
+                        </tr>
+                        <tr>
+                            <td><code>df.info()</code></td>
+                            <td>Display the number of entries (rows), number of columns, and the data types</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h3>Column-specific Methods</h3>
+            <p>Sometimes we don't want to look at the entire DataFrame and instead focus on a single column or a few columns. There are a few ways to select a column, but we'll mainly use the column name. For example, if we have a DataFrame called <code>df</code> and a column named "column_1," we could select just a single column by using <code>df["column_1"]</code>. Once we have a single column chosen, we can use some of the following methods to get more information.</p>
+            
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><strong>Method</strong></th>
+                            <th><strong>Description</strong></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>df.columns</code></td>
+                            <td>Print a list of the columns</td>
+                        </tr>
+                        <tr>
+                            <td><code>df['column_name']</code></td>
+                            <td>Select a single column (returns a Series)</td>
+                        </tr>
+                        <tr>
+                            <td><code>df['column_name'].value_counts()</code></td>
+                            <td>Count the number of <code>object</code> and <code>boolean</code> occurrences</td>
+                        </tr>
+                        <tr>
+                            <td><code>df.sort_values(by='column_name')</code></td>
+                            <td>Sort the values in the given column</td>
+                        </tr>
+                        <tr>
+                            <td><code>df.drop()</code></td>
+                            <td>Remove rows or columns by specifying the label or index of the row/column</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h3>Handling Missing Values</h3>
+            <p>With a lot of data comes the unavoidable fact that some of it will be messy. Messy data means that there will be missing values, "not-a-number" (NaN) occurrences, and problems with zeros not being zero. Fortunately, several pandas methods make dealing with the mess a little easier.</p>
+            
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><strong>Method</strong></th>
+                            <th><strong>Description</strong></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>df.isnull().sum()</code></td>
+                            <td>Count and sum the number of null occurrences (NaN or None)</td>
+                        </tr>
+                        <tr>
+                            <td><code>df.fillna()</code></td>
+                            <td>Fill NaN values in a variety of ways</td>
+                        </tr>
+                        <tr>
+                            <td><code>df.dropna()</code></td>
+                            <td>Remove values that are NaN or None; by default removes all rows with NaNs</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h3>Practical Example</h3>
+            <p>Let's see a practical example of EDA using the M&Ms dataset, which is small and contains both numeric and object (string) data types:</p>
+            
+            <div class="code-example">
+                <pre><code class="language-python"># Import pandas
+import pandas as pd
+
+# Read the data from the website
+url_mms = 'https://tinyurl.com/mms-statistics'
+df = pd.read_csv(url_mms)
+
+# Look at the shape
+df.shape  # returns (816, 4)
+
+# Look at the head of the file
+df.head()</code></pre>
+            </div>
+            
+            <p>When we run <code>df.head()</code>, we'll see the first 5 rows of the dataset with columns 'type', 'color', 'diameter', and 'mass'. We can get more information about the dataset with:</p>
+            
+            <div class="code-example">
+                <pre><code class="language-python"># DataFrame information
+df.info()</code></pre>
+            </div>
+            
+            <p>The output will tell us we have 816 entries, 4 columns, and reveal the data types. Let's also check the statistics of the numeric columns:</p>
+            
+            <div class="code-example">
+                <pre><code class="language-python"># DataFrame describe
+df.describe()</code></pre>
+            </div>
+            
+            <p>This shows statistics like count, mean, standard deviation, min/max, and percentiles for numeric columns.</p>
+            
+            <p>What if we want to count how many of each candy type we have?</p>
+            
+            <div class="code-example">
+                <pre><code class="language-python"># Count the values in the 'type' column
+df['type'].value_counts()</code></pre>
+            </div>
+            
+            <p>This will display a breakdown showing how many plain, peanut butter, and peanut M&M types are present in the DataFrame.</p>
+        </section>
+        
         <section class="content-section">
             <h2>Guided Project</h2>
             <p>Open DS_112_EDA.ipynb in the GitHub repository below to follow along with the guided project:</p>
-            <a href="https://github.com/bloominstituteoftechnology/DS-Unit-1-Sprint-1-Data-Wrangling-and-Storytelling/tree/master/module2-exploratory-data-analysis" class="btn" target="_blank">GitHub: Exploratory Data Analysis</a>
+            <a href="https://github.com/bloominstituteoftechnology/DS-Unit-1-Sprint-1-Data-Wrangling-and-Storytelling/tree/master/module2-exploratory-data-analysis" class="btn" target="_blank" rel="noopener">GitHub: Exploratory Data Analysis</a>
             
             <h3>Resources</h3>
             <ul>
-                <li><a href="http://users.stat.ufl.edu/~winner/datasets.html" target="_blank">Miscellaneous Datasets</a></li>
-                <li><a href="https://pandas.pydata.org/docs/" target="_blank">Pandas Documentation</a></li>
+                <li><a href="http://users.stat.ufl.edu/~winner/datasets.html" target="_blank" rel="noopener">Miscellaneous Datasets</a></li>
+                <li><a href="https://pandas.pydata.org/docs/" target="_blank" rel="noopener">Pandas Documentation</a></li>
             </ul>
         </section>
         
@@ -83,10 +233,9 @@
         <section class="content-section">
             <h2>Additional Resources</h2>
             <ul>
-                <li><a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/10min.html" target="_blank">10 Minutes to pandas</a></li>
-                <li><a href="https://www.kaggle.com/learn/pandas" target="_blank">Kaggle Pandas Tutorial</a></li>
-
-                <li><a href="https://jakevdp.github.io/PythonDataScienceHandbook/03.00-introduction-to-pandas.html" target="_blank">Python Data Science Handbook: Pandas</a></li>
+                <li><a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/10min.html" target="_blank" rel="noopener">10 Minutes to pandas</a></li>
+                <li><a href="https://www.kaggle.com/learn/pandas" target="_blank" rel="noopener">Kaggle Pandas Tutorial</a></li>
+                <li><a href="https://jakevdp.github.io/PythonDataScienceHandbook/03.00-introduction-to-pandas.html" target="_blank" rel="noopener">Python Data Science Handbook: Pandas</a></li>
             </ul>
         </section>
     </main>
