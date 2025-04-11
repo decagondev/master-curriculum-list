@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Build Sprint 1 - Data Science Labs</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1d23;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #222831;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            margin: 0;
+        }
+        h1 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff5722;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333a47;
+            background-color: #2a303c;
+            border-radius: 4px;
+        }
+        .section h2 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .section p {
+            color: #b3b3b3;
+            margin-bottom: 15px;
+        }
+        .video-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .resources {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #1f242e;
+            border-radius: 4px;
+            border-left: 4px solid #ff5722;
+        }
+        .resources h3 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .resources ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .resources li {
+            margin-bottom: 8px;
+        }
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: #ff7043;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background-color: #333a47;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .back-link:hover {
+            background-color: #444e5c;
+            text-decoration: none;
+        }
+        iframe, .wistia_embed {
+            width: 100%;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .code-block {
+            background-color: #1f242e;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            color: #e0e0e0;
+            margin: 15px 0;
+        }
+        .checklist {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        .checklist li {
+            margin-bottom: 8px;
+            color: #b3b3b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-link">← Back to Main Page</a>
+        
+        <h1>Module 2: Build Sprint 1</h1>
+        
+        <div class="section">
+            <h2>Understanding Your First Ticket</h2>
+            <p>Learn how to approach your first ticket in the Labs project and understand the development workflow.</p>
+            
+            <div class="code-block">
+                <h4>First Ticket Details</h4>
+                <p>View your first ticket details and requirements on GitHub:</p>
+                <a href="https://github.com/BloomTech-Labs/BandersnatchStarter/blob/main/tickets/firstTicket.md" target="_blank">First Ticket Documentation</a>
+            </div>
+            
+            <div class="resources">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://github.com/BloomTech-Labs/BandersnatchStarter/blob/main/tickets/firstTicket.md" target="_blank">Access your first ticket here</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Approaching Your First Feature</h2>
+            <p>Learn how to implement database operations and data generation for your first Data Science Labs ticket.</p>
+            
+            <div class="checklist">
+                <h3>Implementation Checklist</h3>
+                <ul>
+                    <li>Set up MongoDB account and create a free tier shared cluster</li>
+                    <li>Configure database security and environment variables</li>
+                    <li>Implement the database interface class with CRUD operations</li>
+                    <li>Generate monster data using the MonsterLab library</li>
+                    <li>Create functions for seeding and managing the database</li>
+                    <li>Implement data visualization with Pandas DataFrames</li>
+                    <li>Follow PEP style guidelines and add proper documentation</li>
+                    <li>Test your implementation with at least 1000 monsters</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre>
+# Example Database Interface Implementation
+
+from os import getenv
+from typing import Dict, Optional
+import pandas as pd
+from pymongo import MongoClient
+from dotenv import load_dotenv
+from certifi import where
+from monster_lab import generate_monster  # Hypothetical monster generation library
+
+class MonsterDatabase:
+    """Interface for monster database operations."""
+    
+    def __init__(self):
+        """Initialize database connection using environment variables."""
+        load_dotenv()
+        self.client = MongoClient(getenv("DB_URL"), tlsCAFile=where())
+        self.db = self.client["monster_database"]
+        self.collection = self.db["monsters"]
+    
+    def seed(self, num_monsters: int) -> bool:
+        """Seed the database with specified number of monsters."""
+        try:
+            monsters = [generate_monster() for _ in range(num_monsters)]
+            self.collection.insert_many(monsters)
+            return True
+        except Exception as e:
+            print(f"Error seeding database: {e}")
+            return False
+    
+    def reset(self) -> bool:
+        """Delete all monsters from the collection."""
+        try:
+            self.collection.delete_many({})
+            return True
+        except Exception as e:
+            print(f"Error resetting database: {e}")
+            return False
+    
+    def count(self) -> int:
+        """Return the number of monsters in the collection."""
+        return self.collection.count_documents({})
+    
+    def dataframe(self) -> Optional[pd.DataFrame]:
+        """Return a DataFrame of all monsters in the collection."""
+        data = list(self.collection.find({}, {'_id': 0}))
+        return pd.DataFrame(data) if data else None
+    
+    def html_table(self) -> Optional[str]:
+        """Return HTML table representation of monster data."""
+        df = self.dataframe()
+        return df.to_html() if df is not None else None</pre>
+            </div>
+            
+            <div class="resources">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://docs.mongodb.com/manual/introduction/" target="_blank">MongoDB Documentation</a></li>
+                    <li><a href="https://pandas.pydata.org/docs/" target="_blank">Pandas Documentation</a></li>
+                    <li><a href="https://pypi.org/project/python-dotenv/" target="_blank">Python-dotenv Documentation</a></li>
+                    <li><a href="https://pymongo.readthedocs.io/" target="_blank">PyMongo Documentation</a></li>
+                    <li><a href="https://www.python.org/dev/peps/pep-0008/" target="_blank">PEP 8 Style Guide</a></li>
+                    <li><a href="https://docs.python.org/3/library/typing.html" target="_blank">Python Type Hints</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Working with APIs</h2>
+            <p>Understand how to interact with APIs, handle data fetching, and manage state in your React application.</p>
+            
+            <div class="code-block">
+<pre>// Example of fetching data from an API using axios
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+
+function DataFetching() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://api.example.com/data');
+        setData(response.data);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <div>
+      {data.map(item => (
+        <div key={item.id}>{item.name}</div>
+      ))}
+    </div>
+  );
+}</pre>
+            </div>
+            
+            <div class="resources">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://axios-http.com/docs/intro" target="_blank">Axios Documentation</a></li>
+                    <li><a href="https://reactjs.org/docs/hooks-effect.html" target="_blank">Using the Effect Hook</a></li>
+                    <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch" target="_blank">Using the Fetch API</a></li>
+                    <li><a href="https://tanstack.com/query/latest" target="_blank">React Query Documentation</a></li>
+                    <li><a href="https://swr.vercel.app/" target="_blank">SWR for Data Fetching</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Component Design</h2>
+            <p>Learn how to create well-designed, reusable components for your React application.</p>
+            
+            <div class="code-block">
+<pre>// Example of a reusable button component
+import React from 'react';
+import PropTypes from 'prop-types';
+import './Button.css';
+
+const Button = ({ 
+  variant = 'primary',
+  size = 'medium',
+  disabled = false,
+  children,
+  onClick,
+  ...props 
+}) => {
+  const classNames = `btn btn-${variant} btn-${size} ${disabled ? 'btn-disabled' : ''}`;
+  
+  return (
+    <button 
+      className={classNames}
+      disabled={disabled}
+      onClick={onClick}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+Button.propTypes = {
+  variant: PropTypes.oneOf(['primary', 'secondary', 'danger', 'success']),
+  size: PropTypes.oneOf(['small', 'medium', 'large']),
+  disabled: PropTypes.bool,
+  children: PropTypes.node.isRequired,
+  onClick: PropTypes.func
+};
+
+export default Button;</pre>
+            </div>
+            
+            <div class="resources">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://reactjs.org/docs/components-and-props.html" target="_blank">React Components and Props</a></li>
+                    <li><a href="https://reactjs.org/docs/composition-vs-inheritance.html" target="_blank">Composition vs Inheritance</a></li>
+                    <li><a href="https://reactjs.org/docs/hooks-state.html" target="_blank">Using the State Hook</a></li>
+                    <li><a href="https://storybook.js.org/docs/react/get-started/introduction" target="_blank">Storybook for Component Development</a></li>
+                    <li><a href="https://css-tricks.com/bem-101/" target="_blank">BEM Naming Convention</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load Wistia script to enable async videos
+        window._wq = window._wq || [];
+        (function() {
+            var wistiaScript = document.createElement('script');
+            wistiaScript.src = "https://fast.wistia.com/assets/external/E-v1.js";
+            wistiaScript.async = true;
+            document.body.appendChild(wistiaScript);
+        })();
+    </script>
+</body>
+</html> 
