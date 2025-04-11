@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Build Sprint 1 - Backend Labs</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1d23;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #222831;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            margin: 0;
+        }
+        h1 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff5722;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333a47;
+            background-color: #2a303c;
+            border-radius: 4px;
+        }
+        .section h2 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .section p {
+            color: #b3b3b3;
+            margin-bottom: 15px;
+        }
+        .video-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .resources {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #1f242e;
+            border-radius: 4px;
+            border-left: 4px solid #ff5722;
+        }
+        .resources h3 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .resources ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .resources li {
+            margin-bottom: 8px;
+        }
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: #ff7043;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background-color: #333a47;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .back-link:hover {
+            background-color: #444e5c;
+            text-decoration: none;
+        }
+        iframe, .wistia_embed {
+            width: 100%;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .code-block {
+            background-color: #1f242e;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            color: #e0e0e0;
+            margin: 15px 0;
+        }
+        .checklist {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        .checklist li {
+            margin-bottom: 8px;
+            color: #b3b3b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-link">← Back to Main Page</a>
+        
+        <h1>Module 2: Build Sprint 1</h1>
+        
+        <div class="section">
+            <h2>Understanding Your First Ticket</h2>
+            <p>Learn how to approach your first ticket in the Labs project and understand the development workflow.</p>
+
+            <div class="code-block">
+                <h4>First Ticket Details</h4>
+                <p>View your first ticket details and requirements on GitHub:</p>
+                <a href="https://github.com/BloomTech-Labs/BloomCodeCamp-be-a-starter/blob/main/tickets/firstTicket.md" target="_blank">First Ticket Documentation</a>
+            </div>
+            
+            <div class="resources">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://github.com/BloomTech-Labs/BloomCodeCamp-be-a-starter/blob/main/tickets/firstTicket.md" target="_blank">Access your first ticket here</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Approaching Your First Feature</h2>
+            <p>Learn how to implement the core domain objects and security configuration for the Bloom Coder Assignment App.</p>
+            
+            <div class="checklist">
+                <h3>Implementation Checklist</h3>
+                <ul>
+                    <li>Create User, Authority, and Assignment entities</li>
+                    <li>Implement proper constructors and relationships</li>
+                    <li>Set up Spring Security configuration</li>
+                    <li>Create required DTOs and Enums</li>
+                    <li>Configure UserDetailsService implementation</li>
+                    <li>Implement proper security overrides</li>
+                    <li>Test authentication flow</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre>// Example User entity implementation
+
+@Entity
+@Table(name = "users")
+public class User implements UserDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private LocalDate cohortStartDate;
+    private String username;
+    private String password;
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Authority> authorities;
+    
+    // Constructors
+    public User() {}
+    
+    public User(LocalDate cohortStartDate, String username, String password) {
+        this.cohortStartDate = cohortStartDate;
+        this.username = username;
+        this.password = password;
+    }
+    
+    // UserDetails overrides
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+    
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+    
+    // ... other overrides
+}</pre>
+            </div>
+            
+            <div class="resources">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://docs.spring.io/spring-data/jpa/docs/current/reference/html/" target="_blank">Spring Data JPA Documentation</a></li>
+                    <li><a href="https://docs.spring.io/spring-security/reference/index.html" target="_blank">Spring Security Documentation</a></li>
+                    <li><a href="https://hibernate.org/orm/documentation/6.2/" target="_blank">Hibernate ORM Documentation</a></li>
+                    <li><a href="https://www.postgresql.org/docs/" target="_blank">PostgreSQL Documentation</a></li>
+                    <li><a href="https://github.com/BloomTech-Labs/BloomCodeCamp-be-a-starter/blob/main/documents/composition_document.md" target="_blank">Project Design Document</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Spring Boot Review</h2>
+            <p>Review essential Spring Boot concepts and JWT authentication implementation for the project.</p>
+            
+            <div class="code-block">
+                <h3>JWT Utils Implementation</h3>
+                <iframe class="wistia_embed" title="Spring Boot - JWT Utils Implementation" src="https://fast.wistia.net/embed/iframe/umpmvwmotv?seo=false&amp;videoFoam=true" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen"></iframe>
+<pre>// Example JWT Utils class
+
+@Component
+public class JwtUtils {
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+    
+    @Value("${jwt.expiration}")
+    private int jwtExpirationMs;
+    
+    public String generateJwtToken(Authentication authentication) {
+        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+        
+        return Jwts.builder()
+            .setSubject((userPrincipal.getUsername()))
+            .setIssuedAt(new Date())
+            .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+            .signWith(SignatureAlgorithm.HS512, jwtSecret)
+            .compact();
+    }
+    
+    public String getUserNameFromJwtToken(String token) {
+        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+    }
+    
+    public boolean validateJwtToken(String authToken) {
+        try {
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            return true;
+        } catch (SignatureException e) {
+            // Handle invalid JWT signature
+        } catch (MalformedJwtException e) {
+            // Handle invalid JWT token
+        } catch (ExpiredJwtException e) {
+            // Handle expired JWT token
+        } catch (UnsupportedJwtException e) {
+            // Handle unsupported JWT token
+        } catch (IllegalArgumentException e) {
+            // Handle JWT claims string is empty
+        }
+        return false;
+    }
+}</pre>
+            </div>
+
+            <div class="code-block">
+                <h3>Spring Data JPA Repository Example</h3>
+                <iframe class="wistia_embed" title="Spring Data JPA Repository Example" src="https://fast.wistia.net/embed/iframe/6bx61wc9ea?seo=false&amp;videoFoam=true" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen"></iframe>
+<pre>// Example Repository interface
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByUsername(String username);
+    Boolean existsByUsername(String username);
+    Boolean existsByEmail(String email);
+}
+
+// Example Service implementation
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    public User createUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+    
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+}</pre>
+            </div>
+            
+            <div class="resources">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://docs.spring.io/spring-boot/docs/current/reference/html/" target="_blank">Spring Boot Documentation</a></li>
+                    <li><a href="https://docs.spring.io/spring-data/jpa/docs/current/reference/html/" target="_blank">Spring Data JPA Documentation</a></li>
+                    <li><a href="https://jwt.io/introduction/" target="_blank">JWT Introduction</a></li>
+                    <li><a href="https://auth0.com/docs/secure/tokens/json-web-tokens" target="_blank">JWT Best Practices</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load Wistia script to enable async videos
+        window._wq = window._wq || [];
+        (function() {
+            var wistiaScript = document.createElement('script');
+            wistiaScript.src = "https://fast.wistia.com/assets/external/E-v1.js";
+            wistiaScript.async = true;
+            document.body.appendChild(wistiaScript);
+        })();
+    </script>
+</body>
+</html> 
