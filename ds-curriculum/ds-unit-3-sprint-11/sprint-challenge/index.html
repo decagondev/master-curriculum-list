@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DS11 Sprint Challenge</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>DS11 Sprint Challenge</h1>
+        <nav>
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../modules/module1/index.html">Module 1: Web Application Development with Flask</a></li>
+                <li><a href="../modules/module2/index.html">Module 2: Consuming Data from an API</a></li>
+                <li><a href="../modules/module3/index.html">Module 3: Adding Data Science to a Web Application</a></li>
+                <li><a href="../modules/module4/index.html">Module 4: Web Application Deployment</a></li>
+                <li><a href="../code-alongs/index.html">Code-Alongs</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Air Quality in the Cloud</h2>
+            <div class="content-box">
+                <h3><strong>Introduction</strong></h3>
+                <p>In this Sprint Challenge, you will build a Flask-powered web application that displays data about air quality. You may use any tools and references you wish, but your final code should reflect <em>your</em> work and be saved in <code>.py</code> files (<em>not</em> notebooks).</p>
+                <p>You may use any imports/environments/tools you wish, but the baseline is:</p>
+                <ul>
+                    <li><code>flask</code>, <code>flask-sqlalchemy</code> to build the application and data model</li>
+                    <li><code>requests</code> (as a dependency for API access)</li>
+                </ul>
+                <p>It is also <em>optional</em> but recommended to manage your environment (e.g. <code>pipenv</code> or <code>venv</code>), but <code>pipenv install flask flask-sqlalchemy requests</code> is adequate for passing.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Challenge Details</h2>
+            <div class="content-box">
+                <h3><strong>Part 1 - If I could put Flask in a File</strong></h3>
+                <p>We worked on a larger Flask project this sprint, but simple applications can fit entirely in a single file. Below is some starter code for a Flask web application. Please create a new file called <code>aq_dashboard.py</code> and add the following lines to it:</p>
+                <pre><code>"""OpenAQ Air Quality Dashboard with Flask."""
+from flask import Flask 
+
+app = Flask(__name__) 
+
+@app.route('/')
+def root():
+    """Base view."""
+    return 'TODO - part 2 and beyond!'
+</code></pre>
+                <p>Ensure you are in a Python environment that at least has <code>flask</code>, <code>flask-sqlalchemy</code>, and <code>requests</code>. You can create an isolated environment with <code>pipenv install flask flask-sqlalchemy requests</code>.</p>
+                <p>Finally, run the application with: <code>FLASK_APP=aq_dashboard.py flask run</code></p>
+                <p>You should see something like:</p>
+                <pre><code>Serving Flask app "aq_dashboard.py" 
+Environment: production WARNING: Do not use the development server in a production environment. 
+Use a production WSGI server instead. 
+Debug mode: off 
+Running on http://127.0.0.1:5000/ 
+(Press CTRL+C to quit)
+</code></pre>
+                <p>Visit the given URL in your browser to verify that it works.</p>
+                <p>It's not required, but you can enable debug mode if you find that it's helpful to you: <code>FLASK_ENV='development'</code> <code>FLASK_DEBUG=1</code></p>
+            </div>
+                
+            <div class="content-box">
+                <h3><strong>Part 2 - Breathe Easy with OpenAQ</strong></h3>
+                <p>You'll need the&nbsp;<a href="https://raw.githubusercontent.com/bloominstituteoftechnology/DS-Unit-3-Sprint-3-Productization-and-Cloud/master/openaq.py" target="_blank">openaq.py</a> file to help you communicate with the API and complete Part 2.</p>
+                <p>Our application is going to be a dashboard that displays air quality data from the <a title="https://docs.openaq.org" href="https://docs.openaq.org/" target="_blank">Open AQ API</a>. This API does not require authorization and can be accessed directly via HTTP requests.</p>
+                <p>Your first goal is to verify that you can pull data from OpenAQ with Python. The file <code>openaq.py</code> provides some functions to help you query the API. These functions make use of the <code>requests</code> package. You'll still need to <code>pip</code> or <code>pipenv</code> install <code>requests</code> (if it's not already in your environment), and then place <code>openaq.py</code> in the same directory as your <code>aq_dashboard.py</code> file. Once you've included it in the folder, try running the following in a Python REPL to verify that you can make API requests using <code>openaq.py</code>.</p>
+                <pre><code>&gt;&gt;&gt; import openaq 
+&gt;&gt;&gt; api = openaq.OpenAQ() 
+&gt;&gt;&gt; status, body = api.cities() 
+&gt;&gt;&gt; status
+200
+&gt;&gt;&gt; body 
+{'meta': {'name': 'openaq-api', 'license': 'CC BY 4.0', 'website':...
+</code></pre>
+                <p>Requests to OpenAQ return a tuple of <code>status</code> (of the HTTP response - 200 is OK) and the body (the response payload, as a Python dict). The body at the top has a <code>meta</code> key for metadata, and a <code>results</code> key for the actual data. One of the more interesting endpoints is <a title="https://docs.openaq.org/#api-Measurements" href="https://docs.openaq.org/#api-Measurements" target="_blank">Measurements</a>.</p>
+                <pre><code>&gt;&gt;&gt; # Assuming we have the api object from above
+&gt;&gt;&gt; status, body = api.measurements(parameter='pm25') 
+&gt;&gt;&gt; status 
+200
+&gt;&gt;&gt; body['meta'] 
+{'name': 'openaq-api', 'license': 'CC BY 4.0', 'website': 'https://docs.openaq.org/', 'page': 1, 'limit': 100, 'found': 3069, 'pages': 31} 
+&gt;&gt;&gt; len(body['results']) 
+100
+&gt;&gt;&gt; body['results'][:2] 
+[{'location': '21 de mayo', 'parameter': 'pm25', 'date': {'utc': '2019-03-08T00:00:00.000Z', 'local': '2019-03-07T21:00:00-03:00'}, 'value': 8.13, 'unit': 'µg/m³', 'coordinates': {'latitude': -37.471182288689, 'longitude': -72.36146284977}, 'country': 'CL', 'city': 'Los Angeles'}, {'location': '21 de mayo', 'parameter': 'pm25', 'date': {'utc': '2019-03-07T23:00:00.000Z', 'local': '2019-03-07T20:00:00-03:00'}, 'value': 8.13, 'unit': 'µg/m³', 'coordinates': {'latitude': -37.471182288689, 'longitude': -72.36146284977}, 'country': 'CL', 'city': 'Los Angeles'}]
+</code></pre>
+                <p>We are pulling 100 observations of measurements of fine particulate matter (PM 2.5). Note that this is equivalent to making a request to this URL (you can even see the data in your browser!): <a title="https://api.openaq.org/v1/measurements?parameter=pm25" href="https://api.openaq.org/v1/measurements?parameter=pm25" target="_blank">https://api.openaq.org/v1/measurements?parameter=pm25</a></p>
+                <p>Run the above examples locally (you will get different data - it's a live API!), and then incorporate the specific request <code>api.measurements(parameter='pm25')</code> into your application as a function named <code>get_results</code>:</p>
+                <ul>
+                    <li>Import and set up the API object in your <code>aq_dashboard.py</code> file</li>
+                    <li>Retrieve the data from the API when the main ('root') route is called</li>
+                    <li>Create a list of <code>(utc_datetime, value)</code> tuples, e.g. the first two tuples for the data returned above would be:<code>[('2019-03-08T00:00:00.000Z', 8.13), ('2019-03-07T23:00:00.000Z', 8.13)]</code></li>
+                    <li>Return this list in the main route, so that the home page of the web application displays the raw list of tuples</li>
+                    <li>Getting this list of tuples may be trickier than you think - the API returns dictionaries inside of dictionaries! You may want to use the REPL or notebook to experiment until you find working code, and then add it to your application.</li>
+                    <li>Hint: <em>Flask routes return</em>strings_, so if you call <code>str()</code> on your list of tuples to convert it, the entire resulting string can be returned by the route and displayed on the page...</li>
+                    <li>Another hint: put the logic for pulling processing results (into the list of tuples) in a separate function from the <code>root()</code> route - the route can just call it, cast the result to a string, and return that.</li>
+                </ul>
+            </div>
+                
+            <div class="content-box">
+                <h3><strong>Part 3 - That Data Belongs In A Database!</strong></h3>
+                <p>Let's use <code>flask-sqlalchemy</code> to keep our data in a durable store, a database. Create a <code>Record</code> model - you can start by adding the following code to <code>aq_dashboard.py</code>:</p>
+                <pre><code>from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__) 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
+DB = SQLAlchemy(app)
+
+class Record(DB.Model):
+    # id (integer, primary key)    
+    # datetime (string)    
+    # value (float, cannot be null)    
+
+    def __repr__(self):
+        return 'TODO - write a nice representation of a Record'
+
+@app.route('/refresh')
+def refresh():
+    """Pull fresh data from Open AQ and replace existing data."""
+    DB.drop_all()
+    DB.create_all()
+    # TODO Get data from OpenAQ, make Record objects with it, and add to db    # YOUR CODE HERE
+    DB.session.commit()
+    return root()
+</code></pre>
+                <ul>
+                    <li>Please finish the data model for the <code>Record</code> table, creating table columns with the attributes mentioned in the comments within the class (see code above).</li>
+                    <li>Then, complete the missing portions of the <code>refresh</code> route to loop over the list of tuples from your <code>get_results</code> function to add new records to the database. As the <code>Record</code> class indicates, store any datetime as a string – SQL does support native <code>datetime</code> objects.</li>
+                    <li>While the provided <code>Record</code> class is adequate for storage, you should implement the <code>__repr__</code> method to provide a nicer representation, so when the objects are printed or converted to a string, you can see their time and values.</li>
+                </ul>
+                <p>To verify that these records are correctly inserted into the DB , you can execute <code>FLASK_APP=aq_dashboard.py flask shell</code></p>
+                <p>Your output may differ from what is shown below if you have written your <code>__repr__</code> function differently, but it should contain comparable information.</p>
+                <pre><code>&gt;&gt;&gt; from aq_dashboard import Record
+&gt;&gt;&gt; Record.query.all()[:5]
+[&lt; Time 2019-03-08T01:00:00.000Z --- Value 9.48 &gt;, &lt; Time 2019-03-08T00:00:00.000Z --- Value 3.0 &gt;, &lt; Time 2019-03-08T00:00:00.000Z --- Value 8.13 &gt;, &lt; Time 2019-03-07T23:00:00.000Z --- Value 3.0 &gt;, &lt; Time 2019-03-07T23:00:00.000Z --- Value 8.13 &gt;]
+</code></pre>
+            </div>
+                
+            <div class="content-box">
+                <h3><strong>Part 4 - Dashboard to the Finish</strong></h3>
+                <p>Now that your data is in a database, revisit your main route - instead of pulling all data directly from the API, query the database for any <code>Record</code> objects that have <code>value</code> greater than or equal to 10. The <a title="https://docs.sqlalchemy.org/en/20/orm/queryguide/query.html" href="https://docs.sqlalchemy.org/en/20/orm/queryguide/query.html" target="_blank">filter</a> method of SQLALchemy queries will be invaluable for this. <strong>Hint</strong> Your query should look like <code>Record.query.filter(condition).all()</code>, where <code>condition</code> is a comparison/statement that returns a boolean (true/false), and you can access the fields of <code>Record</code> to make that comparison.</p>
+                <p>Finally, return this filtered list of "potentially risky" PM 2.5 datetime/value tuples (again, you should make it a string for Flask). You now have a dashboard (albeit a basic one) that stores, updates, and displays useful data! Note - you may get few or even no values above the threshold. You can double-check by investigating the raw data, but that may be correct - it just means we have fairly clean air right now!</p>
+            </div>
+                
+            <div class="content-box">
+                <h3><strong>Part 5 - Deploy Your Dashboard</strong></h3>
+                <p>Now that you have a working air quality dashboard, it's time to deploy it to the web so others can access it. You can deploy your Flask application to one of the following platforms:</p>
+                <ul>
+                    <li><strong>Render</strong>: A modern cloud platform that offers a generous free tier for web services and PostgreSQL databases. <a href="https://render.com/docs/deploy-flask" target="_blank">Render Flask Deployment Guide</a></li>
+                    <li><strong>Railway</strong>: An infrastructure platform that provides a developer-friendly experience with a free tier. <a href="https://railway.app/guides" target="_blank">Railway</a></li>
+                    <li><strong>Fly.io</strong>: A platform for running full-stack apps globally with a free tier. <a href="https://fly.io/docs/languages-and-frameworks/python/" target="_blank">Fly.io Python Deployment Guide</a></li>
+                    <li><strong>Heroku</strong>: While no longer offering a completely free tier, Heroku remains a popular option for Flask deployment. <a href="https://devcenter.heroku.com/articles/getting-started-with-python" target="_blank">Heroku Python Guide</a></li>
+                </ul>
+                <p>For your deployment, you'll need to:</p>
+                <ul>
+                    <li>Create an account on your chosen platform, if you don't already have one</li>
+                    <li>Set up your application for deployment (requirements.txt or Pipfile, Procfile if needed)</li>
+                    <li>Configure environment variables if necessary</li>
+                    <li>Deploy your application and ensure it's accessible via a public URL</li>
+                    <li>Make sure the database functionality works in your deployed application</li>
+                </ul>
+                <p>Include the URL of your deployed application in your GitHub repository's README.md file.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Submission</h2>
+            <div class="content-box">
+                <p>To submit your Sprint Challenge:</p>
+                <ol>
+                    <li>Create a new GitHub repository with all your solution files</li>
+                    <li>Push your changes to GitHub</li>
+                    <li>Submit the URL to your GitHub repository</li>
+                </ol>
+                
+                <p>Please also add a screenshot of your running application loaded locally in a web browser, to facilitate grading and feedback.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Grading Rubric</h2>
+            <div class="content-box">
+                <h3>Flask Application Setup (20%)</h3>
+                <ul>
+                    <li>Successfully created Flask application</li>
+                    <li>Proper environment setup</li>
+                    <li>Correct implementation of routes</li>
+                </ul>
+                
+                <h3>API Integration (20%)</h3>
+                <ul>
+                    <li>Successfully connected to OpenAQ API</li>
+                    <li>Proper extraction of data from API response</li>
+                    <li>Correct formatting of data for display</li>
+                </ul>
+                
+                <h3>Database Implementation (20%)</h3>
+                <ul>
+                    <li>Correctly defined Record model</li>
+                    <li>Successfully stored API data in database</li>
+                    <li>Properly implemented __repr__ method</li>
+                </ul>
+                
+                <h3>Dashboard Functionality (20%)</h3>
+                <ul>
+                    <li>Successfully queried database with filter</li>
+                    <li>Correctly displayed filtered results</li>
+                    <li>Overall application functionality</li>
+                </ul>
+
+                <h3>Deployment (20%)</h3>
+                <ul>
+                    <li>Successfully deployed application to a cloud platform</li>
+                    <li>Application accessible via public URL</li>
+                    <li>Database functionality working in deployed environment</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>Challenge Resources</h2>
+            <div class="content-box">
+                <h3>Helpful Resources</h3>
+                <div class="resource-links">
+                    <a href="https://flask.palletsprojects.com/en/2.0.x/" class="resource-link secondary" target="_blank">Flask Documentation</a>
+                    <a href="https://flask-sqlalchemy.palletsprojects.com/en/2.x/" class="resource-link secondary" target="_blank">Flask-SQLAlchemy Documentation</a>
+                    <a href="https://docs.openaq.org/" class="resource-link secondary" target="_blank">OpenAQ API Documentation</a>
+                    <a href="https://www.health.ny.gov/environmental/indoors/air/pmq_a.htm" class="resource-link secondary" target="_blank">PM 2.5 and Health Information</a>
+                </div>
+
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 BloomTech. All rights reserved.</p>
+    </footer>
+</body>
+</html>
