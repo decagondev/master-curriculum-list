@@ -1,0 +1,163 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Objective 02 - Introduce the Keras Sequential Model API</title>
+<meta name="identifier" content="g1a749a0c91eb7914ce436bf79cdb28d4"/>
+<meta name="editing_roles" content="teachers"/>
+<meta name="workflow_state" content="active"/>
+</head>
+<body>
+<h2 id="overview">Overview</h2>
+<p><span>In the last objective, we coded a single-layer perceptron using just Python and NumPy. While this was (hopefully) a helpful exercise, most of the neural networks you'll be working with are more complicated and include many more layers and neurons.</span></p>
+<p><span>Fortunately, there is an excellent high-level library called </span><a class="inline_disabled" href="https://keras.io/about/" target="_blank">Keras</a><span> that we can use to build neural networks. The Keras library is user-friendly and modular, with the option to use different back ends, including TensorFlow, CNTK, Theano, MXNet, and PlaidML</span></p>
+<h3 id="keras-classes">Keras Classes</h3>
+<p><span>This library provides a simple way to create and train neural networks. We'll be using the sequential model class</span> (<code>tf.keras.models.Sequential()</code>) and will add layers with the layer activation functions (<code>model.add(layers.Dense()</code>). After the model is created, we need to compile it with the model training class (<code>Model.compile()</code>).</p>
+<p>Before we create a more complicated keras model, we'll reproduce the perceptron model that we coded up in the previous objective.</p>
+<p>The basic process that we'll follow is very similar to how we fit models in Unit 2:</p>
+<ul>
+<li>Load Data</li>
+<li>Define Model</li>
+<li>Compile Model</li>
+<li>Fit Model</li>
+<li>Evaluate Model</li>
+</ul>
+<pre><code class="python language-python"># Imports
+import pandas as pd
+
+# Create the OR operator
+data = { 'x1': [0,1,0,1],
+         'x2': [0,0,1,1],
+         'y':  [0,1,1,1]
+       }
+
+df = pd.DataFrame.from_dict(data).astype('int')
+display(df.head())
+
+# Separate feature and target
+X = df[['x1', 'x2']].values
+y = df['y'].values</code></pre>
+<div>
+<table class="dataframe" border="1">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>x1</th>
+<th>x2</th>
+<th>y</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<th>1</th>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<th>2</th>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<th>3</th>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="keras-perceptron">Keras Perceptron</h3>
+<p>Now we'll use Keras to create the perceptron model. We have one layer, which is both the input layer and the output layer.</p>
+<pre><code class="python language-python"># Import Keras classes
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+# Perceptron model
+model = Sequential()
+model.add(Dense(1,input_dim=2, activation='sigmoid'))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.fit(X,y, epochs=10);</code></pre>
+<pre><code>Epoch 1/10
+1/1 [==============================] - 0s 821us/step - loss: 0.5747 - accuracy: 1.0000
+Epoch 2/10
+1/1 [==============================] - 0s 926us/step - loss: 0.5741 - accuracy: 0.7500
+Epoch 3/10
+1/1 [==============================] - 0s 766us/step - loss: 0.5735 - accuracy: 0.7500
+Epoch 4/10
+1/1 [==============================] - 0s 702us/step - loss: 0.5729 - accuracy: 0.7500
+Epoch 5/10
+1/1 [==============================] - 0s 858us/step - loss: 0.5724 - accuracy: 0.7500
+Epoch 6/10
+1/1 [==============================] - 0s 899us/step - loss: 0.5718 - accuracy: 0.7500
+Epoch 7/10
+1/1 [==============================] - 0s 3ms/step - loss: 0.5712 - accuracy: 0.7500
+Epoch 8/10
+1/1 [==============================] - 0s 2ms/step - loss: 0.5706 - accuracy: 0.7500
+Epoch 9/10
+1/1 [==============================] - 0s 933us/step - loss: 0.5700 - accuracy: 0.7500
+Epoch 10/10
+1/1 [==============================] - 0s 2ms/step - loss: 0.5695 - accuracy: 0.7500</code></pre>
+<pre><code class="python language-python"># Evaluate the model
+print('Model accuracy: ', model.evaluate(X, y)[1]*100)</code></pre>
+<pre><code>1/1 [==============================] - 0s 855us/step - loss: 0.5689 - accuracy: 0.7500
+Model accuracy:  75.0</code></pre>
+<h2 id="follow-along">Follow Along</h2>
+<p>We'll test out keras with the Pima Indians diabetes dataset. Recall that this dataset uses various health metrics to predict if a certain individual will have the specified disease, in this case diabetes. The dataset information is available <a class="inline_disabled" href="https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.names" target="_blank">here.</a></p>
+<p><a class="inline_disabled" href="https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.names" target="_blank"></a>The link to the csv is in the code cell below.</p>
+<h3 id="data-parameters">Data Parameters</h3>
+<p><span>We have eight input variables (features) that we're using to predict if the presence of the disease has been tested as positive (0-no, 1-yes). As usual, we'll load the data and separate it into training and testing sets.</span></p>
+<pre><code class="python language-python"># Load the Pima Indians diabetes dataset
+import numpy as np
+
+# Set the URL for the data location
+url = 'https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv'
+
+# Load the dataset
+dataset = np.loadtxt(url, delimiter=',')
+
+# Split into input (X) and output (y) variables
+# (8 input columns, 1 target column)
+X = dataset[:,0:8]
+y = dataset[:,8]</code></pre>
+<h3 id="define-the-layers">Define the Layers</h3>
+<p>We have eight inputs to our model, so the input layer should have eight neurons. But, determining the number of other "hidden" layers and their sizes is a more difficult task. There isn't a simple answer and often we need to use trial and error to decide on the number of layers.</p>
+<p>For this dataset, we'll start with three layers:</p>
+<pre><code class="python language-python"># Define the keras model
+model = Sequential()
+model.add(Dense(12, input_dim=8, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))</code></pre>
+<p><span>We have our model layers defined, so the next step is to compile the model. This step is slightly different from the standard scikit-learn models from Unit 2; it is the last step in defining the model before training. In this step, we define the loss function or the error during the learning process. We also set the optimizer, which sets the input weights to the model after comparing the prediction and loss function. Finally, we can choose which metric to use in evaluating our model.</span></p>
+<p><span>For this dataset, a binary cross entropy loss function is suitable. The optimizer uses the Adam algorithm and is computationally efficient. Finally, we'll use the model accuracy as the metric.</span></p>
+<pre><code class="python language-python"># Compile the keras model
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])</code></pre>
+<p>Now the model is ready to train and fit! In this step, we need to specify the data to train on, the number of epochs, and the batch size.</p>
+<p><span>We'll train our first model on the dataset we created above, stored in the X and y variables. The number of epochs specifies how many times the model will go through the whole dataset. For now, we'll set this to be 100, but we'll come back to discussing how to set this value automatically.</span></p>
+<p><span>Finally, the batch size specifies the number of training examples used to estimate the error gradient. We'll come back to this concept, but for now, it's essential to know that the larger the batch size, the longer it takes to train the model.</span></p>
+<p>Time to train the model!</p>
+<pre><code class="python language-python"># Fit the keras model on the dataset
+# (remove the verbose=0 argument to see the output)
+model.fit(X, y, epochs=100, batch_size=10, verbose=0);</code></pre>
+<h3 id="evaluate-the-model">Evaluate the Model</h3>
+<p><span>The last step is to evaluate the model. Of course, you'll also see the loss and accuracy values displayed if you have the output from the training set to display. But when we use the model.evaluate() method, we will see the model's overall accuracy, not just for each epoch.</span></p>
+<pre><code class="python language-python"># Evaluate the model
+print('Model accuracy: ', model.evaluate(X, y)[1]*100)</code></pre>
+<pre><code>24/24 [==============================] - 0s 821us/step - loss: 0.5424 - accuracy: 0.7500
+Model accuracy:  75.0</code></pre>
+<h2 id="challenge">Challenge</h2>
+<p><span>If you have followed along with the above code, you can try changing some of the parameters to see how the model's accuracy changes. An excellent place to start would be with the number of epochs and the batch size. If you set the number of epochs too high, the model will take longer to train. Similarly, if you set the batch size small, it will also take longer to train. We'll cover both of these parameters in the following few modules.</span></p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a href="https://keras.io/about/">About keras</a></li>
+<li><a href="https://keras.io/api/">keras API reference</a></li>
+</ul>
+</body>
+</html>

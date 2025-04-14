@@ -1,0 +1,86 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Objective 02 - Export a Keras Model and Load it Into a Lightweight Web Application</title>
+<meta name="identifier" content="gdd51671b780c75c8c6bfaa7ab73d5628"/>
+<meta name="editing_roles" content="teachers"/>
+<meta name="workflow_state" content="active"/>
+</head>
+<body>
+<h2 id="overview">Overview</h2>
+<p><span>We have spent a lot of time learning to create and fit neural network models over the past sprint. Depending on the number of parameters and other characteristics, it may take longer to train your model. We benefit by saving the weights learned by our model and then load those parameters later, either to use the model or to continue training.</span></p>
+<p><span>Fortunately, the Keras ModelCheckpoint class provides a convenient way to save the model weights at a specified frequency. Thus, the model can be saved at various points in the training process, and we can specify which metric to monitor, such as the loss or accuracy.</span></p>
+<p><span>When the weights and architecture information are saved, we can load the parameters later and either use the model or continue training.</span></p>
+<h2 id="follow-along">Follow Along</h2>
+<p>Let's look at an example from earlier in the sprint, and use <code>ModelCheckpoint</code> to save and then re-load the model.</p>
+<pre><code class="python language-python">from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+# Define the keras model
+model = Sequential()
+model.add(Dense(12, input_dim=8, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+
+# Compile the keras model
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])</code></pre>
+<p><span>The above code is just the model that we fit in the first module of this sprint: we defined the architecture (an input layer, two hidden layers, and the output, with the appropriate activation functions) and compiled the model.</span></p>
+<p>Next, let's add the callback and save the checkpoints. For this callback, we'll save just the model weights.</p>
+<pre><code class="python language-python"># Create checkpoint options
+from tensorflow.keras.callbacks import ModelCheckpoint
+cpoint = ModelCheckpoint("weights_best.h5", 
+                         verbose=1, save_weights_only=True)</code></pre>
+<p>And finally, load the dataset and fit the model, saving the weights with the callback function.</p>
+<pre><code class="python language-python"># Load the Pima Indians diabetes dataset
+import numpy as np
+
+# Set the URL for the data location
+url = 'https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv'
+
+# Load the dataset
+dataset = np.loadtxt(url, delimiter=',')
+
+# Split into input (X) and output (y) variables
+# (8 input columns, 1 target column)
+X = dataset[:,0:8]
+y = dataset[:,8]
+
+# Fit the keras model on the dataset
+# (remove the verbose=0 argument to see the output)
+model.fit(X, y, epochs=5, batch_size=10, verbose=0, callbacks=[cpoint]);</code></pre>
+<pre><code>Epoch 00001: saving model to weights_best.h5
+
+Epoch 00002: saving model to weights_best.h5
+
+Epoch 00003: saving model to weights_best.h5
+
+Epoch 00004: saving model to weights_best.h5
+
+Epoch 00005: saving model to weights_best.h5</code></pre>
+<p>Now we can look at the saved model weights and architecture.</p>
+<pre><code class="python language-python"># View the saved model weights
+model.load_weights('weights_best.h5')
+model.summary()</code></pre>
+<pre><code>Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense (Dense)                (None, 12)                108       
+_________________________________________________________________
+dense_1 (Dense)              (None, 8)                 104       
+_________________________________________________________________
+dense_2 (Dense)              (None, 1)                 9         
+=================================================================
+Total params: 221
+Trainable params: 221
+Non-trainable params: 0
+_________________________________________________________________</code></pre>
+<h2 id="challenge">Challenge</h2>
+<p><span>Now it's your turn. Using the code above or a previous model you fit, set up the callback and model checkpoint. You can also explore different metrics for how often your model parameters will be saved.</span></p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a href="https://keras.io/api/callbacks/model_checkpoint/">Keras: ModelCheckpoints</a></li>
+<li><a href="https://machinelearningmastery.com/check-point-deep-learning-models-keras/">Tutorial: Checkpoint Deep Learning Models with Keras</a></li>
+</ul>
+</body>
+</html>

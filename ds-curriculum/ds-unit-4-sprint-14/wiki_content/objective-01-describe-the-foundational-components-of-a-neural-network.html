@@ -1,0 +1,135 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Objective 01 - Describe the Foundational Components of a Neural Network</title>
+<meta name="identifier" content="g5852ed5e2b5f3974991e2affdba3fa3c"/>
+<meta name="editing_roles" content="teachers"/>
+<meta name="workflow_state" content="active"/>
+</head>
+<body>
+<h2>Overview</h2>
+<p>Later in this module, we will use a few handy tools to architect and train neural networks. But before we dive into that, we need to understand much more basic concepts of neural networks. As you can see from the name, neural networks use <em>neurons</em>, a digital-analog of a biological neuron. These neurons are linked or networked in a certain way to form a neural network. Essentially, a neural network is a computational model that works similarly to the human (or animal) brain.</p>
+<p>Neural networks range from simple single-layer perceptrons to complex ones with many hidden layers composed of many neurons. The complexity of the neural network depends on the dataset and the problem to solve.</p>
+<h3>Perceptron</h3>
+<p>A neuron can be a single unit that accepts input (data) and provides output. The value of the output depends on the <em>activation threshold</em> of the neuron. The neuron will "fire" if the input is above the threshold; otherwise, the output is zero.</p>
+<p>The input to this perceptron is the data multiplied by a set of weights. The weights are updated for each iteration or pass through the network. The weighted input is then passed to the activation function. This function maps the input to the output, which depends on the function.</p>
+<p>We start with some input data and a set of weights to apply to that data. The one part we haven't mentioned yet is how a neural network learns. On the first iteration, the weights are selected randomly. Then, the weights are adjusted after the calculated results are compared to the expected results (using training data). Finally, these new weights are used to calculate the weighted sum, new results are calculated, and so on for the number of iterations specified.</p>
+<h2>Follow Along</h2>
+<p>Let's implement a simple single-layer perceptron to explain better what we learned in the overview. It will be easier to understand how the different components of a neural network fit together with some example code.</p>
+<p>In the following example, we'll describe and implement the following parts of a neural network:</p>
+<ul>
+<li>activation function</li>
+<li>input data</li>
+<li>weights</li>
+<li>learning rate</li>
+</ul>
+<h3>Activation function</h3>
+<p>The activation function maps the input to the output. This example uses a <em>step function</em> where the output is 0 if the sum of the weighted input is less than 0 and 1 otherwise. Again, a visualization of the function will help.</p>
+<div class="codehilite">
+<pre><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1"># Define the activation function</span>
+<span class="n">unit_step</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span>
+
+<span class="c1"># Vectorize the function (use on an array)</span>
+<span class="n">unit_step_v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">unit_step</span><span class="p">)</span>
+
+<span class="c1"># Create arrays to plot</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">unit_step_v</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'input'</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'step function output'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre>
+</div>
+<p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/sprint_2/mod1_obj1_stepfunc.png" alt="mod1<em>obj1</em>stepfunc.png" loading="lazy"></p>
+<p>Next, we'll define some data to test, which in this case will be the logical OR operator: for input that includes a 1, the output is 1; otherwise, the output is 0. We'll consider an input array of two values so the possible choices are: <code>[0,0], [0,1], [1,0], [1,1]</code>. There is also a bias term, which is currently set to 1 for all inputs (we can use the bias to adjust the threshold; we will focus on the weights only first). The other part of the training data is the expected output, 0 for <code>[0,0]</code> and 1 for the rest of the inputs.</p>
+<div class="codehilite">
+<pre><code><span class="c1"># Data ('OR' gate)</span>
+<span class="c1"># tuple format: ([x1, x2, bias], expected)</span>
+<span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">1</span><span class="p">),</span>
+<span class="p">]</span>
+</code></pre>
+</div>
+<p>Now we'll code the perceptron. First, we'll initialize the weights using random numbers between 0 and 1. Then we'll set the learning rate as 0.2 (we'll learn more about the learning rate in the next module). We'll start with a low number of iterations so we can easily look through our output.</p>
+<div class="codehilite">
+<pre><code><span class="c1"># Perceptron code follows the example here, with</span>
+<span class="c1"># some modifications: </span>
+<span class="c1"># https://blog.dbrgn.ch/2013/3/26/perceptrons-in-python/</span>
+
+<span class="c1"># Imports</span>
+<span class="c1">#for random input selection</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span> 
+
+<span class="c1"># Weights (begin with random weights)</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Errors (store for plotting)</span>
+<span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Learning rate (the size of "jumps" when updating the weights)</span>
+<span class="n">learn_rate</span> <span class="o">=</span> <span class="mf">0.2</span>
+
+<span class="c1"># Number of iterations/weight updates</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">50</span>
+
+<span class="c1"># "Learning" loop</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+
+    <span class="c1"># Select a random item from the training data</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">expected</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span>
+
+    <span class="c1"># Neuron calculation (dot product of weights and input)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+    <span class="c1"># Compare to the expected result</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">expected</span> <span class="o">-</span> <span class="n">unit_step</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+    <span class="c1"># Update the weights</span>
+    <span class="n">w</span> <span class="o">+=</span> <span class="n">learn_rate</span> <span class="o">*</span> <span class="n">error</span> <span class="o">*</span> <span class="n">x</span>
+
+<span class="c1"># Test the perceptron with the "learned" weights</span>
+<span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">training_data</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2"> -&gt; </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">result</span><span class="p">,</span> <span class="n">unit_step</span><span class="p">(</span><span class="n">result</span><span class="p">)))</span>
+</code></pre>
+</div>
+<pre><code>[0 0]: -0.09972348640877343 -&gt; 0
+[0 1]: 0.633699260921845 -&gt; 1
+[1 0]: 0.5182908336831622 -&gt; 1
+[1 1]: 1.2517135810137805 -&gt; 1
+</code></pre>
+<p>We made a neural network! It learned to predict a 0 when the input was <code>[0,0]</code> and 1 otherwise. We completed 50 iterations, which seems like plenty to learn this simple model. We'll plot the error as a function of iteration and see when it stays at zero. .</p>
+<div class="codehilite">
+<pre><code><span class="c1"># Imports</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1"># Plot error as a function of iteration</span>
+<span class="n">iteration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iteration</span><span class="p">,</span> <span class="n">errors</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'iteration'</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'error'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre>
+</div>
+<p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/sprint_2/mod1_obj1_error.png" alt="mod1<em>obj1</em>error.png" loading="lazy"></p>
+<p>The error stays at zero after about 20 iterations (though this will change because of the random weights chosen at the start), which seems reasonable for a small dataset and a relatively simple learning model.</p>
+<h2>Challenge</h2>
+<p>There are a few parameters that can be adjusted in the above example. But first, you might want to wrap the perceptron in a function and then try out different parameters. For example, try using a different activation function; the <a href="https://ml-cheatsheet.readthedocs.io/en/latest/activation_functions.html#sigmoid">sigmoidLinks to an external site.</a> is a commonly used one. Another parameter that could be adjusted is the learning rate; what changes do you have if you set this to a larger value, such as 0.75? Finally, try a different training dataset.</p>
+<h2>Additional Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=aircAruvnKk&amp;t=6s">3Blue1Brown: But what is a Neural Network? | Deep learning, chapter 1</a></li>
+<li><a href="https://medium.com/@thomascountz/perceptrons-in-neural-networks-dc41f3e4c1b9">First neural network for beginners explained (with code)</a></li>
+<li><a href="https://medium.com/@thomascountz/perceptrons-in-neural-networks-dc41f3e4c1b9">Perceptrons in Neural Networks</a></li>
+</ul>
+</body>
+</html>
