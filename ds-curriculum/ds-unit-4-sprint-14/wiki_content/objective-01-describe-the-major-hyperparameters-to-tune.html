@@ -1,0 +1,114 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Objective 01 - Describe the Major Hyperparameters to Tune</title>
+<meta name="identifier" content="g22a7867c1ea024c97bb885146e9d8374"/>
+<meta name="editing_roles" content="teachers"/>
+<meta name="workflow_state" content="active"/>
+</head>
+<body>
+<h2 id="overview">Overview</h2>
+<p><span>We have already experimented with hyperparameter tuning in Unit 2, using the scikit-learn GridSearchCV method. Remember that a hyperparameter is a parameter set before we begin training our model; parameters are what the model learns.</span></p>
+<p><span>In our work with neural networks so far, we've already been setting the hyperparameters and even changing them to see how they affect the model's training. This module will review the significant hyperparameters that are usually tuned and go over an example of how to do a grid search.</span></p>
+<h3 id="hyperparameters">Hyperparameters</h3>
+<p><span>Neural networks have more parameters to tune than the other models we've worked with so far. Some of the most important ones are:</span></p>
+<ul>
+<li>batch size</li>
+<li>learning rate and number of training epochs</li>
+<li>activation function</li>
+<li>number of neurons in the hidden layer(s)</li>
+<li>optimization algorithms</li>
+</ul>
+<h4 id="batch-size">Batch size</h4>
+<p><span>In the previous module, we explored changing the batch size and then just looked at the accuracy. When we used a large batch size (the whole training dataset, in that case), the accuracy decreased. Usually, it is best to use a batch size between 2 and 32 for efficient processor use and keep the batch size small. Smaller batch sizes can take longer to train but provide more weight updates and might converge on a better solution.</span></p>
+<h4 id="learning-rate-and-number-of-training-epochs">Learning rate and number of training epochs</h4>
+<p><span>We also looked at adjusting the learning rate in the previous module. Adjusting the learning rate is the value that controls how much to change the model when the estimated error is calculated. Big changes (large learning rate) might not result in a good solution, and small changes (small learning rate) result in longer training times. The ideal learning rate results in a stable solution in a reasonable amount of time.</span></p>
+<h4 id="activation-function">Activation function</h4>
+<p><span>Activation functions have different properties, and you might get better results using a different one. However, since there are only a few to choose from, this doesn't add a lot of parameters to the space you'll want to search over.</span></p>
+<h4 id="number-of-neurons">Number of neurons</h4>
+<h4 id="optimization-algorithms">Optimization algorithms</h4>
+<h2 id="follow-along">Follow Along</h2>
+<p><span>We'll keep this step pretty simple and create a play dataset for this example. That way, we can more clearly see how to do the tuning rather than load and fit a model on a larger dataset.</span></p>
+<ul>
+<li>create a dataset with the make classification function</li>
+<li>do a grid search</li>
+</ul>
+<pre><code class="python language-python"># Example modified from:
+# https://chrisalbon.com/deep_learning/keras/tuning_neural_network_hyperparameters/
+
+# Imports to create the classification
+from sklearn.datasets import make_classification
+
+# Define the number of features
+num_features=50
+
+# Generate features matrix and target vector
+# binary classification (two classes)
+features, target = make_classification(n_samples = 10000,
+                                       n_features = num_features,
+                                       n_informative = 3,
+                                       n_redundant = 0,
+                                       n_classes = 2,
+                                       weights = [.5, .5],
+                                       random_state = 42)
+
+# Verify the size of the features and target
+print("Features array shape: ", features.shape)
+print("Target array length: ", len(target))</code></pre>
+<pre><code>Features array shape:  (10000, 50)
+Target array length:  10000</code></pre>
+<pre><code class="python language-python"># Import keras models and layers
+from keras import models
+from keras import layers
+
+# Function to return a compiled network
+def make_network(optimizer='adam'):
+
+    # Instantiate a sequential model
+    network = models.Sequential()
+
+    # Add an input layer (shape=number of features)
+    network.add(layers.Dense(units=8, activation='relu', input_shape=(num_features,)))
+
+    # Add a hidden layer with 8 neurons
+    network.add(layers.Dense(units=8, activation='relu'))
+
+    # Add an output layer with a sigmoid activation function
+    network.add(layers.Dense(units=1, activation='sigmoid'))
+
+    # Compile the model
+    network.compile(loss='binary_crossentropy', # Cross-entropy
+                    optimizer=optimizer, # Optimizer
+                    metrics=['accuracy']) # Accuracy performance metric
+
+    # Return compiled network
+    return network</code></pre>
+<pre><code class="python language-python"># Scikit-learn wrappers for keras
+from keras.wrappers.scikit_learn import KerasClassifier
+neural_network = KerasClassifier(build_fn=make_network, verbose=0)</code></pre>
+<pre><code class="python language-python"># Define hyperparameter space over which to search
+epochs = [10, 25]
+batches = [4, 8, 32]
+optimizers = ['rmsprop', 'adam']
+
+# Make a dictionary of the parameters
+hyperparameters = dict(optimizer=optimizers, epochs=epochs, batch_size=batches)
+
+# Create and fit the grid search
+from sklearn.model_selection import GridSearchCV
+grid = GridSearchCV(estimator=neural_network, cv=5, param_grid=hyperparameters)
+grid_result = grid.fit(features, target)</code></pre>
+<p>This might take a few minutes (or more) to train as we are running a lot of batches through the neural network. If you are working through this example in your own notebook, you can either adjust the number of batch size parameters or train fewer epochs.</p>
+<p>Then, we can view the best parameters as determined by the grid search.</p>
+<pre><code class="python language-python"># Take a look at the best parameters
+grid_result.best_params_</code></pre>
+<pre><code>{'batch_size': 4, 'epochs': 25, 'optimizer': 'adam'}</code></pre>
+<h2 id="challenge">Challenge</h2>
+<p><span>Following the example above, try out your own set of parameters. An additional parameter that we didn't test was the activation function. You can add this into your parameter dictionary and see if it makes a difference in the best-fit parameters returned.</span></p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a href="https://www.analyticsvidhya.com/blog/2021/05/tuning-the-hyperparameters-and-layers-of-neural-network-deep-learning/">Tuning Neural Network Hyperparameters</a></li>
+<li><a href="https://towardsdatascience.com/simple-guide-to-hyperparameter-tuning-in-neural-networks-3fe03dad8594">Simple Guide to Hyperparameter Tuning in Neural Networks</a></li>
+</ul>
+</body>
+</html>

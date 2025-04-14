@@ -1,0 +1,145 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Objective 02 - Implement an Experiment Tracking Framework</title>
+<meta name="identifier" content="gb7c26d522b7c3f4fff8f52542f649776"/>
+<meta name="editing_roles" content="teachers"/>
+<meta name="workflow_state" content="active"/>
+</head>
+<body>
+<h2 id="overview">Overview</h2>
+<p><span>In the previous modules and objectives, we know how complicated neural networks can be and the number of hyperparameters that need to be tuned. Fortunately, there are tools to assist us in understanding how our model is affected by different hyperparameters.</span></p>
+<p><span>TensorBoard provides a way to track experiment metrics like loss and accuracy and to provide a way to visualize the results.</span></p>
+<h2 id="follow-along">Follow Along</h2>
+<p><span>We'll start our framework example by using the same artificial dataset from the previous objective. First, load in the data and then split it into training and testing sets.</span></p>
+<pre><code class="python language-python">from sklearn.model_selection import train_test_split
+
+# Imports to create the classification and train/test sets
+from sklearn.datasets import make_classification
+
+# Define the number of features
+num_features=50
+
+# Generate features matrix and target vector
+# binary classification (two classes)
+features, target = make_classification(n_samples = 10000,
+                                       n_features = num_features,
+                                       n_informative = 3,
+                                       n_redundant = 0,
+                                       n_classes = 2,
+                                       random_state = 42)
+
+x_train, x_test, y_train, y_test = train_test_split(
+    features, target, test_size=0.25, random_state=42)</code></pre>
+<p><span>The following example is from the Tensorflow example found </span><a href="https://www.tensorflow.org/tensorboard/hyperparameter_tuning_with_hparams"><span>here.</span></a></p>
+<p><a href="https://www.tensorflow.org/tensorboard/hyperparameter_tuning_with_hparams"></a><span> The next step is to set up the parameters we would like to tune over. In the following example, the parameters are:</span></p>
+<ul>
+<li>Number of units in the first dense layer</li>
+<li>Dropout rate in the dropout layer</li>
+<li>Optimizer</li>
+</ul>
+<pre><code class="python language-python">%load_ext tensorboard</code></pre>
+<pre><code class="python language-python"># Imports
+import tensorflow as tf
+from tensorboard.plugins.hparams import api as hp
+
+# Specify the parameters and values
+HP_NUM_UNITS = hp.HParam('num_units', hp.Discrete([8, 16]))
+HP_DROPOUT = hp.HParam('dropout', hp.RealInterval(0.1, 0.2))
+HP_OPTIMIZER = hp.HParam('optimizer', hp.Discrete(['adam', 'sgd']))
+
+# Evaluate the model using accuracy
+METRIC_ACCURACY = 'accuracy'
+
+# Write the function to create the logs
+with tf.summary.create_file_writer('logs/hparam_tuning').as_default():
+  hp.hparams_config(
+    hparams=[HP_NUM_UNITS, HP_DROPOUT, HP_OPTIMIZER],
+    metrics=[hp.Metric(METRIC_ACCURACY, display_name='Accuracy')],
+  )</code></pre>
+<h3 id="adapt-tensorflow-runs-to-log-hyperparameters-and-metrics">Adapt TensorFlow runs to log hyperparameters and metrics</h3>
+<pre><code class="python language-python"># Write the function to create the model with the
+# specified hyperparameter tuning
+def train_test_model(hparams):
+  model = tf.keras.models.Sequential([
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(hparams[HP_NUM_UNITS], activation=tf.nn.relu),
+    tf.keras.layers.Dropout(hparams[HP_DROPOUT]),
+    tf.keras.layers.Dense(10, activation=tf.nn.softmax),
+  ])
+  model.compile(
+      optimizer=hparams[HP_OPTIMIZER],
+      loss='sparse_categorical_crossentropy',
+      metrics=['accuracy'],
+  )
+
+# Run with 1 epoch to speed things up for demo purposes
+  model.fit(x_train, y_train, epochs=1) 
+  _, accuracy = model.evaluate(x_test, y_test)
+  return accuracy</code></pre>
+<h4 id="log-an-hparams-summary-with-the-hyperparameters-and-final-accuracy">Log an hparams summary with the hyperparameters and final accuracy:</h4>
+<pre><code class="python language-python">def run(run_dir, hparams):
+  with tf.summary.create_file_writer(run_dir).as_default():
+    hp.hparams(hparams)  # record the values used in this trial
+    accuracy = train_test_model(hparams)
+    tf.summary.scalar(METRIC_ACCURACY, accuracy, step=1)</code></pre>
+<h3 id="start-runs-and-log-them-all-under-one-parent-directory">Start runs and log them all under one parent directory</h3>
+<pre><code class="python language-python">session_num = 0
+
+for num_units in HP_NUM_UNITS.domain.values:
+  for dropout_rate in (HP_DROPOUT.domain.min_value, HP_DROPOUT.domain.max_value):
+    for optimizer in HP_OPTIMIZER.domain.values:
+      hparams = {
+          HP_NUM_UNITS: num_units,
+          HP_DROPOUT: dropout_rate,
+          HP_OPTIMIZER: optimizer,
+      }
+      run_name = "run-%d" % session_num
+      print('--- Starting trial: %s' % run_name)
+      print({h.name: hparams[h] for h in hparams})
+      run('logs/hparam_tuning/' + run_name, hparams)
+      session_num += 1</code></pre>
+<pre><code>--- Starting trial: run-0
+{'num_units': 8, 'dropout': 0.1, 'optimizer': 'adam'}
+235/235 [==============================] - 0s 1ms/step - loss: 1.5343 - accuracy: 0.4699
+79/79 [==============================] - 0s 1ms/step - loss: 0.9589 - accuracy: 0.6872
+--- Starting trial: run-1
+{'num_units': 8, 'dropout': 0.1, 'optimizer': 'sgd'}
+235/235 [==============================] - 0s 965us/step - loss: 1.2449 - accuracy: 0.6344
+79/79 [==============================] - 0s 935us/step - loss: 0.7668 - accuracy: 0.7572
+--- Starting trial: run-2
+{'num_units': 8, 'dropout': 0.2, 'optimizer': 'adam'}
+235/235 [==============================] - 0s 1ms/step - loss: 1.7891 - accuracy: 0.4013
+79/79 [==============================] - 0s 930us/step - loss: 1.0534 - accuracy: 0.6940
+--- Starting trial: run-3
+{'num_units': 8, 'dropout': 0.2, 'optimizer': 'sgd'}
+235/235 [==============================] - 0s 955us/step - loss: 1.7103 - accuracy: 0.4639
+79/79 [==============================] - 0s 893us/step - loss: 0.9107 - accuracy: 0.7308
+--- Starting trial: run-4
+{'num_units': 16, 'dropout': 0.1, 'optimizer': 'adam'}
+235/235 [==============================] - 0s 1ms/step - loss: 1.3951 - accuracy: 0.5427
+79/79 [==============================] - 0s 856us/step - loss: 0.6602 - accuracy: 0.7736
+--- Starting trial: run-5
+{'num_units': 16, 'dropout': 0.1, 'optimizer': 'sgd'}
+235/235 [==============================] - 0s 919us/step - loss: 1.2759 - accuracy: 0.5636
+79/79 [==============================] - 0s 908us/step - loss: 0.7052 - accuracy: 0.7420
+--- Starting trial: run-6
+{'num_units': 16, 'dropout': 0.2, 'optimizer': 'adam'}
+235/235 [==============================] - 0s 1ms/step - loss: 1.4608 - accuracy: 0.4924
+79/79 [==============================] - 0s 941us/step - loss: 0.6982 - accuracy: 0.7476
+--- Starting trial: run-7
+{'num_units': 16, 'dropout': 0.2, 'optimizer': 'sgd'}
+235/235 [==============================] - 0s 1ms/step - loss: 1.3706 - accuracy: 0.5804
+79/79 [==============================] - 0s 854us/step - loss: 0.7156 - accuracy: 0.7624</code></pre>
+<h3 id="visualize-the-results-in-tensorboards-hparams-plugin">Visualize the results in TensorBoard's HParams plugin</h3>
+<pre><code class="python language-python"># Uncomment the following line to display the output
+#%tensorboard --logdir logs/hparam_tuning</code></pre>
+<p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/sprint_2/mod3_obj2_tensorboard.png" alt="mod3_obj2_tensorboard.png" loading="lazy"></p>
+<h2 id="challenge">Challenge</h2>
+<p><span>There are a lot of parameters to adjust. For this challenge, try to reproduce the code exactly, either from the above or the link at the top and below. First, make sure you can get the Tensorboard running and then familiarize yourself with the output. Then, if you feel comfortable with that, try adjusting some of the parameters in the tuning function and see how they change the results.</span></p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a href="https://www.tensorflow.org/tensorboard/hyperparameter_tuning_with_hparams">Tensorboard: Tuning with hparams</a></li>
+</ul>
+</body>
+</html>
