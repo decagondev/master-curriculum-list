@@ -8,21 +8,28 @@
 </head>
 <body>
     <header>
-        <h1>DS11 Sprint Challenge</h1>
         <nav>
+            <div class="logo">Data Science Unit 3</div>
             <ul>
                 <li><a href="../index.html">Home</a></li>
-                <li><a href="../modules/module1/index.html">Module 1: Web Application Development with Flask</a></li>
-                <li><a href="../modules/module2/index.html">Module 2: Consuming Data from an API</a></li>
-                <li><a href="../modules/module3/index.html">Module 3: Adding Data Science to a Web Application</a></li>
-                <li><a href="../modules/module4/index.html">Module 4: Web Application Deployment</a></li>
+                <li class="dropdown">
+                    <a href="#">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../modules/module1/index.html">Module 1: Web Application Development with Flask</a>
+                        <a href="../modules/module2/index.html">Module 2: Consuming Data from an API</a>
+                        <a href="../modules/module3/index.html">Module 3: Adding Data Science to a Web Application</a>
+                        <a href="../modules/module4/index.html">Module 4: Web Application Deployment</a>
+                    </div>
+                </li>
                 <li><a href="../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="../sprint-challenge/index.html" class="active">Sprint Challenge</a></li>
             </ul>
         </nav>
     </header>
-
-    <main>
-        <section>
+    
+    <main class="container">
+        <h1>DS11 Sprint Challenge</h1>
+        <section id="challenge-intro">
             <h2>Air Quality in the Cloud</h2>
             <div class="content-box">
                 <h3><strong>Introduction</strong></h3>
@@ -36,7 +43,7 @@
             </div>
         </section>
 
-        <section>
+        <section id="challenge-details">
             <h2>Challenge Details</h2>
             <div class="content-box">
                 <h3><strong>Part 1 - If I could put Flask in a File</strong></h3>
@@ -67,8 +74,8 @@ Running on http://127.0.0.1:5000/
                 
             <div class="content-box">
                 <h3><strong>Part 2 - Breathe Easy with OpenAQ</strong></h3>
-                <p>You'll need the&nbsp;<a href="https://raw.githubusercontent.com/bloominstituteoftechnology/DS-Unit-3-Sprint-3-Productization-and-Cloud/master/openaq.py" target="_blank">openaq.py</a> file to help you communicate with the API and complete Part 2.</p>
-                <p>Our application is going to be a dashboard that displays air quality data from the <a title="https://docs.openaq.org" href="https://docs.openaq.org/" target="_blank">Open AQ API</a>. This API does not require authorization and can be accessed directly via HTTP requests.</p>
+                <p>You'll need the&nbsp;<a href="https://raw.githubusercontent.com/bloominstituteoftechnology/DS-Unit-3-Sprint-3-Productization-and-Cloud/master/openaq.py" target="_blank" rel="noopener">openaq.py</a> file to help you communicate with the API and complete Part 2.</p>
+                <p>Our application is going to be a dashboard that displays air quality data from the <a title="https://docs.openaq.org" href="https://docs.openaq.org/" target="_blank" rel="noopener">Open AQ API</a>. This API does not require authorization and can be accessed directly via HTTP requests.</p>
                 <p>Your first goal is to verify that you can pull data from OpenAQ with Python. The file <code>openaq.py</code> provides some functions to help you query the API. These functions make use of the <code>requests</code> package. You'll still need to <code>pip</code> or <code>pipenv</code> install <code>requests</code> (if it's not already in your environment), and then place <code>openaq.py</code> in the same directory as your <code>aq_dashboard.py</code> file. Once you've included it in the folder, try running the following in a Python REPL to verify that you can make API requests using <code>openaq.py</code>.</p>
                 <pre><code>&gt;&gt;&gt; import openaq 
 &gt;&gt;&gt; api = openaq.OpenAQ() 
@@ -78,7 +85,7 @@ Running on http://127.0.0.1:5000/
 &gt;&gt;&gt; body 
 {'meta': {'name': 'openaq-api', 'license': 'CC BY 4.0', 'website':...
 </code></pre>
-                <p>Requests to OpenAQ return a tuple of <code>status</code> (of the HTTP response - 200 is OK) and the body (the response payload, as a Python dict). The body at the top has a <code>meta</code> key for metadata, and a <code>results</code> key for the actual data. One of the more interesting endpoints is <a title="https://docs.openaq.org/#api-Measurements" href="https://docs.openaq.org/#api-Measurements" target="_blank">Measurements</a>.</p>
+                <p>Requests to OpenAQ return a tuple of <code>status</code> (of the HTTP response - 200 is OK) and the body (the response payload, as a Python dict). The body at the top has a <code>meta</code> key for metadata, and a <code>results</code> key for the actual data. One of the more interesting endpoints is <a title="https://docs.openaq.org/#api-Measurements" href="https://docs.openaq.org/#api-Measurements" target="_blank" rel="noopener">Measurements</a>.</p>
                 <pre><code>&gt;&gt;&gt; # Assuming we have the api object from above
 &gt;&gt;&gt; status, body = api.measurements(parameter='pm25') 
 &gt;&gt;&gt; status 
@@ -90,7 +97,7 @@ Running on http://127.0.0.1:5000/
 &gt;&gt;&gt; body['results'][:2] 
 [{'location': '21 de mayo', 'parameter': 'pm25', 'date': {'utc': '2019-03-08T00:00:00.000Z', 'local': '2019-03-07T21:00:00-03:00'}, 'value': 8.13, 'unit': 'µg/m³', 'coordinates': {'latitude': -37.471182288689, 'longitude': -72.36146284977}, 'country': 'CL', 'city': 'Los Angeles'}, {'location': '21 de mayo', 'parameter': 'pm25', 'date': {'utc': '2019-03-07T23:00:00.000Z', 'local': '2019-03-07T20:00:00-03:00'}, 'value': 8.13, 'unit': 'µg/m³', 'coordinates': {'latitude': -37.471182288689, 'longitude': -72.36146284977}, 'country': 'CL', 'city': 'Los Angeles'}]
 </code></pre>
-                <p>We are pulling 100 observations of measurements of fine particulate matter (PM 2.5). Note that this is equivalent to making a request to this URL (you can even see the data in your browser!): <a title="https://api.openaq.org/v1/measurements?parameter=pm25" href="https://api.openaq.org/v1/measurements?parameter=pm25" target="_blank">https://api.openaq.org/v1/measurements?parameter=pm25</a></p>
+                <p>We are pulling 100 observations of measurements of fine particulate matter (PM 2.5). Note that this is equivalent to making a request to this URL (you can even see the data in your browser!): <a title="https://api.openaq.org/v1/measurements?parameter=pm25" href="https://api.openaq.org/v1/measurements?parameter=pm25" target="_blank" rel="noopener">https://api.openaq.org/v1/measurements?parameter=pm25</a></p>
                 <p>Run the above examples locally (you will get different data - it's a live API!), and then incorporate the specific request <code>api.measurements(parameter='pm25')</code> into your application as a function named <code>get_results</code>:</p>
                 <ul>
                     <li>Import and set up the API object in your <code>aq_dashboard.py</code> file</li>
@@ -145,7 +152,7 @@ def refresh():
                 
             <div class="content-box">
                 <h3><strong>Part 4 - Dashboard to the Finish</strong></h3>
-                <p>Now that your data is in a database, revisit your main route - instead of pulling all data directly from the API, query the database for any <code>Record</code> objects that have <code>value</code> greater than or equal to 10. The <a title="https://docs.sqlalchemy.org/en/20/orm/queryguide/query.html" href="https://docs.sqlalchemy.org/en/20/orm/queryguide/query.html" target="_blank">filter</a> method of SQLALchemy queries will be invaluable for this. <strong>Hint</strong> Your query should look like <code>Record.query.filter(condition).all()</code>, where <code>condition</code> is a comparison/statement that returns a boolean (true/false), and you can access the fields of <code>Record</code> to make that comparison.</p>
+                <p>Now that your data is in a database, revisit your main route - instead of pulling all data directly from the API, query the database for any <code>Record</code> objects that have <code>value</code> greater than or equal to 10. The <a title="https://docs.sqlalchemy.org/en/20/orm/queryguide/query.html" href="https://docs.sqlalchemy.org/en/20/orm/queryguide/query.html" target="_blank" rel="noopener">filter</a> method of SQLALchemy queries will be invaluable for this. <strong>Hint</strong> Your query should look like <code>Record.query.filter(condition).all()</code>, where <code>condition</code> is a comparison/statement that returns a boolean (true/false), and you can access the fields of <code>Record</code> to make that comparison.</p>
                 <p>Finally, return this filtered list of "potentially risky" PM 2.5 datetime/value tuples (again, you should make it a string for Flask). You now have a dashboard (albeit a basic one) that stores, updates, and displays useful data! Note - you may get few or even no values above the threshold. You can double-check by investigating the raw data, but that may be correct - it just means we have fairly clean air right now!</p>
             </div>
                 
@@ -153,10 +160,10 @@ def refresh():
                 <h3><strong>Part 5 - Deploy Your Dashboard</strong></h3>
                 <p>Now that you have a working air quality dashboard, it's time to deploy it to the web so others can access it. You can deploy your Flask application to one of the following platforms:</p>
                 <ul>
-                    <li><strong>Render</strong>: A modern cloud platform that offers a generous free tier for web services and PostgreSQL databases. <a href="https://render.com/docs/deploy-flask" target="_blank">Render Flask Deployment Guide</a></li>
-                    <li><strong>Railway</strong>: An infrastructure platform that provides a developer-friendly experience with a free tier. <a href="https://railway.app/guides" target="_blank">Railway</a></li>
-                    <li><strong>Fly.io</strong>: A platform for running full-stack apps globally with a free tier. <a href="https://fly.io/docs/languages-and-frameworks/python/" target="_blank">Fly.io Python Deployment Guide</a></li>
-                    <li><strong>Heroku</strong>: While no longer offering a completely free tier, Heroku remains a popular option for Flask deployment. <a href="https://devcenter.heroku.com/articles/getting-started-with-python" target="_blank">Heroku Python Guide</a></li>
+                    <li><strong>Render</strong>: A modern cloud platform that offers a generous free tier for web services and PostgreSQL databases. <a href="https://render.com/docs/deploy-flask" target="_blank" rel="noopener">Render Flask Deployment Guide</a></li>
+                    <li><strong>Railway</strong>: An infrastructure platform that provides a developer-friendly experience with a free tier. <a href="https://railway.app/guides" target="_blank" rel="noopener">Railway</a></li>
+                    <li><strong>Fly.io</strong>: A platform for running full-stack apps globally with a free tier. <a href="https://fly.io/docs/languages-and-frameworks/python/" target="_blank" rel="noopener">Fly.io Python Deployment Guide</a></li>
+                    <li><strong>Heroku</strong>: While no longer offering a completely free tier, Heroku remains a popular option for Flask deployment. <a href="https://devcenter.heroku.com/articles/getting-started-with-python" target="_blank" rel="noopener">Heroku Python Guide</a></li>
                 </ul>
                 <p>For your deployment, you'll need to:</p>
                 <ul>
@@ -170,7 +177,7 @@ def refresh():
             </div>
         </section>
 
-        <section>
+        <section id="submission">
             <h2>Submission</h2>
             <div class="content-box">
                 <p>To submit your Sprint Challenge:</p>
@@ -184,7 +191,7 @@ def refresh():
             </div>
         </section>
 
-        <section>
+        <section id="grading">
             <h2>Grading Rubric</h2>
             <div class="content-box">
                 <h3>Flask Application Setup (20%)</h3>
@@ -198,49 +205,29 @@ def refresh():
                 <ul>
                     <li>Successfully connected to OpenAQ API</li>
                     <li>Proper extraction of data from API response</li>
-                    <li>Correct formatting of data for display</li>
                 </ul>
                 
                 <h3>Database Implementation (20%)</h3>
                 <ul>
-                    <li>Correctly defined Record model</li>
-                    <li>Successfully stored API data in database</li>
-                    <li>Properly implemented __repr__ method</li>
+                    <li>Correctly created Record model</li>
+                    <li>Proper implementation of database operations</li>
+                    <li>Data successfully stored in database</li>
                 </ul>
                 
                 <h3>Dashboard Functionality (20%)</h3>
                 <ul>
-                    <li>Successfully queried database with filter</li>
-                    <li>Correctly displayed filtered results</li>
-                    <li>Overall application functionality</li>
+                    <li>Correctly filters records from database</li>
+                    <li>Properly displays filtered data</li>
                 </ul>
-
+                
                 <h3>Deployment (20%)</h3>
                 <ul>
-                    <li>Successfully deployed application to a cloud platform</li>
-                    <li>Application accessible via public URL</li>
-                    <li>Database functionality working in deployed environment</li>
+                    <li>Successfully deployed to a cloud platform</li>
+                    <li>Application is accessible via public URL</li>
+                    <li>Database functionality works in deployed application</li>
                 </ul>
-            </div>
-        </section>
-
-        <section>
-            <h2>Challenge Resources</h2>
-            <div class="content-box">
-                <h3>Helpful Resources</h3>
-                <div class="resource-links">
-                    <a href="https://flask.palletsprojects.com/en/2.0.x/" class="resource-link secondary" target="_blank">Flask Documentation</a>
-                    <a href="https://flask-sqlalchemy.palletsprojects.com/en/2.x/" class="resource-link secondary" target="_blank">Flask-SQLAlchemy Documentation</a>
-                    <a href="https://docs.openaq.org/" class="resource-link secondary" target="_blank">OpenAQ API Documentation</a>
-                    <a href="https://www.health.ny.gov/environmental/indoors/air/pmq_a.htm" class="resource-link secondary" target="_blank">PM 2.5 and Health Information</a>
-                </div>
-
             </div>
         </section>
     </main>
-    
-    <footer>
-        <p>&copy; 2025 BloomTech. All rights reserved.</p>
-    </footer>
 </body>
 </html>
