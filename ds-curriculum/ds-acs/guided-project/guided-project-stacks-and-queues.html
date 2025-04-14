@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guided Project: Stacks and Queues</title>
+    <meta name="identifier" content="g01f9eb02c97e2e7a4de50690705d50ee"/>
+    <meta name="editing_roles" content="teachers"/>
+    <meta name="workflow_state" content="unpublished"/>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1d23; /* Dark background color */
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #222831; /* Darker container background */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            margin: 0;
+        }
+        h1 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff5722; /* Orange accent color */
+            padding-bottom: 10px;
+            text-align: center;
+            font-size: 2.5rem;
+        }
+        h2 {
+            color: #ffffff;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-size: 1.75rem;
+        }
+        h3 {
+            color: #ff5722; /* Orange accent color */
+            margin-top: 0;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #ffffff;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        p {
+            color: #b3b3b3;
+            margin-bottom: 16px;
+        }
+        
+        /* Navigation */
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .nav-link {
+            color: #ff5722;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: #ff7043;
+            text-decoration: underline;
+        }
+        .nav-link svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+        
+        /* Header */
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header-description {
+            max-width: 800px;
+            margin: 0 auto;
+            margin-top: 15px;
+            font-size: 1.2rem;
+        }
+        
+        /* Tab navigation */
+        .tab-nav {
+            display: flex;
+            border-bottom: 1px solid #333a47;
+            margin-bottom: 30px;
+        }
+        .tab-button {
+            background: none;
+            border: none;
+            color: #999;
+            padding: 15px 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab-button:hover {
+            color: #fff;
+            border-bottom-color: #555;
+        }
+        .tab-button.active {
+            color: #ff5722;
+            border-bottom-color: #ff5722;
+        }
+        
+        /* Section styling */
+        .section {
+            margin-bottom: 40px;
+            background-color: #2a303c;
+            border-radius: 4px;
+            padding: 20px;
+            border: 1px solid #333a47;
+        }
+        
+        /* Grid layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        /* Lists */
+        ul, ol {
+            color: #b3b3b3;
+            padding-left: 20px;
+            margin-left: 0;
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        
+        /* Cards */
+        .card {
+            background-color: #333a47;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        /* Code blocks */
+        .code-block {
+            background-color: #1a1d23;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        code {
+            color: #e0e0e0;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre;
+            font-size: 1rem;
+        }
+        
+        /* Code pairs */
+        .code-pairs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .code-label {
+            color: white;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        /* Video container */
+        .wistia-responsive-padding {
+            padding: 56.25% 0 0 0;
+            position: relative;
+        }
+        .wistia-responsive-wrapper {
+            height: 100%;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+        .video-container {
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        /* Links */
+        .leetcode-link {
+            color: #ff5722;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .leetcode-link:hover {
+            color: #ff7043;
+            text-decoration: underline;
+        }
+        
+        /* Hide content */
+        .hidden {
+            display: none;
+        }
+        
+        /* Spacing utilities */
+        .space-y {
+            margin-bottom: 30px;
+        }
+    </style>
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-tab-content="${tabId}"]`).classList.remove('hidden');
+            element.classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <div class="nav-container">
+            <a href="../welcome.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Welcome Page</span>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1>Guided Project: Stacks and Queues</h1>
+            <p class="header-description">
+                Learn to implement and use stack and queue data structures for solving problems.
+            </p>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="tab-nav">
+            <button 
+                data-tab="overview"
+                onclick="switchTab('overview', this)"
+                class="tab-button active">
+                Overview
+            </button>
+            <button 
+                data-tab="guided-implementation"
+                onclick="switchTab('guided-implementation', this)"
+                class="tab-button">
+                Guided Implementation
+            </button>
+            <button 
+                data-tab="practice"
+                onclick="switchTab('practice', this)"
+                class="tab-button">
+                Practice Challenge
+            </button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div>
+            <!-- Overview Tab -->
+            <div data-tab-content="overview">
+                <div class="section">
+                    <h2>Project Overview</h2>
+                    <div class="grid-container">
+                        <div>
+                            <h3>Learning Goals</h3>
+                            <ul>
+                                <li>Understand stack data structure</li>
+                                <li>Implement bracket validation</li>
+                                <li>Handle different bracket types</li>
+                                <li>Optimize validation logic</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Prerequisites</h3>
+                            <ul>
+                                <li>Basic JavaScript knowledge</li>
+                                <li>Array operations understanding</li>
+                                <li>Stack concept familiarity</li>
+                                <li>Basic problem-solving skills</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Key Concepts</h2>
+                    <div class="grid-container">
+                        <div>
+                            <h3>Stack Operations</h3>
+                            <div class="card">
+                                <ul>
+                                    <li>Push: Add element to top</li>
+                                    <li>Pop: Remove top element</li>
+                                    <li>Peek: View top element</li>
+                                    <li>isEmpty: Check if empty</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <h3>Bracket Types</h3>
+                            <div class="card">
+                                <div class="code-pairs">
+                                    <div>
+                                        <p class="code-label">Opening</p>
+                                        <code>( { [</code>
+                                    </div>
+                                    <div>
+                                        <p class="code-label">Closing</p>
+                                        <code>) } ]</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guided Implementation Tab -->
+            <div data-tab-content="guided-implementation" class="hidden">
+                <div class="section">
+                    <h2>Valid Bracket Sequence Implementation</h2>
+                    
+                    <!-- Video Section -->
+                    <div class="video-container">
+                        <div class="wistia-responsive-padding">
+                            <div class="wistia-responsive-wrapper">
+                                <iframe src="https://fast.wistia.net/embed/iframe/1tplct2xxu?videoFoam=true" title="s17M4 Web-JavaScript Guided Project Stacks Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" width="100%" height="100%"></iframe>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Implementation Steps -->
+                    <div class="space-y">
+                        <h3>Step-by-Step Implementation</h3>
+                        
+                        <div class="grid-container">
+                            <div>
+                                <h4>Step 1: Setup Bracket Maps</h4>
+                                <div class="code-block">
+                                    <code>const bracketPairs = {
+    '(': ')',
+    '{': '}',
+    '[': ']'
+};
+
+const openBrackets = new Set(['(', '{', '[']);
+const closeBrackets = new Set([')', '}', ']']);</code>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4>Step 2: Validation Function</h4>
+                                <div class="code-block">
+                                    <code>function isValidBracketSequence(sequence) {
+    const stack = [];
+    
+    for (let i = 0; i < sequence.length; i++) {
+        const char = sequence[i];
+        
+        // Skip non-bracket characters
+        if (!openBrackets.has(char) && 
+            !closeBrackets.has(char)) {
+            continue;
+        }
+        
+        // Handle logic here
+    }
+    
+    return stack.length === 0;
+}</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-container">
+                            <div>
+                                <h4>Step 3: Open Bracket Logic</h4>
+                                <div class="code-block">
+                                    <code>// Inside the for loop from step 2
+if (openBrackets.has(char)) {
+    // If it's an opening bracket, push to stack
+    stack.push(char);
+} else {
+    // Handle closing brackets
+}</code>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4>Step 4: Close Bracket Logic</h4>
+                                <div class="code-block">
+                                    <code>// Inside the else block from step 3
+// If stack is empty, no matching open bracket
+if (stack.length === 0) {
+    return false;
+}
+
+// Get the last open bracket
+const lastOpen = stack.pop();
+
+// Check if brackets match
+if (bracketPairs[lastOpen] !== char) {
+    return false;
+}</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4>Step 5: Complete Implementation</h4>
+                            <div class="code-block">
+                                <code>function isValidBracketSequence(sequence) {
+    const stack = [];
+    
+    for (let i = 0; i < sequence.length; i++) {
+        const char = sequence[i];
+        
+        // Skip non-bracket characters
+        if (!openBrackets.has(char) && 
+            !closeBrackets.has(char)) {
+            continue;
+        }
+        
+        if (openBrackets.has(char)) {
+            // If it's an opening bracket, push to stack
+            stack.push(char);
+        } else {
+            // If stack is empty, no matching open bracket
+            if (stack.length === 0) {
+                return false;
+            }
+            
+            // Get the last open bracket
+            const lastOpen = stack.pop();
+            
+            // Check if brackets match
+            if (bracketPairs[lastOpen] !== char) {
+                return false;
+            }
+        }
+    }
+    
+    // Valid only if all brackets were matched
+    return stack.length === 0;
+}</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Tab -->
+            <div data-tab-content="practice" class="hidden">
+                <div class="section">
+                    <h2>Practice Challenge</h2>
+                    <p>
+                        Now that you've learned how to validate bracket sequences using a stack, try implementing a queue with a twist.
+                    </p>
+
+                    <div class="space-y">
+                        <h3>Challenge: Implement Queue using Stacks</h3>
+                        <p>
+                            Create a queue data structure using two stacks. Your implementation should include these methods:
+                        </p>
+                        
+                        <div class="card">
+                            <h4>Requirements:</h4>
+                            <ul>
+                                <li><code>enqueue(element)</code>: Add element to the queue</li>
+                                <li><code>dequeue()</code>: Remove and return the front element</li>
+                                <li><code>peek()</code>: Return (without removing) the front element</li>
+                                <li><code>isEmpty()</code>: Return true if queue is empty</li>
+                            </ul>
+                        </div>
+                        
+                        <h4>Starter Code:</h4>
+                        <div class="code-block">
+                            <code>class StackQueue {
+    constructor() {
+        this.stackNewest = []; // for enqueue
+        this.stackOldest = []; // for dequeue
+    }
+    
+    enqueue(value) {
+        // Your code here
+    }
+    
+    dequeue() {
+        // Your code here
+    }
+    
+    peek() {
+        // Your code here
+    }
+    
+    isEmpty() {
+        // Your code here
+    }
+}
+</code>
+                        </div>
+                        
+                        <h4>Challenge Practice Resources:</h4>
+                        <p>
+                            If you want more practice with stacks and queues, check out these LeetCode problems:
+                        </p>
+                        <ul>
+                            <li><a href="https://leetcode.com/problems/implement-queue-using-stacks/" class="leetcode-link" target="_blank" rel="noopener">232. Implement Queue using Stacks</a></li>
+                            <li><a href="https://leetcode.com/problems/valid-parentheses/" class="leetcode-link" target="_blank" rel="noopener">20. Valid Parentheses</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3: Graphs III</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ff5722',
+                        secondary: '#ff7043',
+                        dark: '#1a1d23',
+                        darker: '#222831', 
+                        darkgray: '#2a303c',
+                        darkborder: '#333a47',
+                        lighttext: '#b3b3b3',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.classList.remove('border-primary', 'text-primary');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            document.querySelector(`[data-tab-content="${tabId}"]`).classList.remove('hidden');
+            element.classList.remove('text-gray-500', 'border-transparent');
+            element.classList.add('border-primary', 'text-primary');
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            background-color: #1a1d23; /* Dark background color */
+            color: #ffffff;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            color: #ffffff;
+        }
+        
+        p, ul, ol {
+            color: #b3b3b3;
+        }
+        
+        .leetcode-link {
+            color: #ff5722;
+            text-decoration: none;
+        }
+        
+        .leetcode-link:hover {
+            text-decoration: underline;
+            color: #ff7043;
+        }
+        
+        .code-block {
+            background-color: #1e222a;
+            color: #b3b3b3;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-left: 2px solid #ff5722;
+        }
+        
+        .comparison-table th, 
+        .comparison-table td {
+            padding: 0.5rem 1rem;
+            border: 1px solid #333a47;
+        }
+        
+        .comparison-table th {
+            background-color: #2a303c;
+            color: #ffffff;
+        }
+        
+        /* Video container styles */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 1px solid #333a47;
+            border-radius: 4px;
+        }
+        
+        .video-wrapper {
+            height: 100%;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-dark min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mb-8">
+            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Welcome Page</span>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-white mb-4">Module 3: Breadth-First Search</h1>
+            <p class="text-xl text-lighttext max-w-3xl mx-auto">
+                Master the Breadth-First Search algorithm for finding shortest paths in unweighted graphs.
+                Learn how to systematically explore graph levels and track paths efficiently.
+            </p>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="border-b border-darkborder mb-8">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button 
+                    data-tab="overview"
+                    onclick="switchTab('overview', this)"
+                    class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-medium"
+                    aria-current="page">
+                    Overview
+                </button>
+                <button 
+                    data-tab="lecture"
+                    onclick="switchTab('lecture', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Lecture Content
+                </button>
+                <button 
+                    data-tab="implementation"
+                    onclick="switchTab('implementation', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Implementation
+                </button>
+                <button 
+                    data-tab="exercises"
+                    onclick="switchTab('exercises', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Practice Exercises
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="space-y-8">
+            <!-- Overview Tab -->
+            <div data-tab-content="overview" class="space-y-8">
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Learning Objectives</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-primary">Core Concepts</h3>
+                            <ul class="list-disc list-inside text-lighttext space-y-2">
+                                <li>Understand BFS algorithm principles</li>
+                                <li>Implement shortest path finding</li>
+                                <li>Track visited nodes efficiently</li>
+                                <li>Handle graph traversal levels</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-primary">Applications</h3>
+                            <ul class="list-disc list-inside text-lighttext space-y-2">
+                                <li>Social network connections</li>
+                                <li>GPS navigation systems</li>
+                                <li>Web crawling</li>
+                                <li>Network routing protocols</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Algorithm Overview</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-primary">Key Features</h3>
+                            <div class="bg-darkgray p-4 rounded-lg">
+                                <ul class="list-disc list-inside text-lighttext space-y-2">
+                                    <li>Level-by-level exploration</li>
+                                    <li>Queue-based implementation</li>
+                                    <li>O(V + E) time complexity</li>
+                                    <li>Guarantees shortest path</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-primary">Visual Example</h3>
+                            <div class="bg-darkgray p-4 rounded-lg">
+                                <pre class="text-sm text-lighttext">
+Level 0:            A
+                ↙   ↓   ↘
+Level 1:      B     C      D
+            ↙   ↘        ↙
+Level 2:   E      F    G
+</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">BFS vs DFS Comparison</h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Aspect</th>
+                                    <th>Breadth-First Search (BFS)</th>
+                                    <th>Depth-First Search (DFS)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-lighttext">
+                                <tr>
+                                    <td>Data Structure</td>
+                                    <td>Queue</td>
+                                    <td>Stack (or recursion)</td>
+                                </tr>
+                                <tr>
+                                    <td>Order of Exploration</td>
+                                    <td>Level by level</td>
+                                    <td>Path by path</td>
+                                </tr>
+                                <tr>
+                                    <td>Space Complexity</td>
+                                    <td>O(w) where w is the maximum width</td>
+                                    <td>O(h) where h is the maximum depth</td>
+                                </tr>
+                                <tr>
+                                    <td>Time Complexity</td>
+                                    <td>O(V + E)</td>
+                                    <td>O(V + E)</td>
+                                </tr>
+                                <tr>
+                                    <td>Best For</td>
+                                    <td>Shortest path, nearest neighbor</td>
+                                    <td>Path finding, exhaustive search</td>
+                                </tr>
+                                <tr>
+                                    <td>Applications</td>
+                                    <td>Social networks, GPS, web crawling</td>
+                                    <td>Puzzles, mazes, topological sorting</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div data-tab-content="lecture" class="hidden space-y-8">
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Breadth-First Search</h2>
+                    
+                    <!-- Video Section 1: BFS Basics -->
+                    <div class="bg-darker rounded-lg shadow-sm p-6">
+                        <h2 class="text-2xl font-semibold text-white mb-4">1. Breadth-First Search Basics</h2>
+                        <div class="video-container">
+                            <div class="video-wrapper">
+                                <iframe src="https://fast.wistia.net/embed/iframe/u5piqvavzp?videoFoam=true" title="BFS Basics Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-medium text-primary">Key Concepts Explained</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-darkgray p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-lighttext mb-2">Queue Operations</h4>
+                                <ul class="list-disc list-inside text-lighttext space-y-2">
+                                    <li>Enqueue: Add to end</li>
+                                    <li>Dequeue: Remove from front</li>
+                                    <li>FIFO principle</li>
+                                    <li>Level order processing</li>
+                                </ul>
+                            </div>
+                            <div class="bg-darkgray p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-lighttext mb-2">Path Tracking</h4>
+                                <ul class="list-disc list-inside text-lighttext space-y-2">
+                                    <li>Parent pointers</li>
+                                    <li>Distance tracking</li>
+                                    <li>Path reconstruction</li>
+                                    <li>Visited set maintenance</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">BFS Algorithm Steps</h2>
+                    <div class="mt-8">
+                        <ol class="list-decimal list-inside text-lighttext space-y-2">
+                            <li>Initialize a queue with the start vertex</li>
+                            <li>Mark the start vertex as visited</li>
+                            <li>While the queue is not empty:
+                                <ul class="list-disc list-inside ml-6 mt-1">
+                                    <li>Dequeue a vertex from the queue</li>
+                                    <li>Process the vertex (e.g., add to result)</li>
+                                    <li>For each adjacent vertex that hasn't been visited:
+                                        <ul class="list-circle list-inside ml-6">
+                                            <li>Mark it as visited</li>
+                                            <li>Enqueue it</li>
+                                            <li>Record its parent for path tracking (optional)</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Video Section 2: BFS Implementation -->
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">2. Implementing BFS</h2>
+                    <div class="video-container">
+                        <div class="video-wrapper">
+                            <iframe src="https://fast.wistia.net/embed/iframe/qwertyu123?videoFoam=true" title="BFS Implementation Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Section 3: BFS Applications -->
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">3. BFS Applications</h2>
+                    <div class="video-container">
+                        <div class="video-wrapper">
+                            <iframe src="https://fast.wistia.net/embed/iframe/asdfghjkl?videoFoam=true" title="BFS Applications Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div data-tab-content="implementation" class="hidden space-y-6">
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-6">BFS Implementation</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-primary">Basic BFS Implementation</h3>
+                            <div class="code-block">
+                                <pre><code>/**
+ * Performs a breadth-first search on a graph starting from a given vertex
+ * @param {Object} graph - Adjacency list representation of the graph
+ * @param {string|number} start - The starting vertex
+ * @returns {Object} - Contains parent pointers and distances from start
+ */
+function bfs(graph, start) {
+    const queue = [start];
+    const visited = new Set([start]);
+    const parent = new Map();
+    const distance = new Map([[start, 0]]);
+
+    while (queue.length > 0) {
+        const vertex = queue.shift();
+        
+        for (let neighbor of graph[vertex]) {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push(neighbor);
+                parent.set(neighbor, vertex);
+                distance.set(neighbor, distance.get(vertex) + 1);
+            }
+        }
+    }
+
+    return { parent, distance, visited };
+}</code></pre>
+                            </div>
+
+                            <div class="bg-darkgray p-4 rounded-lg mt-4">
+                                <h4 class="text-lg font-medium text-lighttext mb-2">Time & Space Complexity</h4>
+                                <ul class="list-disc list-inside text-lighttext space-y-2">
+                                    <li><strong>Time Complexity:</strong> O(V + E) where V is the number of vertices and E is the number of edges.
+                                        <ul class="list-disc list-inside ml-6">
+                                            <li>Each vertex is enqueued and dequeued at most once: O(V)</li>
+                                            <li>Each edge is examined at most once: O(E)</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Space Complexity:</strong> O(V) for the queue, visited set, parent map, and distance map.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-primary">Shortest Path Finding</h3>
+                            <div class="code-block">
+                                <pre><code>/**
+ * Finds the shortest path between two vertices in an unweighted graph
+ * @param {Object} graph - Adjacency list representation of the graph
+ * @param {string|number} start - The starting vertex
+ * @param {string|number} end - The target vertex
+ * @returns {Array|null} - Array of vertices forming the path, or null if no path exists
+ */
+function findShortestPath(graph, start, end) {
+    // If start and end are the same, return a single-element path
+    if (start === end) {
+        return [start];
+    }
+
+    const { parent } = bfs(graph, start);
+    
+    // If end vertex was not reached, return null
+    if (!parent.has(end)) {
+        return null;
+    }
+
+    // Reconstruct the path by following parent pointers backwards
+    const path = [];
+    let current = end;
+
+    while (current !== undefined) {
+        path.unshift(current);
+        current = parent.get(current);
+    }
+
+    return path;
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-darkgray p-4 rounded-lg mt-6">
+                            <h4 class="text-lg font-medium text-lighttext mb-2">Example Usage:</h4>
+                            <div class="code-block">
+                                <pre><code>// Sample graph (adjacency list representation)
+const graph = {
+    'A': ['B', 'C', 'D'],
+    'B': ['A', 'E'],
+    'C': ['A', 'F'],
+    'D': ['A', 'G'],
+    'E': ['B'],
+    'F': ['C'],
+    'G': ['D']
+};
+
+// Basic BFS traversal
+const { visited } = bfs(graph, 'A');
+console.log('BFS traversal:', Array.from(visited)); 
+// Output: ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+
+// Find shortest path from 'A' to 'F'
+const path = findShortestPath(graph, 'A', 'F');
+console.log('Shortest path from A to F:', path);
+// Output: ['A', 'C', 'F']
+
+// Find shortest path from 'E' to 'G'
+const anotherPath = findShortestPath(graph, 'E', 'G');
+console.log('Shortest path from E to G:', anotherPath);
+// Output: ['E', 'B', 'A', 'D', 'G']</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div data-tab-content="exercises" class="hidden space-y-6">
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-6">Practice Exercises</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-primary">Exercise 1: Multi-Source BFS</h3>
+                            <p class="text-lighttext">Implement a modified BFS that can start from multiple source nodes simultaneously.</p>
+                            
+                            <div class="bg-darkgray p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-lighttext mb-2">Requirements:</h4>
+                                <ul class="list-disc list-inside text-lighttext space-y-2">
+                                    <li>Accept array of starting nodes</li>
+                                    <li>Track distance from nearest source</li>
+                                    <li>Handle disconnected components</li>
+                                    <li>Return distances map</li>
+                                </ul>
+                            </div>
+
+                            <div class="code-block">
+                                <pre><code>function multiSourceBFS(graph, sources) {
+    const queue = [...sources];
+    const visited = new Set(sources);
+    const distance = new Map();
+    
+    // Initialize distances for all source nodes
+    sources.forEach(source => distance.set(source, 0));
+    
+    while (queue.length > 0) {
+        const vertex = queue.shift();
+        
+        for (let neighbor of graph[vertex] || []) {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push(neighbor);
+                distance.set(neighbor, distance.get(vertex) + 1);
+            }
+        }
+    }
+    
+    return { distance, visited };
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-primary">Exercise 2: Path with Conditions</h3>
+                            <p class="text-lighttext">Find shortest path that satisfies certain conditions (e.g., must pass through specific nodes).</p>
+                            
+                            <div class="bg-darkgray p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-lighttext mb-2">Example:</h4>
+                                <pre class="bg-darkgray p-2 rounded"><code>const graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
+};
+
+// Find path from A to F that passes through E
+console.log(findPathThroughNode(graph, 'A', 'F', 'E'));
+// Output: ['A', 'B', 'E', 'F']</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-primary">Exercise 3: Level Groups</h3>
+                            <p class="text-lighttext">Group nodes by their levels (distances) from the start node.</p>
+                            
+                            <div class="bg-darkgray p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-lighttext mb-2">Expected Output Format:</h4>
+                                <pre class="bg-darkgray p-2 rounded"><code>const levels = groupByLevels(graph, 'A');
+/*
+{
+    0: ['A'],
+    1: ['B', 'C', 'D'],
+    2: ['E', 'F', 'G']
+}
+*/</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- LeetCode Practice Problems -->
+                        <div class="space-y-6 mt-8">
+                            <h3 class="text-xl font-medium text-primary">LeetCode Practice Problems</h3>
+                            <p class="text-lighttext">Note: Previously, this course referenced the CodeSignal Arcade for practice, which is no longer available. The LeetCode problems below follow the same principles and are excellent for practicing BFS algorithms.</p>
+                            
+                            <div class="space-y-4">
+                                <h4 class="text-lg font-medium text-lighttext">Beginner BFS Problems:</h4>
+                                <ul class="list-disc list-inside text-lighttext space-y-2">
+                                    <li><a href="https://leetcode.com/problems/flood-fill/" class="leetcode-link" target="_blank" rel="noopener">Flood Fill</a> - Apply a simple BFS to update connected pixels</li>
+                                    <li><a href="https://leetcode.com/problems/number-of-islands/" class="leetcode-link" target="_blank" rel="noopener">Number of Islands</a> - Find connected components using BFS</li>
+                                    <li><a href="https://leetcode.com/problems/rotting-oranges/" class="leetcode-link" target="_blank" rel="noopener">Rotting Oranges</a> - Apply multi-source BFS to simulate rotting process</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <h4 class="text-lg font-medium text-lighttext">Shortest Path Problems:</h4>
+                                <ul class="list-disc list-inside text-lighttext space-y-2">
+                                    <li><a href="https://leetcode.com/problems/word-ladder/" class="leetcode-link" target="_blank" rel="noopener">Word Ladder</a> - Find shortest transformation sequence</li>
+                                    <li><a href="https://leetcode.com/problems/shortest-path-in-binary-matrix/" class="leetcode-link" target="_blank" rel="noopener">Shortest Path in Binary Matrix</a> - Find shortest path in a grid</li>
+                                    <li><a href="https://leetcode.com/problems/open-the-lock/" class="leetcode-link" target="_blank" rel="noopener">Open the Lock</a> - Find minimum rotations to open a lock</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <h4 class="text-lg font-medium text-lighttext">Graph Topology Problems:</h4>
+                                <ul class="list-disc list-inside text-lighttext space-y-2">
+                                    <li><a href="https://leetcode.com/problems/course-schedule/" class="leetcode-link" target="_blank" rel="noopener">Course Schedule</a> - Determine if courses can be finished</li>
+                                    <li><a href="https://leetcode.com/problems/minimum-height-trees/" class="leetcode-link" target="_blank" rel="noopener">Minimum Height Trees</a> - Find tree roots with minimum height</li>
+                                    <li><a href="https://leetcode.com/problems/keys-and-rooms/" class="leetcode-link" target="_blank" rel="noopener">Keys and Rooms</a> - Determine if all rooms can be visited</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <h4 class="text-lg font-medium text-lighttext">Advanced BFS Problems:</h4>
+                                <ul class="list-disc list-inside text-lighttext space-y-2">
+                                    <li><a href="https://leetcode.com/problems/word-ladder-ii/" class="leetcode-link" target="_blank" rel="noopener">Word Ladder II</a> - Find all shortest transformation sequences</li>
+                                    <li><a href="https://leetcode.com/problems/minimum-genetic-mutation/" class="leetcode-link" target="_blank" rel="noopener">Minimum Genetic Mutation</a> - Find shortest gene mutation path</li>
+                                    <li><a href="https://leetcode.com/problems/cut-off-trees-for-golf-event/" class="leetcode-link" target="_blank" rel="noopener">Cut Off Trees for Golf Event</a> - Find minimum steps to cut all trees</li>
+                                    <li><a href="https://leetcode.com/problems/sliding-puzzle/" class="leetcode-link" target="_blank" rel="noopener">Sliding Puzzle</a> - Solve sliding puzzle in minimum moves</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
