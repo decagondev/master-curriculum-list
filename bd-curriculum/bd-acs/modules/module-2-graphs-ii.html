@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Graphs II</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ff5722',
+                        secondary: '#ff7043',
+                        dark: '#1a1d23',
+                        darker: '#222831', 
+                        darkgray: '#2a303c',
+                        darkborder: '#333a47',
+                        lighttext: '#b3b3b3',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.classList.remove('border-primary', 'text-primary');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            document.querySelector(`[data-tab-content="${tabId}"]`).classList.remove('hidden');
+            element.classList.remove('text-gray-500', 'border-transparent');
+            element.classList.add('border-primary', 'text-primary');
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            background-color: #1a1d23; /* Dark background color */
+            color: #ffffff;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            color: #ffffff;
+        }
+        
+        p, ul, ol {
+            color: #b3b3b3;
+        }
+        
+        .leetcode-link {
+            color: #ff5722;
+            text-decoration: none;
+        }
+        
+        .leetcode-link:hover {
+            text-decoration: underline;
+            color: #ff7043;
+        }
+        
+        .code-block {
+            background-color: #1e222a;
+            color: #b3b3b3;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+            border-left: 2px solid #ff5722;
+        }
+        
+        /* Video container styles */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border: 1px solid #333a47;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        
+        .video-wrapper {
+            height: 100%;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-dark min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mb-8">
+            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Welcome Page</span>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-white mb-4">Module 2: Graphs II</h1>
+            <p class="text-xl text-lighttext max-w-3xl mx-auto">
+                Master advanced graph operations including adjacency matrix, adjacency list,
+                and various graph representations.
+            </p>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="border-b border-darkborder mb-8">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button 
+                    data-tab="overview"
+                    onclick="switchTab('overview', this)"
+                    class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-medium"
+                    aria-current="page">
+                    Overview
+                </button>
+                <button 
+                    data-tab="lecture-content"
+                    onclick="switchTab('lecture-content', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Lecture Content
+                </button>
+                <button 
+                    data-tab="implementation"
+                    onclick="switchTab('implementation', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Implementation
+                </button>
+                <button 
+                    data-tab="practice"
+                    onclick="switchTab('practice', this)"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+                    Practice Exercises
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="space-y-8">
+            <!-- Overview Tab -->
+            <div data-tab-content="overview" class="space-y-8">
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Learning Objectives</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-primary">Core Concepts</h3>
+                            <ul class="list-disc list-inside text-lighttext space-y-2">
+                                <li>Understanding graph representations</li>
+                                <li>Implementing adjacency matrices</li>
+                                <li>Building efficient adjacency lists</li>
+                                <li>Converting between representations</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-primary">Skills Development</h3>
+                            <ul class="list-disc list-inside text-lighttext space-y-2">
+                                <li>Graph modeling techniques</li>
+                                <li>Space-time complexity analysis</li>
+                                <li>Data structure selection</li>
+                                <li>Real-world graph applications</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Prerequisites</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-primary">Required Knowledge</h3>
+                            <ul class="list-disc list-inside text-lighttext space-y-2">
+                                <li>Basic graph theory concepts</li>
+                                <li>JavaScript fundamentals</li>
+                                <li>Array and object manipulation</li>
+                                <li>Data structure basics</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-medium text-primary">Technical Requirements</h3>
+                            <ul class="list-disc list-inside text-lighttext space-y-2">
+                                <li>JavaScript development environment</li>
+                                <li>Code editor</li>
+                                <li>Node.js installed</li>
+                                <li>Testing framework (optional)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecture Content Tab -->
+            <div data-tab-content="lecture-content" class="hidden space-y-8">
+                <!-- Video Section 1: Adjacency Matrix -->
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">1. Adjacency Matrix</h2>
+                    <div class="video-container">
+                        <div class="video-wrapper">
+                            <iframe src="https://fast.wistia.net/embed/iframe/7i50v92n0g?videoFoam=true" title="s20M1 JavaScript CC2 Graph Adjacency Matrix Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-lg font-medium text-primary mb-2">Key Topics</h3>
+                        <ul class="list-disc list-inside text-lighttext space-y-2">
+                            <li>Matrix implementation for graph representation</li>
+                            <li>Edge weight handling</li>
+                            <li>Space complexity considerations</li>
+                            <li>Efficient access patterns</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Video Section 2: Adjacency List -->
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">2. Adjacency List</h2>
+                    <div class="video-container">
+                        <div class="video-wrapper">
+                            <iframe src="https://fast.wistia.net/embed/iframe/zd6mxtjm6j?videoFoam=true" title="s20M1 JavaScript CC3 Graph Adjacency List Video" allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%"></iframe>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-lg font-medium text-primary mb-2">Key Topics</h3>
+                        <ul class="list-disc list-inside text-lighttext space-y-2">
+                            <li>Efficient sparse graph representation</li>
+                            <li>Memory optimization techniques</li>
+                            <li>Traversal algorithm implementation</li>
+                            <li>Real-world application patterns</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementation Tab -->
+            <div data-tab-content="implementation" class="hidden space-y-8">
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-6">Implementation Examples</h2>
+                    
+                    <!-- Adjacency Matrix Implementation -->
+                    <div class="space-y-6 mb-8">
+                        <h3 class="text-xl font-medium text-primary">Adjacency Matrix</h3>
+                        <div class="code-block">
+<code>class GraphMatrix {
+    constructor(numVertices) {
+        this.numVertices = numVertices;
+        this.matrix = Array(numVertices)
+            .fill()
+            .map(() => Array(numVertices).fill(0));
+    }
+
+    addEdge(source, destination, weight = 1) {
+        // For directed graph
+        this.matrix[source][destination] = weight;
+        
+        // For undirected graph, uncomment the line below
+        // this.matrix[destination][source] = weight;
+    }
+
+    removeEdge(source, destination) {
+        this.matrix[source][destination] = 0;
+        
+        // For undirected graph, uncomment the line below
+        // this.matrix[destination][source] = 0;
+    }
+
+    hasEdge(source, destination) {
+        return this.matrix[source][destination] !== 0;
+    }
+
+    getNeighbors(vertex) {
+        const neighbors = [];
+        
+        for (let i = 0; i < this.numVertices; i++) {
+            if (this.matrix[vertex][i] !== 0) {
+                neighbors.push(i);
+            }
+        }
+        
+        return neighbors;
+    }
+}</code>
+                        </div>
+                    </div>
+
+                    <!-- Adjacency List Implementation -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-medium text-primary">Adjacency List</h3>
+                        <div class="code-block">
+<code>class GraphList {
+    constructor() {
+        this.adjacencyList = {};
+    }
+    
+    addVertex(vertex) {
+        if (!this.adjacencyList[vertex]) {
+            this.adjacencyList[vertex] = [];
+        }
+    }
+    
+    addEdge(source, destination, weight = 1) {
+        // Add vertex if it doesn't exist
+        if (!this.adjacencyList[source]) {
+            this.addVertex(source);
+        }
+        if (!this.adjacencyList[destination]) {
+            this.addVertex(destination);
+        }
+        
+        // For weighted graph, store objects with vertex and weight
+        this.adjacencyList[source].push({ node: destination, weight });
+        
+        // For undirected graph, uncomment the line below
+        // this.adjacencyList[destination].push({ node: source, weight });
+    }
+    
+    removeEdge(source, destination) {
+        if (this.adjacencyList[source]) {
+            this.adjacencyList[source] = this.adjacencyList[source]
+                .filter(edge => edge.node !== destination);
+        }
+        
+        // For undirected graph, uncomment the block below
+        /*
+        if (this.adjacencyList[destination]) {
+            this.adjacencyList[destination] = this.adjacencyList[destination]
+                .filter(edge => edge.node !== source);
+        }
+        */
+    }
+    
+    getNeighbors(vertex) {
+        return this.adjacencyList[vertex]
+            ? this.adjacencyList[vertex].map(edge => edge.node)
+            : [];
+    }
+}</code>
+                        </div>
+                    </div>
+                    
+                    <!-- Comparing Matrix and List -->
+                    <div class="mt-8 space-y-6">
+                        <h3 class="text-xl font-medium text-primary">Performance Comparison</h3>
+                        <div class="bg-darkgray p-4 rounded-lg">
+                            <h4 class="text-lg font-medium text-white mb-2">Time Complexity</h4>
+                            <table class="min-w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="py-2 px-4 bg-dark border border-darkborder text-white">Operation</th>
+                                        <th class="py-2 px-4 bg-dark border border-darkborder text-white">Adjacency Matrix</th>
+                                        <th class="py-2 px-4 bg-dark border border-darkborder text-white">Adjacency List</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="py-2 px-4 border border-darkborder text-lighttext">Add Edge</td>
+                                        <td class="py-2 px-4 border border-darkborder text-lighttext">O(1)</td>
+                                        <td class="py-2 px-4 border border-darkborder text-lighttext">O(1)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 px-4 border border-darkborder text-lighttext">Remove Edge</td>
+                                        <td class="py-2 px-4 border border-darkborder text-lighttext">O(1)</td>
+                                        <td class="py-2 px-4 border border-darkborder text-lighttext">O(E)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 px-4 border border-darkborder text-lighttext">Check Edge</td>
+                                        <td class="py-2 px-4 border border-darkborder text-lighttext">O(1)</td>
+                                        <td class="py-2 px-4 border border-darkborder text-lighttext">O(E)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 px-4 border border-darkborder text-lighttext">Get All Edges</td>
+                                        <td class="py-2 px-4 border border-darkborder text-lighttext">O(V²)</td>
+                                        <td class="py-2 px-4 border border-darkborder text-lighttext">O(V+E)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h4 class="text-lg font-medium text-white mt-4 mb-2">Space Complexity</h4>
+                            <ul class="list-disc list-inside text-lighttext space-y-2">
+                                <li><strong>Adjacency Matrix:</strong> O(V²) - Inefficient for sparse graphs</li>
+                                <li><strong>Adjacency List:</strong> O(V+E) - Efficient for sparse graphs</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Exercises Tab -->
+            <div data-tab-content="practice" class="hidden space-y-8">
+                <div class="bg-darker rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-semibold text-white mb-6">Practice Exercises</h2>
+                    
+                    <!-- Exercise 1 -->
+                    <div class="space-y-6 mb-8">
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-primary">Exercise 1: Matrix to List Conversion</h3>
+                            <p class="text-lighttext">Implement a function that converts an adjacency matrix to an adjacency list representation.</p>
+                            
+                            <div class="bg-darkgray p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-white mb-2">Input/Output Example:</h4>
+                                <pre class="bg-dark p-2 rounded text-lighttext"><code>// Input adjacency matrix
+const matrix = [
+    [0, 1, 0, 1],
+    [1, 0, 1, 0],
+    [0, 1, 0, 1],
+    [1, 0, 1, 0]
+];
+
+// Expected output adjacency list
+{
+    '0': [1, 3],
+    '1': [0, 2],
+    '2': [1, 3],
+    '3': [0, 2]
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exercise 2 -->
+                    <div class="space-y-6 mb-8">
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-primary">Exercise 2: Reachable Vertices</h3>
+                            <p class="text-lighttext">Implement a function that returns all vertices reachable from a given vertex in a directed graph.</p>
+                            
+                            <div class="bg-darkgray p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-white mb-2">Implementation Hints:</h4>
+                                <ul class="list-disc list-inside text-lighttext space-y-2">
+                                    <li>Use DFS or BFS traversal algorithm</li>
+                                    <li>Keep track of visited vertices</li>
+                                    <li>Handle cycles in the graph</li>
+                                    <li>Return the complete set of reachable vertices</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exercise 3 -->
+                    <div class="space-y-6 mb-8">
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-medium text-primary">Exercise 3: Graph Density Calculator</h3>
+                            <p class="text-lighttext">Implement a function that calculates the density of a graph (ratio of actual edges to maximum possible edges).</p>
+                            
+                            <div class="bg-darkgray p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-white mb-2">Formula:</h4>
+                                <p class="text-lighttext">For a directed graph with V vertices:</p>
+                                <p class="text-lighttext">Density = Number of Edges / (V * (V-1))</p>
+                                <p class="text-lighttext">For an undirected graph:</p>
+                                <p class="text-lighttext">Density = (2 * Number of Edges) / (V * (V-1))</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LeetCode Practice Problems -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-medium text-primary">LeetCode Practice Problems</h3>
+                        <p class="text-lighttext">Note: Previously, this course referenced the CodeSignal Arcade for practice, which is no longer available. The LeetCode problems below follow the same principles and are excellent for practicing graph representations and algorithms.</p>
+                        
+                        <div class="space-y-4">
+                            <h4 class="text-lg font-medium text-white">Graph Representation Problems:</h4>
+                            <ul class="list-disc list-inside text-lighttext space-y-2">
+                                <li><a href="https://leetcode.com/problems/find-the-town-judge/" class="leetcode-link" target="_blank" rel="noopener">Find the Town Judge</a> - Practice with graph representation and in/out degree</li>
+                                <li><a href="https://leetcode.com/problems/find-center-of-star-graph/" class="leetcode-link" target="_blank" rel="noopener">Find Center of Star Graph</a> - Simple graph representation problem</li>
+                                <li><a href="https://leetcode.com/problems/all-paths-from-source-to-target/" class="leetcode-link" target="_blank" rel="noopener">All Paths From Source to Target</a> - Path finding in a directed acyclic graph</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <h4 class="text-lg font-medium text-white">Graph Connectivity Problems:</h4>
+                            <ul class="list-disc list-inside text-lighttext space-y-2">
+                                <li><a href="https://leetcode.com/problems/number-of-provinces/" class="leetcode-link" target="_blank" rel="noopener">Number of Provinces</a> - Find connected components in a graph</li>
+                                <li><a href="https://leetcode.com/problems/is-graph-bipartite/" class="leetcode-link" target="_blank" rel="noopener">Is Graph Bipartite?</a> - Check if a graph can be divided into two independent sets</li>
+                                <li><a href="https://leetcode.com/problems/redundant-connection/" class="leetcode-link" target="_blank" rel="noopener">Redundant Connection</a> - Find an edge that creates a cycle in an undirected graph</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <h4 class="text-lg font-medium text-white">Graph Traversal Problems:</h4>
+                            <ul class="list-disc list-inside text-lighttext space-y-2">
+                                <li><a href="https://leetcode.com/problems/keys-and-rooms/" class="leetcode-link" target="_blank" rel="noopener">Keys and Rooms</a> - Determine if all rooms can be visited in a graph</li>
+                                <li><a href="https://leetcode.com/problems/course-schedule/" class="leetcode-link" target="_blank" rel="noopener">Course Schedule</a> - Detect cycles in a directed graph</li>
+                                <li><a href="https://leetcode.com/problems/possible-bipartition/" class="leetcode-link" target="_blank" rel="noopener">Possible Bipartition</a> - Graph coloring problem</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <h4 class="text-lg font-medium text-white">Advanced Graph Problems:</h4>
+                            <ul class="list-disc list-inside text-lighttext space-y-2">
+                                <li><a href="https://leetcode.com/problems/network-delay-time/" class="leetcode-link" target="_blank" rel="noopener">Network Delay Time</a> - Shortest path in a weighted directed graph</li>
+                                <li><a href="https://leetcode.com/problems/evaluate-division/" class="leetcode-link" target="_blank" rel="noopener">Evaluate Division</a> - Graph traversal with edge weights</li>
+                                <li><a href="https://leetcode.com/problems/cheapest-flights-within-k-stops/" class="leetcode-link" target="_blank" rel="noopener">Cheapest Flights Within K Stops</a> - Path finding with constraints</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

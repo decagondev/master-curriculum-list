@@ -1,0 +1,228 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Graphs I</title>
+<meta name="identifier" content="gbc8b85acb52b066a82daaf52f2a8d731"/>
+<meta name="editing_roles" content="teachers"/>
+<meta name="workflow_state" content="active"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#ff5722',
+                    secondary: '#ff7043',
+                    dark: '#1a1d23',
+                    darker: '#222831', 
+                    darkgray: '#2a303c',
+                    darkborder: '#333a47',
+                    lighttext: '#b3b3b3',
+                }
+            }
+        }
+    }
+</script>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    background-color: #1a1d23; /* Dark background color */
+    color: #ffffff;
+  }
+  
+  .objectives-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-left: 3px solid #ff5722;
+    background-color: #222831;
+    border-radius: 0 5px 5px 0;
+  }
+  
+  .content-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #2a303c;
+    border-radius: 5px;
+    border: 1px solid #333a47;
+  }
+  
+  .code-block {
+    background-color: #1a1d23;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 15px 0;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre;
+    overflow-x: auto;
+    color: #d4d4d4;
+    border: 1px solid #333a47;
+  }
+  
+  .leetcode-link {
+    color: #ff5722;
+    text-decoration: none;
+  }
+  
+  .leetcode-link:hover {
+    text-decoration: underline;
+    color: #ff7043;
+  }
+  
+  h1, h2, h3, h4, h5 {
+    color: #ffffff;
+  }
+  
+  p, ul, ol {
+    color: #b3b3b3;
+  }
+  
+  hr {
+    border-color: #333a47;
+    margin: 20px 0;
+  }
+</style>
+</head>
+<body class="p-4 sm:p-6 max-w-5xl mx-auto">
+<div class="objectives-section">
+  <h2>Module Objectives</h2>
+  <p>Upon completion of this Graphs I module, you will be able to:</p>
+  <ul>
+    <li>Understand what a graph is and how it is useful in representing complex relationships</li>
+    <li>Implement different graph representations: adjacency lists and adjacency matrices</li>
+    <li>Compare the trade-offs between different graph representations</li>
+    <li>Perform a depth-first traversal of a graph using recursion</li>
+    <li>Apply graph algorithms to solve real-world problems</li>
+  </ul>
+</div>
+
+<div class="content-section">
+  <h3>Graph Basics</h3>
+  <p>A graph is a non-linear data structure consisting of vertices (nodes) and edges that connect these vertices. Graphs are ideal for representing relationships between objects.</p>
+  
+  <p><strong>Key Terminology:</strong></p>
+  <ul>
+    <li><strong>Vertex/Node:</strong> A fundamental unit in a graph</li>
+    <li><strong>Edge:</strong> A connection between two vertices</li>
+    <li><strong>Directed/Undirected:</strong> Edges may have a direction or be bidirectional</li>
+    <li><strong>Weighted/Unweighted:</strong> Edges may have associated values (weights)</li>
+    <li><strong>Cyclic/Acyclic:</strong> Graphs may contain cycles or not</li>
+  </ul>
+</div>
+
+<div class="content-section">
+  <h3>Graph Representations</h3>
+  
+  <h4>1. Adjacency List</h4>
+  <p>An adjacency list represents a graph as a collection of linked lists or arrays, where each list describes the neighbors of a vertex.</p>
+  
+  <div class="code-block">
+// Adjacency List implementation
+class Graph {
+  constructor() {
+    this.adjacencyList = {};
+  }
+  
+  addVertex(vertex) {
+    if (!this.adjacencyList[vertex]) {
+      this.adjacencyList[vertex] = [];
+    }
+  }
+  
+  addEdge(vertex1, vertex2) {
+    this.adjacencyList[vertex1].push(vertex2);
+    this.adjacencyList[vertex2].push(vertex1); // For undirected graph
+  }
+}
+
+// Example
+const graph = new Graph();
+graph.addVertex("A");
+graph.addVertex("B");
+graph.addVertex("C");
+graph.addEdge("A", "B");
+graph.addEdge("B", "C");
+
+// Result:
+// {
+//   "A": ["B"],
+//   "B": ["A", "C"],
+//   "C": ["B"]
+// }
+  </div>
+  
+  <h4>2. Adjacency Matrix</h4>
+  <p>An adjacency matrix is a 2D array where each cell [i][j] represents whether there is an edge from vertex i to vertex j.</p>
+  
+  <div class="code-block">
+// Adjacency Matrix representation
+// For the same graph as above:
+const matrix = [
+  [0, 1, 0], // A's connections (to B)
+  [1, 0, 1], // B's connections (to A and C)
+  [0, 1, 0]  // C's connections (to B)
+];
+
+// In a weighted graph, instead of 0/1, we'd use the weight value
+  </div>
+</div>
+
+<div class="content-section">
+  <h3>Depth-First Traversal</h3>
+  <p>Depth-First Traversal (DFT) explores as far as possible along a branch before backtracking. It can be implemented recursively or using a stack.</p>
+  
+  <div class="code-block">
+// Recursive DFT implementation
+class Graph {
+  // ... other methods
+  
+  depthFirstTraversal(startVertex) {
+    const result = [];
+    const visited = {};
+    
+    const dfs = (vertex) => {
+      if (!vertex) return null;
+      
+      visited[vertex] = true;
+      result.push(vertex);
+      
+      this.adjacencyList[vertex].forEach(neighbor => {
+        if (!visited[neighbor]) {
+          return dfs(neighbor);
+        }
+      });
+    };
+    
+    dfs(startVertex);
+    return result;
+  }
+}
+
+// Example usage
+const graph = new Graph();
+// ... add vertices and edges
+console.log(graph.depthFirstTraversal("A")); // ["A", "B", "C", ...]
+  </div>
+</div>
+
+<p><strong>Now it's time to practice what you learned!</strong></p>
+<p>You should have already created your Code Signal account. If you have not done so yet, please follow these instructions <a title="What is CodeSignal and How to Create Your Account" href="$WIKI_REFERENCE$/pages/g0f9edee9d9bad727f053555cc74965dd" data-api-endpoint="https://bloomtech.instructure.com/api/v1/courses/2482/pages/what-is-codesignal-and-how-to-create-your-account" data-api-returntype="Page">What is CodeSignal and How to Create Your Account</a>.</p>
+<p><em>Tip:&nbsp; Before you dive into the practice tasks, revisit the core competency and guided project videos in this sprint.</em></p>
+<hr>
+<p>Complete these tasks in CodeSignal:</p>
+<p><a class="leetcode-link" href="https://app.codesignal.com/public-test/azqEu2QDZfBwsuakz/EJsRhkstAmZuDQ" target="_blank" rel="noopener">ACS2M4</a></p>
+<p><a class="leetcode-link" href="https://app.codesignal.com/public-test/dfGtZxm6289jjD8ns/snHo2H5N2PMKi8" target="_blank" rel="noopener">ACS2M5</a></p>
+<p><a class="leetcode-link" href="https://app.codesignal.com/public-test/d8ZaBTiF7PPmG8oNB/Spk5zCuFnKN3Kh" target="_blank" rel="noopener">ACS2M6</a></p>
+<hr>
+<ol>
+<li>Login to CodeSignal</li>
+<li>Click on the task links above</li>
+<li>Select your preferred language</li>
+<li>Click on NEXT to begin</li>
+<li>Agree with the Terms and Pledges and click START</li>
+</ol>
+<hr>
+<p>Once all the questions for each task are completed in Code Signal, click on&nbsp;<strong>Finish the Test</strong>.</p>
+</body>
+</html>
