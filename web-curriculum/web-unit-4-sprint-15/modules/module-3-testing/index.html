@@ -3,650 +3,437 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Module 3 - Unit Testing</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23; /* Dark background color */
-            color: #ffffff;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: #222831; /* Darker container background */
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722; /* Orange accent color */
-            padding-bottom: 10px;
-        }
-        h2 {
-            color: #ffffff;
-            margin-top: 30px;
-            margin-bottom: 20px;
-        }
-        h3 {
-            color: #ff5722; /* Orange accent color */
-            margin-top: 0;
-        }
-        h4 {
-            color: #ffffff;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        .section {
-            margin-bottom: 40px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            padding: 20px;
-            border: 1px solid #333a47;
-        }
-        .section p, .section li {
-            color: #b3b3b3;
-        }
-        ul, ol {
-            color: #b3b3b3;
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 10px;
-        }
-        .button {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #ff5722; /* Orange accent color */
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .button:hover {
-            background-color: #ff7043; /* Lighter orange on hover */
-            box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
-        }
-        
-        /* Navigation styling */
-        nav {
-            margin-bottom: 30px;
-        }
-        nav ul {
-            list-style: none;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            padding: 0;
-            margin-top: 20px;
-        }
-        nav a {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #333a47;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        nav a:hover {
-            background-color: #ff5722;
-            box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
-        }
-        
-        /* Module grid styling */
-        .module-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .module-card {
-            background-color: #333a47;
-            border-radius: 6px;
-            padding: 20px;
-            border: 1px solid #444c5c;
-            transition: transform 0.3s, box-shadow 0.3s;
-          display: flex;
-  flex-direction: column;
-}
-        .module-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        .module-card h3 {
-            margin-top: 0;
-            color: #ff5722;
-        }
-        .module-card p {
-            color: #b3b3b3;
-          flex-grow: 1;
-}
-        
-        /* Video grid styling */
-        .video-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
-            margin-top: 20px;
-        }
-        .video-card {
-            background-color: #333a47;
-            border-radius: 6px;
-            padding: 20px;
-            border: 1px solid #444c5c;
-            width: 100%;
-        }
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            height: 0;
-            overflow: hidden;
-            margin-bottom: 15px;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 4px;
-        }
-        
-        /* Resources styling */
-        .resource-card a {
-            color: #ff5722;
-            text-decoration: none;
-        }
-        .resource-card a:hover {
-            text-decoration: underline;
-        }
-        
-        .resource-link-list li, .resource-link-list a {
-            text-decoration: none;
-            color: #ffffff;
-        }
-
-        .resource-link-list a:hover {
-            text-decoration: underline;
-            color: #ff5722;
-        }
-        
-        /* Media queries */
-        @media (max-width: 768px) {
-            .video-grid, .module-grid {
-                grid-template-columns: 1fr;
-            }
-            nav ul {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-        }
-        
-        /* Code pre formatting */
-        pre {
-            background-color: #1a1d23;
-            padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-size: 14px;
-            border: 1px solid #444c5c;
-        }
-        
-        code {
-            font-family: 'Courier New', Courier, monospace;
-        }
-    </style>
+    <title>Module 3 - Testing with Jest</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Module 3 - Unit Testing</h1>
+    <header>
+        <nav>
+            <div class="logo">Web Unit 4 Sprint 15</div>
+            <ul>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module-1-auth/index.html">Module 1: Authentication</a>
+                        <a href="../module-2-jwt/index.html">Module 2: JWT</a>
+                        <a href="../module-3-testing/index.html" class="active">Module 3: Testing</a>
+                        <a href="../module-4-backend-testing/index.html">Module 4: Backend Testing</a>
+                    </div>
+                </li>
+                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
+            </ul>
+        </nav>
+    </header>
 
-        <div class="section">
-            <h2>Unit Testing</h2>
-            <p>Unit testing is a fundamental practice in software development that helps ensure code quality, catch bugs early, and make refactoring safer. In this module, you'll learn how to write effective unit tests using Jest, a popular JavaScript testing framework.</p>
-
-            <h2>Learning Objectives</h2>
-            <div class="module-grid">
-                <div class="module-card">
-                    <h3>Testing Fundamentals</h3>
-                    <p>Understand the principles of unit testing, test-driven development (TDD), and the testing pyramid.</p>
-                </div>
-                <div class="module-card">
-                    <h3>Jest Framework</h3>
-                    <p>Master Jest's features including test organization, assertions, mocks, and test coverage reporting.</p>
-                </div>
-                <div class="module-card">
-                    <h3>Testing Patterns</h3>
-                    <p>Learn common testing patterns and best practices for writing maintainable and effective tests.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>Module Content</h2>
-            <div class="module-grid">
-                <div class="module-card">
-                    <h3>Testing Basics</h3>
-                    <ul>
-                        <li>What is Unit Testing?</li>
-                        <li>Test-Driven Development</li>
-                        <li>Testing Pyramid</li>
-                    </ul>
-                </div>
-                <div class="module-card">
-                    <h3>Jest Framework</h3>
-                    <ul>
-                        <li>Test Organization</li>
-                        <li>Assertions & Matchers</li>
-                        <li>Mocks & Spies</li>
-                    </ul>
-                </div>
-                <div class="module-card">
-                    <h3>Testing Patterns</h3>
-                    <ul>
-                        <li>Test Structure</li>
-                        <li>Edge Cases</li>
-                        <li>Code Coverage</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>Testing Fundamentals</h2>
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 3: Testing with Jest</h1>
             
-            <div class="video-grid">
-                <div class="video-card">
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/6yy8xxrfyk" title="Why Test Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <h3>Why Do We Test?</h3>
-                    <p>Testing is an essential skill for a web developer to have. It's hard to anticipate every way that a user might interact with your site, not to mention it is incredibly time-consuming to test all of those options manually.</p>
-                    
-                    <p>If we don't have tests, it's safe to assume the following:</p>
-                    <ul>
-                        <li>Application code has to be tested manually</li>
-                        <li>There is no way to know if a change broke another piece of code</li>
-                        <li>You cannot be sure if the code is correct</li>
-                        <li>Manually testing takes a lot of unnecessary time</li>
-                        <li>Adding new features becomes slow</li>
-                    </ul>
-                    
-                    <h4>Advantages of Testing</h4>
-                    <ul>
-                        <li>Verifies edge cases</li>
-                        <li>Developer can concentrate on current changes (safety net)</li>
-                    </ul>
-                    
-                    <h4>Drawbacks of Testing</h4>
-                    <ul>
-                        <li>More code to write and maintain</li>
-                        <li>More tooling</li>
-                        <li>Additional dependencies</li>
-                        <li>May provide a false sense of security</li>
-                        <li>Trivial test failures may break the build</li>
-                        <li>Regressions (when a new feature breaks existing code)</li>
-                    </ul>
-                </div>
-                
-                <div class="video-card">
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/f8seisa4rh" title="Jest Introduction" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <h3>Unit Testing with Jest</h3>
-                    <p>There are many testing tools available for JavaScript applications. Examples include Jest, Mocha/Chai, Jasmine, Qunit, Enzyme, Supertest, Istanbul, Karma, and Cypress.</p>
-                    
-                    <p>For this module, we'll focus on <strong>Jest</strong>, a JavaScript testing framework that works particularly well with React applications.</p>
-                    
-                    <h4>What is Jest?</h4>
-                    <p>Jest is a test runner and command-line interface npm package. It was originally made by Facebook and is included out-of-the-box with create-react-app. Jest can run asynchronous tests, snapshot testing, and produce coverage reports.</p>
-                    
-                    <h4>Watch Mode</h4>
-                    <p>Instead of running tests manually, Jest has a built-in watch mode feature that will run tests automatically as files change. Jest detects these changes automatically and only runs the tests related to the changes.</p>
-                </div>
-                
-                <div class="video-card">
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/5k23ogyxk5" title="TDD Fundamentals" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <h3>Test-Driven Development</h3>
-                    <p>Test-Driven Development is a software development approach where tests are written before the code that needs to be tested. The TDD cycle is:</p>
-                    
-                    <ol>
-                        <li><strong>Red</strong>: Write a failing test</li>
-                        <li><strong>Green</strong>: Make the test pass with the minimum amount of code</li>
-                        <li><strong>Refactor</strong>: Improve the code while keeping the tests passing</li>
-                    </ol>
-                    
-                    <p>Benefits of TDD include:</p>
-                    <ul>
-                        <li>Ensures testable code from the start</li>
-                        <li>Forces you to think about edge cases early</li>
-                        <li>Provides documentation of how your code should work</li>
-                        <li>Creates a safety net for refactoring</li>
-                    </ul>
+            <div class="content-box module3-accent">
+                <h2>Learning Objectives</h2>
+                <p>By the end of this module, you should be able to:</p>
+                <ul>
+                    <li>Understand the importance of testing in software development</li>
+                    <li>Set up and configure Jest for a JavaScript project</li>
+                    <li>Write unit tests using Jest's testing framework</li>
+                    <li>Implement test-driven development (TDD) practices</li>
+                    <li>Use Jest matchers and assertions effectively</li>
+                    <li>Create test suites and organize tests properly</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h2>Video Lesson</h2>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/7r4xVDI2vho" title="Introduction to Jest" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
             </div>
-        </div>
-        
-        <div class="section">
-            <h2>Setting Up Jest for Testing</h2>
-            
-            <div class="video-grid">
-                <div class="video-card">
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/f8seisa4rh" title="Setting Up Jest" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <h3>Configuring Jest</h3>
-                    <p>To set up Jest in a Node.js project, follow these steps:</p>
-                    
-                    <h4>1. Install Jest</h4>
-                    <pre>
-npm install -D jest</pre>
-                    
-                    <h4>2. Add Test Script to package.json</h4>
-                    <pre>
-// In package.json
-{
+
+            <div class="content-box">
+                <h2>Introduction to Testing</h2>
+                <p>Testing is a critical part of software development that ensures your code functions as expected and helps prevent bugs. Automated testing allows you to verify your code's correctness continuously and catch issues early.</p>
+                
+                <h3>Types of Tests</h3>
+                <ul>
+                    <li><strong>Unit Tests</strong>: Test individual functions or components in isolation</li>
+                    <li><strong>Integration Tests</strong>: Test how multiple components work together</li>
+                    <li><strong>End-to-End Tests</strong>: Test the entire application workflow</li>
+                </ul>
+                
+                <h3>Why Jest?</h3>
+                <p>Jest is a popular JavaScript testing framework maintained by Facebook. It's designed to be simple to set up with zero configuration and includes built-in functionality for:</p>
+                <ul>
+                    <li>Test runners</li>
+                    <li>Assertion libraries</li>
+                    <li>Mocking capabilities</li>
+                    <li>Coverage reports</li>
+                    <li>Snapshot testing</li>
+                </ul>
+                
+                <div class="note-box">
+                    <p>Testing may seem like extra work initially, but it saves time in the long run by catching bugs early and making your code more maintainable.</p>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Setting Up Jest</h2>
+                <p>Let's start by setting up Jest in a Node.js project:</p>
+                
+                <h3>Installation</h3>
+                <pre><code>npm install --save-dev jest</code></pre>
+                
+                <h3>Configuration</h3>
+                <p>Add Jest to your package.json:</p>
+                <pre><code>{
   "scripts": {
-    "test": "jest --watch"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   }
-}</pre>
-                    
-                    <h4>3. Create Test Files</h4>
-                    <p>Jest will find your tests in two ways:</p>
-                    <ul>
-                        <li>By placing <code>.js</code> files inside a folder called <code>__tests__</code></li>
-                        <li>By ending the name of a file in <code>.test.js</code> or <code>.spec.js</code></li>
-                    </ul>
-                    
-                    <h4>4. Run Tests</h4>
-                    <pre>
-npm test</pre>
-                </div>
+}</code></pre>
                 
-                <div class="video-card">
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/f8seisa4rh" title="Writing Basic Tests with Jest" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <h3>Writing Basic Tests with Jest</h3>
-                    <p>Here's an example of a basic test file structure:</p>
-                    
-                    <h4>Code Example - Simple Math Functions and Tests:</h4>
-                    <pre>
-// math.js
+                <p>Create a jest.config.js file for advanced configuration (optional):</p>
+                <pre><code>// jest.config.js
+module.exports = {
+  testEnvironment: 'node',
+  verbose: true,
+  collectCoverage: true,
+  collectCoverageFrom: [
+    '**/*.{js,jsx}',
+    '!**/node_modules/**',
+    '!**/vendor/**'
+  ]
+};</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h2>Writing Your First Jest Test</h2>
+                <p>Let's write some basic tests to understand how Jest works.</p>
+                
+                <h3>Test File Naming Conventions</h3>
+                <p>Jest automatically finds tests in files that match these patterns:</p>
+                <ul>
+                    <li>Files with <code>.test.js</code> suffix</li>
+                    <li>Files with <code>.spec.js</code> suffix</li>
+                    <li>Files inside a <code>__tests__</code> directory</li>
+                </ul>
+                
+                <h3>Basic Test Structure</h3>
+                <pre><code>// sum.js
 function sum(a, b) {
   return a + b;
 }
+module.exports = sum;
 
-function multiply(a, b) {
-  return a * b;
-}
+// sum.test.js
+const sum = require('./sum');
 
-module.exports = { sum, multiply };
-
-// math.test.js
-const { sum, multiply } = require('./math');
-
-describe('Math module', () => {
-  // Test suite for the sum function
-  describe('sum function', () => {
-    test('adds 1 + 2 to equal 3', () => {
-      expect(sum(1, 2)).toBe(3);
-    });
-    
-    test('adds negative numbers correctly', () => {
-      expect(sum(-1, -2)).toBe(-3);
-    });
-  });
-  
-  // Test suite for the multiply function
-  describe('multiply function', () => {
-    test('multiplies 2 * 3 to equal 6', () => {
-      expect(multiply(2, 3)).toBe(6);
-    });
-    
-    test('multiplies with zero to equal zero', () => {
-      expect(multiply(5, 0)).toBe(0);
-    });
-  });
-});</pre>
-                </div>
+test('adds 1 + 2 to equal 3', () => {
+  expect(sum(1, 2)).toBe(3);
+});</code></pre>
                 
-                <div class="video-card">
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/f8seisa4rh" title="Test Organization" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <h3>Jest Test Organization</h3>
-                    <p>Jest provides several functions to organize your tests effectively:</p>
-                    
-                    <h4>Key Jest Functions:</h4>
-                    <ul>
-                        <li><code>describe()</code>: Group related tests in a test suite</li>
-                        <li><code>test()</code> or <code>it()</code>: Define individual test cases</li>
-                        <li><code>beforeEach()</code>: Run code before each test in a suite</li>
-                        <li><code>afterEach()</code>: Run code after each test in a suite</li>
-                        <li><code>beforeAll()</code>: Run code once before all tests in a suite</li>
-                        <li><code>afterAll()</code>: Run code once after all tests in a suite</li>
-                    </ul>
-                    
-                    <h4>Code Example - Test Organization:</h4>
-                    <pre>
-describe('User Authentication', () => {
-  let db;
-  
-  // Setup - runs once before all tests
-  beforeAll(() => {
-    db = connectToTestDatabase();
-  });
-  
-  // Cleanup - runs once after all tests
-  afterAll(() => {
-    disconnectFromDatabase(db);
-  });
-  
-  // Reset for each test
-  beforeEach(() => {
-    resetTestUser(db);
-  });
-  
-  // Test cases
-  test('registers a new user successfully', () => {
-    // Test registration
-  });
-  
-  test('fails to register with invalid email', () => {
-    // Test invalid registration
-  });
-  
-  test('logs in an existing user', () => {
-    // Test login
-  });
-});</pre>
-                </div>
+                <h3>Running Tests</h3>
+                <pre><code>npm test</code></pre>
+                
+                <p>Test output should look like:</p>
+                <pre><code>PASS  ./sum.test.js
+✓ adds 1 + 2 to equal 3 (3ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        0.789s
+Ran all tests.</code></pre>
             </div>
-        </div>
-        
-        <div class="section">
-            <h2>Advanced Testing Techniques</h2>
-            
-            <div class="video-grid">
-                <div class="video-card">
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/f8seisa4rh" title="Assertions and Matchers" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <h3>Assertions and Matchers</h3>
-                    <p>Jest provides a rich set of matchers to test different types of values:</p>
-                    
-                    <h4>Common Matchers:</h4>
-                    <pre>
-// Equality
-expect(value).toBe(exactValue);            // Exact equality (===)
-expect(value).toEqual(obj);                // Deep equality for objects
+
+            <div class="content-box">
+                <h2>Jest Matchers and Assertions</h2>
+                <p>Jest provides a variety of matchers to help you verify different types of conditions:</p>
+                
+                <h3>Common Matchers</h3>
+                <pre><code>// Equality
+expect(value).toBe(exactValue);           // exact equality (===)
+expect(object).toEqual(anotherObject);    // deep equality
 
 // Truthiness
-expect(value).toBeTruthy();                // Truthy value
-expect(value).toBeFalsy();                 // Falsy value
-expect(value).toBeNull();                  // Null value
-expect(value).toBeUndefined();             // Undefined value
-expect(value).toBeDefined();               // Not undefined
+expect(value).toBeTruthy();               // truthy value
+expect(value).toBeFalsy();                // falsy value
+expect(value).toBeNull();                 // null
+expect(value).toBeUndefined();            // undefined
+expect(value).toBeDefined();              // not undefined
 
 // Numbers
-expect(value).toBeGreaterThan(number);     // > number
-expect(value).toBeGreaterThanOrEqual(number); // >= number
-expect(value).toBeLessThan(number);        // < number
-expect(value).toBeLessThanOrEqual(number); // <= number
+expect(value).toBeGreaterThan(number);
+expect(value).toBeGreaterThanOrEqual(number);
+expect(value).toBeLessThan(number);
+expect(value).toBeLessThanOrEqual(number);
+expect(value).toBeCloseTo(number, numDigits); // for floating-point equality
 
 // Strings
-expect(string).toMatch(/regex/);           // Match regex
+expect(string).toMatch(/regex/);          // matches regex
 
-// Arrays and Iterables
-expect(array).toContain(item);             // Contains item
-expect(array).toHaveLength(number);        // Has length
+// Arrays and iterables
+expect(array).toContain(item);            // contains item
+expect(array).toHaveLength(number);       // has length
 
 // Objects
-expect(object).toHaveProperty(keyPath);    // Has property
-</pre>
-                </div>
+expect(object).toHaveProperty(keyPath);   // has property
+expect(function).toThrow(error);          // throws error</code></pre>
                 
-                <div class="video-card">
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/f8seisa4rh" title="Mocks and Spies" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <h3>Mocks and Spies</h3>
-                    <p>Mocks allow you to replace real implementations with test doubles. This is particularly useful for:</p>
-                    <ul>
-                        <li>Testing code that makes API calls</li>
-                        <li>Isolating the code being tested from its dependencies</li>
-                        <li>Verifying that functions were called with specific arguments</li>
-                    </ul>
-                    
-                    <h4>Code Example - Using Jest Mocks:</h4>
-                    <pre>
-// userService.js
-const axios = require('axios');
-
-async function getUsers() {
-  const response = await axios.get('https://api.example.com/users');
-  return response.data;
-}
-
-module.exports = { getUsers };
-
-// userService.test.js
-const axios = require('axios');
-const { getUsers } = require('./userService');
-
-// Mock the axios module
-jest.mock('axios');
-
-test('fetches users successfully', async () => {
-  // Setup mock response
-  const users = [{ id: 1, name: 'John' }, { id: A, name: 'Jane' }];
-  axios.get.mockResolvedValue({ data: users });
+                <h3>Example with Different Matchers</h3>
+                <pre><code>test('demonstrates different matchers', () => {
+  // Primitive equality
+  expect(2 + 2).toBe(4);
   
-  // Call the function
-  const result = await getUsers();
+  // Object equality
+  expect({ name: 'Alice', age: 30 }).toEqual({ name: 'Alice', age: 30 });
   
-  // Verify axios.get was called correctly
-  expect(axios.get).toHaveBeenCalledWith('https://api.example.com/users');
+  // Truthiness
+  expect(true).toBeTruthy();
+  expect(false).toBeFalsy();
+  expect(null).toBeNull();
   
-  // Verify result
-  expect(result).toEqual(users);
-});</pre>
-                </div>
+  // Numbers
+  expect(10).toBeGreaterThan(5);
+  expect(5).toBeLessThanOrEqual(5);
+  
+  // Strings
+  expect('Hello World').toMatch(/World/);
+  
+  // Arrays
+  expect(['apple', 'banana', 'orange']).toContain('banana');
+  expect(['apple', 'banana', 'orange']).toHaveLength(3);
+  
+  // Exceptions
+  const throwError = () => { throw new Error('This is an error'); };
+  expect(throwError).toThrow('This is an error');
+});</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h2>Organizing Tests with Describe and Test Blocks</h2>
+                <p>Jest provides ways to organize your tests into logical groups:</p>
                 
-                <div class="video-card">
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/f8seisa4rh" title="Async Testing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <h3>Testing Asynchronous Code</h3>
-                    <p>Jest provides several ways to test asynchronous code:</p>
-                    
-                    <h4>Code Example - Testing Async Functions:</h4>
-                    <pre>
-// Using async/await (recommended)
-test('async function test with async/await', async () => {
-  const data = await fetchData();
-  expect(data).toBe('expected data');
-});
+                <h3>Describe and Test (or it)</h3>
+                <pre><code>// userService.test.js
+const userService = require('./userService');
 
-// Using promises
-test('async function test with promises', () => {
-  return fetchData().then(data => {
-    expect(data).toBe('expected data');
+describe('User Service', () => {
+  // You can have setup and teardown for each describe block
+  beforeAll(() => {
+    // Run before all tests in this describe block
+    console.log('Setting up User Service tests');
+  });
+  
+  afterAll(() => {
+    // Run after all tests in this describe block
+    console.log('Cleaning up after User Service tests');
+  });
+  
+  beforeEach(() => {
+    // Run before each test in this describe block
+    // Great for resetting state
+  });
+  
+  afterEach(() => {
+    // Run after each test in this describe block
+  });
+  
+  describe('createUser', () => {
+    test('creates a user successfully with valid data', () => {
+      const userData = { username: 'testuser', email: 'test@example.com' };
+      const user = userService.createUser(userData);
+      
+      expect(user).toHaveProperty('id');
+      expect(user.username).toBe('testuser');
+      expect(user.email).toBe('test@example.com');
+    });
+    
+    test('throws error when missing required fields', () => {
+      const userData = { username: 'testuser' }; // Missing email
+      
+      expect(() => {
+        userService.createUser(userData);
+      }).toThrow('Email is required');
+    });
+  });
+  
+  describe('findUserById', () => {
+    test('returns user when found', () => {
+      const user = userService.findUserById(1);
+      expect(user).not.toBeNull();
+    });
+    
+    test('returns null when user not found', () => {
+      const user = userService.findUserById(999);
+      expect(user).toBeNull();
+    });
+  });
+});</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h2>Testing Asynchronous Code</h2>
+                <p>Jest has several ways to test asynchronous code:</p>
+                
+                <h3>Promises</h3>
+                <pre><code>// With promises, return the promise
+test('fetchUserData returns user data', () => {
+  return fetchUserData(1).then(data => {
+    expect(data).toHaveProperty('name');
   });
 });
 
-// Using the done callback (older style)
-test('async function test with done callback', done => {
-  fetchData().then(data => {
-    expect(data).toBe('expected data');
-    done();
-  });
-});</pre>
-                    
-                    <h4>Testing Error Handling:</h4>
-                    <pre>
-test('handles errors in async functions', async () => {
-  // Using .rejects with async/await
-  await expect(fetchDataWithError()).rejects.toThrow('Network Error');
-  
-  // Alternative approach
+// Using async/await
+test('fetchUserData returns user data', async () => {
+  const data = await fetchUserData(1);
+  expect(data).toHaveProperty('name');
+});
+
+// Testing rejected promises
+test('fetchUserData rejects when user does not exist', async () => {
+  expect.assertions(1); // Ensure the assertion in the catch block is called
   try {
-    await fetchDataWithError();
-    // If we reach this line, the test should fail
-    expect(true).toBe(false); // This will never pass
+    await fetchUserData(999);
   } catch (error) {
-    expect(error.message).toBe('Network Error');
+    expect(error).toMatch('User not found');
   }
-});</pre>
-                </div>
-            </div>
-        </div>
+});
 
-        <div class="section">
-            <h2>Guided Project</h2>
-            <div class="module-card">
-                <h3>Testing Implementation</h3>
-                <p>Build a test suite for a Node.js application using Jest</p>
-                <a href="https://github.com/bloominstituteoftechnology/node-testing-guided" class="button" target="_blank" rel="noopener noreferrer">View Project</a>
+// Alternative way to test rejected promises
+test('fetchUserData rejects when user does not exist', () => {
+  return expect(fetchUserData(999)).rejects.toMatch('User not found');
+});</code></pre>
+                
+                <h3>Callbacks</h3>
+                <pre><code>// For callback APIs, use the done parameter
+test('fetchUserDataCallback returns user data', done => {
+  function callback(error, data) {
+    if (error) {
+      done(error);
+      return;
+    }
+    
+    try {
+      expect(data).toHaveProperty('name');
+      done();
+    } catch (error) {
+      done(error);
+    }
+  }
+  
+  fetchUserDataCallback(1, callback);
+});</code></pre>
             </div>
-        </div>
 
-        <div class="section">
-            <h2>Resources</h2>
-            <div class="module-grid">
-                <div class="module-card">
-                    <h3>Recommended Reading</h3>
-                    <ul class="resource-link-list">
-                        <li><a href="https://jestjs.io/docs/getting-started" target="_blank" rel="noopener noreferrer">Jest Documentation</a></li>
-                        <li><a href="https://martinfowler.com/bliki/TestPyramid.html" target="_blank" rel="noopener noreferrer">Test Pyramid</a></li>
-                        <li><a href="https://github.com/facebook/jest#readme" target="_blank" rel="noopener noreferrer">Jest GitHub Repository</a></li>
-                    </ul>
-                </div>
-                <div class="module-card">
-                    <h3>Tools & Libraries</h3>
-                    <ul>
-                        <li>Jest - JavaScript Testing Framework</li>
-                        <li>jest-cli - Command line interface</li>
-                        <li>jest-watch - Watch mode for Jest</li>
-                    </ul>
-                </div>
+            <div class="content-box">
+                <h2>Mocking with Jest</h2>
+                <p>Mocking is crucial for isolating units of code during testing. Jest provides powerful mocking capabilities:</p>
+                
+                <h3>Function Mocks</h3>
+                <pre><code>// Mock a specific function
+const mockFn = jest.fn();
+mockFn.mockReturnValue(42);
+// or
+mockFn.mockImplementation(() => 42);
+
+// With arguments
+mockFn.mockReturnValueOnce('first call')
+      .mockReturnValueOnce('second call')
+      .mockReturnValue('default');
+
+// Testing a mock was called correctly
+test('mock function example', () => {
+  mockFn(10, 'test');
+  
+  expect(mockFn).toHaveBeenCalled();
+  expect(mockFn).toHaveBeenCalledTimes(1);
+  expect(mockFn).toHaveBeenCalledWith(10, 'test');
+});</code></pre>
+                
+                <h3>Module Mocks</h3>
+                <pre><code>// Create a manual mock by creating a __mocks__ directory
+// __mocks__/axios.js
+module.exports = {
+  get: jest.fn(() => Promise.resolve({ data: {} }))
+};
+
+// In your test file:
+jest.mock('axios');
+const axios = require('axios');
+
+test('fetches data with axios', async () => {
+  // Set up the mock return value for this test
+  axios.get.mockResolvedValueOnce({
+    data: { id: 1, name: 'Test User' }
+  });
+  
+  const result = await fetchUser(1);
+  
+  expect(axios.get).toHaveBeenCalledWith('/users/1');
+  expect(result).toEqual({ id: 1, name: 'Test User' });
+});</code></pre>
+                
+                <h3>Spying on Methods</h3>
+                <pre><code>// Spy on an object method
+const user = {
+  setName(name) {
+    this.name = name;
+  }
+};
+
+test('spy on setName method', () => {
+  const spy = jest.spyOn(user, 'setName');
+  
+  user.setName('Alice');
+  
+  expect(spy).toHaveBeenCalledWith('Alice');
+  expect(user.name).toBe('Alice');
+  
+  // Restore the original implementation
+  spy.mockRestore();
+});</code></pre>
             </div>
-        </div>
-    </div>
+
+            <section class="resource-section">
+                <h2 class="resource-section-title">Additional Resources</h2>
+                <div class="resource-links">
+                    <a href="https://jestjs.io/docs/getting-started" target="_blank" rel="noopener noreferrer" class="resource-link">
+                        Jest Documentation
+                    </a>
+                    <a href="https://jestjs.io/docs/expect" target="_blank" rel="noopener noreferrer" class="resource-link">
+                        Jest Matchers Reference
+                    </a>
+                    <a href="https://jestjs.io/docs/mock-functions" target="_blank" rel="noopener noreferrer" class="resource-link">
+                        Jest Mock Functions
+                    </a>
+                    <a href="https://medium.com/@rickhanlonii/understanding-jest-mocks-f0046c68e53c" target="_blank" rel="noopener noreferrer" class="resource-link">
+                        Understanding Jest Mocks
+                    </a>
+                </div>
+            </section>
+
+            <div class="content-box">
+                <h2>Practice Assignment</h2>
+                <p>Now it's time to practice writing tests with Jest! Create tests for the authentication and JWT functionality you've been working on:</p>
+                <ul>
+                    <li>Write unit tests for user registration functions</li>
+                    <li>Test password hashing and verification</li>
+                    <li>Test JWT generation and verification</li>
+                    <li>Create mocks for database interactions</li>
+                    <li>Aim for at least 80% test coverage</li>
+                </ul>
+                <a href="#" class="btn">Practice Assignment Details</a>
+            </div>
+
+            <div class="content-box">
+                <h2>Next Steps</h2>
+                <p>In the next module, we'll explore testing backend applications, focusing on API route testing, database testing, and integration testing.</p>
+                <a href="../module-4-backend-testing/index.html" class="btn">Go to Module 4: Backend Testing</a>
+            </div>
+        </section>
+    </main>
 </body>
 </html>
