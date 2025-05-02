@@ -47,22 +47,187 @@
                 </ul>
             </div>
 
-            <div class="content-box">
-                <h3>Video Lessons</h3>
+            <div class="content-box module3-accent">
+                <h3>Understanding Redux</h3>
+
+                <p>In a web application, 'state' refers to the dynamic elements such as the URL, user inputs, and interactive features. This is akin to the changing conditions of a car, like speed or fuel level. In Redux, state is treated as a single source of truth, representing the entire state of the application at any given moment.</p>
+                <p>Front-end developers often grapple with how to manage state effectively. Choices include storing state within the DOM, building a singular large object for the entire application's state, or allowing the URL to influence state. These decisions impact how easily state can be tracked, manipulated, and maintained.</p>
+                <p>In response to these challenges, the front-end community has created numerous libraries and frameworks. Each offers different approaches to state management, addressing various needs and complexities of web applications. Redux emerged as a popular choice due to its simplicity and predictability.</p>
+
+                <h3>How to Build It</h3>
+
+                <p><a href="https://redux.js.org/" target="_blank">Redux</a> is a library that centralizes the application's state, making it more predictable and easier to manage. It's commonly used in complex applications for consistent state management, but it's flexible enough to manage only parts of the state, as needed.</p>
+
+                <p>Redux's centralized approach provides a clear overview of the application's state at any point in time. It offers powerful development tools, like state time-travel, and ensures a clean separation between state management logic and UI components. <a href="https://redux-toolkit.js.org/" target="_blank">Redux Toolkit</a>, an official Redux package, further simplifies Redux development by providing useful utilities.</p>
+
+                <p>Redux's widespread adoption is evidenced by its <a href="https://www.npmjs.com/package/redux" target="_blank">massive download numbers</a> and active community. Its ongoing maintenance by <a href="https://www.youtube.com/watch?v=TROygqXGa10" target="_blank">passionate developers</a> ensures that it stays relevant and efficient in managing modern web application states.</p>
+
+                <p>Redux's architecture revolves around a single, immutable state object. The state is never mutated directly; instead, actions are dispatched to signify state changes. Reducers, which are pure functions, then take the current state and an action to calculate a new state. This approach guarantees predictability and ease of debugging.</p>
+                <p>Actions in Redux are plain JavaScript objects describing what happened, and reducers are functions that determine how the state changes in response to these actions. This pattern makes it straightforward to trace, test, and maintain state changes across the application.</p>
+                <p>Redux encourages a design where components are 'dumb' regarding state management. They dispatch actions and may read state but are not involved in state mutation. This separation of concerns leads to more maintainable and scalable codebases.</p>
+                <p>Redux is a robust framework for state management, building on the reducer pattern to ensure a predictable application state. Redux Toolkit further enhances Redux by offering utilities like <code>createSlice</code> and <code>createAsyncThunk</code>, which simplify common Redux patterns and reduce boilerplate. Overall, Redux and Redux Toolkit provide a structured approach to managing state in complex web applications.</p>
                 
                 <div class="video-container">
-                    <h3>Introduction to Redux Toolkit</h3>
+                    <iframe src="https://fast.wistia.net/embed/iframe/tqeqfc4luj?seo=false&videoFoam=false" title="Introduction to Redux Toolkit" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="content-box module3-accent">
+                <h3>Creating a Redux App</h3>
+
+                <p>In order to use Redux in a React project, you will install two NPM packages: <a href="https://www.npmjs.com/package/@reduxjs/toolkit" target="_blank">Redux Toolkit</a> and <a href="https://www.npmjs.com/package/react-redux" target="_blank">React Redux</a>. You may also bootstrap a React app that already includes these dependencies by running <code>npx @bloomtools/react my-first-redux-app</code> in your terminal.</p>
+                <p>In this Objective, you will learn to get Redux up and running in your application. The state will be very simple: Redux will be tracking the state of a counter. But once you have a little bit of state working, it's very easy to add some more.</p>
+                <p>Configuring Redux will involve four different aspects:</p>
+
+                <ol>
+                    <li><strong>Creating a slice of application state</strong>, and defining the state changing functions.</li>
+                    <li><strong>Building a Redux store</strong>, which is the place where all slices are combined.</li>
+                    <li><strong>Wrapping the component tree</strong> with a Provider, which uses Context to "teleport" application state to any component.</li>
+                    <li><strong>Displaying and updating state</strong> from any component in the tree.</li>
+                </ol>
+
+                <p>Let's get into it!</p>
+
+                <h3>How to Build It</h3>
+
+                <p><strong>1- Create a Slice of Application State</strong></p>
+
+                <p>In the project's front-end folder, a new folder called 'state' and a file 'slice.js' are created. This file holds a part of the application state, with potential for multiple slices in more complex applications. The slice is defined using the 'createSlice' function from Redux Toolkit. It includes a name ('count_state'), an initial state object (e.g., <code>{ count: 0 }</code>), and reducers with methods like 'increment' to update the state. The 'slice.reducer' and actions like 'increment' are exported for use in components, allowing for state changes when actions are emitted:</p>
+
+                <pre><code>
+// frontend/state/slice.js
+import { createSlice } from '@reduxjs/toolkit'
+
+const slice = createSlice({
+  name: 'count_state',
+  initialState: { count: 0 }, // we can add many more properties besides 'count'
+  reducers: {
+    increment(state) {
+      // this is like a branch in the switches you wrote in The Reducer Pattern
+      return { ...state, count: state.count + 1 }
+    },
+  }
+})
+
+export default slice.reducer // there can be other reducers in the app besides this one
+
+export const { increment } = slice.actions // components will use these functions
+                </code></pre>
+
+                <p>Redux Toolkit includes a library called <a href="https://immerjs.github.io/immer" target="_blank">Immer</a>> which allows you to write seemingly mutable logic in your reducers, which is then translated into immutable updates under the hood. For example, it allows you to rewrite your 'increment' function like this:</p>
+
+                <pre><code>
+increment(state) {
+    // thanks to the magic of Immer:
+    state.count++ // mutate freely, and don't return!
+},
+                </code></pre>
+
+                <p>Redux Toolkit addresses in this way the concerns of many developers regarding the verbosity of 'classic' reducers, without actually changing the way reducers work under the hood.</p>
+
+                <p><strong>2- Build a Redux Store</strong></p>
+
+                <p>A single store for the entire application state is created in 'store.js'. It is configured with the 'configureStore' function from Redux Toolkit, incorporating the created slice(s):</p>
+
+                <pre><code>
+// frontend/state/store.js
+import { configureStore } from '@reduxjs/toolkit'
+import reducer from './slice'
+
+export const store = configureStore({
+  reducer: {
+    counters: reducer,
+    // other reducers would go here
+  }
+})
+                </code></pre>
+
+                <p>In this way, Redux combines all the slices of state in the application into one big reducer.</p>
+
+                <p><strong>3- Wrap the Component Tree with a Provider</strong></p>
+
+                <p>The React application is wrapped with a Provider from React Redux, which is provided with the created store to enable state access across all components:</p>
+
+                <pre><code>
+// frontend/index.js
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './components/App'
+import { Provider } from 'react-redux'
+import { store } from './state/store'
+
+const root = createRoot(document.getElementById('root'))
+
+root.render(
+  &lt;Provider store={store}&gt;
+    &lt;App /&gt;
+  &lt;/Provider&gt;
+)
+                </code></pre>
+
+                <p>Redux is using the Context API under the hood, to 'teleport' props to any component in the tree, no matter how deeply nested. You only need to do this step once per application. You can wrap the whole app like you see here, or just a part of the component tree.</p>
+
+                <p><strong>4- Display and Update State in Components</strong></p>
+
+                <p>Components, like the App component, use the 'useSelector' and 'useDispatch' hooks from React Redux to access and update state. 'useSelector' retrieves specific state data (e.g., the count), and 'useDispatch' allows dispatching actions like increment:</p>
+
+                <pre><code>
+// frontend/components/App.js
+import React from 'react'
+import {
+  useSelector, // allows to select pieces of state
+  useDispatch, // allows to dispatch actions to the reducers
+} from 'react-redux'
+import { increment } from '../state/slice' // the action
+
+export default function App() {
+  const count = useSelector(st => st.counters.count)
+  const dispatch = useDispatch()
+  return (
+    &lt;div&gt;
+      &lt;button onClick={() => {
+        const action = increment()
+        dispatch(action) // the reducer will detect this action
+      }}&gt;The count is {count}&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+                </code></pre>
+
+                <p>If you install the Redux Dev Tools extension for Chrome, you should be able to see the state of your app and the actions dispatched, when you click the increment button!</p>
+                
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/252fu4dvhj?seo=false&videoFoam=false" title="Introduction to Redux Toolkit" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="content-box module3-accent">
+                <h3>Working with Reducers and Actions</h3>
+
+
+                
+                <div class="video-container">
                     <iframe src="https://fast.wistia.net/embed/iframe/abc123def456" title="Introduction to Redux Toolkit" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
                 </div>
+            </div>
 
+            <div class="content-box module3-accent">
+                <h3>Dispatching Actions</h3>
+
+
+                
                 <div class="video-container">
-                    <h3>Creating Slices with createSlice</h3>
-                    <iframe src="https://fast.wistia.net/embed/iframe/abc123def456" title="Creating Slices with createSlice" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+                    <iframe src="https://fast.wistia.net/embed/iframe/abc123def456" title="Introduction to Redux Toolkit" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
                 </div>
+            </div>
 
+            <div class="content-box module3-accent">
+                <h3>Managing Complex State</h3>
+
+
+                
                 <div class="video-container">
-                    <h3>Async Actions with Redux Thunk</h3>
-                    <iframe src="https://fast.wistia.net/embed/iframe/abc123def456" title="Async Actions with Redux Thunk" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+                    <iframe src="https://fast.wistia.net/embed/iframe/abc123def456" title="Introduction to Redux Toolkit" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
                 </div>
             </div>
 
