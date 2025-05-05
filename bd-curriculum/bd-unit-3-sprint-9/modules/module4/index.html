@@ -4,245 +4,185 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 4: Testing and Debugging - BD Unit 3 Sprint 9</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23;
-            color: #ffffff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #222831;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722;
-            padding-bottom: 10px;
-        }
-        .module {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #333a47;
-            background-color: #2a303c;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-        }
-        .module h2 {
-            color: #ffffff;
-            margin-top: 0;
-        }
-        .module p {
-            color: #b3b3b3;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
-        .video-container {
-            margin: 20px 0;
-        }
-        .video-container iframe {
-            max-width: 100%;
-            border-radius: 4px;
-            width: 100%;
-            height: 360px;
-        }
-        .resources {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border-left: 4px solid #ff5722;
-        }
-        .resources h2, .resources h3 {
-            color: #ffffff;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .resources ul {
-            list-style-type: none;
-            padding: 0;
-            color: #b3b3b3;
-        }
-        .resources li {
-            margin-bottom: 10px;
-        }
-        .resources a {
-            color: #ff5722;
-            text-decoration: none;
-        }
-        .resources a:hover {
-            text-decoration: underline;
-            color: #ff7043;
-        }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background-color: #2a303c;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .back-button:hover {
-            background-color: #333a47;
-        }
-        section {
-            margin-bottom: 30px;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <a href="../../index.html" class="back-button">← Back to Home</a>
-        
-        <h1>Module 4: Testing and Debugging</h1>
-        
-        <div class="module">
-            <h2>Module Overview</h2>
-            <p>Learn advanced testing techniques and debugging strategies for Java applications.</p>
-        </div>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Testing and Debugging Video" src="https://fast.wistia.net/embed/iframe/xdu9mmc5vu" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-        </div>
-
-        <section>
-            <h2>Learning Objectives</h2>
-            <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Master inheritance and polymorphism in Java</li>
-                <li>Understand method overriding in complex inheritance hierarchies</li>
-                <li>Implement constructors that use superclass constructors</li>
-                <li>Use superclass types to reference subclass instances effectively</li>
-                <li>Learn how to expose members to subclasses without public access</li>
-                <li>Analyze is-a relationships in class design</li>
-                <li>Understand when to use a superclass vs an interface</li>
-                <li>Design and implement abstract classes and methods</li>
-                <li>Recognize the risks in modifying superclasses</li>
-                <li>Compare different inheritance approaches for effective class hierarchies</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Advanced Inheritance and Polymorphism</h2>
-            <div style="color: #b3b3b3; margin-bottom: 20px;">
-                <p>Advanced inheritance and polymorphism concepts are crucial for designing robust, maintainable, and extensible applications. A deeper understanding of these concepts allows developers to leverage the full power of object-oriented programming.</p>
-                
-                <h3>Method Execution in Inheritance Hierarchies:</h3>
-                <ul style="padding-left: 20px;">
-                    <li><strong>Method Dispatch:</strong> When a method is called on an object, Java determines which implementation to use based on the actual object type, not the reference type</li>
-                    <li><strong>Superclass Method Calling Overridden Method:</strong> When a superclass method calls another method that is overridden in a subclass, the subclass's implementation is called</li>
-                    <li>Example:
-                        <pre style="background-color: #333a47; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>class Parent {
-    public void doWork() {
-        System.out.println("Parent working");
-        this.prepareWork(); // Will call Child's implementation if called on Child
-    }
-    
-    public void prepareWork() {
-        System.out.println("Parent preparing");
-    }
-}
-
-class Child extends Parent {
-    @Override
-    public void prepareWork() {
-        System.out.println("Child preparing");
-    }
-}
-
-// Usage
-Parent p = new Child();
-p.doWork(); // Outputs: "Parent working" followed by "Child preparing"</code></pre>
-                    </li>
-                </ul>
-
-                <h3>Access Modifiers and Inheritance:</h3>
-                <ul style="padding-left: 20px;">
-                    <li><strong>Protected Members:</strong> Visible to subclasses and classes in the same package, but not to the outside world</li>
-                    <li>This allows superclasses to expose functionality to subclasses without making it public</li>
-                    <li>Example:
-                        <pre style="background-color: #333a47; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>public class DatabaseConnection {
-    protected Connection getConnection() {
-        // Implementation that returns a database connection
-        // Available to subclasses but not to external classes
-    }
-    
-    public void executeQuery(String sql) {
-        Connection conn = getConnection();
-        // Use connection to execute query
-    }
-}</code></pre>
-                    </li>
-                </ul>
-
-                <h3>Superclass vs Interface Decision Making:</h3>
-                <ul style="padding-left: 20px;">
-                    <li><strong>Use a Superclass When:</strong>
-                        <ul>
-                            <li>You want to share code implementation</li>
-                            <li>You have a clear is-a relationship</li>
-                            <li>You need to maintain state across all subclasses</li>
-                        </ul>
-                    </li>
-                    <li><strong>Use an Interface When:</strong>
-                        <ul>
-                            <li>You want to define a contract without implementation</li>
-                            <li>You need multiple inheritance (a class can implement multiple interfaces)</li>
-                            <li>You want to define behavior that can be implemented by unrelated classes</li>
-                        </ul>
-                    </li>
-                </ul>
-
-                <h3>Risks of Modifying Superclasses:</h3>
-                <ul style="padding-left: 20px;">
-                    <li>Adding or changing methods can break existing subclasses</li>
-                    <li>Changing method behavior can cause unexpected issues in subclasses</li>
-                    <li>Implementation details that subclasses depend on may change</li>
-                    <li>Best practices:
-                        <ul>
-                            <li>Design superclasses carefully from the start</li>
-                            <li>Document clearly which methods are meant to be overridden</li>
-                            <li>Consider marking classes as final if they're not designed for extension</li>
-                            <li>Use composition over inheritance when appropriate</li>
-                        </ul>
-                    </li>
-                </ul>
-
-                <h3>Polymorphic Assignment and Type Casting:</h3>
-                <pre style="background-color: #333a47; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>// Polymorphic assignment - reference type vs object type
-Shape shape = new Circle(10); // Shape is reference type, Circle is object type
-shape.area(); // Calls Circle's implementation
-
-// Accessing subclass-specific methods requires casting
-if (shape instanceof Circle) {
-    Circle circle = (Circle) shape;
-    double diameter = circle.getDiameter(); // Method only available in Circle
-}</code></pre>
-            </div>
-        </section>
-
-        <div class="resources">
-            <h2>Resources</h2>
+    <header>
+        <nav>
+            <div class="logo">BD Unit 3 Sprint 9</div>
             <ul>
-                <li><a href="https://github.com/BloomTech-Labs/java-testing-debugging-guided-project" target="_blank" rel="noopener">Module 4 Guided Project Repository</a></li>
-                <li><a href="https://github.com/BloomTech-Labs/java-testing-debugging-guided-project-solution" target="_blank" rel="noopener">Module 4 Solution Repository</a></li>
-                <li><a href="https://junit.org/junit5/docs/current/user-guide/" target="_blank" rel="noopener">JUnit 5 Documentation</a></li>
-                <li><a href="https://www.baeldung.com/java-testing" target="_blank" rel="noopener">Guide to Java Testing - Baeldung</a></li>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module1/index.html">Module 1: Design Patterns</a>
+                        <a href="../module2/index.html">Module 2: Advanced OOP Concepts</a>
+                        <a href="../module3/index.html">Module 3: Exception Handling</a>
+                        <a href="../module4/index.html" class="active">Module 4: Testing and Debugging</a>
+                    </div>
+                </li>
+                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-        </div>
-    </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 4: Testing and Debugging</h1>
+            
+            <div class="content-box">
+                <h2>Module Overview</h2>
+                <p>Learn advanced testing techniques and debugging strategies for Java applications.</p>
+            </div>
+            
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Testing and Debugging Video" src="https://fast.wistia.net/embed/iframe/j27kdp4l66" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+
+            <div class="content-box">
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Understand unit testing principles and best practices</li>
+                    <li>Write effective tests using JUnit and Mockito</li>
+                    <li>Utilize test-driven development (TDD) methodology</li>
+                    <li>Implement test coverage analysis</li>
+                    <li>Apply advanced debugging techniques</li>
+                    <li>Use logs and stack traces effectively for problem diagnosis</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h2>Testing and Debugging in Detail</h2>
+                <p>Proper testing and debugging are essential skills for any software developer. These practices help ensure code quality, reduce bugs, and make maintenance easier over time.</p>
+                
+                <h3>Unit Testing in Java:</h3>
+                <ul>
+                    <li><strong>JUnit Basics:</strong> The standard framework for unit testing in Java</li>
+                    <li><strong>Test Case Structure:</strong> Setup, execution, verification, teardown</li>
+                    <li><strong>Assertions:</strong> Methods to verify expected outcomes</li>
+                    <li><strong>Test Organization:</strong> Test classes, methods, suites</li>
+                </ul>
+                
+                <h4>JUnit 5 Example:</h4>
+                <pre><code>import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CalculatorTest {
+    private Calculator calculator;
+    
+    @BeforeEach
+    public void setUp() {
+        calculator = new Calculator();
+    }
+    
+    @Test
+    public void testAddition() {
+        assertEquals(5, calculator.add(2, 3), "2 + 3 should equal 5");
+    }
+    
+    @Test
+    public void testDivision() {
+        assertEquals(2.5, calculator.divide(5, 2), "5 / 2 should equal 2.5");
+    }
+    
+    @Test
+    public void testDivisionByZero() {
+        Exception exception = assertThrows(
+            ArithmeticException.class,
+            () -> calculator.divide(1, 0),
+            "Division by zero should throw ArithmeticException"
+        );
+        
+        String expectedMessage = "Cannot divide by zero";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+}</code></pre>
+                
+                <h3>Mocking with Mockito:</h3>
+                <p>Mocking allows you to test components in isolation by replacing dependencies with objects that simulate their behavior.</p>
+                <pre><code>import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+public class OrderServiceTest {
+    @Test
+    public void testPlaceOrder() {
+        // Create mocks
+        PaymentGateway paymentGatewayMock = mock(PaymentGateway.class);
+        InventoryService inventoryServiceMock = mock(InventoryService.class);
+        
+        // Set up mock behavior
+        when(paymentGatewayMock.processPayment(anyDouble())).thenReturn(true);
+        when(inventoryServiceMock.isProductAvailable("PROD-1", 2)).thenReturn(true);
+        
+        // Create service with mocks
+        OrderService orderService = new OrderService(paymentGatewayMock, inventoryServiceMock);
+        
+        // Execute the method
+        OrderResult result = orderService.placeOrder("PROD-1", 2, 29.99);
+        
+        // Verify the result
+        assertTrue(result.isSuccess());
+        
+        // Verify interactions with mocks
+        verify(paymentGatewayMock).processPayment(29.99 * 2);
+        verify(inventoryServiceMock).reduceStock("PROD-1", 2);
+    }
+}</code></pre>
+                
+                <h3>Test-Driven Development (TDD):</h3>
+                <ol>
+                    <li><strong>Write a Test:</strong> Start by writing a test that defines the functionality you want to implement</li>
+                    <li><strong>Run the Test (It Should Fail):</strong> Verify that the test fails since the functionality doesn't exist yet</li>
+                    <li><strong>Write the Code:</strong> Implement the minimum code necessary to make the test pass</li>
+                    <li><strong>Run the Test Again (It Should Pass):</strong> Verify your implementation</li>
+                    <li><strong>Refactor:</strong> Clean up your code while ensuring tests still pass</li>
+                    <li><strong>Repeat:</strong> Continue the cycle for new features or bug fixes</li>
+                </ol>
+                
+                <h3>Advanced Debugging Techniques:</h3>
+                <ul>
+                    <li><strong>Conditional Breakpoints:</strong> Stop execution only when specific conditions are met</li>
+                    <li><strong>Watchpoints:</strong> Monitor variable values without explicitly adding breakpoints</li>
+                    <li><strong>Stepping Through Code:</strong> Step into, over, and out of method calls</li>
+                    <li><strong>Stack Analysis:</strong> Inspect the call stack to understand execution flow</li>
+                    <li><strong>Evaluating Expressions:</strong> Execute code snippets during debugging sessions</li>
+                </ul>
+                
+                <h3>Logging Best Practices:</h3>
+                <ul>
+                    <li>Use appropriate log levels (TRACE, DEBUG, INFO, WARN, ERROR)</li>
+                    <li>Include context information in log messages</li>
+                    <li>Don't expose sensitive data in logs</li>
+                    <li>Use structured logging for easier analysis</li>
+                    <li>Configure log rotation and retention policies</li>
+                </ul>
+            </div>
+
+            <section class="resource-section">
+                <h2 class="resource-section-title">Resources</h2>
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTech-Labs/java-testing-debugging-guided-project" target="_blank" rel="noopener" class="resource-link">
+                        Module 4 Guided Project Repository
+                    </a>
+                    <a href="https://github.com/BloomTech-Labs/java-testing-debugging-guided-project-solution" target="_blank" rel="noopener" class="resource-link">
+                        Module 4 Solution Repository
+                    </a>
+                    <a href="https://junit.org/junit5/docs/current/user-guide/" target="_blank" rel="noopener" class="resource-link">
+                        JUnit 5 User Guide
+                    </a>
+                    <a href="https://site.mockito.org/" target="_blank" rel="noopener" class="resource-link">
+                        Mockito Documentation
+                    </a>
+                    <a href="https://www.baeldung.com/java-debugging-tips" target="_blank" rel="noopener" class="resource-link">
+                        Java Debugging Tips - Baeldung
+                    </a>
+                </div>
+            </section>
+        </section>
+    </main>
 </body>
 </html> 

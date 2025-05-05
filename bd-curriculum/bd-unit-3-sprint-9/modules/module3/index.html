@@ -4,234 +4,162 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3: Exception Handling - BD Unit 3 Sprint 9</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23;
-            color: #ffffff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #222831;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722;
-            padding-bottom: 10px;
-        }
-        .module {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #333a47;
-            background-color: #2a303c;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-        }
-        .module h2 {
-            color: #ffffff;
-            margin-top: 0;
-        }
-        .module p {
-            color: #b3b3b3;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
-        .video-container {
-            margin: 20px 0;
-        }
-        .video-container iframe {
-            max-width: 100%;
-            border-radius: 4px;
-            width: 100%;
-            height: 360px;
-        }
-        .resources {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border-left: 4px solid #ff5722;
-        }
-        .resources h2, .resources h3 {
-            color: #ffffff;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .resources ul {
-            list-style-type: none;
-            padding: 0;
-            color: #b3b3b3;
-        }
-        .resources li {
-            margin-bottom: 10px;
-        }
-        .resources a {
-            color: #ff5722;
-            text-decoration: none;
-        }
-        .resources a:hover {
-            text-decoration: underline;
-            color: #ff7043;
-        }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background-color: #2a303c;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .back-button:hover {
-            background-color: #333a47;
-        }
-        section {
-            margin-bottom: 30px;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <a href="../../index.html" class="back-button">← Back to Home</a>
-        
-        <h1>Module 3: Exception Handling</h1>
-        
-        <div class="module">
-            <h2>Module Overview</h2>
-            <p>Master exception handling and error management in Java applications.</p>
-        </div>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Exception Handling Video" src="https://fast.wistia.net/embed/iframe/bx6wl4hiep" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-        </div>
-
-        <section>
-            <h2>Learning Objectives</h2>
-            <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand hashing and its importance in Java collections</li>
-                <li>Learn about the hashCode() and equals() contract</li>
-                <li>Implement proper hashCode() methods using Objects.hash()</li>
-                <li>Analyze consistency between hashCode() and equals() implementations</li>
-                <li>Understand how hashing enables constant-time lookup in collections</li>
-                <li>Handle hash collisions appropriately</li>
-                <li>Learn the importance of immutable fields in hashCode() implementations</li>
-                <li>Implement hashCode() in subclasses correctly</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Hashing and HashCode Implementation in Detail</h2>
-            <div style="color: #b3b3b3; margin-bottom: 20px;">
-                <p>Hashing is a fundamental concept in computer science that allows for efficient data retrieval. In Java, proper implementation of hashCode() is essential for the correct functioning of hash-based collections like HashMap, HashSet, and Hashtable.</p>
-                
-                <h3>Hash Functions and Hash Codes:</h3>
-                <ul style="padding-left: 20px;">
-                    <li><strong>Hash Function:</strong> A function that converts data of arbitrary size to fixed-size values (hash codes)</li>
-                    <li><strong>Hash Code:</strong> The integer value returned by a hash function</li>
-                    <li><strong>Hash Code Collision:</strong> Occurs when two different objects have the same hash code</li>
-                </ul>
-
-                <h3>The hashCode() and equals() Contract:</h3>
-                <ul style="padding-left: 20px;">
-                    <li>If two objects are equal according to equals(), they MUST have the same hash code</li>
-                    <li>If two objects have the same hash code, they are NOT necessarily equal</li>
-                    <li>hashCode() should consistently return the same value for the same object (unless state changes)</li>
-                    <li>For good performance, different objects should have different hash codes when possible</li>
-                </ul>
-
-                <h3>Proper hashCode() Implementation:</h3>
-                <pre style="background-color: #333a47; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>public class Person {
-    private final String firstName;
-    private final String lastName;
-    private final int age;
-    
-    public Person(String firstName, String lastName, int age) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.age = age;
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        
-        Person person = (Person) o;
-        return age == person.age && 
-               Objects.equals(firstName, person.firstName) && 
-               Objects.equals(lastName, person.lastName);
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(firstName, lastName, age);
-    }
-}</code></pre>
-
-                <h3>Hash Collision Resolution:</h3>
-                <ul style="padding-left: 20px;">
-                    <li><strong>Chaining:</strong> Store multiple entries with the same hash in a linked list or similar structure</li>
-                    <li><strong>Open Addressing:</strong> When a collision occurs, look for the next available slot</li>
-                    <li>Java's HashMap uses chaining with balanced trees for buckets that become too large</li>
-                </ul>
-
-                <h3>Common Issues with hashCode() Implementations:</h3>
-                <ul style="padding-left: 20px;">
-                    <li><strong>Mutable Fields:</strong> Using mutable fields in hashCode() can cause objects to be "lost" in hash-based collections if the fields change</li>
-                    <li><strong>Inconsistency with equals():</strong> If hashCode() doesn't use all fields used in equals(), objects considered equal might have different hash codes</li>
-                    <li><strong>Poor Distribution:</strong> A hashCode() that doesn't distribute values well leads to more collisions and worse performance</li>
-                </ul>
-
-                <h3>Implementing hashCode() in Subclasses:</h3>
-                <pre style="background-color: #333a47; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>public class Employee extends Person {
-    private final String employeeId;
-    
-    public Employee(String firstName, String lastName, int age, String employeeId) {
-        super(firstName, lastName, age);
-        this.employeeId = employeeId;
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        
-        Employee employee = (Employee) o;
-        return Objects.equals(employeeId, employee.employeeId);
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), employeeId);
-    }
-}</code></pre>
-            </div>
-        </section>
-
-        <div class="resources">
-            <h2>Resources</h2>
+    <header>
+        <nav>
+            <div class="logo">BD Unit 3 Sprint 9</div>
             <ul>
-                <li><a href="https://github.com/BloomTech-Labs/java-exception-handling-guided-project" target="_blank" rel="noopener">Module 3 Guided Project Repository</a></li>
-                <li><a href="https://github.com/BloomTech-Labs/java-exception-handling-guided-project-solution" target="_blank" rel="noopener">Module 3 Solution Repository</a></li>
-                <li><a href="https://docs.oracle.com/javase/tutorial/essential/exceptions/index.html" target="_blank" rel="noopener">Java Exception Handling Documentation</a></li>
-                <li><a href="https://www.baeldung.com/java-exceptions" target="_blank" rel="noopener">Guide to Java Exceptions - Baeldung</a></li>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module1/index.html">Module 1: Design Patterns</a>
+                        <a href="../module2/index.html">Module 2: Advanced OOP Concepts</a>
+                        <a href="../module3/index.html" class="active">Module 3: Exception Handling</a>
+                        <a href="../module4/index.html">Module 4: Testing and Debugging</a>
+                    </div>
+                </li>
+                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-        </div>
-    </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 3: Exception Handling</h1>
+            
+            <div class="content-box">
+                <h2>Module Overview</h2>
+                <p>Master exception handling and error management in Java applications.</p>
+            </div>
+            
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Exception Handling Video" src="https://fast.wistia.net/embed/iframe/x9h7dp4k82" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+
+            <div class="content-box">
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Understand the Java exception hierarchy</li>
+                    <li>Work with checked and unchecked exceptions</li>
+                    <li>Implement proper exception handling with try-catch-finally blocks</li>
+                    <li>Create and use custom exceptions for specific application needs</li>
+                    <li>Use multi-catch blocks for effective exception handling</li>
+                    <li>Implement proper exception propagation strategies</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h2>Exception Handling in Detail</h2>
+                <p>Exception handling is a critical aspect of creating robust Java applications. Proper error handling ensures that your programs can respond gracefully to unexpected conditions and provide meaningful feedback to users or other systems.</p>
+                
+                <h3>Java Exception Hierarchy:</h3>
+                <ul>
+                    <li><strong>Throwable:</strong> The root class of all errors and exceptions
+                        <ul>
+                            <li><strong>Error:</strong> Serious problems that applications should not try to handle (e.g., OutOfMemoryError)</li>
+                            <li><strong>Exception:</strong> Problems that can be reasonably handled by applications
+                                <ul>
+                                    <li><strong>Checked Exceptions:</strong> Must be explicitly caught or declared (e.g., IOException)</li>
+                                    <li><strong>Unchecked Exceptions (RuntimeException):</strong> Do not need to be explicitly caught (e.g., NullPointerException)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <h3>Exception Handling Techniques:</h3>
+                <h4>Basic try-catch-finally:</h4>
+                <pre><code>try {
+    // Code that might throw an exception
+    File file = new File("example.txt");
+    FileReader fr = new FileReader(file);
+    BufferedReader br = new BufferedReader(fr);
+    String line = br.readLine();
+    System.out.println(line);
+} catch (FileNotFoundException e) {
+    // Handle specific exception
+    System.err.println("File not found: " + e.getMessage());
+} catch (IOException e) {
+    // Handle another type of exception
+    System.err.println("Error reading file: " + e.getMessage());
+} finally {
+    // Code that always executes, regardless of exception
+    System.out.println("Cleanup operations");
+    // Close resources, etc.
+}</code></pre>
+                
+                <h4>Try-with-resources (Java 7+):</h4>
+                <pre><code>try (BufferedReader br = new BufferedReader(new FileReader("example.txt"))) {
+    String line = br.readLine();
+    System.out.println(line);
+} catch (IOException e) {
+    System.err.println("Error working with file: " + e.getMessage());
+    e.printStackTrace();
+}
+// Resources automatically closed</code></pre>
+                
+                <h3>Creating Custom Exceptions:</h3>
+                <p>Custom exceptions allow you to create application-specific error handling that can provide more meaningful feedback.</p>
+                <pre><code>// Custom checked exception
+public class InsufficientFundsException extends Exception {
+    private double amount;
+    
+    public InsufficientFundsException(double amount) {
+        super("Insufficient funds: Attempted to withdraw " + amount);
+        this.amount = amount;
+    }
+    
+    public double getAmount() {
+        return amount;
+    }
+}
+
+// Usage
+public class Account {
+    private double balance;
+    
+    public void withdraw(double amount) throws InsufficientFundsException {
+        if (amount > balance) {
+            throw new InsufficientFundsException(amount);
+        }
+        balance -= amount;
+    }
+}</code></pre>
+                
+                <h3>Best Practices for Exception Handling:</h3>
+                <ul>
+                    <li>Only catch exceptions you can handle meaningfully</li>
+                    <li>Don't swallow exceptions (catch and do nothing)</li>
+                    <li>Clean up resources in finally blocks or use try-with-resources</li>
+                    <li>Use specific exception types rather than catching Exception</li>
+                    <li>Include helpful information in exception messages</li>
+                    <li>Log exceptions properly for troubleshooting</li>
+                    <li>Throw exceptions at the appropriate level of abstraction</li>
+                </ul>
+            </div>
+
+            <section class="resource-section">
+                <h2 class="resource-section-title">Resources</h2>
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTech-Labs/java-exception-handling-guided-project" target="_blank" rel="noopener" class="resource-link">
+                        Module 3 Guided Project Repository
+                    </a>
+                    <a href="https://github.com/BloomTech-Labs/java-exception-handling-guided-project-solution" target="_blank" rel="noopener" class="resource-link">
+                        Module 3 Solution Repository
+                    </a>
+                    <a href="https://docs.oracle.com/javase/tutorial/essential/exceptions/" target="_blank" rel="noopener" class="resource-link">
+                        Oracle Exception Handling Tutorial
+                    </a>
+                    <a href="https://www.baeldung.com/java-exceptions" target="_blank" rel="noopener" class="resource-link">
+                        Exception Handling in Java - Baeldung
+                    </a>
+                </div>
+            </section>
+        </section>
+    </main>
 </body>
 </html> 
