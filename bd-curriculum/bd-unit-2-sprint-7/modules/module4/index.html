@@ -4,310 +4,245 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 4: Comparators and Using sort() - BD Unit 2 Sprint 7</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23;
-            color: #ffffff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #222831;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722;
-            padding-bottom: 10px;
-        }
-        .module {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #333a47;
-            background-color: #2a303c;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-        }
-        .module h2 {
-            color: #ffffff;
-            margin-top: 0;
-        }
-        .module p {
-            color: #b3b3b3;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
-        .video-container {
-            margin: 20px 0;
-        }
-        .video-container iframe {
-            max-width: 100%;
-            border-radius: 4px;
-            width: 100%;
-            height: 360px;
-        }
-        .resources {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border-left: 4px solid #ff5722;
-        }
-        .resources h2, .resources h3 {
-            color: #ffffff;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .resources ul {
-            list-style-type: none;
-            padding: 0;
-            color: #b3b3b3;
-        }
-        .resources li {
-            margin-bottom: 10px;
-        }
-        .resources a {
-            color: #ff5722;
-            text-decoration: none;
-        }
-        .resources a:hover {
-            text-decoration: underline;
-            color: #ff7043;
-        }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background-color: #2a303c;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .back-button:hover {
-            background-color: #333a47;
-        }
-        section {
-            margin-bottom: 30px;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <a href="../../index.html" class="back-button">← Back to Home</a>
-        
-        <h1>Module 4: Comparators and Using sort()</h1>
-        
-        <div class="module">
-            <h2>Module Overview</h2>
-            <p>Learn about Comparators for flexible object comparison and how to use Java's built-in sorting mechanisms.</p>
-        </div>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Comparators Video" src="https://fast.wistia.net/embed/iframe/koyo1qdyvj" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-        </div>
-
-        <section>
-            <h2>Learning Objectives</h2>
-            <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Design and implement a Comparator that provides a custom ordering for a given class</li>
-                <li>Analyze whether to design and implement a Comparator or the Comparable interface for a given scenario</li>
-                <li>Use a pre-existing Java sort implementation to sort a collection of objects according to their natural ordering</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Detailed Explanations</h2>
-            
-            <div class="module">
-                <h3>Introduction to Comparators</h3>
-                <p>While the Comparable interface provides a natural ordering for a class, the Comparator interface allows you to define multiple custom orderings for objects without modifying their classes.</p>
-                
-                <h4>When to Use Comparators</h4>
-                <ul style="color: #b3b3b3; padding-left: 20px;">
-                    <li>When you can't modify the class to implement Comparable</li>
-                    <li>When you need multiple different ways to compare objects</li>
-                    <li>When the natural ordering isn't suitable for your specific use case</li>
-                    <li>For classes where a natural ordering doesn't make sense (e.g., a Person class could be sorted by name, age, etc.)</li>
-                </ul>
-            </div>
-
-            <div class="module">
-                <h3>Implementing a Comparator</h3>
-                <p>The Comparator interface has a single abstract method to implement:</p>
-                
-                <pre style="background-color: #2a303c; color: #b3b3b3; padding: 10px; border-radius: 4px; overflow-x: auto;">
-public interface Comparator&lt;T&gt; {
-    int compare(T o1, T o2);
-}
-                </pre>
-                
-                <p>Similar to compareTo(), the compare() method should:</p>
-                <ul style="color: #b3b3b3; padding-left: 20px;">
-                    <li>Return a negative value if o1 < o2</li>
-                    <li>Return zero if o1 equals o2</li>
-                    <li>Return a positive value if o1 > o2</li>
-                </ul>
-                
-                <h4>Example Implementation</h4>
-                <pre style="background-color: #2a303c; color: #b3b3b3; padding: 10px; border-radius: 4px; overflow-x: auto;">
-// A comparator that sorts Product objects by price
-public class ProductPriceComparator implements Comparator&lt;Product&gt; {
-    @Override
-    public int compare(Product p1, Product p2) {
-        // Compare prices
-        return p1.getPrice().compareTo(p2.getPrice());
-    }
-}
-
-// A comparator that sorts Product objects by title
-public class ProductTitleComparator implements Comparator&lt;Product&gt; {
-    @Override
-    public int compare(Product p1, Product p2) {
-        // Compare titles alphabetically
-        return p1.getTitle().compareTo(p2.getTitle());
-    }
-}
-                </pre>
-            </div>
-
-            <div class="module">
-                <h3>Using Java's Sorting Mechanisms</h3>
-                <p>Java provides several ways to sort collections of objects:</p>
-                
-                <h4>Sorting Using Collections.sort()</h4>
-                <pre style="background-color: #2a303c; color: #b3b3b3; padding: 10px; border-radius: 4px; overflow-x: auto;">
-// Sorting by natural ordering (using Comparable)
-List&lt;String&gt; names = Arrays.asList("Charlie", "Alice", "Bob");
-Collections.sort(names);  // ["Alice", "Bob", "Charlie"]
-
-// Sorting with a Comparator
-List&lt;Product&gt; products = getProductList();
-Collections.sort(products, new ProductPriceComparator());  // Sorted by price
-Collections.sort(products, new ProductTitleComparator());  // Sorted by title
-                </pre>
-                
-                <h4>Sorting Arrays</h4>
-                <pre style="background-color: #2a303c; color: #b3b3b3; padding: 10px; border-radius: 4px; overflow-x: auto;">
-// Sorting an array of Comparable objects
-String[] namesArray = {"Charlie", "Alice", "Bob"};
-Arrays.sort(namesArray);
-
-// Sorting an array with a Comparator
-Product[] productsArray = getProductArray();
-Arrays.sort(productsArray, new ProductPriceComparator());
-                </pre>
-            </div>
-
-            <div class="module">
-                <h3>Advanced Comparator Techniques</h3>
-                
-                <h4>Chaining Comparisons</h4>
-                <p>For complex sorting requirements, you can chain multiple comparisons:</p>
-                
-                <pre style="background-color: #2a303c; color: #b3b3b3; padding: 10px; border-radius: 4px; overflow-x: auto;">
-public class ProductPriceRatingComparator implements Comparator&lt;Product&gt; {
-    @Override
-    public int compare(Product p1, Product p2) {
-        // First compare by price
-        int priceComparison = p1.getPrice().compareTo(p2.getPrice());
-        
-        // If prices are equal, compare by rating
-        if (priceComparison == 0) {
-            return Double.compare(p2.getRating(), p1.getRating());  // Higher rating first
-        }
-        
-        return priceComparison;
-    }
-}
-                </pre>
-                
-                <h4>Using Lambda Expressions (Java 8+)</h4>
-                <p>In modern Java, you can use lambda expressions to create Comparators concisely:</p>
-                
-                <pre style="background-color: #2a303c; color: #b3b3b3; padding: 10px; border-radius: 4px; overflow-x: auto;">
-// Sorting by price
-Collections.sort(products, (p1, p2) -> p1.getPrice().compareTo(p2.getPrice()));
-
-// Sorting by title
-Collections.sort(products, (p1, p2) -> p1.getTitle().compareTo(p2.getTitle()));
-
-// Chaining comparisons using Comparator methods
-Comparator&lt;Product&gt; comparator = Comparator
-    .comparing(Product::getPrice)
-    .thenComparing(Product::getRating, Comparator.reverseOrder())
-    .thenComparing(Product::getTitle);
-
-Collections.sort(products, comparator);
-                </pre>
-                
-                <h4>Reversing Order</h4>
-                <p>To reverse the ordering of a Comparator:</p>
-                
-                <pre style="background-color: #2a303c; color: #b3b3b3; padding: 10px; border-radius: 4px; overflow-x: auto;">
-// Using the reversed() method (Java 8+)
-Collections.sort(products, new ProductPriceComparator().reversed());
-
-// For natural ordering, use reverseOrder()
-Collections.sort(names, Comparator.reverseOrder());
-                </pre>
-            </div>
-
-            <div class="module">
-                <h3>Comparator vs. Comparable</h3>
-                <p>Decision guidelines for choosing between Comparator and Comparable:</p>
-                
-                <table style="width: 100%; border-collapse: collapse; color: #b3b3b3; margin: 10px 0;">
-                    <tr style="border-bottom: 1px solid #444;">
-                        <th style="text-align: left; padding: 8px;">Criterion</th>
-                        <th style="text-align: left; padding: 8px;">Comparable</th>
-                        <th style="text-align: left; padding: 8px;">Comparator</th>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #333;">
-                        <td style="padding: 8px;">Control over class</td>
-                        <td style="padding: 8px;">Need to modify class</td>
-                        <td style="padding: 8px;">No need to modify class</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #333;">
-                        <td style="padding: 8px;">Ordering types</td>
-                        <td style="padding: 8px;">Single natural ordering</td>
-                        <td style="padding: 8px;">Multiple orderings possible</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #333;">
-                        <td style="padding: 8px;">Usage with sort</td>
-                        <td style="padding: 8px;">Collections.sort(list)</td>
-                        <td style="padding: 8px;">Collections.sort(list, comparator)</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 8px;">Common examples</td>
-                        <td style="padding: 8px;">String, Integer, Date</td>
-                        <td style="padding: 8px;">Custom sorting strategies</td>
-                    </tr>
-                </table>
-            </div>
-        </section>
-
-        <div class="resources">
-            <h2>Resources</h2>
+    <header>
+        <nav>
+            <div class="logo">BD Unit 2 Sprint 7</div>
             <ul>
-                <li><a href="https://github.com/BloomTech-Labs/java-comparators-guided-project" target="_blank" rel="noopener">Module 4 Guided Project Repository</a></li>
-                <li><a href="https://github.com/BloomTech-Labs/java-comparators-guided-project-solution" target="_blank" rel="noopener">Module 4 Solution Repository</a></li>
-                <li><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Comparator.html" target="_blank" rel="noopener">Java Comparator Interface Documentation</a></li>
-                <li><a href="https://www.baeldung.com/java-comparator-comparable" target="_blank" rel="noopener">Comparator and Comparable in Java - Baeldung</a></li>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module1/index.html">Module 1: Lists</a>
+                        <a href="../module2/index.html">Module 2: Big O</a>
+                        <a href="../module3/index.html">Module 3: Comparable</a>
+                        <a href="../module4/index.html" class="active">Module 4: Comparators and Using sort()</a>
+                    </div>
+                </li>
+                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-        </div>
-    </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 4: Comparators and Using sort()</h1>
+            
+            <div class="content-box">
+                <h2>Module Overview</h2>
+                <p>Learn about Comparators for flexible object sorting and how to use Java's sorting functionality.</p>
+            </div>
+            
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Comparators and Sorting Video" src="https://fast.wistia.net/embed/iframe/z9h4dq3k89" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+
+            <div class="content-box">
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Implement a Comparator to establish custom ordering criteria</li>
+                    <li>Use Comparators with Collections.sort() and Arrays.sort()</li>
+                    <li>Create multiple ordering strategies using different Comparators</li>
+                    <li>Understand the difference between Comparable and Comparator</li>
+                    <li>Leverage lambda expressions and method references for creating Comparators</li>
+                    <li>Chain multiple Comparators for complex sorting logic</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h2>Understanding Comparators</h2>
+                
+                <h3>What is a Comparator?</h3>
+                <p>A Comparator is a functional interface that allows you to define custom comparison strategies separate from the objects being compared. Unlike Comparable (which provides a class's natural ordering), Comparators enable multiple different ordering criteria for the same class.</p>
+                
+                <p>The interface contains a primary method:</p>
+                <pre><code>public interface Comparator&lt;T&gt; {
+    int compare(T o1, T o2);
+    // Optional methods...
+}</code></pre>
+                
+                <h3>How compare() Works</h3>
+                <p>The compare method compares two objects and returns:</p>
+                <ul>
+                    <li>Negative integer: if o1 should come before o2</li>
+                    <li>Zero: if o1 and o2 are considered equal for sorting purposes</li>
+                    <li>Positive integer: if o1 should come after o2</li>
+                </ul>
+                
+                <h3>Basic Comparator Implementation</h3>
+                <p>Here's an example of a Comparator that sorts Person objects by name:</p>
+                <pre><code>import java.util.Comparator;
+
+public class PersonNameComparator implements Comparator<Person> {
+    @Override
+    public int compare(Person p1, Person p2) {
+        return p1.getName().compareTo(p2.getName());
+    }
+}</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h3>Using Comparators</h3>
+                
+                <h4>With Collections.sort()</h4>
+                <pre><code>List<Person> people = new ArrayList<>();
+people.add(new Person("Charlie", 35));
+people.add(new Person("Alice", 30));
+people.add(new Person("Bob", 25));
+
+// Sort by name using a Comparator
+Collections.sort(people, new PersonNameComparator());
+
+// Using lambda expression (Java 8+)
+Collections.sort(people, (p1, p2) -> p1.getName().compareTo(p2.getName()));</code></pre>
+                
+                <h4>With Arrays.sort()</h4>
+                <pre><code>Person[] peopleArray = new Person[3];
+peopleArray[0] = new Person("Charlie", 35);
+peopleArray[1] = new Person("Alice", 30);
+peopleArray[2] = new Person("Bob", 25);
+
+// Sort array using a Comparator
+Arrays.sort(peopleArray, new PersonNameComparator());</code></pre>
+                
+                <h4>With TreeSet and TreeMap</h4>
+                <pre><code>// Create a TreeSet with a custom comparator
+TreeSet<Person> sortedByName = new TreeSet<>(new PersonNameComparator());
+sortedByName.add(new Person("Charlie", 35));
+sortedByName.add(new Person("Alice", 30));
+sortedByName.add(new Person("Bob", 25));</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h3>Modern Comparator Techniques (Java 8+)</h3>
+                
+                <h4>Lambda Expressions</h4>
+                <p>You can use lambda expressions to create concise Comparators:</p>
+                <pre><code>// Sort by age
+Comparator<Person> byAge = (p1, p2) -> Integer.compare(p1.getAge(), p2.getAge());
+
+// Sort by name
+Comparator<Person> byName = (p1, p2) -> p1.getName().compareTo(p2.getName());</code></pre>
+                
+                <h4>Method References</h4>
+                <p>Even more concise with method references:</p>
+                <pre><code>// Sort by name using method reference
+Comparator<Person> byName = Comparator.comparing(Person::getName);</code></pre>
+                
+                <h4>Comparator Utility Methods</h4>
+                <p>The Comparator interface provides several utility methods:</p>
+                <pre><code>// Sort by age in ascending order
+Comparator<Person> byAge = Comparator.comparing(Person::getAge);
+
+// Sort by age in descending order
+Comparator<Person> byAgeReversed = Comparator.comparing(Person::getAge).reversed();
+
+// Sort by age, then by name (multiple sort criteria)
+Comparator<Person> byAgeAndThenName = Comparator
+    .comparing(Person::getAge)
+    .thenComparing(Person::getName);</code></pre>
+                
+                <h4>Handling null Values</h4>
+                <p>When null values might be involved:</p>
+                <pre><code>// Handle null Person objects
+Comparator<Person> nullSafeComparator = Comparator.nullsFirst(byAge);
+
+// Handle null names within Person objects
+Comparator<Person> byNullSafeName = Comparator.comparing(
+    Person::getName, 
+    Comparator.nullsFirst(String::compareTo)
+);</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h3>Comparable vs. Comparator</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Comparable</th>
+                            <th>Comparator</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Implemented by the class being compared</td>
+                            <td>External to the class being compared</td>
+                        </tr>
+                        <tr>
+                            <td>Provides a single, natural ordering</td>
+                            <td>Provides multiple, custom ordering strategies</td>
+                        </tr>
+                        <tr>
+                            <td>compareTo() method</td>
+                            <td>compare() method</td>
+                        </tr>
+                        <tr>
+                            <td>Used without an additional argument: Collections.sort(list)</td>
+                            <td>Requires the comparator as an argument: Collections.sort(list, comparator)</td>
+                        </tr>
+                        <tr>
+                            <td>Cannot change ordering without modifying the class</td>
+                            <td>Can create new ordering strategies without modifying the class</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h4>When to Use Each</h4>
+                <ul>
+                    <li><strong>Use Comparable:</strong> When there's a clear, default way to order objects of a class</li>
+                    <li><strong>Use Comparator:</strong> When you need multiple ways to order objects, or when you can't modify the class</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h3>Best Practices for Using Comparators</h3>
+                <ul>
+                    <li>Make comparators consistent with equals when possible</li>
+                    <li>Use static final instances for common comparators</li>
+                    <li>Consider using Comparator methods (comparing, thenComparing) for cleaner code</li>
+                    <li>Handle null values appropriately with nullsFirst or nullsLast</li>
+                    <li>Avoid excessive object creation with lambda expressions</li>
+                    <li>Document the ordering criteria implemented by each comparator</li>
+                </ul>
+                
+                <h4>Example of Static Final Comparators</h4>
+                <pre><code>public class PersonComparators {
+    // Common comparators as static constants
+    public static final Comparator<Person> BY_NAME = 
+        Comparator.comparing(Person::getName);
+        
+    public static final Comparator<Person> BY_AGE = 
+        Comparator.comparing(Person::getAge);
+        
+    public static final Comparator<Person> BY_AGE_THEN_NAME = 
+        BY_AGE.thenComparing(BY_NAME);
+        
+    // Prevent instantiation
+    private PersonComparators() {}
+}</code></pre>
+            </div>
+
+            <section class="resource-section">
+                <h2 class="resource-section-title">Resources</h2>
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTech-Labs/java-comparators-guided-project" target="_blank" rel="noopener" class="resource-link">
+                        Module 4 Guided Project Repository
+                    </a>
+                    <a href="https://github.com/BloomTech-Labs/java-comparators-guided-project-solution" target="_blank" rel="noopener" class="resource-link">
+                        Module 4 Solution Repository
+                    </a>
+                    <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Comparator.html" target="_blank" rel="noopener" class="resource-link">
+                        Java Comparator Interface Documentation
+                    </a>
+                    <a href="https://www.baeldung.com/java-8-comparator-comparing" target="_blank" rel="noopener" class="resource-link">
+                        Java 8 Comparator.comparing() - Baeldung
+                    </a>
+                </div>
+            </section>
+        </section>
+    </main>
 </body>
 </html> 
