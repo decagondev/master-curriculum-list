@@ -4,258 +4,189 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3: Comparable - BD Unit 2 Sprint 7</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23;
-            color: #ffffff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #222831;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722;
-            padding-bottom: 10px;
-        }
-        .module {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #333a47;
-            background-color: #2a303c;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-        }
-        .module h2 {
-            color: #ffffff;
-            margin-top: 0;
-        }
-        .module p {
-            color: #b3b3b3;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
-        .video-container {
-            margin: 20px 0;
-        }
-        .video-container iframe {
-            max-width: 100%;
-            border-radius: 4px;
-            width: 100%;
-            height: 360px;
-        }
-        .resources {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border-left: 4px solid #ff5722;
-        }
-        .resources h2, .resources h3 {
-            color: #ffffff;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .resources ul {
-            list-style-type: none;
-            padding: 0;
-            color: #b3b3b3;
-        }
-        .resources li {
-            margin-bottom: 10px;
-        }
-        .resources a {
-            color: #ff5722;
-            text-decoration: none;
-        }
-        .resources a:hover {
-            text-decoration: underline;
-            color: #ff7043;
-        }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background-color: #2a303c;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .back-button:hover {
-            background-color: #333a47;
-        }
-        section {
-            margin-bottom: 30px;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <a href="../../index.html" class="back-button">← Back to Home</a>
-        
-        <h1>Module 3: Comparable</h1>
-        
-        <div class="module">
-            <h2>Module Overview</h2>
-            <p>Learn about the Comparable interface and how to implement natural ordering for objects in Java.</p>
-        </div>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Introduction to Comparable Interface Video" src="https://fast.wistia.net/embed/iframe/mqyicrkbzm" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-        </div>
-
-        <section>
-            <h2>Learning Objectives</h2>
-            <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Analyze the natural comparison method of a class and two instances of that class to determine the natural ordering of the provided objects</li>
-                <li>Design and implement a class with a natural ordering that is consistent with its equals method</li>
-                <li>Design and implement a method that uses a type's natural comparison method to compare objects</li>
-                <li>Analyze whether a given class has a natural ordering that supports implementing Comparable</li>
-                <li>Discuss how the Comparable interface in Java enables comparison and ordering objects of the same type</li>
-                <li>Recall that an object's natural ordering is defined by how it implements the Comparable interface</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Detailed Explanations</h2>
-            
-            <div class="module">
-                <h3>Introduction to the Comparable Interface</h3>
-                <p>The Comparable interface in Java is used to define a "natural ordering" between objects of the same type. This allows collections of objects to be sorted and compared in a meaningful way.</p>
-                
-                <h4>Interface Declaration</h4>
-                <pre style="background-color: #2a303c; color: #b3b3b3; padding: 10px; border-radius: 4px; overflow-x: auto;">
-public interface Comparable&lt;T&gt; {
-    // Returns negative if this < other, zero if this == other, positive if this > other
-    public int compareTo(T other);
-}
-                </pre>
-                
-                <p>Many built-in Java classes such as String, Integer, and Date implement Comparable, allowing them to be naturally ordered.</p>
-            </div>
-
-            <div class="module">
-                <h3>Implementing the Comparable Interface</h3>
-                <p>To make your custom class comparable, you need to implement the Comparable interface and provide a compareTo method.</p>
-                
-                <h4>Example Implementation</h4>
-                <pre style="background-color: #2a303c; color: #b3b3b3; padding: 10px; border-radius: 4px; overflow-x: auto;">
-public class Student implements Comparable&lt;Student&gt; {
-    private String name;
-    private double gpa;
-    
-    public Student(String name, double gpa) {
-        this.name = name;
-        this.gpa = gpa;
-    }
-    
-    // Getters and setters...
-    
-    @Override
-    public int compareTo(Student other) {
-        // Compare based on GPA (higher GPA comes first)
-        if (this.gpa > other.gpa) {
-            return -1;
-        } else if (this.gpa < other.gpa) {
-            return 1;
-        } else {
-            // If GPAs are equal, compare by name
-            return this.name.compareTo(other.name);
-        }
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Student student = (Student) o;
-        return Double.compare(student.gpa, gpa) == 0 && 
-               Objects.equals(name, student.name);
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, gpa);
-    }
-}
-                </pre>
-            </div>
-
-            <div class="module">
-                <h3>The compareTo Method Contract</h3>
-                <p>The compareTo method must follow these rules:</p>
-                <ul style="color: #b3b3b3; padding-left: 20px;">
-                    <li>It must return a negative integer if this object is "less than" the other object</li>
-                    <li>It must return zero if this object is "equal to" the other object</li>
-                    <li>It must return a positive integer if this object is "greater than" the other object</li>
-                    <li>It should be consistent with equals (a.equals(b) should be true if and only if a.compareTo(b) == 0)</li>
-                    <li>It should be transitive (if a.compareTo(b) > 0 and b.compareTo(c) > 0, then a.compareTo(c) > 0)</li>
-                </ul>
-            </div>
-
-            <div class="module">
-                <h3>Using Comparable Objects</h3>
-                <p>Once a class implements Comparable, its instances can be:</p>
-                <ul style="color: #b3b3b3; padding-left: 20px;">
-                    <li>Sorted using Collections.sort() or Arrays.sort()</li>
-                    <li>Used as elements in sorted collections like TreeSet or TreeMap</li>
-                    <li>Compared directly using the compareTo method</li>
-                </ul>
-                
-                <h4>Example Usage</h4>
-                <pre style="background-color: #2a303c; color: #b3b3b3; padding: 10px; border-radius: 4px; overflow-x: auto;">
-// Creating a list of students
-List&lt;Student&gt; students = new ArrayList&lt;&gt;();
-students.add(new Student("Alice", 3.8));
-students.add(new Student("Bob", 3.5));
-students.add(new Student("Charlie", 4.0));
-
-// Sorting the list using the natural ordering (defined by compareTo)
-Collections.sort(students);
-
-// Now students will be sorted by GPA (highest first), then by name
-for (Student student : students) {
-    System.out.println(student.getName() + ": " + student.getGpa());
-}
-                </pre>
-            </div>
-
-            <div class="module">
-                <h3>When to Implement Comparable</h3>
-                <p>You should implement Comparable when:</p>
-                <ul style="color: #b3b3b3; padding-left: 20px;">
-                    <li>Your class has a clear, natural ordering (like numbers, dates, or alphabetical names)</li>
-                    <li>You want to enable sorting of objects of your class</li>
-                    <li>You need to use your objects in sorted collections</li>
-                </ul>
-                <p>If different orderings are needed for the same class, consider using Comparator (covered in Module 4) instead of or in addition to Comparable.</p>
-            </div>
-        </section>
-
-        <div class="resources">
-            <h2>Resources</h2>
+    <header>
+        <nav>
+            <div class="logo">BD Unit 2 Sprint 7</div>
             <ul>
-                <li><a href="https://github.com/BloomTech-Labs/java-comparable-guided-project" target="_blank" rel="noopener">Module 3 Guided Project Repository</a></li>
-                <li><a href="https://github.com/BloomTech-Labs/java-comparable-guided-project-solution" target="_blank" rel="noopener">Module 3 Solution Repository</a></li>
-                <li><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Comparable.html" target="_blank" rel="noopener">Java Comparable Interface Documentation</a></li>
-                <li><a href="https://www.baeldung.com/java-compareto" target="_blank" rel="noopener">Guide to the compareTo Method - Baeldung</a></li>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module1/index.html">Module 1: Lists</a>
+                        <a href="../module2/index.html">Module 2: Big O</a>
+                        <a href="../module3/index.html" class="active">Module 3: Comparable</a>
+                        <a href="../module4/index.html">Module 4: Comparators and Using sort()</a>
+                    </div>
+                </li>
+                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-        </div>
-    </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 3: Comparable</h1>
+            
+            <div class="content-box">
+                <h2>Module Overview</h2>
+                <p>Explore the Comparable interface and natural ordering in Java.</p>
+            </div>
+            
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Comparable Interface Video" src="https://fast.wistia.net/embed/iframe/x7h9dp4k12" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+
+            <div class="content-box">
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Implement the Comparable interface to enable natural ordering of objects</li>
+                    <li>Explain how the compareTo method works for establishing object ordering</li>
+                    <li>Use the Comparable interface with Java collections like TreeSet and TreeMap</li>
+                    <li>Apply the Collections.sort() method with comparable objects</li>
+                    <li>Create ordering based on multiple object attributes</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h2>Understanding Comparable</h2>
+                
+                <h3>What is the Comparable Interface?</h3>
+                <p>The Comparable interface is used to define a natural ordering for a class. A class that implements Comparable can be sorted using Java's sorting methods like Collections.sort() or Arrays.sort().</p>
+                
+                <p>The interface contains a single method:</p>
+                <pre><code>public interface Comparable&lt;T&gt; {
+    public int compareTo(T o);
+}</code></pre>
+                
+                <h3>How compareTo Works</h3>
+                <p>The compareTo method returns an integer that indicates how the current object compares to the specified object:</p>
+                <ul>
+                    <li>Returns a negative integer: if this object is less than the specified object</li>
+                    <li>Returns zero: if this object is equal to the specified object</li>
+                    <li>Returns a positive integer: if this object is greater than the specified object</li>
+                </ul>
+                
+                <h3>Implementing Comparable</h3>
+                <p>Here's an example of a Person class that implements Comparable to sort by age:</p>
+                <pre><code>public class Person implements Comparable&lt;Person&gt; {
+    private String name;
+    private int age;
+    
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    // Getters and setters
+    public String getName() { return name; }
+    public int getAge() { return age; }
+    
+    @Override
+    public int compareTo(Person other) {
+        return this.age - other.age;
+    }
+    
+    @Override
+    public String toString() {
+        return name + " (" + age + ")";
+    }
+}</code></pre>
+                
+                <h3>Using Comparable with Collections</h3>
+                <p>Once a class implements Comparable, objects of that class can be sorted using Java's built-in sorting methods:</p>
+                <pre><code>List&lt;Person&gt; people = new ArrayList&lt;&gt;();
+people.add(new Person("Alice", 30));
+people.add(new Person("Bob", 25));
+people.add(new Person("Charlie", 35));
+
+Collections.sort(people);
+
+// Now the list is sorted by age
+for (Person person : people) {
+    System.out.println(person);
+}</code></pre>
+                
+                <h3>Sorting in Multiple Ways</h3>
+                <p>If you need to sort objects in multiple ways, you can use the Comparable interface for the "natural ordering" and then use Comparator for additional ordering schemes (covered in Module 4).</p>
+            </div>
+
+            <div class="content-box">
+                <h3>Advanced Comparable Techniques</h3>
+                
+                <h4>Sorting by Multiple Fields</h4>
+                <p>You can implement compareTo to sort by multiple fields in a specific order:</p>
+                <pre><code>@Override
+public int compareTo(Person other) {
+    // First compare by age
+    int ageComparison = this.age - other.age;
+    if (ageComparison != 0) {
+        return ageComparison;
+    }
+    
+    // If ages are equal, compare by name
+    return this.name.compareTo(other.name);
+}</code></pre>
+                
+                <h4>Using Comparable with TreeSet and TreeMap</h4>
+                <p>Classes that implement Comparable can be used with sorted collections like TreeSet and TreeMap:</p>
+                <pre><code>// Will be sorted according to Person's compareTo method
+TreeSet&lt;Person&gt; sortedPeople = new TreeSet&lt;&gt;();
+sortedPeople.add(new Person("Alice", 30));
+sortedPeople.add(new Person("Bob", 25));
+sortedPeople.add(new Person("Charlie", 35));</code></pre>
+                
+                <h4>Protecting Against Null and Overflow</h4>
+                <p>When implementing compareTo, it's important to handle null values and potential integer overflow:</p>
+                <pre><code>@Override
+public int compareTo(Person other) {
+    // Null check
+    if (other == null) {
+        return 1; // This is greater than null
+    }
+    
+    // Safer age comparison to avoid overflow
+    return Integer.compare(this.age, other.age);
+}</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h3>Best Practices for Comparable</h3>
+                
+                <h4>Consistent with equals</h4>
+                <p>The compareTo method should be consistent with equals. If x.equals(y) is true, then x.compareTo(y) should return 0.</p>
+                
+                <h4>Transitive Comparison</h4>
+                <p>If x.compareTo(y) > 0 and y.compareTo(z) > 0, then x.compareTo(z) should also be > 0.</p>
+                
+                <h4>Reflexive Comparison</h4>
+                <p>For any non-null reference x, x.compareTo(x) should return 0.</p>
+                
+                <h4>Symmetric Comparison with Sign</h4>
+                <p>If x.compareTo(y) returns a value, y.compareTo(x) should return the negation of that value.</p>
+            </div>
+
+            <section class="resource-section">
+                <h2 class="resource-section-title">Resources</h2>
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTech-Labs/java-comparable-guided-project" target="_blank" rel="noopener" class="resource-link">
+                        Module 3 Guided Project Repository
+                    </a>
+                    <a href="https://github.com/BloomTech-Labs/java-comparable-guided-project-solution" target="_blank" rel="noopener" class="resource-link">
+                        Module 3 Solution Repository
+                    </a>
+                    <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Comparable.html" target="_blank" rel="noopener" class="resource-link">
+                        Java Comparable Interface Documentation
+                    </a>
+                    <a href="https://www.baeldung.com/java-comparator-comparable" target="_blank" rel="noopener" class="resource-link">
+                        Comparable and Comparator in Java - Baeldung
+                    </a>
+                </div>
+            </section>
+        </section>
+    </main>
 </body>
 </html> 

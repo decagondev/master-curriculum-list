@@ -4,437 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 4: DynamoDB Query - BD Unit 6 Sprint 21</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23;
-            color: #ffffff;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: #222831;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722;
-            padding-bottom: 10px;
-        }
-        .section {
-            margin-bottom: 40px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border: 1px solid #333a47;
-        }
-        .section-title {
-            color: #ffffff;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #333a47;
-        }
-        .video-container {
-            margin: 20px 0;
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 4px;
-        }
-        p {
-            color: #b3b3b3;
-            margin-bottom: 16px;
-        }
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .card {
-            background-color: #2a303c;
-            border: 1px solid #333a47;
-            border-radius: 4px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .card-header {
-            padding: 15px;
-            background-color: #333a47;
-        }
-        .card-header h3 {
-            margin: 0;
-        }
-        .card-body {
-            padding: 15px;
-            flex-grow: 1;
-            color: #b3b3b3;
-        }
-        .card-body p {
-            margin-top: 0;
-        }
-        .card-body ul {
-            margin-top: 10px;
-            padding-left: 20px;
-        }
-        .card-footer {
-            padding: 15px;
-            border-top: 1px solid #333a47;
-        }
-        .btn {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #ff5722;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .btn:hover {
-            background-color: #ff7043;
-            box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
-            color: white;
-            text-decoration: none;
-        }
-        ul, ol {
-            color: #b3b3b3;
-            margin-bottom: 20px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        a {
-            color: #ff5722;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-            color: #ff7043;
-        }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background-color: #2a303c;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .back-button:hover {
-            background-color: #333a47;
-        }
-        .learning-objectives {
-            margin: 20px 0;
-            padding: 20px;
-            border-radius: 4px;
-            background-color: #333a47;
-            border-left: 4px solid #ff5722;
-        }
-        .learning-objectives h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .learning-objectives ul {
-            margin-top: 10px;
-            margin-bottom: 0;
-        }
-        pre, code {
-            background-color: #1a1d23;
-            border-radius: 4px;
-        }
-        pre {
-            padding: 10px;
-        }
-        code {
-            padding: 2px 5px;
-            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
-            color: #e6e6e6;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <a href="../../index.html" class="back-button">← Back to Home</a>
-        
-        <h1>Module 4: DynamoDB Query</h1>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Introduction to Databases" src="https://fast.wistia.net/embed/iframe/mf9t79n9mr" allow="autoplay; fullscreen" allowfullscreen></iframe>
-        </div>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Sprint 21 DynamoDB Query Video" src="https://fast.wistia.net/embed/iframe/j3zecaqmdh" allow="autoplay; fullscreen" allowfullscreen></iframe>
-        </div>
-        
-        <div class="learning-objectives">
-            <h3>Learning Objectives</h3>
+    <header>
+        <nav>
+            <div class="logo">BD Unit 6 Sprint 21</div>
             <ul>
-                <li>Design and implement functionality that uses a query to retrieve items with a given partition key from a provided DynamoDB table</li>
-                <li>Design and implement functionality that uses a paginated query to retrieve items with a given partition key from a provided DynamoDB table</li>
-                <li>Design and implement functionality that uses a comparison operator to narrow the scope of a query on a provided DynamoDB table</li>
-                <li>Design and implement functionality that uses a comparison operator to narrow the scope of a paginated query on a provided DynamoDB table</li>
-                <li>Design and implement functionality that retrieves a specific number of items from a provided DynamoDB table</li>
-                <li>Explain when to query a DynamoDB table</li>
-                <li>Recall that only DynamoDB tables that use a composite primary key can be queried</li>
-                <li>Define pagination</li>
-                <li>Compare and contrast using query() and queryPage() on DynamoDB tables</li>
-                <li>Explain how to retrieve the results of a paginated query that come after a given item in a DynamoDB table using exclusiveStartKey</li>
-                <li>Explain how to limit the number of items retrieved from a query of a DynamoDB table using withLimit</li>
-                <li>Explain how to query a DynamoDB table using the comparison operators = , &lt; , &lt;= , &gt; , &gt;=, begins_with, and between in order to retrieve a more specific output</li>
-                <li>Explain the impacts of eventual consistency in DynamoDB</li>
-                <li>Define eventual consistency</li>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module1/index.html">Module 1: Iterators</a>
+                        <a href="../module2/index.html">Module 2: Spring Boot</a>
+                        <a href="../module3/index.html">Module 3: DynamoDB Delete</a>
+                        <a href="../module4/index.html" class="active">Module 4: DynamoDB Query</a>
+                    </div>
+                </li>
+                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-        </div>
-        
-        <section class="section">
-            <h2 class="section-title">Introduction to DynamoDB Query Operations</h2>
-            <p>The Query operation is one of the most powerful features of Amazon DynamoDB. It allows you to retrieve multiple items from a table or secondary index using the primary key attributes. Query provides fast, efficient access to data by leveraging the table's structure, making it essential for applications that need to access data in specific patterns.</p>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 4: DynamoDB Query</h1>
             
-            <p>Unlike the Scan operation, which examines every item in a table, Query only looks at items with the specified partition key value, making it much more efficient for large tables. Query operations can be further refined using sort key conditions, allowing for precise data retrieval based on your application's needs.</p>
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Sprint 21 DynamoDB Query Video" src="https://fast.wistia.net/embed/iframe/axnwelbnuu" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            </div>
             
-            <p>It's important to note that <strong>only tables with a composite primary key</strong> (partition key + sort key) can be queried effectively. This is one of the benefits of using a composite key structure in your database design.</p>
-        </section>
-        
-        <section class="section">
-            <h2 class="section-title">Key Topics</h2>
-            <div class="card-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Query Basics</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Learn the fundamentals of DynamoDB Query operations.</p>
-                        <ul>
-                            <li>Query syntax and parameters</li>
-                            <li>Required and optional parameters</li>
-                            <li>Query vs. Scan operations</li>
-                        </ul>
-                    </div>
-                </div>
+            <div class="note-box">
+                <h3>Learning Objectives</h3>
+                <ul>
+                    <li>Implement functionality that queries a provided DynamoDB table by partition key</li>
+                    <li>Implement functionality that queries a provided DynamoDB table by partition key and sort key</li>
+                    <li>Discuss how to query a provided DynamoDB table using a secondary index</li>
+                </ul>
+            </div>
+            
+            <div class="content-box">
+                <h2>Introduction to DynamoDB Query Operations</h2>
+                <p>The Query operation is one of the most powerful features of Amazon DynamoDB. It allows you to retrieve multiple items from a table or secondary index using the primary key attributes. Query provides fast, efficient access to data by leveraging the table's structure, making it essential for applications that need to access data in specific patterns.</p>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Key Condition Expressions</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Define conditions for querying based on primary key attributes.</p>
-                        <ul>
-                            <li>Partition key equality</li>
-                            <li>Sort key conditions</li>
-                            <li>Comparison operators</li>
-                        </ul>
-                    </div>
-                </div>
+                <p>Unlike the Scan operation, which examines every item in a table, Query only looks at items with the specified partition key value, making it much more efficient for large tables. Query operations can be further refined using sort key conditions, allowing for precise data retrieval based on your application's needs.</p>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Filter Expressions</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Apply additional filtering on query results.</p>
-                        <ul>
-                            <li>Filtering non-key attributes</li>
-                            <li>Logical operators</li>
-                            <li>Expression attribute names and values</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Query Result Management</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Control how query results are returned and processed.</p>
-                        <ul>
-                            <li>Pagination using LastEvaluatedKey</li>
-                            <li>Controlling sort order</li>
-                            <li>Limiting result count</li>
-                        </ul>
-                    </div>
-                </div>
+                <p>It's important to note that <strong>only tables with a composite primary key</strong> (partition key + sort key) can be queried effectively. This is one of the benefits of using a composite key structure in your database design.</p>
             </div>
         </section>
-        
-        <section class="section">
-            <h2 class="section-title">DynamoDB Query Implementation</h2>
-            
-            <h3>Basic Query for Items with the Same Partition Key</h3>
-            <p>Here's how to query a DynamoDB table to retrieve all items with a specific partition key value:</p>
-            
-            <pre><code>public List&lt;Song&gt; getSongsByArtist(String artist) {
-    Song song = new Song();
-    song.setArtist(artist);
-
-    DynamoDBQueryExpression&lt;Song&gt; queryExpression = new DynamoDBQueryExpression&lt;Song&gt;()
-        .withHashKeyValues(song);
-    
-    DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
-    PaginatedQueryList&lt;Song&gt; songList = mapper.query(Song.class, queryExpression);
-    
-    return songList;
-}</code></pre>
-            
-            <p>In this example, if we call <code>getSongsByArtist("Black Eyed Peas")</code>, it would return all songs by that artist from our table.</p>
-            
-            <h3>Paginated Queries</h3>
-            <p>For large datasets, DynamoDB uses pagination to divide query results into manageable chunks of up to 1MB each. The <code>query()</code> method handles pagination automatically, but sometimes we need more control.</p>
-            
-            <p>Using <code>queryPage()</code> with limits:</p>
-            
-            <pre><code>public QueryResultPage&lt;Song&gt; getLimitedSongsByArtist(String artist, int limit) {
-    Song song = new Song();
-    song.setArtist(artist);
-
-    DynamoDBQueryExpression&lt;Song&gt; queryExpression = new DynamoDBQueryExpression&lt;Song&gt;()
-        .withHashKeyValues(song)
-        .withLimit(limit);
-    
-    DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
-    QueryResultPage&lt;Song&gt; queryResultPage = mapper.queryPage(Song.class, queryExpression);
-    
-    return queryResultPage;
-}</code></pre>
-            
-            <p>This method returns only the specified number of items, which is useful for implementing features like "Load More" in user interfaces.</p>
-            
-            <h3>Using Comparison Operators for Sort Keys</h3>
-            <p>We can use comparison operators to create more specific queries based on the sort key. For example, to find songs released after a certain year:</p>
-            
-            <pre><code>public List&lt;Song&gt; getSongsByArtistAfterYear(String artist, int year) {
-    Song song = new Song();
-    song.setArtist(artist);
-
-    Map&lt;String, AttributeValue&gt; expressionAttributeValues = new HashMap&lt;&gt;();
-    expressionAttributeValues.put(":year", new AttributeValue().withN(String.valueOf(year)));
-
-    DynamoDBQueryExpression&lt;Song&gt; queryExpression = new DynamoDBQueryExpression&lt;Song&gt;()
-        .withHashKeyValues(song)
-        .withRangeKeyCondition("year", new Condition()
-            .withComparisonOperator(ComparisonOperator.GT)
-            .withAttributeValueList(new AttributeValue().withN(String.valueOf(year))))
-        .withConsistentRead(false);
-    
-    DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
-    PaginatedQueryList&lt;Song&gt; songList = mapper.query(Song.class, queryExpression);
-    
-    return songList;
-}</code></pre>
-            
-            <h3>Handling Pagination with ExclusiveStartKey</h3>
-            <p>For implementing pagination across multiple requests, we use the <code>ExclusiveStartKey</code> parameter:</p>
-            
-            <pre><code>public QueryResultPage&lt;Song&gt; getNextPageOfSongsByArtist(
-        String artist, 
-        int limit, 
-        Map&lt;String, AttributeValue&gt; lastEvaluatedKey) {
-    
-    Song song = new Song();
-    song.setArtist(artist);
-
-    DynamoDBQueryExpression&lt;Song&gt; queryExpression = new DynamoDBQueryExpression&lt;Song&gt;()
-        .withHashKeyValues(song)
-        .withLimit(limit);
-    
-    if (lastEvaluatedKey != null) {
-        queryExpression.setExclusiveStartKey(lastEvaluatedKey);
-    }
-    
-    DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
-    QueryResultPage&lt;Song&gt; queryResultPage = mapper.queryPage(Song.class, queryExpression);
-    
-    // The LastEvaluatedKey can be used for the next page request
-    Map&lt;String, AttributeValue&gt; lastKey = queryResultPage.getLastEvaluatedKey();
-    
-    return queryResultPage;
-}</code></pre>
-            
-            <p>This approach allows for efficient navigation through large result sets by providing a continuation point for subsequent queries.</p>
-            
-            <h3>Eventual Consistency</h3>
-            <p>DynamoDB provides two consistency options for reads: eventually consistent and strongly consistent. By default, queries use eventually consistent reads, which means you might get slightly outdated data but with higher throughput and lower latency.</p>
-            
-            <p>For cases where you need the most up-to-date data, you can specify consistent reads:</p>
-            
-            <pre><code>queryExpression.setConsistentRead(true);</code></pre>
-            
-            <p>However, consistent reads consume twice the read capacity units and may have higher latency.</p>
-        </section>
-
-        <section class="section">
-            <h2 class="section-title">Best Practices for DynamoDB Queries</h2>
-            <ul>
-                <li><strong>Design for Query Efficiency</strong>: Structure your data model to support common query patterns</li>
-                <li><strong>Use Key Condition Expressions</strong>: Limit queries to specific partition keys to reduce costs</li>
-                <li><strong>Be Careful with Filter Expressions</strong>: Filters are applied after the query and consume read capacity</li>
-                <li><strong>Implement Pagination</strong>: Use LastEvaluatedKey for handling large result sets</li>
-                <li><strong>Choose Projections Wisely</strong>: Only request the attributes you need to reduce data transfer</li>
-                <li><strong>Consider Consistent Reads</strong>: Use consistent reads when data freshness is critical</li>
-                <li><strong>Use Indexes Strategically</strong>: Create and use secondary indexes for alternate access patterns</li>
-            </ul>
-        </section>
-
-        <section class="section">
-            <h2 class="section-title">Resources</h2>
-            <div class="card-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>AWS Documentation: Query</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Official AWS documentation for the Query operation.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html" class="btn" target="_blank" rel="noopener">View Documentation</a>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Code-Alongs</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Additional code-along exercises for this sprint.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="../../code-alongs/index.html" class="btn">View Code-Alongs</a>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Sprint Challenge</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Access the sprint challenge for this unit.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="../../sprint-challenge/index.html" class="btn">View Challenge</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+    </main>
 </body>
 </html> 

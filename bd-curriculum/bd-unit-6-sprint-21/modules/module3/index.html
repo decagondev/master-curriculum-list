@@ -4,415 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3: DynamoDB Delete - BD Unit 6 Sprint 21</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23;
-            color: #ffffff;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: #222831;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722;
-            padding-bottom: 10px;
-        }
-        .section {
-            margin-bottom: 40px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border: 1px solid #333a47;
-        }
-        .section-title {
-            color: #ffffff;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #333a47;
-        }
-        .video-container {
-            margin: 20px 0;
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 4px;
-        }
-        p {
-            color: #b3b3b3;
-            margin-bottom: 16px;
-        }
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .card {
-            background-color: #2a303c;
-            border: 1px solid #333a47;
-            border-radius: 4px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .card-header {
-            padding: 15px;
-            background-color: #333a47;
-        }
-        .card-header h3 {
-            margin: 0;
-        }
-        .card-body {
-            padding: 15px;
-            flex-grow: 1;
-            color: #b3b3b3;
-        }
-        .card-body p {
-            margin-top: 0;
-        }
-        .card-body ul {
-            margin-top: 10px;
-            padding-left: 20px;
-        }
-        .card-footer {
-            padding: 15px;
-            border-top: 1px solid #333a47;
-        }
-        .btn {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #ff5722;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .btn:hover {
-            background-color: #ff7043;
-            box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
-            color: white;
-            text-decoration: none;
-        }
-        ul, ol {
-            color: #b3b3b3;
-            margin-bottom: 20px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        a {
-            color: #ff5722;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-            color: #ff7043;
-        }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background-color: #2a303c;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .back-button:hover {
-            background-color: #333a47;
-        }
-        .learning-objectives {
-            margin: 20px 0;
-            padding: 20px;
-            border-radius: 4px;
-            background-color: #333a47;
-            border-left: 4px solid #ff5722;
-        }
-        .learning-objectives h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .learning-objectives ul {
-            margin-top: 10px;
-            margin-bottom: 0;
-        }
-        pre, code {
-            background-color: #1a1d23;
-            border-radius: 4px;
-        }
-        pre {
-            padding: 10px;
-        }
-        code {
-            padding: 2px 5px;
-            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
-            color: #e6e6e6;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <a href="../../index.html" class="back-button">← Back to Home</a>
-        
-        <h1>Module 3: DynamoDB Delete</h1>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Introduction to Databases" src="https://fast.wistia.net/embed/iframe/ybnd9vr8ad" allow="autoplay; fullscreen" allowfullscreen></iframe>
-        </div>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Sprint 21 DynamoDB Delete Video" src="https://fast.wistia.net/embed/iframe/xu7199xl5r" allow="autoplay; fullscreen" allowfullscreen></iframe>
-        </div>
-        
-        <div class="learning-objectives">
-            <h3>Learning Objectives</h3>
+    <header>
+        <nav>
+            <div class="logo">BD Unit 6 Sprint 21</div>
             <ul>
-                <li>Implement functionality that deletes an item from a provided DynamoDB table by partition key</li>
-                <li>Implement functionality that deletes an item from a provided DynamoDB table by partition and sort key</li>
-                <li>Implement functionality that conditionally deletes an item from a provided DynamoDB table</li>
-                <li>Design and implement functionality to deactivate rather than delete an item from a provided DynamoDB table in order to prevent loss of information</li>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module1/index.html">Module 1: Iterators</a>
+                        <a href="../module2/index.html">Module 2: Spring Boot</a>
+                        <a href="../module3/index.html" class="active">Module 3: DynamoDB Delete</a>
+                        <a href="../module4/index.html">Module 4: DynamoDB Query</a>
+                    </div>
+                </li>
+                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-        </div>
-        
-        <section class="section">
-            <h2 class="section-title">Introduction to DynamoDB Delete Operations</h2>
-            <p>DynamoDB provides several ways to delete data from your tables. In this module, we focus on using the <code>DynamoDBMapper.delete()</code> method to remove items from DynamoDB tables. Understanding how to properly delete data is crucial for maintaining your database and ensuring data integrity throughout your application.</p>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 3: DynamoDB Delete</h1>
             
-            <p>Delete operations in DynamoDB are designed to be idempotent, which means that you can execute the same delete operation multiple times without changing the result beyond the initial application. This is important for handling retries and error recovery in distributed systems.</p>
-        </section>
-        
-        <section class="section">
-            <h2 class="section-title">Key Topics</h2>
-            <div class="card-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>DeleteItem Operation</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Learn how to delete single items from DynamoDB tables.</p>
-                        <ul>
-                            <li>Basic DeleteItem syntax</li>
-                            <li>Required parameters</li>
-                            <li>Error handling</li>
-                        </ul>
-                    </div>
-                </div>
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Introduction to Databases" src="https://fast.wistia.net/embed/iframe/ybnd9vr8ad" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            </div>
+            
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Sprint 21 DynamoDB Delete Video" src="https://fast.wistia.net/embed/iframe/xu7199xl5r" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            </div>
+            
+            <div class="note-box">
+                <h3>Learning Objectives</h3>
+                <ul>
+                    <li>Implement functionality that deletes an item from a provided DynamoDB table by partition key</li>
+                    <li>Implement functionality that deletes an item from a provided DynamoDB table by partition and sort key</li>
+                    <li>Implement functionality that conditionally deletes an item from a provided DynamoDB table</li>
+                    <li>Design and implement functionality to deactivate rather than delete an item from a provided DynamoDB table in order to prevent loss of information</li>
+                </ul>
+            </div>
+            
+            <div class="content-box">
+                <h2>Introduction to DynamoDB Delete Operations</h2>
+                <p>DynamoDB provides several ways to delete data from your tables. In this module, we focus on using the <code>DynamoDBMapper.delete()</code> method to remove items from DynamoDB tables. Understanding how to properly delete data is crucial for maintaining your database and ensuring data integrity throughout your application.</p>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Conditional Deletes</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Add conditions to your delete operations for data validation.</p>
-                        <ul>
-                            <li>ConditionExpression parameter</li>
-                            <li>Expression attributes</li>
-                            <li>Handling conditional failures</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Return Values</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Retrieve information about deleted items.</p>
-                        <ul>
-                            <li>ReturnValues parameter</li>
-                            <li>Options for returned data</li>
-                            <li>Processing returned attributes</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Batch Deletes</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Delete multiple items in a single operation.</p>
-                        <ul>
-                            <li>BatchWriteItem operation</li>
-                            <li>Limitations and constraints</li>
-                            <li>Handling partial failures</li>
-                        </ul>
-                    </div>
-                </div>
+                <p>Delete operations in DynamoDB are designed to be idempotent, which means that you can execute the same delete operation multiple times without changing the result beyond the initial application. This is important for handling retries and error recovery in distributed systems.</p>
             </div>
         </section>
-        
-        <section class="section">
-            <h2 class="section-title">Deleting Items in DynamoDB</h2>
-            
-            <h3>Deleting Items with a Partition Key</h3>
-            <p>For DynamoDB tables that use only a partition key, you only need to specify that key value to delete an item. Let's look at an example with a <code>Shoes</code> table:</p>
-            
-            <pre><code>@DynamoDBTable(tableName = "Shoes")
-public class Shoe {
-    private String shoeId;
-    private int cubbyLocation;
-    private String color;
-    private String style;
-    private String occasion;
-
-    @DynamoDBHashKey(attributeName = "shoeId")
-    public String getShoeId() {
-        return shoeId;
-    }
-
-    public void setShoeId(String shoeId) {
-        this.shoeId = shoeId;
-    }
-
-    // Additional getters and setters...
-}</code></pre>
-            
-            <p>To delete a shoe with <code>shoeId = "SN01"</code>:</p>
-            
-            <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
-Shoe shoe = new Shoe();
-shoe.setShoeId("SN01");
-mapper.delete(shoe);</code></pre>
-            
-            <p>Notice that we only need to set the partition key (<code>shoeId</code>) value. There's no need to load the complete item before deleting it.</p>
-            
-            <h3>Deleting Items with a Composite Key</h3>
-            <p>For tables that use a composite key (partition key + sort key), you must specify both key values to delete an item. Here's an example with a <code>Songs</code> table:</p>
-            
-            <pre><code>@DynamoDBTable(tableName = "Songs")
-public class Song {
-    private String artist;
-    private String songTitle;
-    private String genre;
-    private int year;
-    private boolean favorited;
-
-    @DynamoDBHashKey(attributeName = "artist")
-    public String getArtist() {
-        return artist;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-
-    @DynamoDBRangeKey(attributeName = "song_title")
-    public String getSongTitle() {
-        return songTitle;
-    }
-
-    public void setSongTitle(String songTitle) {
-        this.songTitle = songTitle;
-    }
-
-    // Additional getters and setters...
-}</code></pre>
-            
-            <p>To delete a song by "Black Eyed Peas" with the title "I Gotta Feeling":</p>
-            
-            <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
-Song song = new Song();
-song.setArtist("Black Eyed Peas");
-song.setSongTitle("I Gotta Feeling");
-mapper.delete(song);</code></pre>
-            
-            <h3>Idempotent Delete Operations</h3>
-            <p>An important characteristic of DynamoDB delete operations is that they are idempotent. If you try to delete an item that doesn't exist, the operation completes successfully without any error or special indication. The response remains the same whether the item existed or not.</p>
-            
-            <p>This feature is useful for handling retry scenarios where you want to ensure an item is deleted but don't need to know if it existed beforehand.</p>
-            
-            <h3>Implementing Soft Deletes</h3>
-            <p>Rather than permanently deleting data, many applications implement "soft deletes" by setting a flag or status on the item. This approach preserves the data while making it appear deleted to the application. Here's how to implement a soft delete:</p>
-            
-            <pre><code>// Load the item first
-Song song = mapper.load(Song.class, "Black Eyed Peas", "I Gotta Feeling");
-
-// Instead of deleting, mark it as inactive
-song.setActive(false);
-
-// Save the updated item
-mapper.save(song);</code></pre>
-            
-            <p>This approach allows you to filter out inactive items in your queries while maintaining the ability to restore or reference the data later if needed.</p>
-            
-        </section>
-        
-        <section class="section">
-            <h2 class="section-title">Best Practices for DynamoDB Deletes</h2>
-            <ul>
-                <li><strong>Use Conditional Expressions</strong>: Ensure the item exists and meets certain criteria before deletion</li>
-                <li><strong>Handle ConditionalCheckFailedException</strong>: Create meaningful error messages when conditions fail</li>
-                <li><strong>Consider Soft Deletes</strong>: For data that may need to be recovered later</li>
-                <li><strong>Use BatchWriteItem Wisely</strong>: For deleting multiple items efficiently</li>
-                <li><strong>Monitor Throughput Consumption</strong>: Delete operations consume write capacity units</li>
-                <li><strong>Implement Retries</strong>: Handle throttling and transient errors with exponential backoff</li>
-            </ul>
-        </section>
-
-        <section class="section">
-            <h2 class="section-title">Resources</h2>
-            <div class="card-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>AWS Documentation: DeleteItem</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Official AWS documentation for the DeleteItem operation.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html" class="btn" target="_blank" rel="noopener">View Documentation</a>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Code-Alongs</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Additional code-along exercises for this sprint.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="../../code-alongs/index.html" class="btn">View Code-Alongs</a>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Sprint Challenge</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Access the sprint challenge for this unit.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="../../sprint-challenge/index.html" class="btn">View Challenge</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+    </main>
 </body>
 </html> 

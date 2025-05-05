@@ -4,282 +4,184 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 2 - Streams - BD Unit 7 Sprint 25</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23;
-            color: #ffffff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #222831;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722;
-            padding-bottom: 10px;
-        }
-        .module {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #333a47;
-            background-color: #2a303c;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-        }
-        .module h2 {
-            color: #ffffff;
-            margin-top: 0;
-        }
-        .module p {
-            color: #b3b3b3;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
-        .video-container {
-            margin: 20px 0;
-        }
-        .video-container iframe {
-            max-width: 100%;
-            border-radius: 4px;
-            width: 100%;
-            height: 360px;
-        }
-        .resources {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border-left: 4px solid #ff5722;
-        }
-        .resources h2, .resources h3 {
-            color: #ffffff;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .resources ul {
-            list-style-type: none;
-            padding: 0;
-            color: #b3b3b3;
-        }
-        .resources li {
-            margin-bottom: 10px;
-        }
-        .resources a {
-            color: #ff5722;
-            text-decoration: none;
-        }
-        .resources a:hover {
-            text-decoration: underline;
-            color: #ff7043;
-        }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background-color: #2a303c;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .back-button:hover {
-            background-color: #333a47;
-        }
-        section {
-            margin-bottom: 30px;
-        }
-        /* New class for Learning Objectives list */
-        .learning-objectives-list {
-            color: #b3b3b3;
-            padding-left: 20px;
-        }
-        .learning-objective-description {
-            color: #9e9e9e;
-            margin-left: 10px;
-            margin-bottom: 15px;
-            font-size: 0.95em;
-        }
-        .code-example {
-            background-color: #1a1d23;
-            border-radius: 4px;
-            overflow-x: auto;
-            font-family: 'Courier New', Courier, monospace;
-            color: #e2e8f0;
-            padding: 10px;
-        }
-        .video-description {
-            color: #b3b3b3;
-            font-size: 1em;
-            margin: 15px 0;
-            padding: 10px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border-left: 2px solid #ff5722;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <a href="../../index.html" class="back-button">← Back to Home</a>
-        
-        <h1>Module 2 - Streams</h1>
-        
-        <div class="module">
-            <h2>Module Overview</h2>
-            <p>Explore the Java Streams API and learn how to perform functional operations on collections of objects with improved readability and performance.</p>
-        </div>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Streams Introduction" src="https://fast.wistia.net/embed/iframe/153iys9uvr" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-        </div>
-        <div class="video-description">
-            This introduction video covers the fundamentals of Java Streams and their role in modern Java programming. You'll learn how Streams differ from collections, their lazy evaluation model, and the benefits they bring to data processing pipelines. The video explains the key components of the Stream API and how they enable functional-style programming in Java.
-        </div>
-
-        <section>
-            <h2>Learning Objectives</h2>
-            <ul class="learning-objectives-list">
-                <li>Recall that streams are only evaluated when a terminal operation is invoked
-                    <div class="learning-objective-description">
-                        Streams use lazy evaluation—intermediate operations create a pipeline but don't execute until a terminal operation is called. This allows for optimization and avoids unnecessary computation.
-                        <div class="code-example">
-                        List&lt;String&gt; names = Arrays.asList("John", "Jane", "Adam", "Eve");<br>
-                        <br>
-                        // This creates the pipeline but doesn't execute yet<br>
-                        Stream&lt;String&gt; filteredStream = names.stream()<br>
-                            &nbsp;&nbsp;.filter(name -> {<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Filtering: " + name);<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;return name.startsWith("J");<br>
-                            &nbsp;&nbsp;});<br>
-                        <br>
-                        // Terminal operation - NOW the pipeline executes<br>
-                        filteredStream.count(); // Prints "Filtering: " messages<br>
-                        </div>
-                    </div>
-                </li>
-                <li>Use streams to perform an operation on every object in a Collection
-                    <div class="learning-objective-description">
-                        The forEach() terminal operation allows you to execute an action on each element of a stream.
-                        <div class="code-example">
-                        List&lt;Product&gt; products = getProducts();<br>
-                        <br>
-                        // Print all product names<br>
-                        products.stream()<br>
-                            &nbsp;&nbsp;.forEach(product -> System.out.println(product.getName()));<br>
-                        <br>
-                        // Update all products<br>
-                        products.stream()<br>
-                            &nbsp;&nbsp;.forEach(product -> product.applyDiscount(0.1));<br>
-                        </div>
-                    </div>
-                </li>
-                <li>Use streams to find all elements of a Collection that satisfy a provided condition
-                    <div class="learning-objective-description">
-                        The filter() method creates a stream consisting only of elements that match a given predicate.
-                        <div class="code-example">
-                        List&lt;User&gt; users = getUsers();<br>
-                        <br>
-                        // Find active premium users<br>
-                        List&lt;User&gt; premiumActiveUsers = users.stream()<br>
-                            &nbsp;&nbsp;.filter(User::isActive)<br>
-                            &nbsp;&nbsp;.filter(user -> user.getSubscriptionType() == SubscriptionType.PREMIUM)<br>
-                            &nbsp;&nbsp;.collect(Collectors.toList());<br>
-                        </div>
-                    </div>
-                </li>
-                <li>Use streams to apply a Function to each element of a Collection
-                    <div class="learning-objective-description">
-                        The map() operation transforms each element in a stream by applying a function to it, creating a new stream of the transformed elements.
-                        <div class="code-example">
-                        List&lt;Order&gt; orders = getOrders();<br>
-                        <br>
-                        // Extract order IDs from order objects<br>
-                        List&lt;String&gt; orderIds = orders.stream()<br>
-                            &nbsp;&nbsp;.map(Order::getId)<br>
-                            &nbsp;&nbsp;.collect(Collectors.toList());<br>
-                        <br>
-                        // Calculate total price for each order<br>
-                        List&lt;Double&gt; orderTotals = orders.stream()<br>
-                            &nbsp;&nbsp;.map(order -> order.getItems().stream()<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;.mapToDouble(item -> item.getPrice() * item.getQuantity())<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;.sum())<br>
-                            &nbsp;&nbsp;.collect(Collectors.toList());<br>
-                        </div>
-                    </div>
-                </li>
-                <li>Implement code to collect the elements of a Stream into a specified Collection
-                    <div class="learning-objective-description">
-                        The collect() terminal operation allows you to accumulate stream elements into different types of collections or custom containers.
-                        <div class="code-example">
-                        List&lt;String&gt; names = getNames();<br>
-                        <br>
-                        // Collect into a List<br>
-                        List&lt;String&gt; namesList = names.stream()<br>
-                            &nbsp;&nbsp;.filter(name -> name.length() > 3)<br>
-                            &nbsp;&nbsp;.collect(Collectors.toList());<br>
-                        <br>
-                        // Collect into a Set (removes duplicates)<br>
-                        Set&lt;String&gt; namesSet = names.stream()<br>
-                            &nbsp;&nbsp;.collect(Collectors.toSet());<br>
-                        <br>
-                        // Collect into a Map<br>
-                        Map&lt;String, Integer&gt; nameLengthMap = names.stream()<br>
-                            &nbsp;&nbsp;.collect(Collectors.toMap(<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;name -> name,         // Key mapper<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;name -> name.length() // Value mapper<br>
-                            &nbsp;&nbsp;));<br>
-                        </div>
-                    </div>
-                </li>
-                <li>Compare and contrast stateful and stateless stream operations
-                    <div class="learning-objective-description">
-                        Stateless operations (like filter, map) don't need to know about other elements, while stateful operations (like sorted, distinct) need knowledge of all elements in the stream, potentially impacting performance.
-                    </div>
-                </li>
-                <li>Recall that terminal operations are Stream methods that produce a non-Stream result
-                    <div class="learning-objective-description">
-                        Terminal operations like forEach(), collect(), count(), min(), max(), and reduce() trigger the processing of the stream pipeline and produce a final result or side effect.
-                    </div>
-                </li>
-                <li>Recall that a short-circuiting terminal operation ends the stream as soon as it is satisfied
-                    <div class="learning-objective-description">
-                        Operations like findFirst(), findAny(), anyMatch(), allMatch(), and noneMatch() don't need to process the entire stream if they can determine the result early.
-                        <div class="code-example">
-                        boolean hasAdminUser = users.stream()<br>
-                            &nbsp;&nbsp;.anyMatch(user -> user.getRole() == Role.ADMIN);<br>
-                        <br>
-                        Optional&lt;User&gt; firstActiveUser = users.stream()<br>
-                            &nbsp;&nbsp;.filter(User::isActive)<br>
-                            &nbsp;&nbsp;.findFirst();<br>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </section>
-
-        <div class="resources">
-            <h2>Resources</h2>
+    <header>
+        <nav>
+            <div class="logo">BD Unit 7 Sprint 25</div>
             <ul>
-                <li><a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html" target="_blank" rel="noopener">Java Stream API Documentation</a></li>
-                <li><a href="https://www.baeldung.com/java-8-streams" target="_blank" rel="noopener">Java 8 Streams Introduction - Baeldung</a></li>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../../modules/module1/index.html">Module 1: Optionals</a>
+                        <a href="../../modules/module2/index.html" class="active">Module 2: Streams</a>
+                        <a href="../../modules/module3/index.html">Module 3: JSON Serialization</a>
+                        <a href="../../modules/module4/index.html">Module 4: DynamoDB Scan</a>
+                    </div>
+                </li>
                 <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
                 <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-        </div>
-    </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 2 - Streams</h1>
+            
+            <div class="content-box">
+                <h2>Module Overview</h2>
+                <p>Explore the Java Streams API and learn how to perform functional operations on collections of objects with improved readability and performance.</p>
+            </div>
+            
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Streams Introduction" src="https://fast.wistia.net/embed/iframe/153iys9uvr" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+            <div class="content-box">
+                <p>This introduction video covers the fundamentals of Java Streams and their role in modern Java programming. You'll learn how Streams differ from collections, their lazy evaluation model, and the benefits they bring to data processing pipelines. The video explains the key components of the Stream API and how they enable functional-style programming in Java.</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Learning Objectives</h2>
+                <ul class="learning-objectives-list">
+                    <li>Recall that streams are only evaluated when a terminal operation is invoked
+                        <div class="learning-objective-description">
+                            Streams use lazy evaluation—intermediate operations create a pipeline but don't execute until a terminal operation is called. This allows for optimization and avoids unnecessary computation.
+                            <div class="code-example">
+                            List&lt;String&gt; names = Arrays.asList("John", "Jane", "Adam", "Eve");<br>
+                            <br>
+                            // This creates the pipeline but doesn't execute yet<br>
+                            Stream&lt;String&gt; filteredStream = names.stream()<br>
+                                &nbsp;&nbsp;.filter(name -> {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Filtering: " + name);<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;return name.startsWith("J");<br>
+                                &nbsp;&nbsp;});<br>
+                            <br>
+                            // Terminal operation - NOW the pipeline executes<br>
+                            filteredStream.count(); // Prints "Filtering: " messages<br>
+                            </div>
+                        </div>
+                    </li>
+                    <li>Use streams to perform an operation on every object in a Collection
+                        <div class="learning-objective-description">
+                            The forEach() terminal operation allows you to execute an action on each element of a stream.
+                            <div class="code-example">
+                            List&lt;Product&gt; products = getProducts();<br>
+                            <br>
+                            // Print all product names<br>
+                            products.stream()<br>
+                                &nbsp;&nbsp;.forEach(product -> System.out.println(product.getName()));<br>
+                            <br>
+                            // Update all products<br>
+                            products.stream()<br>
+                                &nbsp;&nbsp;.forEach(product -> product.applyDiscount(0.1));<br>
+                            </div>
+                        </div>
+                    </li>
+                    <li>Use streams to find all elements of a Collection that satisfy a provided condition
+                        <div class="learning-objective-description">
+                            The filter() method creates a stream consisting only of elements that match a given predicate.
+                            <div class="code-example">
+                            List&lt;User&gt; users = getUsers();<br>
+                            <br>
+                            // Find active premium users<br>
+                            List&lt;User&gt; premiumActiveUsers = users.stream()<br>
+                                &nbsp;&nbsp;.filter(User::isActive)<br>
+                                &nbsp;&nbsp;.filter(user -> user.getSubscriptionType() == SubscriptionType.PREMIUM)<br>
+                                &nbsp;&nbsp;.collect(Collectors.toList());<br>
+                            </div>
+                        </div>
+                    </li>
+                    <li>Use streams to apply a Function to each element of a Collection
+                        <div class="learning-objective-description">
+                            The map() operation transforms each element in a stream by applying a function to it, creating a new stream of the transformed elements.
+                            <div class="code-example">
+                            List&lt;Order&gt; orders = getOrders();<br>
+                            <br>
+                            // Extract order IDs from order objects<br>
+                            List&lt;String&gt; orderIds = orders.stream()<br>
+                                &nbsp;&nbsp;.map(Order::getId)<br>
+                                &nbsp;&nbsp;.collect(Collectors.toList());<br>
+                            <br>
+                            // Calculate total price for each order<br>
+                            List&lt;Double&gt; orderTotals = orders.stream()<br>
+                                &nbsp;&nbsp;.map(order -> order.getItems().stream()<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;.mapToDouble(item -> item.getPrice() * item.getQuantity())<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;.sum())<br>
+                                &nbsp;&nbsp;.collect(Collectors.toList());<br>
+                            </div>
+                        </div>
+                    </li>
+                    <li>Implement code to collect the elements of a Stream into a specified Collection
+                        <div class="learning-objective-description">
+                            The collect() terminal operation allows you to accumulate stream elements into different types of collections or custom containers.
+                            <div class="code-example">
+                            List&lt;String&gt; names = getNames();<br>
+                            <br>
+                            // Collect into a List<br>
+                            List&lt;String&gt; namesList = names.stream()<br>
+                                &nbsp;&nbsp;.filter(name -> name.length() > 3)<br>
+                                &nbsp;&nbsp;.collect(Collectors.toList());<br>
+                            <br>
+                            // Collect into a Set (removes duplicates)<br>
+                            Set&lt;String&gt; namesSet = names.stream()<br>
+                                &nbsp;&nbsp;.collect(Collectors.toSet());<br>
+                            <br>
+                            // Collect into a Map<br>
+                            Map&lt;String, Integer&gt; nameLengthMap = names.stream()<br>
+                                &nbsp;&nbsp;.collect(Collectors.toMap(<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;name -> name,         // Key mapper<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;name -> name.length() // Value mapper<br>
+                                &nbsp;&nbsp;));<br>
+                            </div>
+                        </div>
+                    </li>
+                    <li>Compare and contrast stateful and stateless stream operations
+                        <div class="learning-objective-description">
+                            Stateless operations (like filter, map) don't need to know about other elements, while stateful operations (like sorted, distinct) need knowledge of all elements in the stream, potentially impacting performance.
+                        </div>
+                    </li>
+                    <li>Recall that terminal operations are Stream methods that produce a non-Stream result
+                        <div class="learning-objective-description">
+                            Terminal operations like forEach(), collect(), count(), min(), max(), and reduce() trigger the processing of the stream pipeline and produce a final result or side effect.
+                        </div>
+                    </li>
+                    <li>Recall that a short-circuiting terminal operation ends the stream as soon as it is satisfied
+                        <div class="learning-objective-description">
+                            Operations like findFirst(), findAny(), anyMatch(), allMatch(), and noneMatch() don't need to process the entire stream if they can determine the result early.
+                            <div class="code-example">
+                            boolean hasAdminUser = users.stream()<br>
+                                &nbsp;&nbsp;.anyMatch(user -> user.getRole() == Role.ADMIN);<br>
+                            <br>
+                            Optional&lt;User&gt; firstActiveUser = users.stream()<br>
+                                &nbsp;&nbsp;.filter(User::isActive)<br>
+                                &nbsp;&nbsp;.findFirst();<br>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <section class="resource-section">
+                <h2 class="resource-section-title">Resources</h2>
+                <div class="resource-links">
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html" target="_blank" rel="noopener" class="resource-link">
+                        Java Stream API Documentation
+                    </a>
+                    <a href="https://www.baeldung.com/java-8-streams" target="_blank" rel="noopener" class="resource-link">
+                        Java 8 Streams Tutorial - Baeldung
+                    </a>
+                    <a href="../../code-alongs/index.html" class="resource-link">
+                        Code-Alongs
+                    </a>
+                    <a href="../../sprint-challenge/index.html" class="resource-link">
+                        Sprint Challenge
+                    </a>
+                </div>
+            </section>
+        </section>
+    </main>
 </body>
 </html> 

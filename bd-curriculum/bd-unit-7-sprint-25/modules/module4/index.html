@@ -4,238 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 4 - DynamoDB Scan - BD Unit 7 Sprint 25</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23;
-            color: #ffffff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #222831;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722;
-            padding-bottom: 10px;
-        }
-        .module {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #333a47;
-            background-color: #2a303c;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-        }
-        .module h2 {
-            color: #ffffff;
-            margin-top: 0;
-        }
-        .module p {
-            color: #b3b3b3;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
-        .video-container {
-            margin: 20px 0;
-        }
-        .video-container iframe {
-            max-width: 100%;
-            border-radius: 4px;
-            width: 100%;
-            height: 360px;
-        }
-        .resources {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border-left: 4px solid #ff5722;
-        }
-        .resources h2, .resources h3 {
-            color: #ffffff;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .resources ul {
-            list-style-type: none;
-            padding: 0;
-            color: #b3b3b3;
-        }
-        .resources li {
-            margin-bottom: 10px;
-        }
-        .resources a {
-            color: #ff5722;
-            text-decoration: none;
-        }
-        .resources a:hover {
-            text-decoration: underline;
-            color: #ff7043;
-        }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background-color: #2a303c;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .back-button:hover {
-            background-color: #333a47;
-        }
-        section {
-            margin-bottom: 30px;
-        }
-        /* New class for Learning Objectives list */
-        .learning-objectives-list {
-            color: #b3b3b3;
-            padding-left: 20px;
-        }
-        .learning-objective-description {
-            color: #9e9e9e;
-            margin-left: 10px;
-            margin-bottom: 15px;
-            font-size: 0.95em;
-        }
-        .code-example {
-            background-color: #1a1d23;
-            border-radius: 4px;
-            overflow-x: auto;
-            font-family: 'Courier New', Courier, monospace;
-            color: #e2e8f0;
-            padding: 10px;
-        }
-        .video-description {
-            color: #b3b3b3;
-            font-size: 1em;
-            margin: 15px 0;
-            padding: 10px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border-left: 2px solid #ff5722;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <a href="../../index.html" class="back-button">← Back to Home</a>
-        
-        <h1>Module 4 - DynamoDB Scan</h1>
-        
-        <div class="module">
-            <h2>Module Overview</h2>
-            <p>Learn about DynamoDB scanning operations, best practices, and techniques to efficiently retrieve data from your NoSQL database.</p>
-        </div>
-
-        <section>
-            <h2>Learning Objectives</h2>
-            <ul class="learning-objectives-list">
-                <li>Design and implement functionality that uses scan with a filter to retrieve a subset of items from a provided DynamoDB table
-                    <div class="learning-objective-description">
-                        Learn how to use scan operations with filter expressions to selectively retrieve items from a DynamoDB table based on specific criteria.
-                        <div class="code-example">
-                        // Create ScanExpression with filter<br>
-                        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();<br>
-                        <br>
-                        // Create filter condition (products with price > 100)<br>
-                        Map&lt;String, AttributeValue&gt; expressionValues = new HashMap&lt;&gt;();<br>
-                        expressionValues.put(":priceValue", new AttributeValue().withN("100"));<br>
-                        <br>
-                        scanExpression.setFilterExpression("price > :priceValue");<br>
-                        scanExpression.setExpressionAttributeValues(expressionValues);<br>
-                        <br>
-                        // Execute scan with filter<br>
-                        PaginatedScanList&lt;Product&gt; productList = mapper.scan(Product.class, scanExpression);<br>
-                        <br>
-                        // Process filtered results<br>
-                        for (Product product : productList) {<br>
-                            &nbsp;&nbsp;System.out.println("Product: " + product.getName() + ", Price: " + product.getPrice());<br>
-                        }<br>
-                        </div>
-                    </div>
-                </li>
-                <li>Design and implement functionality that uses paginated scan with a limit to retrieve a subset of items from a provided DynamoDB table
-                    <div class="learning-objective-description">
-                        Learn how to implement efficient pagination for scan operations to process large datasets in manageable chunks, reducing memory usage and improving application responsiveness.
-                        <div class="code-example">
-                        // Create scan expression with limit<br>
-                        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()<br>
-                            &nbsp;&nbsp;.withLimit(10); // Retrieve 10 items per page<br>
-                        <br>
-                        Map&lt;String, AttributeValue&gt; lastKeyEvaluated = null;<br>
-                        <br>
-                        do {<br>
-                            &nbsp;&nbsp;// Set exclusive start key (for pagination)<br>
-                            &nbsp;&nbsp;scanExpression.setExclusiveStartKey(lastKeyEvaluated);<br>
-                            <br>
-                            &nbsp;&nbsp;// Execute scan<br>
-                            &nbsp;&nbsp;ScanResultPage&lt;Product&gt; scanResult = mapper.scanPage(Product.class, scanExpression);<br>
-                            <br>
-                            &nbsp;&nbsp;// Process current page of results<br>
-                            &nbsp;&nbsp;for (Product product : scanResult.getResults()) {<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Processing: " + product.getId());<br>
-                            &nbsp;&nbsp;}<br>
-                            <br>
-                            &nbsp;&nbsp;// Get last evaluated key for next page<br>
-                            &nbsp;&nbsp;lastKeyEvaluated = scanResult.getLastEvaluatedKey();<br>
-                            <br>
-                            &nbsp;&nbsp;// Continue until no more pages<br>
-                        } while (lastKeyEvaluated != null);<br>
-                        </div>
-                    </div>
-                </li>
-                <li>Outline when to scan a DynamoDB table
-                    <div class="learning-objective-description">
-                        Understand the appropriate use cases for scan operations, including full table exports, infrequent operations on small tables, or when you need to query data without a known partition key.
-                    </div>
-                </li>
-                <li>Outline how to use DynamoDBMapper's scan() method
-                    <div class="learning-objective-description">
-                        Learn the different methods and options available in DynamoDBMapper for scan operations, including basic scans, filtered scans, and paginated scans.
-                        <div class="code-example">
-                        // Basic scan (all items)<br>
-                        PaginatedScanList&lt;User&gt; allUsers = mapper.scan(User.class, new DynamoDBScanExpression());<br>
-                        <br>
-                        // Scan with attribute projection (specific attributes only)<br>
-                        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()<br>
-                            &nbsp;&nbsp;.withProjectionExpression("id, username, email");<br>
-                        <br>
-                        // Parallel scan (for large tables)<br>
-                        DynamoDBScanExpression parallelScanExpression = new DynamoDBScanExpression()<br>
-                            &nbsp;&nbsp;.withSegment(0)      // Current segment<br>
-                            &nbsp;&nbsp;.withTotalSegments(4); // Total segments<br>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </section>
-
-        <div class="resources">
-            <h2>Resources</h2>
+    <header>
+        <nav>
+            <div class="logo">BD Unit 7 Sprint 25</div>
             <ul>
-                <li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Scan.html" target="_blank" rel="noopener">DynamoDB Scan Documentation</a></li>
-                <li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-query-scan.html" target="_blank" rel="noopener">Best Practices for Querying and Scanning Data</a></li>
-                <li><a href="https://aws.amazon.com/blogs/database/implementing-priority-queuing-with-amazon-dynamodb/" target="_blank" rel="noopener">Implementing Priority Queuing with DynamoDB</a></li>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../../modules/module1/index.html">Module 1: Optionals</a>
+                        <a href="../../modules/module2/index.html">Module 2: Streams</a>
+                        <a href="../../modules/module3/index.html">Module 3: JSON Serialization</a>
+                        <a href="../../modules/module4/index.html" class="active">Module 4: DynamoDB Scan</a>
+                    </div>
+                </li>
                 <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
                 <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-        </div>
-    </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 4 - DynamoDB Scan</h1>
+            
+            <div class="content-box">
+                <h2>Module Overview</h2>
+                <p>Learn about DynamoDB scan operations and best practices for efficiently querying and filtering data from your DynamoDB tables.</p>
+            </div>
+            
+            <div class="video-container">
+                <iframe class="wistia_embed" title="DynamoDB Scan Introduction" src="https://fast.wistia.net/embed/iframe/n6hsdtm3qp" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+            <div class="content-box">
+                <p>This introduction video covers the basics of DynamoDB scan operations. You'll learn about the purpose of scan operations, their capabilities and limitations, and when to use them versus query operations for better performance.</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Learning Objectives</h2>
+                <ul class="learning-objectives-list">
+                    <li>Understand DynamoDB Scan operation basics
+                        <div class="learning-objective-description">
+                            The Scan operation examines all items in a table or a secondary index, returning items that satisfy filter criteria. While powerful, scans can be resource-intensive for large tables.
+                        </div>
+                    </li>
+                    <li>Implement basic scan operations with the AWS SDK
+                        <div class="learning-objective-description">
+                            Learn to use the AWS SDK to perform basic DynamoDB scan operations to retrieve data.
+                            <div class="code-example">
+                            // Create DynamoDB client<br>
+                            DynamoDB dynamoDB = new DynamoDB(AmazonDynamoDBClientBuilder.standard().build());<br>
+                            <br>
+                            // Create a scan request for a table<br>
+                            ScanRequest scanRequest = new ScanRequest()<br>
+                                &nbsp;&nbsp;.withTableName("Products");<br>
+                            <br>
+                            // Execute the scan<br>
+                            ScanResult result = dynamoDB.getClient().scan(scanRequest);<br>
+                            <br>
+                            // Process results<br>
+                            List&lt;Map&lt;String, AttributeValue&gt;&gt; items = result.getItems();<br>
+                            </div>
+                        </div>
+                    </li>
+                    <li>Apply filters to scan operations
+                        <div class="learning-objective-description">
+                            Use filter expressions to selectively retrieve items that match specific conditions.
+                            <div class="code-example">
+                            // Create scan request with filter<br>
+                            ScanRequest scanRequest = new ScanRequest()<br>
+                                &nbsp;&nbsp;.withTableName("Products")<br>
+                                &nbsp;&nbsp;.withFilterExpression("price > :min AND category = :cat")<br>
+                                &nbsp;&nbsp;.withExpressionAttributeValues(Map.of(<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;":min", new AttributeValue().withN("19.99"),<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;":cat", new AttributeValue().withS("Electronics")<br>
+                                &nbsp;&nbsp;));<br>
+                            </div>
+                        </div>
+                    </li>
+                    <li>Handle pagination for large result sets
+                        <div class="learning-objective-description">
+                            DynamoDB limits the number of items returned in a single scan. Learn to handle pagination for large data sets.
+                            <div class="code-example">
+                            // Initial scan request<br>
+                            ScanRequest scanRequest = new ScanRequest()<br>
+                                &nbsp;&nbsp;.withTableName("Products")<br>
+                                &nbsp;&nbsp;.withLimit(100);<br>
+                            <br>
+                            ScanResult result = null;<br>
+                            do {<br>
+                                &nbsp;&nbsp;// If this isn't the first iteration, update the request with the token<br>
+                                &nbsp;&nbsp;if (result != null) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;scanRequest.setExclusiveStartKey(result.getLastEvaluatedKey());<br>
+                                &nbsp;&nbsp;}<br>
+                                <br>
+                                &nbsp;&nbsp;// Execute the scan<br>
+                                &nbsp;&nbsp;result = dynamoDB.getClient().scan(scanRequest);<br>
+                                <br>
+                                &nbsp;&nbsp;// Process the current page of results<br>
+                                &nbsp;&nbsp;processItems(result.getItems());<br>
+                                <br>
+                                &nbsp;&nbsp;// Continue until we've processed all items<br>
+                            } while (result.getLastEvaluatedKey() != null);<br>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <section class="resource-section">
+                <h2 class="resource-section-title">Resources</h2>
+                <div class="resource-links">
+                    <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Scan.html" target="_blank" rel="noopener" class="resource-link">
+                        DynamoDB Scan Documentation
+                    </a>
+                    <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ScanQueryExamples.html" target="_blank" rel="noopener" class="resource-link">
+                        DynamoDB Scan Examples - AWS
+                    </a>
+                    <a href="../../code-alongs/index.html" class="resource-link">
+                        Code-Alongs
+                    </a>
+                    <a href="../../sprint-challenge/index.html" class="resource-link">
+                        Sprint Challenge
+                    </a>
+                </div>
+            </section>
+        </section>
+    </main>
 </body>
 </html> 
