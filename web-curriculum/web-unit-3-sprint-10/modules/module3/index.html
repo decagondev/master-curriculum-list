@@ -47,22 +47,600 @@
                 </ul>
             </div>
 
-            <div class="content-box">
-                <h3>Video Lessons</h3>
+            <div class="content-box module3-accent">      
+                    
+              <h3>Guided Project</h3>
+              <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/dla0oq5ha3" title="Guided Project" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+              </div>
+              <h3>Resources</h3>
+              <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/w-s10-redux-rtk-gp-start" target="_blank">Redux Toolkit</a></p>
+              <p>Solution Repo: <a href="https://github.com/bloominstituteoftechnology/w-s10-redux-rtk-gp-end" target="_blank">Redux Toolkit Solution</a></p>
+            </div> 
+
+            <div class="content-box module3-accent">
+                <h3>Understanding Redux</h3>
+
+                <p>In a web application, 'state' refers to the dynamic elements such as the URL, user inputs, and interactive features. This is akin to the changing conditions of a car, like speed or fuel level. In Redux, state is treated as a single source of truth, representing the entire state of the application at any given moment.</p>
+                <p>Front-end developers often grapple with how to manage state effectively. Choices include storing state within the DOM, building a singular large object for the entire application's state, or allowing the URL to influence state. These decisions impact how easily state can be tracked, manipulated, and maintained.</p>
+                <p>In response to these challenges, the front-end community has created numerous libraries and frameworks. Each offers different approaches to state management, addressing various needs and complexities of web applications. Redux emerged as a popular choice due to its simplicity and predictability.</p>
+
+                <h3>How to Build It</h3>
+
+                <p><a href="https://redux.js.org/" target="_blank">Redux</a> is a library that centralizes the application's state, making it more predictable and easier to manage. It's commonly used in complex applications for consistent state management, but it's flexible enough to manage only parts of the state, as needed.</p>
+
+                <p>Redux's centralized approach provides a clear overview of the application's state at any point in time. It offers powerful development tools, like state time-travel, and ensures a clean separation between state management logic and UI components. <a href="https://redux-toolkit.js.org/" target="_blank">Redux Toolkit</a>, an official Redux package, further simplifies Redux development by providing useful utilities.</p>
+
+                <p>Redux's widespread adoption is evidenced by its <a href="https://www.npmjs.com/package/redux" target="_blank">massive download numbers</a> and active community. Its ongoing maintenance by <a href="https://www.youtube.com/watch?v=TROygqXGa10" target="_blank">passionate developers</a> ensures that it stays relevant and efficient in managing modern web application states.</p>
+
+                <p>Redux's architecture revolves around a single, immutable state object. The state is never mutated directly; instead, actions are dispatched to signify state changes. Reducers, which are pure functions, then take the current state and an action to calculate a new state. This approach guarantees predictability and ease of debugging.</p>
+                <p>Actions in Redux are plain JavaScript objects describing what happened, and reducers are functions that determine how the state changes in response to these actions. This pattern makes it straightforward to trace, test, and maintain state changes across the application.</p>
+                <p>Redux encourages a design where components are 'dumb' regarding state management. They dispatch actions and may read state but are not involved in state mutation. This separation of concerns leads to more maintainable and scalable codebases.</p>
+                <p>Redux is a robust framework for state management, building on the reducer pattern to ensure a predictable application state. Redux Toolkit further enhances Redux by offering utilities like <code>createSlice</code> and <code>createAsyncThunk</code>, which simplify common Redux patterns and reduce boilerplate. Overall, Redux and Redux Toolkit provide a structured approach to managing state in complex web applications.</p>
                 
                 <div class="video-container">
-                    <h3>Introduction to Redux Toolkit</h3>
-                    <iframe src="https://fast.wistia.net/embed/iframe/abc123def456" title="Introduction to Redux Toolkit" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+                    <iframe src="https://fast.wistia.net/embed/iframe/tqeqfc4luj?seo=false&videoFoam=false" title="Introduction to Redux Toolkit" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
                 </div>
+            </div>
+
+            <div class="content-box module3-accent">
+                <h3>Creating a Redux App</h3>
+
+                <p>In order to use Redux in a React project, you will install two NPM packages: <a href="https://www.npmjs.com/package/@reduxjs/toolkit" target="_blank">Redux Toolkit</a> and <a href="https://www.npmjs.com/package/react-redux" target="_blank">React Redux</a>. You may also bootstrap a React app that already includes these dependencies by running <code>npx @bloomtools/react my-first-redux-app</code> in your terminal.</p>
+                <p>In this Objective, you will learn to get Redux up and running in your application. The state will be very simple: Redux will be tracking the state of a counter. But once you have a little bit of state working, it's very easy to add some more.</p>
+                <p>Configuring Redux will involve four different aspects:</p>
+
+                <ol>
+                    <li><strong>Creating a slice of application state</strong>, and defining the state changing functions.</li>
+                    <li><strong>Building a Redux store</strong>, which is the place where all slices are combined.</li>
+                    <li><strong>Wrapping the component tree</strong> with a Provider, which uses Context to "teleport" application state to any component.</li>
+                    <li><strong>Displaying and updating state</strong> from any component in the tree.</li>
+                </ol>
+
+                <p>Let's get into it!</p>
+
+                <h3>How to Build It</h3>
+
+                <p><strong>1- Create a Slice of Application State</strong></p>
+
+                <p>In the project's front-end folder, a new folder called 'state' and a file 'slice.js' are created. This file holds a part of the application state, with potential for multiple slices in more complex applications. The slice is defined using the 'createSlice' function from Redux Toolkit. It includes a name ('count_state'), an initial state object (e.g., <code>{ count: 0 }</code>), and reducers with methods like 'increment' to update the state. The 'slice.reducer' and actions like 'increment' are exported for use in components, allowing for state changes when actions are emitted:</p>
+
+                <pre><code>
+// frontend/state/slice.js
+import { createSlice } from '@reduxjs/toolkit'
+
+const slice = createSlice({
+  name: 'count_state',
+  initialState: { count: 0 }, // we can add many more properties besides 'count'
+  reducers: {
+    increment(state) {
+      // this is like a branch in the switches you wrote in The Reducer Pattern
+      return { ...state, count: state.count + 1 }
+    },
+  }
+})
+
+export default slice.reducer // there can be other reducers in the app besides this one
+
+export const { increment } = slice.actions // components will use these functions
+                </code></pre>
+
+                <p>Redux Toolkit includes a library called <a href="https://immerjs.github.io/immer" target="_blank">Immer</a>> which allows you to write seemingly mutable logic in your reducers, which is then translated into immutable updates under the hood. For example, it allows you to rewrite your 'increment' function like this:</p>
+
+                <pre><code>
+increment(state) {
+    // thanks to the magic of Immer:
+    state.count++ // mutate freely, and don't return!
+},
+                </code></pre>
+
+                <p>Redux Toolkit addresses in this way the concerns of many developers regarding the verbosity of 'classic' reducers, without actually changing the way reducers work under the hood.</p>
+
+                <p><strong>2- Build a Redux Store</strong></p>
+
+                <p>A single store for the entire application state is created in 'store.js'. It is configured with the 'configureStore' function from Redux Toolkit, incorporating the created slice(s):</p>
+
+                <pre><code>
+// frontend/state/store.js
+import { configureStore } from '@reduxjs/toolkit'
+import reducer from './slice'
+
+export const store = configureStore({
+  reducer: {
+    counters: reducer,
+    // other reducers would go here
+  }
+})
+                </code></pre>
+
+                <p>In this way, Redux combines all the slices of state in the application into one big reducer.</p>
+
+                <p><strong>3- Wrap the Component Tree with a Provider</strong></p>
+
+                <p>The React application is wrapped with a Provider from React Redux, which is provided with the created store to enable state access across all components:</p>
+
+                <pre><code>
+// frontend/index.js
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './components/App'
+import { Provider } from 'react-redux'
+import { store } from './state/store'
+
+const root = createRoot(document.getElementById('root'))
+
+root.render(
+  &lt;Provider store={store}&gt;
+    &lt;App /&gt;
+  &lt;/Provider&gt;
+)
+                </code></pre>
+
+                <p>Redux is using the Context API under the hood, to 'teleport' props to any component in the tree, no matter how deeply nested. You only need to do this step once per application. You can wrap the whole app like you see here, or just a part of the component tree.</p>
+
+                <p><strong>4- Display and Update State in Components</strong></p>
+
+                <p>Components, like the App component, use the 'useSelector' and 'useDispatch' hooks from React Redux to access and update state. 'useSelector' retrieves specific state data (e.g., the count), and 'useDispatch' allows dispatching actions like increment:</p>
+
+                <pre><code>
+// frontend/components/App.js
+import React from 'react'
+import {
+  useSelector, // allows to select pieces of state
+  useDispatch, // allows to dispatch actions to the reducers
+} from 'react-redux'
+import { increment } from '../state/slice' // the action
+
+export default function App() {
+  const count = useSelector(st => st.counters.count)
+  const dispatch = useDispatch()
+  return (
+    &lt;div&gt;
+      &lt;button onClick={() => {
+        const action = increment()
+        dispatch(action) // the reducer will detect this action
+      }}&gt;The count is {count}&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+                </code></pre>
+
+                <p>If you install the Redux Dev Tools extension for Chrome, you should be able to see the state of your app and the actions dispatched, when you click the increment button!</p>
+                
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/252fu4dvhj?seo=false&videoFoam=false" title="Introduction to Redux Toolkit" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="content-box module3-accent">
+                <h3>Working with Reducers and Actions</h3>
+
+                <p>With the scaffolding of Redux in your React app out of the way, in this Objective we will take a closer look at writing more complex reducers and dispatching actions from components. We will also discuss the difference between an action object and an action creator. Along the way, you will discover the power of selectors.</p>
+                <p>Let's get into it!</p>
+
+                <h3>How to Build It</h3>
+
+                <p><strong>Introduction</strong></p>
+
+                <p>Starting from our basic counter-tracking React app, let's enhance it by adding a new state slice. This will track the current day of the week. While we could use strings like 'Monday', 'Tuesday', etc., using numeric representations (0 for Monday, 1 for Tuesday, and so on) offers greater flexibility for operations:</p>
+
+                <pre><code>
+// frontend/state/slice.js
+import { createSlice } from '@reduxjs/toolkit'
+
+const slice = createSlice({
+  name: 'count_state',
+  initialState: {
+    count: 0,
+    day: 0, // ❗ the week will start on Monday
+  },
+  reducers: {
+    increment(state) { state.count++ }
+  }
+})
+
+export default slice.reducer
+export const { increment } = slice.actions
+                </code></pre>
+
+                <p><strong>Display Issue and Selectors</strong></p>
+
+                <p>When integrating this state into our UI, we encounter a user experience problem: displaying numeric day values isn't great:</p>
+
+                <pre><code>
+// frontend/components/App.js
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { increment } from '../state/slice'
+
+export default function App() {
+  const count = useSelector(st => st.counters.count)
+  const day = useSelector(st => st.counters.day) // ❗ getting the day as is...
+  const dispatch = useDispatch()
+  return (
+    &lt;div&gt;
+      &lt;button onClick={() => dispatch(increment())}&gt;
+        The count is {count}
+      &lt;/button&gt;
+
+      &lt;button&gt;
+        The day of the week is {day} {/* ❗ this shows 0 instead of Monday! */}
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+                </code></pre>
+
+                <p>This is where Redux selectors shine! They allow us to transform this raw state into a user-friendly format. Below, we map our numeric day to its corresponding string name, effortlessly bridging our state representation with user expectations. Just return from your selector function what you want your derived state to look like:
+                </p>
+
+                <pre><code>
+const day = useSelector(st => {
+    const days = [
+        'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+    ]
+    return days[st.counters.day]
+    })
+                </code></pre>
+
+                <p>This is more like it! Another nice thing about selectors is that you can keep collections of them in their own modules, and then import them wherever they're needed.</p>
+
+                <p><strong>Reducer Enhancement</strong></p>
+
+                <p>Next, we'll enhance our reducer to allow cycling through the days. After Sunday, our logic smartly loops back to Monday, reflecting a typical week cycle. This is a great example of how reducers can centralize state logic so that components can remain blissfully ignorant of if:</p>
+
+                <pre><code>
+// frontend/state/slice.js
+import { createSlice } from '@reduxjs/toolkit'
+
+const slice = createSlice({
+  name: 'count_state',
+  initialState: { count: 0, day: 0 },
+  reducers: {
+    increment(state) { state.count++ },
+    nextDay(state) {
+      // ❗ make sure to go back to Monday after Sunday!
+      const isSunday = state.day === 6
+      state.day = isSunday ? 0 : state.day + 1
+    }
+  }
+})
+
+export default slice.reducer
+// ❗ don't forget to export out your `nextDay` action creator
+export const { increment, nextDay } = slice.actions
+                </code></pre>
+
+                <p><strong>Reducer vs. Action Creator</strong></p>
+
+                <p>It's important to note the distinction between the reducer function and the action creator in Redux. While the reducer (<code>nextDay</code>) updates the state, the action creator (<code>nextDay()</code>) returns a plain action object.</p>
+
+                <pre><code>
+// ❗ note: this block is just pseudo-code
+nextDay() // returns an action object { type: "count_state/nextDay", payload: undefined }
+dispatch(nextDay()) // this is literally dispatching an action to the nextDay reducer
+                </code></pre>
+
+                <p>The Redux Toolkit conveniently generates these action creators for us, simplifying our workflow.</p>
+
+                <p><strong>Component Integration</strong></p>
+
+                <p>Finally, integrating this into our component, we connect the Redux state to our UI. The <code>useDispatch</code> hook triggers our <code>nextDay</code> action, resulting in a seamless user experience where clicking a button updates the day. This demonstrates the power of Redux in managing and connecting state to our React components.</p>
+
+                <pre><code>
+// frontend/components/App.js
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { increment, nextDay } from '../state/slice' // ❗ import your action creator
+
+export default function App() {
+    const count = useSelector(st => st.counters.count)
+    const day = useSelector(st => {
+    const days = [
+        'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+    ]
+    return days[st.counters.day]
+    })
+    const dispatch = useDispatch()
+    return (
+    &lt;div&gt;
+        &lt;button onClick={() => dispatch(increment())}&gt;
+        The count is {count}
+        &lt;/button&gt;
+
+        &lt;button onClick={() => dispatch(nextDay())}&gt;  {/* ❗ dispatching a nextDay action */}
+        The day of the week is {day}
+        &lt;/button&gt;
+    &lt;/div&gt;
+    )
+}
+                </code></pre>
+                
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/9bajpynfok?seo=false&videoFoam=false" title="Introduction to Redux Toolkit" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="content-box module3-accent">
+                <h3>Dispatching Actions</h3>
+
+                <p>This section provides a comprehensive guide on dispatching actions within a React application, focusing on the Redux Toolkit framework. We will cover essential aspects such as actions and payloads. To do this, we will expand on the the basic 'counter' Redux app from Objective 2, and implement a new feature to track savings, as well as to save and spend money!</p>
+
+                <h3>How to Build It</h3>
+
+                <p><strong>Initialization of State in Slice</strong></p>
+
+                <p>We will add a new state property, 'savings', in the Redux slice. The initial value of 'savings' will be set at $10. To go along with this new state, reducers will be needed to handle adding money to savings, and spending money from savings. Finally, we will expose to other modules the action creator functions that will trigger their corresponding reducers:</p>
+
+                <pre><code>
+// frontend/state/slice.js
+import { createSlice } from '@reduxjs/toolkit'
+
+const slice = createSlice({
+  name: 'count_state', // ❗ feel free to use a better name
+  initialState: { savings: 10, /* other states */ },
+  reducers: {
+    save(state, action) { /* TODO */ },
+    spend(state, action) { /* TODO */ },
+    // other reducers
+  }
+})
+
+export default slice.reducer
+export const { save, spend, /* other actions */ } = slice.actions
+                </code></pre>
+
+                <p>You might notice that the 'spend' and 'save' reducers are accepting a second argument we haven't used so far, but which should be familiar from The Reducer Pattern: the action object. The action is important if the action 'type' on its own is not enough for the reducer to know how exactly  to compute the next state. How much are we spending? How much are we saving? That kind of information will come included inside the action object.</p>
+
+                <p><strong>Dispatching Spend and Save Actions</strong></p>
+
+                <p>From the side of the component that displays our savings and allows us to save and spend (hopefully more of the former):</p>
+
+                <pre><code>
+// frontend/components/App.js
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { save, spend } from '../state/slice'
+
+export default function App() {
+  const savings = useSelector(st => st.counters.savings) // ❗ assuming a 'counters' slice
+  const dispatch = useDispatch()
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;My savings are at ${savings}&lt;/h2&gt;
+
+      &lt;button onClick={() => {
+        const saveAction = save(10) // ❗ note the 10
+        dispatch(saveAction)
+      }}&gt;Save $10&lt;/button&gt;
+
+      &lt;button onClick={() => {
+        const spendAction = spend(5)  // ❗ note the 5
+        dispatch(spendAction)
+      }}&gt;Spend $5&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+                </code></pre>
+
+                <p>It makes sense that we supply the amount we wish to save (or spend) as the argument to each action creator. But where does this amount end up? To try and answer that question, we can console log 'saveAction' and 'spendAction':</p>
+
+                <pre><code>
+console.log(saveAction) // prints { type: 'count_state/save', payload: 10 }
+// etc
+console.log(spendAction) // prints { type: 'count_state/spend', payload: 5 }
+                </code></pre>
+
+                <p>Mystery solved! Whatever data we pass as the argument to the action creator ends up as <code>action.payload</code> inside the action object. No wonder these functions are called action creators! And unlike with The Reducer Pattern, these functions are provided to us by Redux Toolkit so we don't have to write them manually, nor juggle the typo-prone action type strings.</p>
+
+                <p><strong>Implementing Save and Spend Reducers</strong></p>
+
+                <p>Reducers never sleep! They are always waiting for an action to be dispatched by a component. If we use the save and spend buttons which we have implemented in the App component, this is how it will play out:</p>
+                
+                <pre><code>
+// frontend/state/slice.js
+import { createSlice } from '@reduxjs/toolkit'
+
+const slice = createSlice({
+  name: 'count_state',
+  initialState: { savings: 10, /* other states */ },
+  reducers: {
+    save(state, action) { // ❗ the action payload contains 10
+      state.savings += action.payload
+    },
+    spend(state, action) { // ❗ the action payload contains 5
+      if (state.savings > action.payload) {
+        state.savings -= action.payload
+      } else {
+        // ❗ we don't want to end up with negative savings!
+        state.savings = 0
+      }
+    },
+    // other reducers
+  }
+})
+
+export default slice.reducer
+export const { save, spend, /* other actions */ } = slice.actions
+                </code></pre>
+
+                <p>Having closed the development loop, the spend and save buttons work as expected! We can inspect the actions and payloads in detail, using Redux Dev Tools. We can even time-travel to past states, by clicking on a past action!</p>
 
                 <div class="video-container">
-                    <h3>Creating Slices with createSlice</h3>
-                    <iframe src="https://fast.wistia.net/embed/iframe/abc123def456" title="Creating Slices with createSlice" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+                    <iframe src="https://fast.wistia.net/embed/iframe/18sek1w481?seo=false&videoFoam=false" title="Introduction to Redux Toolkit" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="content-box module3-accent">
+                <h3>Managing Complex State</h3>
+
+                <p>In this Objective we will learn to write more complicated reducers - of the type you will encounter whenever you need to track lists of objects and support 'create', 'update' and 'delete' operations on them.</p>
+
+                <h3>How to Build It</h3>
+
+                <p><strong>Introduction</strong></p>
+
+                <p>Let's imagine our Redux app must support the following features:</p>
+
+                <ol>
+                    <li>Should <strong>display</strong> friend <strong>names</strong> (and a little <strong>heart</strong> if the friend is one of the favorite ones).</li>
+                    <li>Allow to <strong>delete</strong> a friend.</li>
+                    <li>Allow to <strong>toggle</strong> the favorite status of a friend.</li>
+                    <li>Allow to <strong>add</strong> a new friend by entering the name into the input box.</li>
+                </ol>
+
+                <p><strong>Building the Slice</strong></p>
+
+                <p>Getting to work on the 'friends' slice, this is how things might look like:</p>
+
+                <pre><code>
+import { createSlice } from '@reduxjs/toolkit'
+
+const slice = createSlice({
+  name: 'friends',
+  initialState: {
+    list: [ // ❗ note the unique ID on each friend
+      { id: 'ldo', name: 'Pam', fav: true },
+      { id: '1sb', name: 'Jess', fav: false },
+      { id: 'xu7', name: 'Ana', fav: false },
+    ],
+  },
+  reducers: {
+    deleteFriend(state, action) { /* TODO */ },
+    favFriend(state, action) { /* TODO */ },
+    createFriend(state, action) {  /* TODO */ }
+  }
+})
+
+export default slice.reducer
+
+export const {
+  deleteFriend, createFriend, favFriend,
+} = slice.actions
+                </code></pre>
+
+                <p><strong>Writing Reducers for Delete and Update Operations</strong></p>
+
+                <p>The 'deleteFriend' and 'favFriend' reducers are straightforward and similar to other reducers and state updaters you have written in the past, except that now we have Immer to make the work much easier:</p>
+
+                <pre><code>
+deleteFriend(state, action) {
+    // ❗ the ID to delete comes inside action.payload
+    state.list = state.list
+        .filter(fr => fr.id !== action.payload)
+    },
+    favFriend(state, action) {
+    // ❗ the ID to update comes inside action.payload
+    const fr = state.list
+        .find(fr => fr.id === action.payload)
+    fr.fav = !fr.fav
+    },
+                </code></pre>
+
+                <p><strong>Problems Creating a New Friend</strong></p>
+
+                <p>Creating a new friend has an unexpected complication. The component, when the user clicks on the 'create' button, can provide the desired name, but a presentational component should not be expected to 'know' that new friends have a 'fav' status of <code>false</code>, or be forced to generate a random ID.</p>
+
+                <p>On the other hand, generating a random ID also cannot be the job the 'createFriend' reducer. Reducers are supposed to be deterministic functions! No randomness is allowed inside of them.</p>
+
+                <p>Luckily, we can create a 'prepare' function that takes care of processing the argument sent by the component when it calls 'createFriend' (the desired name), and putting together a new payload for the reducer:</p>
+
+                <pre><code>
+import { createSlice } from '@reduxjs/toolkit'
+
+const slice = createSlice({
+  name: 'friends',
+  initialState: {
+    list: [
+      { id: 'ldo', name: 'Pam', fav: true }, /* etc */
+    ],
+  },
+  reducers: {
+    createFriend: { // ❗ we change this to be an object
+      prepare(name) { // ❗ the component supplies the desired name
+        const newFriend = {
+          name,
+          fav: false,
+          // ❗ random ID generation:
+          id: Math.random().toString(36).slice(2, 5),
+        }
+        return { payload: newFriend } // ❗ payload for the reducer
+      },
+      reducer(state, action) {
+        state.list.push(action.payload)
+      }
+    },
+    deleteFriend(state, action) { /* etc */ },
+    favFriend(state, action) { /* etc */ },
+  }
+})
+
+export default slice.reducer
+
+export const {
+  deleteFriend, createFriend, favFriend,
+} = slice.actions
+                </code></pre>
+
+                <p><strong>Friend Creation Fixed!</strong></p>
+
+                <p>The component that calls 'createFriend' passing a string will cause the 'prepare' function to run and put together a proper friend object, which is then taken by the reducer from inside <code>action.payload</code>. Here is the component that dispatches the creation of a new friend:</p>
+
+                <pre><code>
+import React, { useRef } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { createFriend, deleteFriend, favFriend } from '../state/slice'
+
+export default function App() {
+  const friends = useSelector(st => st.friends.list)
+  const dispatch = useDispatch()
+  const ref = useRef() // ❗ used to grab the input value from the DOM
+  return (
+    &lt;div&gt;
+      &lt;input ref={ref}>&lt;/input&gt;
+      &lt;button onClick={() => {
+        dispatch(createFriend(ref.current.value))
+        ref.current.value = '' // ❗ resetting the input
+      }}&gt;create&lt;/button&gt;
+      &lt;ul&gt;
+        {friends.map(fr => (
+          &lt;li key={fr.id}&gt;
+            {fr.name}
+            &lt;button onClick={() => dispatch(favFriend(fr.id))}&gt;fav&lt;/button&gt;
+            &lt;button onClick={() => dispatch(deleteFriend(fr.id))}&gt;del&lt;/button&gt;
+            {fr.fav && ' ❤️'}
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  )
+}
+                </code></pre>
+
+                <p>And this concludes your Redux objectives! Make sure to check out your Guided Project and your Module Project.</p>
+                
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/075m0zgzjd?seo=false&videoFoam=false" title="Introduction to Redux Toolkit" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
                 </div>
 
+              </div>
+              <div class="content-box module3-accent">
+                <h3>Module Project</h3>
+                <p>For this project you will revisit the Inspirational Quotes app, which allows users to view, create and delete quotes. This time you will use Redux Toolkit to manage the global state of the app. This removes state calculations from components, and scales well to very large React applications.</p>
+                <p>The Module Project contains advanced problems that will challenge and stretch your understanding of the module's content. The solution video is available below in case you need help or want to see how we solved each challenge (note: there is always more than one way to solve a problem). If you can successfully complete all the Module Projects in a sprint, you are ready for the Sprint Challenge and Assessment.</p>
+                <p>The link below will provide you with a copy of the Module Project on GitHub:</p>
+
+                <ul>
+                    <li>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/web-s10-redux-toolkit-mp-start" target="_blank">Redux Toolkit</a></li>
+                    <li><strong>Fork and clone</strong> the code repository to your machine, and</li>
+                    <li><strong>open</strong> the <code>README.md</code> file in VSCode, where you will find instructions on completing this Project.</li>
+                    <li>Submit your GitHub url for the <strong>updated</strong> repository to the Sprint Challenge Submissions tab of your BloomTech portal for grading and review.</li>
+                </ul>
+
+                <p>Watch if you get stuck or need help getting started.</p>
+
                 <div class="video-container">
-                    <h3>Async Actions with Redux Thunk</h3>
-                    <iframe src="https://fast.wistia.net/embed/iframe/abc123def456" title="Async Actions with Redux Thunk" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
+                    <iframe src="https://fast.wistia.net/embed/iframe/4jf98xhm1p?seo=false&videoFoam=false" title="MP Solution" allow="autoplay; fullscreen" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" width="100%" height="100%" loading="lazy"></iframe>
                 </div>
             </div>
 
