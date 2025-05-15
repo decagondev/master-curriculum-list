@@ -4,208 +4,181 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3: Mocking Review: TDD with Mockito - BD Unit 3 Sprint 12</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23;
-            color: #ffffff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #222831;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722;
-            padding-bottom: 10px;
-        }
-        .module {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #333a47;
-            background-color: #2a303c;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-        }
-        .module h2 {
-            color: #ffffff;
-            margin-top: 0;
-        }
-        .module p {
-            color: #b3b3b3;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
-        .video-container {
-            margin: 20px 0;
-        }
-        .video-container iframe {
-            max-width: 100%;
-            border-radius: 4px;
-            width: 100%;
-            height: 360px;
-        }
-        .resources {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border-left: 4px solid #ff5722;
-        }
-        .resources h2, .resources h3 {
-            color: #ffffff;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .resources ul {
-            list-style-type: none;
-            padding: 0;
-            color: #b3b3b3;
-        }
-        .resources li {
-            margin-bottom: 10px;
-        }
-        .resources a {
-            color: #ff5722;
-            text-decoration: none;
-        }
-        .resources a:hover {
-            text-decoration: underline;
-            color: #ff7043;
-        }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background-color: #2a303c;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .back-button:hover {
-            background-color: #333a47;
-        }
-        section {
-            margin-bottom: 30px;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <a href="../../index.html" class="back-button">← Back to Home</a>
-        
-        <h1>Module 3: Mocking Review: TDD with Mockito</h1>
-        
-        <div class="module">
-            <h2>Module Overview</h2>
-            <p>Review mocking techniques and learn how to apply them in the context of test-driven development.</p>
-        </div>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Sprint 12 Unit Testing with Mocks Recorded Guided Project Video" src="https://fast.wistia.net/embed/iframe/7nbnjuh24f" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-        </div>
-
-        <section>
-            <h2>Learning Objectives</h2>
-            <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand what a mocked object is and its purpose in testing</li>
-                <li>Know how to work with Mockito to create and configure mocks
-                    <ul>
-                        <li>Setting up mock objects</li>
-                        <li>Configuring return values and behaviors</li>
-                        <li>Capturing and validating arguments</li>
-                    </ul>
-                </li>
-                <li>Master techniques for working with mocks and controlling mock object behavior</li>
-                <li>Know how to verify that specific methods were called on a mocked object</li>
-                <li>Learn how to mock exceptions to test error handling</li>
-                <li>Understand the concept of a unit test and how mocking allows us to write unit tests that otherwise couldn't be written</li>
-                <li>Practice applying mocks in Test Driven Development workflows</li>
-            </ul>
-        </section>
-
-        <section>
-            <h3>Code Example: Mocking with Mockito</h3>
-            <pre style="background-color: #2a303c; color: #b3b3b3; padding: 15px; border-radius: 4px; overflow-x: auto;">
-// Basic mocking example
-@Test
-void shouldFetchUserAndSendNotification() {
-    // Arrange
-    UserRepository mockRepository = mock(UserRepository.class);
-    NotificationService mockNotificationService = mock(NotificationService.class);
-    
-    User testUser = new User("user123", "user@example.com");
-    when(mockRepository.findById("user123")).thenReturn(testUser);
-    
-    UserService userService = new UserService(mockRepository, mockNotificationService);
-    
-    // Act
-    userService.notifyUser("user123", "Hello!");
-    
-    // Assert
-    verify(mockRepository).findById("user123");
-    verify(mockNotificationService).sendEmail(testUser.getEmail(), "Hello!");
-}
-
-// Mocking exceptions
-@Test
-void shouldHandleUserNotFound() {
-    // Arrange
-    UserRepository mockRepository = mock(UserRepository.class);
-    when(mockRepository.findById("missing")).thenThrow(new UserNotFoundException());
-    
-    UserService userService = new UserService(mockRepository, mock(NotificationService.class));
-    
-    // Act & Assert
-    assertThrows(UserNotFoundException.class, () -> {
-        userService.notifyUser("missing", "Hello!");
-    });
-}
-
-// Using argument captors
-@Test
-void shouldCreateProperNotificationContent() {
-    // Arrange
-    NotificationService mockNotificationService = mock(NotificationService.class);
-    UserService userService = new UserService(mock(UserRepository.class), mockNotificationService);
-    
-    // Capture what gets passed to the notification service
-    ArgumentCaptor&lt;String&gt; contentCaptor = ArgumentCaptor.forClass(String.class);
-    
-    // Act
-    userService.sendSystemNotification("System maintenance");
-    
-    // Assert
-    verify(mockNotificationService).broadcast(contentCaptor.capture());
-    String capturedContent = contentCaptor.getValue();
-    assertTrue(capturedContent.contains("System maintenance"));
-    assertTrue(capturedContent.startsWith("[SYSTEM NOTIFICATION]"));
-}</pre>
-        </section>
-
-        <div class="resources">
-            <h2>Resources</h2>
+    <header>
+        <nav>
+            <div class="logo">BD Unit 3 Sprint 12</div>
             <ul>
-                <li><a href="https://github.com/BloomTechBackend/12.3_guided_project_board_game" target="_blank" rel="noopener">Board Game Project Repository</a></li>
-                <li><a href="https://site.mockito.org/" target="_blank" rel="noopener">Mockito Documentation</a></li>
-                <li><a href="https://www.baeldung.com/mockito-series" target="_blank" rel="noopener">Mockito Tutorial Series - Baeldung</a></li>
-                <li><a href="https://www.baeldung.com/mockito-argumentcaptor" target="_blank" rel="noopener">Mockito ArgumentCaptor - Baeldung</a></li>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module1/index.html">Module 1: Design Pattern: Dependency Injection</a>
+                        <a href="../module2/index.html">Module 2: Unit Testing: Test Driven Development</a>
+                        <a href="../module3/index.html" class="active">Module 3: Mocking Review: TDD with Mockito</a>
+                        <a href="../module4/index.html">Module 4: AWS Lambda Functions Review</a>
+                    </div>
+                </li>
+                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-        </div>
-    </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 3: Mocking Review: TDD with Mockito</h1>
+            
+            <div class="content-box">
+                <h2>Module Overview</h2>
+                <p>Review mocking techniques and learn how to apply them in the context of test-driven development using Mockito.</p>
+            </div>
+            
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Sprint 12 Mocking with Mockito Recorded Guided Project Video" src="https://fast.wistia.net/embed/iframe/fpxc7zrqs4" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+
+            <div class="content-box">
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Understand why mocking is essential for effective unit testing</li>
+                    <li>Review how to isolate components using mock objects</li>
+                    <li>Master the Mockito framework for creating mocks and stubs
+                        <ul>
+                            <li>Creating mock objects with <code>Mockito.mock()</code></li>
+                            <li>Stubbing methods with <code>when()</code> and <code>thenReturn()</code></li>
+                            <li>Verifying method calls with <code>verify()</code></li>
+                            <li>Using argument matchers like <code>any()</code>, <code>eq()</code></li>
+                        </ul>
+                    </li>
+                    <li>Apply TDD principles while utilizing mocks
+                        <ul>
+                            <li>Writing tests first with mocked dependencies</li>
+                            <li>Implementing against the test specifications</li>
+                            <li>Refactoring while maintaining test coverage</li>
+                        </ul>
+                    </li>
+                    <li>Mock different types of dependencies appropriately
+                        <ul>
+                            <li>External services and APIs</li>
+                            <li>Databases and repositories</li>
+                            <li>Complex business logic components</li>
+                        </ul>
+                    </li>
+                    <li>Use annotations to simplify mock creation
+                        <ul>
+                            <li><code>@Mock</code> for creating mock objects</li>
+                            <li><code>@InjectMocks</code> for injecting mocks into tested objects</li>
+                            <li><code>@Spy</code> for partial mocking</li>
+                        </ul>
+                    </li>
+                    <li>Test exception handling using mocks</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h3>Code Example: Mocking with Mockito</h3>
+                <pre><code>import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+// Example service to be tested
+public class OrderService {
+    private final PaymentGateway paymentGateway;
+    private final OrderRepository orderRepository;
+    
+    public OrderService(PaymentGateway paymentGateway, OrderRepository orderRepository) {
+        this.paymentGateway = paymentGateway;
+        this.orderRepository = orderRepository;
+    }
+    
+    public OrderResult placeOrder(Order order) {
+        // Process payment
+        PaymentResult paymentResult = paymentGateway.processPayment(order.getAmount());
+        
+        if (paymentResult.isSuccessful()) {
+            // Save order if payment successful
+            orderRepository.save(order);
+            return new OrderResult(true, "Order placed successfully");
+        } else {
+            return new OrderResult(false, "Payment failed: " + paymentResult.getMessage());
+        }
+    }
+}
+
+// Test using Mockito
+@ExtendWith(MockitoExtension.class)
+class OrderServiceTest {
+    @Mock
+    private PaymentGateway paymentGateway;
+    
+    @Mock
+    private OrderRepository orderRepository;
+    
+    @InjectMocks
+    private OrderService orderService;
+    
+    @Test
+    void shouldPlaceOrderWhenPaymentSuccessful() {
+        // Arrange
+        Order order = new Order("123", 100.0);
+        PaymentResult paymentResult = new PaymentResult(true, "Payment successful");
+        
+        when(paymentGateway.processPayment(100.0)).thenReturn(paymentResult);
+        
+        // Act
+        OrderResult result = orderService.placeOrder(order);
+        
+        // Assert
+        assertTrue(result.isSuccessful());
+        assertEquals("Order placed successfully", result.getMessage());
+        
+        // Verify interactions
+        verify(paymentGateway).processPayment(100.0);
+        verify(orderRepository).save(order);
+    }
+    
+    @Test
+    void shouldNotSaveOrderWhenPaymentFails() {
+        // Arrange
+        Order order = new Order("123", 100.0);
+        PaymentResult paymentResult = new PaymentResult(false, "Insufficient funds");
+        
+        when(paymentGateway.processPayment(100.0)).thenReturn(paymentResult);
+        
+        // Act
+        OrderResult result = orderService.placeOrder(order);
+        
+        // Assert
+        assertFalse(result.isSuccessful());
+        assertEquals("Payment failed: Insufficient funds", result.getMessage());
+        
+        // Verify interactions
+        verify(paymentGateway).processPayment(100.0);
+        verify(orderRepository, never()).save(any(Order.class));
+    }
+}</code></pre>
+            </div>
+
+            <section class="resource-section">
+                <h2 class="resource-section-title">Resources</h2>
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/unit3-sprint12-mockito-examples" target="_blank" rel="noopener" class="resource-link">
+                        Mockito TDD Examples
+                    </a>
+                    <a href="https://site.mockito.org/" target="_blank" rel="noopener" class="resource-link">
+                        Mockito Documentation
+                    </a>
+                    <a href="https://www.baeldung.com/mockito-series" target="_blank" rel="noopener" class="resource-link">
+                        Baeldung Mockito Series
+                    </a>
+                    <a href="https://www.baeldung.com/mockito-argumentcaptor" target="_blank" rel="noopener" class="resource-link">
+                        ArgumentCaptor in Mockito
+                    </a>
+                </div>
+            </section>
+        </section>
+    </main>
 </body>
 </html> 
