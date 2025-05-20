@@ -37,7 +37,7 @@
             </div>
             
             <div class="video-container">
-                <iframe class="wistia_embed" title="Sprint 10 Exception Handling Video" src="https://fast.wistia.net/embed/iframe/es3x6k4bod" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                <iframe class="wistia_embed" title="Sprint 10 Exception Handling Video" src="https://fast.wistia.net/embed/iframe/rirfuqppp3" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
 
             <div class="content-box">
@@ -56,6 +56,244 @@
                     <li>Explain when it is necessary to include a throws clause in a method declaration</li>
                     <li>Outline how to override methods that can throw checked exceptions</li>
                 </ul>
+            </div>
+
+            <div class="content-box">
+                <h3>Overview</h3>
+                <p>Sometimes errors occur while code is executing. While some errors can be handled and allow execution to continue, other errors may not be recoverable. Even when an error cannot be recovered from, the error can at least be reported. Good software attempts to recover gracefully from errors. This lesson will cover exceptions, handling exceptions, and propagating exceptions. These are the basics of error handling in modern software development.</p>
+                <p>In this reading, we'll cover how errors are handled as exceptions and how they're handled by a Java compiler. We'll explain the difference between checked and unchecked exceptions. We'll learn how to handle exceptions using try and catch blocks.<br>In the next reading, we'll discuss propagating exceptions and overriding methods that throw exceptions. We'll also learn how to determine whether to handle an exception versus propagate it.</p>
+                
+                <h3>What are exceptions?</h3>
+                <p>Exceptions represent errors that occur while code is executing. Java signals an error with an exception object that extends from the base Exception class. The Exception object includes a human-readable message and a stack trace showing the method calls that led to the error. The exception is then passed up the call stack until it's handled. If an exception is not handled, it will cause the program to stop running. We don't want that, so it's important to handle exceptions whenever possible.</p>
+
+                <h3>Checked vs. unchecked exceptions</h3>
+                <p>There are two basic types of exceptions in Java, checked and unchecked. Checked exceptions are verified by the compiler. Unchecked exceptions, a.k.a. runtime exceptions, are not verified by the compiler.</p>
+
+                <h4>Checked exceptions</h4>
+                <p>Checked exceptions are declared in the code as part of method signatures. They represent errors we should be prepared to manage. For example, an IOException (Input Output Exception) is declared on methods that read from and write to files. This declaration indicates that such an error could occur when the method is called, and developers who call the method should prepare to handle it if it does. The compiler fails if a method that declares a checked exception is called and the code calling it doesn't either handle or propagate the exception. Handling an exception means the exception is caught and resolved acted upon. This might mean printing an error message, recovering, or throwing a new type of Exception. Adding the exception to the method signature is known as propagating the exception. This signals the exception should be passed up the chain to the code that called that method.</p>
+                <p>Below is an example of a method signature that declares a checked exception. The write() method is defined in the Writer class and is used for writing Strings to character streams. In Java, streams are used to read to and write from different sources, such as files or the network. The base process for using streams is to open one, read or write, then close it when finished. When writing to streams, many things can go wrong. For instance, the stream might close before another call to write something to the stream comes in. When this occurs, an IOException will be thrown. Since an IOException is a checked exception and can be thrown somewhere within the write() method, there's a throws declaration indicating that code calling the write() method must either handle or propagate the exception.</p>
+                <pre><code class="language-java">
+public void write(String str) throws IOException
+                </code></pre>
+                <p>When we write code that calls this method, the Java compiler requires us to do something about a potential IOException. We can handle the exception or propagate it, but we can't ignore it since it's a declared checked exception on the write() method signature.</p>
+
+                <h4>Unchecked exceptions</h4>
+                <p>In addition to checked exceptions, there are exceptions that a compiler can't predict at compile time. These types of exceptions typically occur due to a bug in the code or represent some type of problem that isn't recoverable. An example of these types of exceptions include the NullPointerException, which occurs when code is written that attempts to access an object that hasn't been created yet. Another common problem is failing to prevent a situation where a number could be divided by 0, which results in an ArithmeticException. These types of errors are unchecked exceptions. Unchecked exceptions all inherit from RuntimeException (which itself inherits from Exception). This special branch of exceptions may be thrown without being declared or even handled. The Java compiler doesn't require these types of errors to be handled at compile time.</p>
+                <p>The addStringIntegers() method below adds two numbers together where the numbers are passed in as strings. First, the method must parse the Strings into ints. Then it can add them together and return the result. However, if either of the String arguments can't be parsed as ints (the String "this is not a number" for example), a NumberFormatException will be thrown. The NumberFormatException is a type of IllegalArgumentException which is itself a type of RuntimeException.</p>
+                <pre><code class="language-java">
+public int addStringIntegers(String s1, String s2) {
+    int n1 = Integer.parseInt(s1);
+    int n2 = Integer.parseInt(s2);
+    return n1 + n2;
+}
+                </code></pre>
+                <p>As a type of RuntimeException, the compiler won't complain about the possibility of a NumberFormatException being thrown. Unchecked exceptions don't require the same handling or propagation rules as checked exceptions.</p>
+
+                <h3>Handling an exception</h3>
+                <p>When we call methods from any source (code you've written, code you're extending, or from libraries), we're bound to encounter methods that declare exceptions. In addition, we may find code that could throw unchecked exceptions we want to handle. In both cases, the Java language provides us with the try and catch blocks to handle exceptions. As we mentioned above, handling exceptions doesn't always mean fixing the problem. It could mean, asking a user to retry, automatically retrying, or reporting a user-friendly error message and failing. In the next section, we will show an example of reporting a user-friendly error message and continuing to execute the program.</p>
+
+                <h4>Implementing try and catch blocks</h4>
+                <pre><code class="language-java">
+try {
+    ...
+}
+                </code></pre>
+                <p>Defining a try block is the first part of handling an exception. All the code within the try block shares the same exception handling logic. Think of this as telling the compiler that there may be exceptions thrown within the code you put in the try block. We can choose to put most of a method within the block, just the line that may throw an exception, or create multiple try blocks within a method. It all depends on how we want the program to proceed when an exception occurs.</p>
+                <p>The second part of handling an exception is catch blocks. One or more catch blocks can be defined after each try block. The catch block defines the type of exception being caught, a variable name for that exception to use within the catch block, and code within the block to execute when such an exception occurs in the preceding try block.</p>
+                <pre><code class="language-java">
+catch (Exception e) {
+    ...
+}
+                </code></pre>
+                <p>When an exception occurs in a try block, the execution of that code stops. The runtime will look for a catch block matching the type of exception being thrown. This includes any exception type in an exception's inheritance chain. The runtime will only execute the first matching catch block by passing in the exception object. Once the catch block executes, the runtime continues after the try and catch blocks. If no matching catch block is found, the exception is passed up to the caller of the method that is executing (the next method on the call stack).</p>
+
+                <h4>Simple try/catch example</h4>
+                <p>To see how this works in practice, let's use a try and catch block to handle an Exception. For this example, we'll build a method that looks up an order in a database and fulfills the order by calling a service that is connected to the fulfillment pipeline. We'll start with the method below which relies on an OrderDataAccess class and a FulfillmentService class.</p>
+                <pre><code class="language-java">
+1   public boolean fulfillOrder(String orderId) {
+2       Order orderToProcess = orderDataAccess.retrieveOrder(orderId);
+3       return fulfillmentService.processOrder(orderToProcess);
+4   }
+                </code></pre>
+                <p>In line 2, an orderId is used to look up the order details. If the call to the fulfillment service is successful in line 3 then the order will be fulfilled and we return true statement. The return statements report back if the order processing was successful or not. There's no exception handling in this code yet. Let's look at the call to orderDataAccess.retrieveOrder().</p>
+                <pre><code class="language-java">
+public static Order retrieveOrder(String orderId) throws SQLException
+                </code></pre>
+                <p>The retrieveOrder() method has a throws declaration with an SQLException. This is a checked exception that may be thrown when accessing a database. Our code for fulfillOrder() wouldn't compile as-is. We need to do something about the potential SQLException. Let's add try and catch blocks to handle the Exception should it occur and print a message to the console.</p>
+                <pre><code class="language-java">
+ 1  public boolean fulfillOrder(String orderId) {
+ 2      try {
+ 3          Order orderToProcess = orderDataAccess.retrieveOrder(orderId);
+ 4          return fulfillmentService.processOrder(orderToProcess);
+ 5      } catch (SQLException e) {
+ 6          System.out.println("A database error prevented the order from being fulfilled due to: " + e.getMessage());
+ 7      }
+ 8      return false;
+ 9  }
+                </code></pre>
+                <p>With the try block around our code from lines 2 through 4, an SQLException will be caught and handled using the matching catch block starting on line 5. If no SQLException is thrown the method will return with the result from the call to fulfillmentService.processOrder(orderToProcess), otherwise false will be returned after the catch block on line 8. Note that we included the call to the FulfillmentService in the try block. If we instead wrote it after the catch block, Java would execute this code after the catch block finishes. In this case, we do not want to fulfill an order if we were unable to retrieve one from OrderDataAccess.</p>
+
+                <h3>Handling multiple exceptions</h3>
+                <p>When writing try and catch blocks, you aren't limited to a single catch block. Sometimes there are multiple exceptions that can be thrown from within a single try block, each specifying a different potential problem that can occur. You can write one catch block after another. The first catch block with an exception that matches the type (including inherited types) will be the catch block that's executed.</p>
+
+                <h4>Example of multiple exceptions</h4>
+                <p>Our fulfillOrder() example also calls a method in the FulfillmentService class. Let's look at the signature for the FulfillmentService.processOrder() method.</p>
+                <pre><code class="language-java">
+public boolean processOrder(Order orderToProcess) throws NoFulfillerFoundException
+                </code></pre>
+                <p>The processOrder() method can throw a NoFulfillerFoundException, a checked exception, to indicate a problem in identifying a fulfillment center to process the order. As this is a checked exception, we'll want to handle it as well. Let's add another catch block to our method.</p>
+                <pre><code class="language-java">
+ 1  public boolean fulfillOrder(String orderId) {
+ 2      try {
+ 3          Order orderToProcess = orderDataAccess.retrieveOrder(orderId);
+ 4          return fulfillmentService.processOrder(orderToProcess);
+ 5      } catch (SQLException e) {
+ 6          System.out.println("A database error prevented the order from being fulfilled due to: " + e.getMessage());
+ 7      } catch (NoFulfillerFoundException e) {
+ 8          System.out.println("Unable to fulfill order due to: " + e.getMessage());
+ 9      }
+10      return false;
+11  }
+                </code></pre>
+                <p>Now, we're handling all the checked exceptions that may occur in the try block. So, the compiler won't complain about unhandled exceptions.</p>
+
+                <h4>How multiple catch blocks work with exception subclasses</h4>
+                <p>When handling multiple types of exceptions, it's possible to write handlers for different types of exceptions in the same inheritance chain. We should put catch blocks for exceptions further up the inheritance chain last. Otherwise, we'll end up writing a catch block for an exception that will never be handled. For example, if we added a catch block for Exception to our fulfillOrder() code and placed it before the SQLException, the SQLException block would never be executed since SQLException inherits from Exception. The exception that will be thrown by retrieveOrder would match the Exception block (because SQLException is-A Exception) before ever considering the SQLException block. It's important to remember that the Java runtime will only execute one catch block. Don't sweat too much, your IDE will help you out and warn you if you do this. It will mention that one of your catch blocks is unreachable.</p>
+
+                <h4>Example for multiple catch blocks and inheritance</h4>
+                <p>Let's take a look at an example using the FileInputStream class and multiple catch blocks. We'll demonstrate how exception handling works with exceptions that inherit from each other. In this example, we read the contents of a file, character by character, and return the contents as a String.</p>
+                <pre><code class="language-java">
+ 1  public String readFile(String filePath) {
+ 2      StringBuilder contents = new StringBuilder();
+ 3      try {
+ 4         FileInputStream inStream = new FileInputStream(filePath);
+ 5         int character = inStream.read();
+ 6         while (character != -1) {
+ 7             contents.append((char)character);
+ 8             character = inStream.read();
+ 9         }
+10      } catch (FileNotFoundException e) {
+11         System.out.println("The file was not found at " + filePath);
+12         return "";
+13      } catch (IOException e) {
+14         System.out.println("Unable to read file " + filePath);
+15         return "";
+16      }
+17      return contents.toString();
+18  }
+                </code></pre>
+                <p>A FileNotFoundException is thrown by the FileInputStream constructor, on line 4. An IOException is thrown by the read() method on line 5. The FileNotFoundException class inherits from IOException. We placed the FileNotFoundException catch block first. Then we defined the IOException catch block. This ensures that a FileNotFoundException goes to the desired FileNotFoundException catch block. If we had defined it after the IOException block, the IOException block is the one that would've been executed to handle a FileNotFoundException. Note we created both catch blocks to handle the exceptions differently, printing a different error message in each case. If we did not want to handle them separately, we could define just a single catch block to catch IOExceptions.</p>
+
+                <h3>The dangers of catching exceptions too generically</h3>
+                <p>It may seem like a good practice to always add a generic catch block for the base Exception class, but this is a dangerous choice. There are many different types of exceptions and not all will be problems you should handle within your method. We should limit catch blocks to exception types we plan to recover from. By catching the base Exception type, we might accidently squash the indication of serious errors that should bubble higher up the call stack or necessitate stopping the program. As a catch-all, it could hide other problems that may not even originate in the code such as permission problems, file system access, or memory problems. It's better to write exceptions to handle specific problems rather than a very generic handler that could hide or even cause problems.</p>
+
+                <h3>Summary</h3>
+                <p>In this reading, we covered how errors are handled in Java as exceptions. We covered the difference between checked and unchecked exceptions. We learned how to handle exceptions using try/catch blocks. Lastly, we learned how to use multiple catch blocks, and how to order them, and we learned about the danger of using catch blocks for the generic Exception type.</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Exception Propagation and Inheritance</h2>
+
+                <h3>Overview</h3>
+                <p>Sometimes errors occur while code is executing. While some errors can be handled and allow execution to continue, other errors may not be recoverable. Even when an error can't be recovered from, the error can at least be reported. Good software attempts to recover gracefully from errors. This lesson covers exceptions, handling exceptions, and propagating exceptions. These are the basics of error handling in modern software development.</p>
+                <p>In the last reading, we covered how errors are handled as exceptions and how they're handled by a Java compiler. We explained the difference between checked and unchecked exceptions and we learned how to handle exceptions using try and catch blocks.</p>
+                <p>In this reading, we'll discuss propagating exceptions and overriding methods that throw exceptions. We'll also learn how to determine whether to handle an exception versus propagate it.</p>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Sprint 10 Exception Handling Video" src="https://fast.wistia.net/embed/iframe/gfart71im5" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
+                <h3>Propagating exceptions</h3>
+                <p>Handling an exception is one option for dealing with errors that occur in a program. Another option is to propagate the exception. By propagating an exception, we pass the exception up the call stack to the method's caller. If we can't resolve an exception and it already contains all the information needed, there's no need to handle the exception. In this situation, we want to propagate it up the call stack. There are syntax differences when it comes to propagating checked and unchecked exceptions.</p>
+
+                <h4>Propagating checked exceptions</h4>
+                <p>When writing code that calls a method, that method may indicate that it throws a checked exception. If we're not able to handle an exception, we have the option of propagating it using a <code>throws</code> declaration in our method signature.</p>
+                <p>In the previous reading, we wrote a <code>readFile()</code> method that returned the contents of a file as a String. If we chose to propagate the <code>IOException</code> instead of handling it, we just need to add a <code>throws</code> declaration. We no longer need a catch block for <code>IOException</code>. Now, the <code>IOException</code> will be passed to the code calling <code>readFile</code>. Any code calling the <code>readFile</code> method will need to decide whether to catch or propagate the exception as you can see below.</p>
+                <pre><code class="language-java">
+public String readFile(String filePath) throws IOException {
+    StringBuilder contents = new StringBuilder();
+    try {
+        FileInputStream inStream = new FileInputStream(filePath);
+        int character = inStream.read();
+        while (character != -1) {
+            contents.append((char)character);
+            character = inStream.read();
+        }
+    } catch (FileNotFoundException e) {
+        System.out.println("The file was not found at " + filePath);
+        return "";
+    }
+    return contents.toString();
+}
+                </code></pre>
+
+                <h4>Propagating unchecked exceptions</h4>
+                <p>If a method call throws an unchecked exception, we choose whether to handle or propagate the exception. For unchecked exceptions only, the <code>throws</code> declaration is optional for propagation. Even if the unchecked exception is declared in a <code>throws</code> clause on the method being called, the compiler won't complain about leaving off the <code>throws</code> clause because it doesn't verify unchecked exceptions.</p>
+                <p>In the previous reading, we saw an example of propagating an unchecked exception without a <code>throws</code> declaration. The <code>IllegalArgumentException</code> in the <code>addStringIntegers()</code> method is already propagated without a <code>throws</code> declaration. One can be added as shown below. However, it is not a common practice to do this for unchecked exceptions.</p>
+                <pre><code class="language-java">
+public int addStringIntegers(String s1, String s2) throws IllegalArgumentException {
+    int n1 = Integer.parseInt(s1);
+    int n2 = Integer.parseInt(s2);
+    return n1 + n2;
+}
+                </code></pre>
+
+                <h4>Propagation through the call stack</h4>
+                <p>When an exception is thrown, it propagates through the call stack until caught. Code execution will only continue from the point the exception is caught. Every time the exception is propagated, execution in that method is done.</p>
+                
+                <img src="../../assets/images/figure1_propagation_call_stack.png" alt="Diagram illustrating exception propagation through a call stack" style="width: 100%; max-width: 600px; display: block; margin: 1em auto;">
+                <p><em>Figure 1: A call stack showing an exception being thrown, propagated through several methods, and finally being handled in a try/catch block.</em></p>
+                
+                <p>The example in Figure 1 shows what happens when a file does not exist:</p>
+                <ul>
+                    <li>The <code>main()</code> method calls the <code>readFile()</code> method passing the <code>filePath</code> variable.</li>
+                    <li>The <code>readFile()</code> method passes the <code>filePath</code> to the <code>getLines()</code> method.</li>
+                    <li>The <code>getLines()</code> method attempts to open a file. Since the file doesn't exist, it throws a new <code>IOException</code>. As the one throwing the exception up the stack, the method also declares the possible <code>IOException</code> on its method signature.</li>
+                    <li>The <code>readFile()</code> method attempts to pull all the lines from a file using the <code>getLines()</code> method. It also does nothing to handle the exception and must declare the possible <code>IOException</code> on its method signature.</li>
+                    <li>The <code>main()</code> method calls the <code>readFile()</code> method, but it wraps this call in a <code>try</code> block. There's a <code>catch</code> block for any <code>IOExceptions</code>, which prints out an error message. The <code>main()</code> method handles the exception, as not doing so would result in the program ending without any indication to the user about what happened.</li>
+                </ul>
+
+                <h3>Overriding methods with checked exceptions</h3>
+                <p>Creating subclasses is a useful way to extend or add functionality to existing classes. However, if a method in a superclass has declared exceptions, there are rules that must be followed to avoid compiler errors. Similarly, if we're implementing an interface, the same rules apply for methods with exceptions declared on their signatures.</p>
+                <ul>
+                    <li>Subclasses may not throw exceptions further up the inheritance chain than the exceptions on the superclass.</li>
+                    <li>If we create a subclass of a class that has methods declaring exceptions, we can't make the declarations more generic. (For example, we wouldn't add a declaration for the base level <code>Exception</code> instead of specific exceptions that appeared on the superclass definition.)</li>
+                    <li>Subclasses may not throw new checked exceptions.</li>
+                    <li>A subclass can't add more checked exceptions to a method signature. If more checked exceptions are added, then the method signature won't match the superclass signature.</li>
+                    <li>Subclasses may leave off declared exceptions.</li>
+                    <li>Our implementation of a subclass method may either handle or avoid situations where checked exceptions declared on the superclass occur. If that's the case, we may leave off the declarations for those exceptions without causing compiler issues. This allows our subclass to create a cleaner interface with less potential exceptions while still obeying the rules for overriding the superclass interface.</li>
+                </ul>
+                <p>The examples for subclass method definitions in Figure 2 illustrate what changes to the <code>throws</code> declaration are allowed and not allowed by the Java compiler.</p>
+                
+                <img src="../../assets/images/figure2_method_overrides_exceptions.png" alt="Diagram illustrating legal and illegal method overrides for exceptions" style="width: 100%; max-width: 600px; display: block; margin: 1em auto;">
+                <p><em>Figure 2: Illustration of legal and illegal method overrides. Legal overrides include subclass methods with no change to throws declaration and subclass methods with less exceptions defined. Illegal overrides include adding exception superclass and adding new checked exceptions.</em></p>
+
+                <h3>Determining when to catch vs propagate</h3>
+                <p>Now that we know how to handle and propagate exceptions, all that remains is learning how to determine which approach is best to use when dealing with exceptions.</p>
+
+                <h4>Handling exceptions when possible</h4>
+                <p>If an exception is something we can recover from, we should handle it. The ideal way to handle any exception is to leave the program in a state that allows execution to continue. The first place in the call stack that an exception can be handled cleanly and allow execution to continue should be the place it's handled. In our order processing example from the previous reading, we might encounter exceptions when the database or order processing service are unavailable. In these cases, it's best to allow a user to continue using the application. By catching the exception and alerting the user, the flow of the program can continue. If we propagated the exceptions and no other calling code had handled them, the program would crash when either of these external pieces was unavailable.</p>
+
+                <h4>Do not fail silently</h4>
+                <p>If we can't recover from an exception, we don't catch the exception just to stop it from propagating. Failing silently can be worse than failing in the first place. It causes problems with our code that will be difficult to track down. At the very least, we should be writing a message to log the exceptions we catch.</p>
+
+                <h4>If possible, catch checked exceptions somewhere</h4>
+                <p>While Java makes error handling easy by allowing us to pass exceptions up the call stack, we should try to catch the exceptions somewhere in the chain. This is especially important for applications with user-facing pieces. Nothing is more annoying to a user than an application breaking and not being able to continue. Users don't want to try to work around problems. Even if the exception causes the program to end, we can still add a user-friendly error message before the program stops execution.</p>
+
+                <h4>Propagate exceptions with important information</h4>
+                <p>If an exception can't be recovered from, it's important to pass important information onward. For example, if we're processing an order for a website, but the database is down, notifying the user that their order did not go through will be very important. Therefore, it's better to pass that exception up to allow it to turn into an error message for the user.</p>
+
+                <h3>Conclusion</h3>
+                <p>In this lesson, we learned about exceptions in Java. We also learned how to handle exceptions with <code>try</code>, <code>catch</code>, and <code>finally</code> blocks. When we can't handle an exception, we learned how to propagate the exception using <code>throws</code> declarations. Since exceptions have implications when overriding methods, we learned what is allowed and not allowed in these situations. Finally, we learned how to determine when to handle an exception and when to propagate an exception.</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Practice</h2>
+                <p>Complete these exercises to reinforce your understanding of exception handling.</p>
+
+                <a href="https://github.com/BloomTechBackend/bd-exception-handling-bank" target="_blank" rel="noopener" class="resource-link">
+                    bd-exception-handling-bank
+                </a>
             </div>
 
             <div class="content-box">
@@ -233,12 +471,43 @@ public class CheckedVsUncheckedExample {
 }</pre>
             </div>
 
+            <div class="content-box">
+                <h2>Guided Project</h2>
+                <p>Complete this project to practice your exception handling skills.</p>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Sprint 10 Exception Handling Video" src="https://fast.wistia.net/embed/iframe/es3x6k4bod" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
+                <a href="https://github.com/BloomTechBackend/bd-exception-handling-basics" target="_blank" rel="noopener" class="resource-link">
+                    Exception Handling Basics
+                </a>
+            </div>
+
+            <div class="content-box">
+                <h2>Mastery Task 6: I Fits, I Sits</h2>
+                <p>Your team has launched polybags! You've been on the lookout for any failures due to the new polybags when calling your service. You haven't seen any yet. In fact, you haven't seen any exceptions being thrown from your service. You know no software service is ever perfect, so you do a little digging!</p>
+                <p>You discover that the ShipmentService is "swallowing" exceptions thrown by the PackagingDAO and just returning null. This seems a little fishy so you bring it up to your team in your daily stand-up meeting. They agree with you. If a client (a client is any code that makes calls to your service code - you can think of a client as a programmatic user) is passing in a FullfillmentCenter that your service doesn't know about you should let them know that it is invalid! The other exceptional case is if your service cannot find a shipment option that will fit the item. Not having packaging that fits the item is a condition that the client should handle appropriately, but instead of returning null we should return a properly-populated ShipmentOption with null packaging. Returning a null object is not very user-friendly. Remember, calling methods on null objects can cause a NullPointerException. We want to help prevent that! You can use the ShipmentOption.builder to help with this.</p>
+                <p>The scrum master swaps out a stretch goal on the sprint board for "Use exceptions in ShipmentService" and assigns it to you. Well, it’s not exactly specific directions, but it looks like that’s all you’re going to get.</p>
+                <p>Update the ShipmentService to process the PackagingDAO‘s exceptions, and write unit tests, of course. Here are a few things to keep in mind:</p>
+                <ul>
+                    <li>You should not change or modify the behavior of the PackagingDAO class.</li>
+                    <li>Use a try...catch block to catch each possible exception thrown by PackagingDAO</li>
+                    <li>You should throw a RuntimeException in the case of receiving an UnknownFulfillmentCenterException</li>
+                    <li>You can check out the PackagingDAOTest for an example of a unit test that verifies that an exception gets thrown.</li>
+                </ul>
+                <p><strong>Exit Checklist</strong></p>
+                <ul>
+                    <li>Your findShipmentOption() method no longer returns null when a shipment option cannot be found to fit the item</li>
+                    <li>Your findShipmentOption() throws a RuntimeException when a client provides an unknown FullfillmentCenter</li>
+                    <li>Your CR handling exceptions thrown by PackagingDAO has been approved and the code pushed</li>
+                    <li>(No MasteryTask TCTs this time)</li>
+                </ul>
+            </div>
+
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
-                    <a href="https://github.com/BloomTechBackend/bd-exceptions-calculator-complete" target="_blank" rel="noopener" class="resource-link">
-                        Exceptions Calculator Repository
-                    </a>
                     <a href="https://docs.oracle.com/javase/tutorial/essential/exceptions/" target="_blank" rel="noopener" class="resource-link">
                         Java Exceptions Tutorial - Oracle
                     </a>
