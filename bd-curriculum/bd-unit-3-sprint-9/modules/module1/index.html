@@ -32,70 +32,85 @@
             <h1>Module 1: Remote Debugging</h1>
             
             <div class="content-box">
-                <h2>Module Overview</h2>
-                <p>Learn about common design patterns and their implementation in Java applications.</p>
-            </div>
-
-            <div class="content-box">
-                <h2>Learning Objectives</h2>
+                <h2>Overview of Remote Debugging</h2>
+                <h3>Basic Concepts</h3>
+                <p>Up until now, we have been running our application and debugger under the same IDE (IntelliJ) session:</p>
+                <p><img src="../../assets/images/normal_ide_debuggging.png" alt="Normal IDE Debugging"></p> <!-- Placeholder for actual image path -->
+                <p>While this is great when developing an application, it is not the environment where the application will run after it is deployed (production environment). Occasionally programs operate differently in a production environment than in the development environment. These differences in operation can occur for several reasons: varied hardware configurations, connections to different resources, leveraging resources unavailable in development, different runtime environment/software versions, et al.</p>
+                <p>Debugging or monitoring an application in its production environment allows us to see how/if it operates as intended.</p>
+                <p>With remote debugging, we can connect the debugger in our IDE (IntelliJ) to a process running outside the IDE on a different computer/server or our local machine:</p>
+                <p><img src="../../assets/images/remote_debugging.png" alt="Remote Debugging"></p> <!-- Placeholder for actual image path -->
+                <p>With the remote debugging features of your favorite IDE, you can attach to an application running outside your IDE -- even on another computer -- and set up breakpoints and inspect application state just like you would when running code from within the IDE.</p>
+                <p>To set up remote debugging, you first must configure the application and debugger to allow for remote debugging.</p>
+                
+                <h4>For the application:</h4>
                 <ul>
-                    <li>Understand common design patterns and their use cases</li>
-                    <li>Learn about creational, structural, and behavioral patterns</li>
-                    <li>Implement design patterns in real-world scenarios</li>
-                    <li>Recognize when to apply different design patterns</li>
-                    <li>Use an IDE debugger by attaching it to a remotely running process</li>
-                    <li>Explain why it is necessary to connect to a remote host or process</li>
+                    <li>Compile the application with debug information.</li>
+                    <li>Start the application in the Java JVM with debugging options (more about this later).</li>
+                </ul>
+
+                <h4>For the debugger:</h4>
+                <ul>
+                    <li>Know the location of the application class file from the build process.</li>
+                    <li>Know the port you want to use for debugging. When connecting to external applications, make sure the port is not already in use. 5005 is a commonly used port for remote debugging and the one we will be using.</li>
                 </ul>
             </div>
 
             <div class="content-box">
-                <h2>Design Patterns in Detail</h2>
-                <p>Design patterns are reusable solutions to common problems that occur in software design. They represent best practices evolved over time by experienced developers. Understanding these patterns helps you write more maintainable and flexible code.</p>
-                
-                <h3>Types of Design Patterns:</h3>
+                <h3>Starting a non-server application for debugging in the Java JVM</h3>
+                <p>To perform remote debugging for a non-server Java application, you must start the application in the Java JVM with the appropriate debugging options.</p>
+                <p>The command to start an application in the JVM for debugging is:</p>
+                <pre><code>java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:port application-class-name</code></pre>
+                <p>where:</p>
                 <ul>
-                    <li><strong>Creational Patterns:</strong> These patterns focus on object creation mechanisms. Examples include:
+                    <li><code>java</code> - name of command to invoke the Java JVM</li>
+                    <li><code>-agentlib:jdwp</code> - indicates you will use the Java Debug Wire Protocol to communicate with the JVM for debugging</li>
+                    <li><code>transport=dt_socket</code> - indicates the JVM for will use a socket stream to transport information to/from the debugger</li>
+                    <li><code>server=y</code> - indicates the JVM will function as a server for the remote debugging purposes</li>
+                    <li><code>suspend=n</code> - indicates process is to start normally and not suspend execution before it starts</li>
+                    <li><code>address=*:port</code> - specifies the port the JVM will listen to remote debugging</li>
+                    <li><code>application-class-name</code> - the name of the application .class file containing the main() function for the application</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h3>Setting up a debugging run configuration in an IDE</h3>
+                <p>Every robust IDE will have a method for connecting to a remote (external) process for debugging.</p>
+                <p>The details and actual process and parameters will vary from IDE to IDE, but in general, will include the following generic setup:</p>
+                <ul>
+                    <li>Create a project for the remote debugging session.</li>
+                    <li>Create a Run/Debug configuration for remote debugging that includes:
                         <ul>
-                            <li>Singleton: Ensures a class has only one instance and provides a global point of access to it</li>
-                            <li>Factory Method: Creates objects without specifying the exact class of object that will be created</li>
-                            <li>Builder: Separates the construction of complex objects from their representation</li>
-                        </ul>
-                    </li>
-                    <li><strong>Structural Patterns:</strong> These patterns focus on composition of classes or objects. Examples include:
-                        <ul>
-                            <li>Adapter: Allows incompatible interfaces to work together</li>
-                            <li>Decorator: Attaches additional responsibilities to objects dynamically</li>
-                            <li>Facade: Provides a simplified interface to a complex subsystem</li>
-                        </ul>
-                    </li>
-                    <li><strong>Behavioral Patterns:</strong> These patterns focus on communication between objects. Examples include:
-                        <ul>
-                            <li>Observer: Defines a one-to-many dependency between objects</li>
-                            <li>Strategy: Defines a family of algorithms and makes them interchangeable</li>
-                            <li>Command: Encapsulates a request as an object</li>
+                            <li>Debugging mode</li>
+                            <li>Host/Server name of the external process</li>
+                            <li>Port that the external process will be listening to</li>
+                            <li>Path to the source code of the external process, if available</li>
+                            <li>Additional information required by the particular IDE</li>
                         </ul>
                     </li>
                 </ul>
-                
-                <h3>Remote Debugging Concepts:</h3>
-                <p>Remote debugging is an essential skill when working with distributed systems or services running in different environments:</p>
-                <ul>
-                    <li>To debug a remote process, the JVM must be started with debugging options enabled</li>
-                    <li>The IDE connects to this process over a network socket</li>
-                    <li>Remote debugging is necessary when:
-                        <ul>
-                            <li>The application runs in a different environment (e.g., production, staging)</li>
-                            <li>Working with distributed systems where components run on different machines</li>
-                            <li>Debugging applications inside containers or cloud environments</li>
-                        </ul>
-                    </li>
-                    <li>Sample code to attach a debugger:
-                        <pre><code>// JVM startup parameters
--agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+            </div>
 
-// In IntelliJ IDEA: Run &gt; Attach to Process
-// In Eclipse: Run &gt; Debug Configurations &gt; Remote Java Application</code></pre>
+            <div class="content-box">
+                <h3>Performing remote debugging</h3>
+                <ol>
+                    <li>Start the process to be remotely debugged. If the process is not on an actual server, use the JVM command with the appropriate options from a command line. You should see an indication that the JVM is listening for a remote debugger. The message may look something like this:
+                        <pre><code>Listening for transport dt_socket at address: nnnn &lt;=== this should be the port you specified in the JVM command</code></pre>
                     </li>
+                    <li>Open the remote debugging project in the IDE.</li>
+                    <li>Start the debugger in the IDE.</li>
+                </ol>
+                <p>You should now be in remote debugging mode. Most debuggers will issue a message in the console window indicating they have attached themselves to an external task. The message may look something like this:</p>
+                <pre><code>Connected to the target VM, address: 'servername:port', transport: 'socket'</code></pre>
+                <p>Congratulations!</p>
+                <p>You are now connected to an external process from your IDE debugger. You can start swatting bugs, set breakpoints, examine/change variables, just "poke around," or perform whatever other debugging you need to do.</p>
+                <p>The first command you might want to try is to pause the external process so you can interact with it.</p>
+                <p><strong>Note:</strong> You may need to change to the "Debugger" window/tab in the IDE to see the results of your debugging efforts.</p>
+                <p>When you have finished debugging:</p>
+                <ul>
+                    <li>Terminate the debugging session in the IDE.</li>
+                    <li>Go to the command window and terminate the application. Usually, you can accomplish this by pressing the control-C keys.</li>
+                    <li>If you do not terminate the application, it will continue to run to normal completion or until you close the command window. To avoid potential resource leaks, you will want (and it is considered good practice) to terminate the application before closing the command window.</li>
                 </ul>
             </div>
             

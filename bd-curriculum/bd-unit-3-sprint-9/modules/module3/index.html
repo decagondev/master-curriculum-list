@@ -33,113 +33,354 @@
             
             <div class="content-box">
                 <h2>Module Overview</h2>
-                <p>Master exception handling and error management in Java applications.</p>
+                <p>Master hashing concepts and how to implement them in Java applications.</p>
             </div>
             
             <div class="video-container">
-                <iframe class="wistia_embed" title="Exception Handling Video" src="https://fast.wistia.net/embed/iframe/x9h7dp4k82" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                <iframe class="wistia_embed" title="Hashing Video" src="https://fast.wistia.net/embed/iframe/4xn11e5729" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
 
+            
             <div class="content-box">
-                <h2>Learning Objectives</h2>
+                <h2>Understanding Hashing Concepts</h2>
+                <p>Imagine you are working with a Java array containing many thousands of objects stored in random order. To find a given object, your code would need to iterate, potentially through the entire array, until it found the object in question, resulting in an O(n) runtime complexity. If the array was sorted, you could use a binary search algorithm (which you will learn about in a future lesson) to find objects in O(log n) runtime. Still, if the array is vast, this could take a pretty long time.</p>
+                <p>What if I told you there was a magical function that could let you find an element in that array in constant time complexity, O(1)?</p>
+                <p>That function exists, and it is called a hash function, and the value it generates is called a hash code. Hash functions aren't magic — they're computer science! A hash function creates a hash code for a particular object. The hash code is a number that is (usually - we'll get to this later) unique to that specific object. The hash function can use any method it wants to generate these numbers, but it should have the following properties:</p>
                 <ul>
-                    <li>Understand the Java exception hierarchy</li>
-                    <li>Work with checked and unchecked exceptions</li>
-                    <li>Implement proper exception handling with try-catch-finally blocks</li>
-                    <li>Create and use custom exceptions for specific application needs</li>
-                    <li>Use multi-catch blocks for effective exception handling</li>
-                    <li>Implement proper exception propagation strategies</li>
+                    <li>It returns a number for any object.</li>
+                    <li>Two equivalent objects will always return the same hash code value.</li>
+                    <li>Two unequal objects try to return different hash code values but do not necessarily always succeed.</li>
                 </ul>
-            </div>
+                <p>How does this help us find an object in an array? Let's explore a simple example. Imagine you have an array of Strings containing the names of fruit sold on Amazon Fresh:</p>
+                <pre>
+Pear
+Fig
+Cherry
+Mango
+                </pre>
+                <p>We could write a simple hash function that returns the length of the String as a hash code.</p>
+                <pre>
+Pear → 4
+Fig → 3
+Cherry → 6
+Mango → 5
+                </pre>
+                <p>We then store the fruit Strings in an array using their hash code as the index:</p>
+                <pre>
+Index	Value
+0	&lt;empty&gt;
+1	&lt;empty&gt;
+2	&lt;empty&gt;
+3	"Fig"
+4	"Pear"
+5	"Mango"
+6	"Cherry"
+7	&lt;empty&gt;
+8	&lt;empty&gt;
+9	&lt;empty&gt;
+...etc...	
+                </pre>
+                <p>If we want to find out whether a particular fruit is in the array, we can simply calculate the hash code of that fruit and check the value at that array index.</p>
+                <p>For example, if we wanted to know whether a "Cherry" is in the array, we would call its hash function method, which would return 6. We would then look in the array at index 6. Sure enough, we see "Cherry" there and know this value is in the array.</p>
+                <p>Or if we wanted to know whether a "Pineapple" is in the array, we would call its hash function, which would return 9. If we look in the array at index 9, we see it's empty. So now we know "Pineapple" isn't in the array.</p>
 
-            <div class="content-box">
-                <h2>Exception Handling in Detail</h2>
-                <p>Exception handling is a critical aspect of creating robust Java applications. Proper error handling ensures that your programs can respond gracefully to unexpected conditions and provide meaningful feedback to users or other systems.</p>
-                
-                <h3>Java Exception Hierarchy:</h3>
+                <h2>Hash Code Collisions</h2>
+                <p>What happens if we try to add "Apple" to this array using this approach? Our hash function uses the length of the String as a hash code, so the hash code will be 5. Unfortunately, "Mango" is already stored at position 5. This example illustrates a hash code collision. A collision is when two objects that aren't equal have the same hash code value. How can we work around this?</p>
+                <p>One way to deal with collisions is to change what is stored in the array. Instead of storing the value itself, we can store a <a href="#">CollectionLinks to an external site.</a> of some kind. A Collection is an interface that represents a group of objects, known as its elements. There are many implementations of this interface - each one represents a group of objects slightly differently. One example of a Collection is an ArrayList.</p>
+                <p>If we update our storage array to use a Collection as the value, objects with the same hash code can be stored at the same array position:</p>
+                <pre>
+Index	Value
+0	&lt;empty&gt;
+1	&lt;empty&gt;
+2	&lt;empty&gt;
+3	Collection { "Fig" }
+4	Collection { "Pear" }
+5	Collection { "Mango", "Apple" }
+6	Collection { "Cherry" }
+7	&lt;empty&gt;
+8	&lt;empty&gt;
+9	&lt;empty&gt;
+                </pre>
+                <p>Using a Collection doesn't change much when we add an item to our array. We still calculate the object's hash code to determine the index and then add the object to the Collection stored at that array index. However, using a Collection does require an additional step to check if our array contains a specific object. First, we calculate the hash code of the object. Then we retrieve the Collection at that array index. Before, if there was an object at that location, we could say, yes, that object is in our array. Now we have multiple objects, so we need to examine each of them to see if it is equal to the object we are looking for. So, if we want to find out if the array contains "Mango", we first calculate its hash code, 5, retrieve the Collection from that array position Collection { "Mango", "Apple" }, and iterate over the Collection contents, checking the equality of each element.</p>
+                <p>The same is true with a missing item like "Grape." The hash code for "Grape" is also 5. We would have to check equality with both "Mango" and "Apple" before determining it wasn't in the array.</p>
+                <p>An important thing to call out here is that we use the hash code value to find the index of the array for the Collection. Once we're at the index, we no longer need the hash code value, but we do need a method to determine if the item in the Collection is the one we're looking for.</p>
+                <p>Think about trying to figure out if your friend is home. Their hash code value is kind of like their street address. Once we get to their house, their street address doesn't do us much good at that point. Now we need to look at each person inside the house to determine if they are our friend.</p>
+                <p>There are other ways of handling hashing collisions, but they are beyond the scope of this lesson.</p>
+
+                <h2>The Java hashCode() and equals() methods</h2>
+                <p>Now it's time to jump from story problems into actual Java language code and concepts. We know that we need a way to generate hash codes and determine if two objects are equal to make our constant time, O(1), approach for looking up items in an array work.</p>
+                <p>Every Java object inherits a hashCode() and an equals() method from Object (see <a href="#">All Java Objects are Objects!Links to an external site.</a>, <a href="#">hashcode() JavaDocLinks to an external site.</a>, and <a href="#">equals() JavaDocLinks to an external site.</a>). Object#hashCode() creates a unique hash code for every Java object using the machine-level memory address of that object. Object#equals() returns true if the references (locations in memory) being compared refer to the same object, not based on the object's attributes.</p>
+                <p>Let's see how this would work in our Amazon Fresh fruit example. If we represent the fruit using a FreshFruit class and don't override hashCode() or equals we might see something like:</p>
+                <pre><code class="language-java">
+public class FreshFruit {
+    private String name;
+
+    public FreshFruit(String name) {
+        this.name = name;
+    }
+}
+
+FreshFruit apple1 = new FreshFruit("Apple");
+FreshFruit apple2 = new FreshFruit("Apple");
+FreshFruit apple3 = apple2;
+System.out.println(apple1.hashCode()); // 873415566
+System.out.println(apple2.hashCode()); // 818403870
+System.out.println(apple3.hashCode()); // 818403870
+System.out.println(apple1.equals(apple2)); // false
+System.out.println(apple2.equals(apple3)); // true
+                </code></pre>
+                <p>Even though our apple objects have identical attributes, they are different objects in memory. This means that they will not be considered equal by the default equals method, nor will they return the same hash code.</p>
+                <p>Let's see how this would affect our constant time lookup array. When we would add apple1 we get its hash code and store the object at the index 873415566, but when we check if apple2 is in the array we get its hash code and look at the index 818403870 and do not find an apple! Intuitively we see that these objects represent the same piece of fresh fruit, but we need to make that explicit to our Java code. We do this by defining an equals and a hashcode method specific to the FreshFruit class and its attributes.</p>
+                <p>It is a best practice always to define these methods together, never one without the other. As we mentioned at the start of this reading, a hashcode() method should always return the same hash code for two equivalent objects. We just saw the issue that this inconsistency could cause. We'll see another example of it later in the reading.</p>
+
+                <h3>Defining equals()</h3>
+                <p>When implementing an equals method for a class, the first thing to decide is which attributes in your class define equality. Consider which attributes would uniquely identify an object of this class. Mutable attributes are not good options for equals methods and should not be used when defining equality. We'll demonstrate the issue with this later in the reading.</p>
+                <p>When implementing the method, we want to make sure we are writing code to check for the following:</p>
                 <ul>
-                    <li><strong>Throwable:</strong> The root class of all errors and exceptions
-                        <ul>
-                            <li><strong>Error:</strong> Serious problems that applications should not try to handle (e.g., OutOfMemoryError)</li>
-                            <li><strong>Exception:</strong> Problems that can be reasonably handled by applications
-                                <ul>
-                                    <li><strong>Checked Exceptions:</strong> Must be explicitly caught or declared (e.g., IOException)</li>
-                                    <li><strong>Unchecked Exceptions (RuntimeException):</strong> Do not need to be explicitly caught (e.g., NullPointerException)</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
+                    <li>Is the passed-in object null? Since we're in an instance of the class, we know we aren't null, and can't possibly be equal to null. Return false.</li>
+                    <li>Is the passed-in object the exact same object? If our reference is pointing to the same object in memory, then the attributes must be equal. Return true.</li>
+                    <li>Is the passed-in object a different type? Then we don't have the same set of attributes to compare. Return false.</li>
+                    <li>Finally, implement the checks for equality between the chosen attributes that make the two objects equal.</li>
                 </ul>
-                
-                <h3>Exception Handling Techniques:</h3>
-                <h4>Basic try-catch-finally:</h4>
-                <pre><code>try {
-    // Code that might throw an exception
-    File file = new File("example.txt");
-    FileReader fr = new FileReader(file);
-    BufferedReader br = new BufferedReader(fr);
-    String line = br.readLine();
-    System.out.println(line);
-} catch (FileNotFoundException e) {
-    // Handle specific exception
-    System.err.println("File not found: " + e.getMessage());
-} catch (IOException e) {
-    // Handle another type of exception
-    System.err.println("Error reading file: " + e.getMessage());
-} finally {
-    // Code that always executes, regardless of exception
-    System.out.println("Cleanup operations");
-    // Close resources, etc.
-}</code></pre>
-                
-                <h4>Try-with-resources (Java 7+):</h4>
-                <pre><code>try (BufferedReader br = new BufferedReader(new FileReader("example.txt"))) {
-    String line = br.readLine();
-    System.out.println(line);
-} catch (IOException e) {
-    System.err.println("Error working with file: " + e.getMessage());
-    e.printStackTrace();
-}
-// Resources automatically closed</code></pre>
-                
-                <h3>Creating Custom Exceptions:</h3>
-                <p>Custom exceptions allow you to create application-specific error handling that can provide more meaningful feedback.</p>
-                <pre><code>// Custom checked exception
-public class InsufficientFundsException extends Exception {
-    private double amount;
-    
-    public InsufficientFundsException(double amount) {
-        super("Insufficient funds: Attempted to withdraw " + amount);
-        this.amount = amount;
-    }
-    
-    public double getAmount() {
-        return amount;
-    }
-}
+                <p>Let's consider the FreshFruit class. We will define that two FreshFruit objects will be equal if they have the same name. The code below implements the equals() method following the guidance above.</p>
+                <pre><code class="language-java">
+public class FreshFruit {
+   private String name;
 
-// Usage
-public class Account {
-    private double balance;
-    
-    public void withdraw(double amount) throws InsufficientFundsException {
-        if (amount > balance) {
-            throw new InsufficientFundsException(amount);
+   public FreshFruit(String name) {
+       this.name = name;
+   }
+   
+   @Override
+   public boolean equals(Object o) {
+        // An object can't be equal to null.
+        if (o == null) {
+            return false;
         }
-        balance -= amount;
+
+        // If two objects have the same reference, they should be equal.
+        if (this == o) {
+            return true;
+        }
+        
+        // If the objects are of different types, they shouldn't be equal. 
+        if (getClass() != o.getClass()) {
+            return false;
+        }
+        
+        // Now that we know they are of the same type, cast the object to a FreshFruit
+        FreshFruit that = (FreshFruit) o;
+        
+        // Finally, implement the checks for equality between attributes that make the two objects equal.
+        return Objects.equals(this.name, that.name);
+   }
+}
+                </code></pre>
+                <p>Let's break down this example.</p>
+                <p>Assume we have the following objects:</p>
+                <pre><code class="language-java">
+FreshFruit apple1 = new FreshFruit("Apple");
+FreshFruit apple2 = new FreshFruit("Apple");
+FreshFruit apple3 = apple2;
+FreshFruit apple4 = null;
+System.out.println(apple1.equals(apple2)); // true
+System.out.println(apple2.equals(apple3)); // true
+System.out.println(apple1.equals(apple4)); // false
+                </code></pre>
+                <p>On a call to equals, we first check if the passed in object is null. The only way this could happen is if someone called the equals method and passed a null reference (apple1.equals(apple4)). Since apple1 is not null, we can't be equal to null. Therefore we can return false right away. This is the first check on every equals() implementation. Note: apple4.equals(apple1) would result in a NullPointerException.</p>
+                <p>Next, we test this == obj since any object is equal to itself. This is the check that is made in the Object#equals() implementation. By doing it early, we avoid any other computation, which could be more expensive. apple2.equals(apple3) would return true.</p>
+                <p>Next, the code uses getClass() to check if the object we are comparing to has exactly the same class as our object. getClass() is another method that every object provides. It returns the instance type of the object, the actual type of the object on the heap. We don't want to compare FreshFruit objects to Car objects.</p>
+                <p>Instead of using getClass(), you may see people implementing equals using a keyword instanceof:</p>
+                <pre><code class="language-java">
+if (!(obj instanceof FreshFruit)) {
+    return false;
+}
+                </code></pre>
+                <p>We do not recommend using it. instanceof checks if the object is that particular type or a subtype. This can get us into trouble when we start to use inheritance. We will cover those details after we discuss inheritance!</p>
+                <p>Next, we cast obj to a FreshFruit so we can check its FreshFruit attributes. If we had left it as an Object, the code that accesses name would not compile: an Object has no name attribute. We know it's safe to make this cast because we just verified that obj has the same class.</p>
+                <p>Finally, we use the <a href="#">Objects.equals() method JavaDocLinks to an external site.</a> to compare all the attributes. We use this utility instead of == because it handles null comparisons in a readable way so we can avoid NullPointerExceptions, and it respects other classes that already provide their own implementations of equals().</p>
+                <p><strong>Optional Mind-Blowing Detail:</strong></p>
+                <p>Did you notice that we used != to compare the two classes instead of .equals()? That means that either getClass() returns a primitive (spoiler: it doesn't) or finds the same reference for each object. Java creates exactly one Class object for each class, which includes the class's constructors and other details. When code uses new, Java uses the Class object to build your instance, and keeps track of which Class it used. Therefore calling getClass() on any Circle will always return a reference to the same Class instance.</p>
+
+                <h3>Defining hashcode()</h3>
+                <p>Whichever attributes are used in the equals method will be the attributes we will use in our hashcode method. This will guarantee that whenever our equals method returns true for two objects, we will return the same hash code for the two objects.</p>
+                <p>We could implement hashcode using our simple hashing function, which is based on the length of the name attribute, but this is likely to lead to a lot of collisions. It's unlikely that the length of the name attribute will be shorter than two characters and any longer than 10. This is not a very wide range when you consider that an int value can be as large as 2,147,483,647 and as small as -2,147,483,648! It is tough to develop a way to spread out the hash code values we assign, but there are standard algorithms you can use to generate such hash codes. These typically involve multiplying the attribute values or hash codes by prime numbers and adding them together.</p>
+                <p>Lucky for us, Java provides a way to take advantage of those algorithms without writing them ourselves with the <a href="#">Objects.hash() method (JavaDocLinks to an external site.)</a>. Objects.hash() takes a list of values and generates a hash code based on all of them. To use this in our FreshFruit class we would implement the following:</p>
+                <pre><code class="language-java">
+public class FreshFruit {
+   private String name;
+
+   public FreshFruit(String name) {
+       this.name = name;
+   }
+   
+   @Override
+   public boolean equals(Object o) {
+        // An object can't be equal to null.
+        if (o == null) {
+            return false;
+        }
+
+        // If two objects have the same reference, they should be equal.
+        if (this == o) {
+            return true;
+        }
+        
+        // If the objects are of different types, they shouldn't be equal. 
+        if (getClass() != o.getClass()) {
+            return false;
+        }
+        
+        // Now that we know they are of the same type, cast the object to a FreshFruit
+        FreshFruit that = (FreshFruit) o;
+        
+        // Finally, implement the checks for equality between attributes that make the two objects equal.
+        return Objects.equals(this.name, that.name);
+   }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.name);
     }
-}</code></pre>
-                
-                <h3>Best Practices for Exception Handling:</h3>
-                <ul>
-                    <li>Only catch exceptions you can handle meaningfully</li>
-                    <li>Don't swallow exceptions (catch and do nothing)</li>
-                    <li>Clean up resources in finally blocks or use try-with-resources</li>
-                    <li>Use specific exception types rather than catching Exception</li>
-                    <li>Include helpful information in exception messages</li>
-                    <li>Log exceptions properly for troubleshooting</li>
-                    <li>Throw exceptions at the appropriate level of abstraction</li>
-                </ul>
+}
+                </code></pre>
+                <p>Java's implementation ensures a good distribution of hash codes from the set of possible int values. The numbers produced will be unpredictable to a human being, almost like a random number. You might be wondering whether having billions of possible hash codes for your objects means you need to use an enormous array to store those objects. In practice, we can use a much smaller array and use the modulo function on the hash code to find the array position. You will not need to know how to implement modular hashing.</p>
+
+                <h3>Inconsistent hashcode and equals</h3>
+                <p>Let's consider what happens if we only override equals.</p>
+                <pre><code class="language-java">
+public class FreshFruit {
+    
+    private String name;
+
+    ...
+
+    public FreshFruit (String name) {
+         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        // An object can't be equal to null.
+        if (o == null) {
+            return false;
+        }
+
+        // If two objects have the same reference, they should be equal.
+        if (this == o) {
+            return true;
+        }
+        
+        // If the objects are of different types, they shouldn't be equal. 
+        if (getClass() != o.getClass()) {
+            return false;
+        }
+        
+        // Now that we know they are of the same type, cast the object to a FreshFruit
+        FreshFruit that = (FreshFruit) o;
+        
+        // Finally, implement the checks for equality between attributes that make the two objects equal.
+        return Objects.equals(this.name, that.name);
+    }
+}
+                </code></pre>
+                <p>We have a fruit named "fig".</p>
+                <pre><code class="language-java">
+FreshFruit fig = new FreshFruit("fig");
+                </code></pre>
+                <p>To add fig to our array, we call hashCode on this object to get the index we should use. The default hashcode implementation returns 843403877, and after we do modulo 10, we store fig in a Collection at index 7.</p>
+                <pre>
+Index	Value
+0	Collection [{ "pineapple", 100 }]
+1	&lt;empty&gt;
+2	Collection [{ "banana" }]
+3	&lt;empty&gt;
+4	&lt;empty&gt;
+5	Collection [{ "apple" }, { "mango" }]
+6	&lt;empty&gt;
+7	Collection [{ "fig" }]
+8	&lt;empty&gt;
+9	&lt;empty&gt;
+...etc...	
+                </pre>
+                <p>Now somebody else wants to check if our array contains a fig. They create a fig object.</p>
+                <pre><code class="language-java">
+FreshFruit checkFig = new FreshFruit("fig");
+                </code></pre>
+                <p>We call hashcode on checkFig and it returns 976403870. After we do modulo 10 (976403870 % 10 = 0) we inspect the contents at index 0: Collection [{ "Pineapple", 100 }]. We test to see if checkFig is equal to any object in that Collection. It is not, and so we determine a FreshFruit with the name "fig" is not in our array.</p>
+                <p>We run into a similar pitfall if we override hashcode and not equals. We must consistently implement them together and always use the same set of attributes.</p>
+
+                <h3>Choose your attributes carefully!</h3>
+                <p>Let's enhance our FreshFruit class to include an attribute that represents whether the fruit contains seeds and one that tracks how many times it is purchased. Should we include these new attributes in our equality rules? Well, fruits can come with or without seeds, like grapes or watermelons. Let's consider these to be different fruits at our ATA market that we keep separate. This means we will want to include it in our equals method. Seedless grapes will not be considered equal to seeded grapes. How about purchase count? Our alarm bells should be going off! We warned above that using an attribute that can be updated is dangerous. We will include it but then show you how things can go wrong.</p>
+                <pre><code class="language-java">
+public class FreshFruit {
+    
+    private String name;
+    private boolean isSeedless;
+    private long purchaseCount;
+
+    ...
+
+    public FreshFruit (String name, boolean isSeedless, long purchaseCount) {
+         this.name = name;
+         this.isSeedless = isSeedless;
+         this.purchaseCount = purchaseCount;
+    }
+    
+    // Updates the current purchase count by the provided purchaseQuantity
+    public void addPurchase(int purchaseQuantity) {
+        this.purchaseCount = this.purchaseCount + purchaseQuantity;
+    }
+
+   
+   @Override
+   public boolean equals(Object o) {
+        // An object can't be equal to null.
+        if (o == null) {
+            return false;
+        }
+
+        // If two objects have the same reference, they should be equal.
+        if (this == o) {
+            return true;
+        }
+        
+        // If the objects are of different types, they shouldn't be equal. 
+        if (getClass() != o.getClass()) {
+            return false;
+        }
+        
+        // Now that we know they are of the same type, cast the object to a FreshFruit
+        FreshFruit that = (FreshFruit) o;
+        
+        // Finally, implement the checks for equality between attributes that make the two objects equal.
+        return Objects.equals(this.name, that.name) && Objects.equals(this.isSeedless, that.isSeedless)
+            && Objects.equals(this.purchaseCount, that.purchaseCount);
+   }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.name, this.isSeedless, this.purchaseCount);
+    }
+}
+                </code></pre>
+                <p>We have a fruit named "fig" that has seeds and has been purchased 3 times.</p>
+                <pre><code class="language-java">
+FreshFruit fig = new FreshFruit("fig", true, 3);
+                </code></pre>
+                <p>To add fig to our array, we call hashCode on this object, 7 is returned. We add this object to an array at index 7.</p>
+                <p><em>Here is a memory diagram showing our created "fig" object, which has been purchased three times. You will notice both array index 7 and the stack pointing to the same "fig" object on the heap.</em></p>
+                <p><em>A memory diagram displaying a "fig" object on the heap with a purchase count of 3. Index 7 of an array points to this object, as does a fig variable on the stack.</em></p>
+                <p>The fig is then purchased again, so it now has a purchase count of 4. Let's take another look at our array.</p>
+                <p><em>A memory diagram showing the in the "fig" object on the heap has been updated from 3 to 4, but the pointers from the "fig" variable on the stack and the pointer from the 7th index of the array have not been updated.</em></p>
+                <p>You'll notice the purchaseCount in the "fig" object on the heap has been updated from 3 to 4, but the pointers from the "fig" variable on the stack and the pointer from the 7th index of the array have not been updated.</p>
+                <p>Now we want to check to see if this fig is in our array. This time when we call hashCode() it uses the values "fig", true, and 4. The hash code value 8 is returned. If we look in the array at index 8, we see an empty spot. So we incorrectly determine that the fig is not present in the array.</p>
+                <p><em>A final memory diagram showing that when we use our "fig" variable that is on the stack, it called the hashCode method of the existing FreshFruit object on the heap. This time hashCode returns a different value, but the location of the pointer from the array to the FreshFruit object on the heap has not been moved. So based on this new hashCode we don't find the object from the array.</em></p>
+
+                <h3>Does hashing really provide constant time array access?</h3>
+                <p>Finally, as we've discussed, the main attraction of using hash codes for array access is the constant-time performance for the basic operations such as add, remove, and contains. However, because of collisions, we can't guarantee constant runtime in the worst-case. For example, imagine that your hashCode method always returns 1, and all of our objects collide into the same index. In such a case, we would have one collection containing all of our objects in one index. Finding an element would result in a linear runtime O(n), since we must iterate through the entire collection.</p>
+                <p>However, it is possible to guarantee an average constant runtime, O(1), as long as your hashcode does an excellent job of returning unique values for unique objects. This will mean the collections stored in the array don't become too long, and when they do become too long, you can resize the array so that objects are spread out more uniformly throughout the array. Using Java's Objects.hash is an excellent way to ensure you evenly distribute your objects across indexes. You don't need to know all the details of how Objects.hash or resizing is implemented; just know that hashing allows your code to find an element in an array in constant time.</p>
+                <p>In our next reading, we will cover the HashSet data structure that implements this constant time array access. We need to implement hashcode and equals in the class of the objects we want to store it in.</p>
             </div>
             
             <div class="content-box">
@@ -167,6 +408,7 @@ public class Account {
                     </a>
                 </div>
             </section>
+
         </section>
     </main>
 </body>
