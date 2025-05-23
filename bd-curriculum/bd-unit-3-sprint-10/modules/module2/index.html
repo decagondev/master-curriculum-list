@@ -37,7 +37,7 @@
             </div>
             
             <div class="video-container">
-                <iframe class="wistia_embed" title="Sprint 10 Maps Video" src="https://fast.wistia.net/embed/iframe/da8maj17cw" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                <iframe class="wistia_embed" title="Sprint 10 Maps Video" src="https://fast.wistia.net/embed/iframe/d3iwjyrxdh" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
 
             <div class="content-box">
@@ -57,6 +57,135 @@
                     <li>Explain common use cases for a Map</li>
                     <li>Outline when you would use either entrySet(), keySet(), or values() to access the contents of a Map</li>
                 </ul>
+            </div>
+
+            <div class="content-box">
+                <h2>Overview</h2>
+                <p>In this lesson, you're going to learn about the Map data structure. Up to this point, you've mainly used a List for storing data. A List is an instrumental data structure but isn't always the best option. When writing a program, you often have to look up information based on a provided value. For example, "For a given order id, what are the order details?" or "For a given user, what is their preferred language?" By the end of this lesson, you'll learn how a map can provide faster access to data that is structured in this way. You will also learn how to store, retrieve, and remove data from a map.</p>
+
+                <h2>What is a map?</h2>
+                <p>Imagine you're creating a dictionary of computer science terms. Each entry in the dictionary will need to have a term and a definition. The dictionary's primary purpose is to be searched, so this operation should be fast, even as it gets larger! Suppose you use an ArrayList to store each entry, containing both the term and the definition. Your list might look like this:</p>
+                <pre><code>[("debugging", "The process of identifying and removing errors from computer hardware or software"),
+("interface", "A group of related methods with empty bodies."),
+("list", "An ordered collection"),
+("int", "A primitive data type that represents whole numbers")]</code></pre>
+                <p>How would you search for an entry? To look up a specific term, you either have to know the index, which is unlikely, or you have to search the entire list. Searching the list requires starting at the first entry and checking each entry until you find the matching term, a linear search. Linear searches have a time complexity of O(n), linear time, since you may need to look through all n entries in the list. As our dictionary gets larger, our search will get slower! However, we've learned that some operations, like retrieving an object from an ArrayList at a given index, can be done in constant time, O(1). We can get the definition from the dictionary for a given term on average in constant time, O(1), if we use a Map.</p>
+                <p>A Map is a data structure that stores key and value pairs. A key is similar to an ArrayList's index, and the value is the object at the index.</p>
+                <p>If we include the indexes in our list from above, we might have something like this:</p>
+                <pre><code>0 -&gt; ("debugging", "The process of identifying and removing errors from computer hardware or software")
+1 -&gt; ("interface", "A group of related methods with empty bodies")
+2 -&gt; ("list", "An ordered collection")
+3 -&gt; (int, "A primitive data type that represents whole numbers")</code></pre>
+                <p>As mentioned above, if you know the index of your entry in the list, you can access it in constant time, O(1). Since you know the exact location of your object, you can access it immediately without needing to search through the list at all.</p>
+                <p>A Map builds on this idea. In a Map, the key isn't restricted to being only an int. It can be any object! We didn't think looking up an entry by the index would be very helpful when it was just an integer, but what if it could be a String? As a dictionary user, I would never think to look up entry 2, knowing that was where the term 'list' was located! Instead, I want to lookup by the String 'list'. If we use a Map to store our dictionary, the key can be the term from our dictionary entry! We can make the value our definition. Using a Map, our dictionary looks like this:</p>
+                <pre><code>"debugging" -&gt; "The process of identifying and removing errors from computer hardware or software"
+interface" -&gt; "A group of related methods with empty bodies"
+"list" -&gt; "An ordered collection"
+"int" -&gt; "A primitive data type that represents whole numbers"</code></pre>
+                <p>In Java, Map is an interface, which means we cannot instantiate a Map. Instead, we use a class that implements Map. Java provides three different commonly used Map implementations: HashMap, TreeMap, and LinkedHashMap. We'll be focusing on HashMap in this lesson, but you'll also learn about TreeMap later in the program.</p>
+
+                <h2>HashMap</h2>
+                <p>Declaring a HashMap looks like this:</p>
+                <pre><code class="language-java">Map&lt;Key, Value&gt; hashMap = new HashMap&lt;&gt;();</code></pre>
+                <p>We use the interface type on the left-hand side, declaring Key and Value as the generic types. Key and Value are placeholders for the Java class types your Map will use. We've named the map hashMap. On the right-hand side of the equals sign, we call the no-args HashMap constructor.</p>
+                <p>For our dictionary example, our HashMap declaration looks like the following:</p>
+                <pre><code class="language-java">Map&lt;String, String&gt; dictionaryMap = new HashMap&lt;&gt;();</code></pre>
+                <p>We are declaring our key (the dictionary term) and our value (the definition) to both be String types. Note: only Java objects can be used as keys and values. You must use the wrapper classes such as Integer and Double if you want to use primitives as the keys or values in your Map.</p>
+                <p>A Map cannot contain duplicate keys, but different keys can map to identical values. For example, let's say you want to add the terms 'TreeMap' and 'HashMap' to your dictionary. Since you haven't learned any specifics about the classes, you just want to give a general definition of their relation to the Map interface. You have the following definitions:</p>
+                <p>TreeMap: A class that implements the Map interface</p>
+                <p>HashMap: A class that implements the Map interface</p>
+                <p>These two entries have the same values but different keys. Later, you learn more about the TreeMap class and want to add a more detailed description. You add the following entry to your dictionary:</p>
+                <p>TreeMap: A class that implements the Map interface and sorts the map according to the natural ordering of its keys</p>
+                <p>This entry uses an existing key value. You cannot have multiple entries with the same key value. This will replace the value with your new definition.</p>
+                <p>How a HashMap works is very similar to the HashSet implementation we saw in a previous lesson. Remember that the data is stored in an array, and we use hashing to locate where to store it! To handle collisions, our storage array will contain a list at each index. This allows multiple entries to be stored at the same index. When we were using a HashSet we were only storing a value, with a HashMap we will instead store an entire entry (both key and value).</p>
+                <p>When using a HashMap, it's essential to understand that there is no guarantee of the order of the entries in the map. The order that you add entries to the map has no impact on how they are stored, unlike an ArrayList that always adds to the end of the list. Instead, entries are stored based on a key's hash code values. So, if you retrieve all entries from a Map, they are not returned in any specific order. Another call to retrieve all entries in the Map may return the entries in a different order.</p>
+                <p>Now that we know some basics about the HashMap class and how to create one, let's dive into some commonly used methods. For a complete list, you can check out the Map <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Map.html" target="_blank" rel="noopener" class="resource-link">javadoc</a> (Links to an external site.).</p>
+
+                <h3>The put() method</h3>
+                <p>The put() method allows you to either insert a new key:value pair or replace the existing one if the key exists. The method also returns whatever value previously existed for the given key. If the key is new to the map, the put() method will return null. The put() method accepts a key and a value. For our dictionary example, the key is a term, and the value is a definition. For instance, we want to add the following entry to our dictionaryMap:</p>
+                <p>map: An interface that stores key:value pairs</p>
+                <p>In this case, our key is 'map', and our value is 'An interface that stores key:value pairs'.</p>
+                <p>We add this entry to our dictionary with the following code:</p>
+                <pre><code class="language-java">dictionaryMap.put("map", "An interface that stores key:value pairs");</code></pre>
+                <p>The 'map' entry has now been added to dictionaryMap!</p>
+                <p>Let's discuss in more detail how the entry is being added and stored. Even though we just said that a map allows any object to be a key when storing the data, we still need an integer to determine its storage location. We've learned about a method that can generate an integer for any object, hashCode()!</p>
+                <p>Our entry will be stored at the array index, which corresponds to the hash code value of the key, as shown in Figure 1. In this case, the put() method calls the String hashcode() method to get the hash code for 'map'. Let's say it returns 1. As we stated above, the put() method also returns whatever value previously existed for the given key. Since the key, 'map', didn't previously exist, the method returns null. This whole process takes on average constant time, O(1)! Regardless of how big our map is, we still only need to execute the hashcode() method to determine the storage location of the entry.</p>
+                <p><strong>Figure 1</strong></p>
+                <p><em>Figure 1. A diagram that shows three cells of our storage array: 0, 1, and 2. The 'map' entry with value 'An interface that stores key:value pairs' is stored in cell 1. The put() method returns null.</em></p>
+                <p>Since the 'map' entry is the first entry added to dictionaryMap, we know that the cell it's added to is empty, but that's not always the case. The storage array has a limited number of cells, meaning that some entries are hashed to the same location. Let's add the following entry to dictionaryMap:</p>
+                <p>int: A primitive data type that represents whole numbers</p>
+                <p>The code to add the entry is:</p>
+                <pre><code class="language-java">dictionaryMap.put("int", "A primitive data type that represents whole numbers");</code></pre>
+                <p>The put() method calls the String hashcode() method to get the hash code for 'int'. Let's say the hashCode() method returns 1. We go to store our new entry in cell 1, but there is something already there! Since the put() method allows the caller to update a key's value, we first have to check if the existing entry has the same key value. The key type's equals() method is used to see if the two items have the same key. In this case, the String equals() method compares 'map' to 'int' and returns false. We have ruled out an update; instead, we have what we call a collision. Remember, we are storing a list in each cell of our storage array, so we can add our new entry to the list stored at cell 1. The 'map' and 'int' entries are stored in the same list at cell 1, as shown in Figure 2. Since the 'int' key didn't previously exist in the map, the put() method once again returns null.</p>
+                <p><strong>Figure 2</strong></p>
+                <p><em>Figure 2. A diagram that shows three cells of our storage array: 0, 1, and 2. The 'map' entry with value 'An interface that stores key: value pairs'. is stored in a list at cell 1. The 'int' entry with value 'A primitive data type that represents whole numbers' is also stored in the list at cell 1. The put() method returns null.</em></p>
+                <p>As we mentioned above, put() can be used to update values in the map. To update the definition of 'map' in our dictionaryMap we can use the following code:</p>
+                <pre><code class="language-java">dictionaryMap.put("map", "An interface that stores key:value pairs. Keys must be unique.");</code></pre>
+                <p>The put() method calls the String hashcode() method to get the hash code for 'map'. The hashCode() method returns 1. (Remember: the hashCode() method should always return the same value for the same object. hashCode() should always return 1 for 'map'; otherwise, we will have some trouble updating and getting the value!) Next, the put() method will check the list's contents in cell 1 for an entry with the key 'map'. The equals() method is used to make the key comparisons. The put() method finds that the first entry in the list has the same key. The put() method will then update the entry value and return the value that was previously in the entry. In this case, 'An interface that stores key:value pairs' will be returned. Our newly updated map is shown in Figure 3.</p>
+                <p><strong>Figure 3</strong></p>
+                <p><em>Figure 3. A diagram that shows three cells of our storage array: 0, 1, and 2. The 'map' entry with value 'An interface that stores key:value pairs. Keys must be unique' is stored in a list at cell 1. The 'int' entry with value 'A primitive data type that represents whole numbers' is also stored in the list at cell 1. The put() method returns 'An interface that stores key:value pairs'.</em></p>
+
+                <h3>The get() method</h3>
+                <p>To see the definition for the 'int' entry, we can use the map's get() method. You need to provide the get() method a key, and it will retrieve the corresponding value. We can use the following line of code to return the definition for 'int':</p>
+                <pre><code class="language-java">String intDefinition = dictionaryMap.get("int");</code></pre>
+                <p>The get() method also utilizes the hashCode() method of the key object. The key's hash code is used to determine which cell in the array storage to look for the entry. Each entry in the cell's list is inspected to see if it is the entry the caller is looking for. The equals() method is used to compare the given key and the key of the entry in the list. If they match, the value of the matching entry is returned. If none of the keys match, the get() method knows the given key doesn't exist in the map and returns null.</p>
+                <p>For example, let's say our dictionaryMap currently looks like Figure 4.</p>
+                <p><strong>Figure 4</strong></p>
+                <p><em>Figure 4. A diagram that shows three cells of our storage array: 0, 1, and 2. The 'map' entry with value 'An interface that stores key:value pairs. Keys must be unique' is stored in a list at cell 1. The 'int' entry with value 'A primitive data type that represents whole numbers' is also stored in the list at cell 1.</em></p>
+                <p>Let's walk through what happens when we execute the following line of code:</p>
+                <pre><code class="language-java">dictionaryMap.get("int");</code></pre>
+                <p>The get() method calls the String hashcode() method for int. It returns 1. The String equals() method is used to compare the given key, 'int', with the key of the first entry in cell 1. The key is 'map'. 'int' ≠ 'map', so that's not the value we want to return. The second key is evaluated. 'int' = 'int', so the corresponding value is returned: 'A primitive data type that represents whole numbers'.</p>
+                <p>We say that HashMap's get() method is also, on average, a constant time, O(1), operation. We need to call the hashCode() method to find the storage location of an entry directly. The hashCode() operation will consistently take the same amount of time, regardless of the size of our map. However, we just saw that once we get to the storage cell, we may need to inspect a few entries to determine which value to return. Collisions can be minimized when we have a large enough storage array, and the key's hashCode() method does an excellent job of providing unique hash codes for unique objects. As an engineer, you are typically responsible for writing the hashCode() method. At ATA, we recommend using the Objects.hash() method to implement your hashCode() method effectively. The Java implementation of HashMap is smart and will resize the map to ensure there are enough storage cells to minimize collisions. This will result in an average constant runtime, O(1).</p>
+                <p>At times, you may only need to know if a map contains a given key and don't necessarily need to get the value. While you could use the get() method and check that its return value is not null, the containsKey() method provided by the Map interface will make your code more readable.</p>
+
+                <h3>The remove() method</h3>
+                <p>You're using the dictionary application to help you study and want to delete all the terms you feel very comfortable with. We can delete a key:value pair from a map using the remove() method. The remove() method accepts a key and then deletes both the key and value. The method also returns the deleted value or null if there was no mapping for the key (i.e., you passed in a key to delete that didn't exist in the map). We would use the following line of code to delete the 'map' entry:</p>
+                <pre><code class="language-java">dictionaryMap.remove("map");</code></pre>
+                <p>The above code functions very similarly to the get() method, but in addition to returning the value for the given key, the key:value pair is deleted from the map. Let's say our dictionaryMap looks as it does above in Figure 4. The entry is located in the same manner as above, but now the entry is removed from the cell. The updated dictionaryMap is shown in Figure 5.</p>
+                <p><strong>Figure 5</strong></p>
+                <p><em>Figure 5. A diagram that shows three cells of our storage array: 0, 1, and 2. After a call to remove the 'map' entry, the entry is removed from cell 1, and the method returns 'An interface that stores key:value pairs. Keys must be unique'.</em></p>
+
+                <h3>Iterating over the entries</h3>
+                <p>You've decided that you want to print the contents of your dictionary, adding "Term: " in front of each key and "Definition: " in front of each value to make the display easier to understand. We can use the entrySet() method to iterate through all the entries in our map and perform the same operation on each key:value pair!</p>
+                <p>The entrySet() method returns a Set of Map.Entry&lt;Key, Value&gt; objects, where Key and Value are the same types that are defined by the Map this method was called on. The notation here is a little different from what we've seen before. This is because the Entry&lt;Key, Value&gt; class is a nested interface, an interface defined inside of the Map interface. We won't say too much about these, but they are typically used when the two classes/interfaces have an extremely tight relationship. The nested class/interface typically is only useful to the enclosing class. The Entry&lt;Key, Value&gt; class defines two accessor methods, getKey() and getValue() that allow us to access the entry's key and value. To iterate through our entry set, printing our formatted key:value pairs, we can use a for-each loop. The code to print each entry is defined here:</p>
+                <pre><code class="language-java">for(Map.Entry&lt;String, String&gt; entry : dictionaryMap.entrySet()) {
+    System.out.println(String.format("Term: %s Definition: %s",
+    entry.getKey(), entry.getValue()));
+}</code></pre>
+                <p>The Map interface also exposes methods to access all of its keys (keySet()), and all of its values (values()) if the entire entry isn't needed.</p>
+
+                <h3>Lists for values</h3>
+                <p>So far, we have a pretty well functioning dictionary application set-up, but sometimes dictionaries have more than one definition for a single term. We haven't accounted for that scenario because the keys in a map must be unique, only mapping to one value. However, that one value could be capable of holding many things! We can use a list as a value! Our HashMap declaration would look the following:</p>
+                <pre><code class="language-java">Map&lt;String, List&lt;String&gt;&gt; dictionaryMap = new HashMap&lt;&gt;();</code></pre>
+                <p>Now you can create a list of definitions for each term in your dictionary! Let's say you're adding the term 'loop' to your dictionary, and you have two different definitions. You can create a list of Strings called loopDefinitions and, add each definition to the list, and then use the put() method to add the list to the dictionary!</p>
+                <pre><code class="language-java">List&lt;String&gt; loopDefinitions = new ArrayList&lt;&gt;();
+
+loopDefinitions.add("Repeats execution of code for a defined number of times (for).");
+loopDefinitions.add("Repeats execution of code for an undefined number of times (while).");
+dictionaryMap.put("loop", loopDefinitions);</code></pre>
+                <p>The list loopDefinitions is now added to our dictionaryMap, which is shown in Figure 6.</p>
+                <p><strong>Figure 6</strong></p>
+                <p><em>Figure 6. A diagram that shows three cells of our storage array: 0, 1, and 2. The 'loop' entry with list value ["Repeats execution of code for a defined number of times (for).", "Repeats execution of code for an undefined number of times (while)."] is stored in cell 0. The put() method returns ["Repeats execution of code for a defined number of times (for).", "Repeats execution of code for an undefined number of times (while)."]</em></p>
+                <p>Great! Now we're able to store multiple definitions for each term, but what if we want to change the list of definitions. We can get the list from the map using the get() method.</p>
+                <pre><code class="language-java">List&lt;String&gt; loopDefinitions = dictionaryMap.get("loop");</code></pre>
+                <p>Now we can add a new definition:</p>
+                <pre><code class="language-java">loopDefinitions.add("Repeats execution of code for each item in a collection (for-each).");</code></pre>
+                <p>This is the cool part---because loopDefinitions list is just a reference to the list stored in our dictionaryMap, any changes we make to it will be reflected in the map! We can add or delete any values in loopDefinitions and those changes will be reflected in dictionaryMap (without us having to call put() to update the value in the map)! The updated dictionaryMap is shown in Figure 7.</p>
+                <p><strong>Figure 7</strong></p>
+                <p><em>Figure 7. A diagram that shows the contents of the map after updating the value for 'loop'.</em></p>
+
+                <h2>How and why do we use maps?</h2>
+                <p>Now that we understand what maps are and how to manipulate them let's briefly discuss the situations where we might use them. Maps are advantageous data structures for when your data has a strong key:value association, as shown in our dictionary example.</p>
+                <p>The following are some common uses for maps:</p>
+                <ul>
+                    <li>Lookup - maps are great data structures for when you need to lookup data using a key value. Our dictionary scenario was an example of a lookup. Another commonly used lookup is when you use an attribute of an object as the key and the object itself as the value. For example, mapping a customerId to a Customer object.</li>
+                    <li>Aggregation - maps are also helpful for keeping track of averages and sums. If you were trying to calculate the word counts for a document, you could create a map that stores words as keys and counts as values. As you parse the document, you would update the count as you see each word.</li>
+                    <li>Building per-key lists - as we mentioned above, maps can store lists as their values. This is useful for collecting multiple values that relate to a key. For example, you could track all the commits for an engineer's alias or all the commands given to a specific Echo device.</li>
+                </ul>
+                <p>There are lots of great uses for a map, but not every application requires a map! Don't force your data to have a key:value association if it doesn't need one. Make sure that your data structure fits your data instead of trying to make your data fit your structure.</p>
+
+                <h2>Conclusion</h2>
+                <p>In this lesson, we introduced the Map interface and learned how to use the HashMap class. Maps are great interfaces for storing and organizing data that have a strong key:value association. The HashMap class implements the Map interface and uses an internal hashing function to store items. We discussed ways to add, retrieve, and remove items from a HashMap. To further manipulate our structure, we learned how to use a for-each loop to iterate through the map. When you need to store multiple values for one key, you can use a List.</p>
             </div>
 
             <div class="content-box">
@@ -197,12 +326,62 @@ public class CustomObjectMapExample {
 }</pre>
             </div>
 
+            <div class="content-box">
+                <h2>Maps Practice</h2>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-maps-imdb" target="_blank" rel="noopener" class="resource-link">
+                        IMDB Cast Credits
+                    </a>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Guided Projects</h2>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/da8maj17cw" title="Module 2 Guided Projects Video Content" allowfullscreen></iframe>
+                </div>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-maps-parts-discovery" target="_blank" rel="noopener" class="resource-link">
+                        Parts Discovery
+                    </a>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Mastery Task 4: Time is Still Marching On</h2>
+
+                <h3>Mastery Task Guidelines</h3>
+                <p>Mastery Tasks are opportunities to test your knowledge and understanding through code. When a mastery task is shown in a module, it means that we've covered all the concepts that you need to complete that task. You will want to make sure you finish them by the end of the week to stay on track and complete the unit.</p>
+                <p>Each mastery task must pass 100% of the automated tests and code styling checks to pass each unit. Your code must be your own. If you have any questions, feel free to reach out for support.</p>
+
+                <h3>Milestone 1: Clean Up on Aisle 82</h3>
+                <p>IAD2 is the first FC to make arrangements to onboard with new polybag options, and they’ll be ready in two weeks. You decided to have a look at the PackagingDatastore and noticed that IAD2 has A4 boxes (CORRUGATE boxes that are 20cm x 20cm x 20cm) added twice!</p>
+                <p>You could just remove the extra line from the initialization code in PackagingDatastore, but that information comes from somewhere; the next time the list is changed (two weeks from now!) whoever updates the code might just re-insert the duplicate. This is a perfect time to exercise Postel's Law (aka the Principle of Robustness): "Be conservative in what you do, be liberal in what you accept from others".</p>
+                <p>Update the PackagingDAO (and any other necessary classes) to detect and ignore duplicate FcPackagingOptions. "Duplicate" in this case means that the FC code is identical, and the Packaging has the same size and the same material. We can achieve this by instead of using an ArrayList to hold our fcPackagingOptions we can use a HashMap whose keys are the FulfillmentCenters and whose values are a HashSet of FcPackagingOptions. This will complicate the constructor as you will need to iterate through each of the FcPackagingOptions and add them to the HashMap, and you will need to check for and handle whether the entry already exists or not.</p>
+
+                <h3>Milestone 2: Lookup on Aisle 82</h3>
+                <p>To find the packaging options at an FC that can fit an item, our code must check every FcPackagingOption object, which takes O(n) time. That sounds okay until you realize that n is the number of FCs multiplied by the number of packaging options at each FC, so it’s really O(nm) in disguise (where n is the number of FCs, and m is the number of packaging options at each FC). Then you consider the numbers: Amazon currently has 75 FCs in North America alone, each of which may have up to 100 different package types. That’s something like 7500 checks to find the PackagingOptions that fit a shipment, and we make nearly 2 million shipments a day. That’s... well, that’s a lot of checks.</p>
+                <p>Update the PackagingDAO so the findShipmentOptions() method only has to check the unique Packagings for the one provided FulfillmentCenter, instead of searching through all combinations. (Don’t look it up by its code; use the FulfillmentCenter object.) Reduce the number of checks from from O(n*m) to O(m).</p>
+                <p>Write a unit test inside of PackagingDAOTest and test that finding shipment options for IAD2 will in fact return a single option rather than 2 identical options (as would have occurred prior to us updating the PackagingDAO).</p>
+
+                <h3>Milestone 3: Setup on IAD2</h3>
+                <p>The system is ready, and you’ve improved its correctness and efficiency. Add the new polybag options for IAD2. In PackagingDatastore, you’ll see a collection of FcPackagingOptions named fcPackagingOptions. In task 3, you had to update the createFcPackagingOption to create a Box instead of a Packaging. Now you’ll need to provide a way to create a PolyBag, too. It’s up to you how you’d like to do this. When you're ready, add two PolyBag options to IAD2: one with 2,000cc volume, and one with 10,000cc volume. You'll then need to update the unit test you wrote since there should now be three unique packing options.</p>
+
+                <h3>Exit Checklist</h3>
+                <ul>
+                    <li><code>./gradlew -q clean :test --tests 'tct.MT4*'</code> passes</li>
+                    <li><code>./gradlew -q clean :test --tests 'com.amazon.ata.*'</code> passes</li>
+                    <li>Your change to remove the duplicate box has been pushed</li>
+                    <li>You've improved the runtime of finding a package to O(m), where m is the number of packages at a single FC</li>
+                    <li>You've added the new PolyBag options to IAD2</li>
+                </ul>
+            </div>
+
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
-                    <a href="https://github.com/BloomTechBackend/bd-maps-store-locator-complete" target="_blank" rel="noopener" class="resource-link">
-                        Maps Store Locator Repository
-                    </a>
                     <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Map.html" target="_blank" rel="noopener" class="resource-link">
                         Java Map Interface Documentation
                     </a>
