@@ -37,7 +37,11 @@
             </div>
             
             <div class="video-container">
-                <iframe class="wistia_embed" title="Sprint 6 Encapsulation Video" src="https://fast.wistia.net/embed/iframe/8la0uhwu7c" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                <iframe class="wistia_embed" title="Sprint 6 Encapsulation Video 1" src="https://fast.wistia.net/embed/iframe/vdbiifxqj5" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+            
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Sprint 6 Encapsulation Video 2" src="https://fast.wistia.net/embed/iframe/8la0uhwu7c" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
 
             <div class="content-box">
@@ -103,6 +107,463 @@ public class Species {
     }
 }
                 </code></pre>
+            </div>
+
+            <div class="content-box">
+                <h2>Encapsulation</h2>
+                <div class="content-section">
+                    <p>Encapsulation is the process of hiding all the details of how a piece of software works and describing only enough about the software to enable someone to use it. Data and actions are combined into a single unit (a class in Java) that hides the implementation details. Since the internal state is hidden, and users of the class are provided with all methods necessary to perform actions on the data, how the internal state is represented or modified can be changed by the designers of the class without any of its callers being affected.</p>
+
+                    <p>To make a class's internal data secure, we need to use private access modifiers, restricting access to the data from outside the class. This provides security to the data of your class by keeping it safe from external interference. Once we have secured the class's data, we can decide what data to expose and how we want to allow callers to change the class data. You can expose data from the class by providing public getter methods (sometimes called accessor methods) and public setter methods (sometimes called mutator methods) to change data. When writing a setter method, we should consider what rules must be followed for the piece of data we are changing. When we have private instance variables and setter methods, the class will always know when its internal state has changed.</p>
+
+                    <h3>Species Example</h3>
+                    <p>Let's consider an example. The Species class below is not well encapsulated.</p>
+
+                    <pre><code>public class Species {
+
+    public String name;
+    public int population;
+    public double yearlyGrowthRatePercentage;
+
+    public Species(String name, int population, double yearlyGrowthRatePercentage){
+        this.name = name;
+        if(population < 0) {
+            throw new IllegalArgumentException("Population must be positive.");
+        }
+        this.population = population;
+        this.yearlyGrowthRatePercentage = yearlyGrowthRatePercentage;
+    }
+    
+    public int predictPopulation(int years) {
+        int result = 0;
+        double predictedPopulation = population;
+        while(years > 0 && predictedPopulation > 0) {
+            predictedPopulation += (yearlyGrowthRatePercentage / 100)
+                    * predictedPopulation; 
+            years--;
+        }
+        if(predictedPopulation > 0) {
+            return (int)predictedPopulation;
+        }
+        return 0;
+    }
+}</code></pre>
+
+                    <p>A user of this class might write code like this to predict the population of a species.</p>
+
+                    <pre><code>public class SpeciesTester {
+
+    public static void main(String[] args) {
+        Species cat = new Species("Asiatic Lion", 20000, 2.0);
+        System.out.println(cat.name + " population in 100 years: " + 
+                cat.predictPopulation(100));
+
+        //prints 144892
+    }
+}</code></pre>
+
+                    <p>However, with public fields, a user of this class might also write code that changes the population to an invalid value, yielding an unexpected population prediction. The constructor of the class prohibits this type of population value when creating a new object of type Species, but the public population field can be changed without the class knowing!</p>
+
+                    <pre><code>public class SpeciesTester {
+
+    public static void main(String[] args) {
+        Species cat = new Species("Asiatic Lion", 20000, 2.0);
+        cat.population = -2; // Directly changes population!
+        System.out.println(cat.name + " population in 100 years: " + 
+                cat.predictPopulation(100));
+
+        //prints 0
+    }
+}</code></pre>
+
+                    <p>Our first step to prevent our data fields from being changed to this illegal value is to use the private access modifier. Let's apply it to all of our instance variables.</p>
+
+                    <pre><code>public class Species {
+
+    // Make instance variables private
+    private String name;
+    private int population;
+    private double yearlyGrowthRatePercentage;
+
+    public Species(String name, int population, double yearlyGrowthRatePercentage){
+        this.name = name;
+        if(population < 0) {
+            throw new IllegalArgumentException("Population must be positive.");
+        }
+        this.population = population;
+        this.yearlyGrowthRatePercentage = yearlyGrowthRatePercentage;
+    }
+    
+    public int predictPopulation(int years) {
+        int result = 0;
+        double predictedPopulation = population;
+        while(years > 0 && predictedPopulation > 0) {
+            predictedPopulation += (yearlyGrowthRatePercentage / 100)
+                    * predictedPopulation; 
+            years--;
+        }
+        if(predictedPopulation > 0) {
+            return (int)predictedPopulation;
+        }
+        return 0;
+    }
+}</code></pre>
+
+                    <p>Now, the second line of code below will not compile, as population is private. However, we also cannot use cat.name in the third line of code for the same reason. We can allow access to our name field by writing an accessor method/getter.</p>
+
+                    <pre><code>Species cat = new Species("Asiatic Lion", 20000, 2.0);
+cat.population = -2; // Won't compile! :)
+System.out.println(cat.name + " population in 100 years: "
+        + cat.predictPopulation(100)); // Also won't compile! :(</code></pre>
+
+                    <p>In fact, we may want to provide access to all of our instance variables. Below is the Species class with the getter methods.</p>
+
+                    <pre><code>public class Species {
+
+    private String name;
+    private int population;
+    private double yearlyGrowthRatePercentage;
+
+    public Species(String name, int population, double yearlyGrowthRatePercentage){
+        this.name = name;
+        if(population < 0) {
+            throw new IllegalArgumentException("Population must be positive.");
+        }
+        this.population = population;
+        this.yearlyGrowthRatePercentage = yearlyGrowthRatePercentage;
+    }
+    
+    public int predictPopulation(int years) {
+        int result = 0;
+        double predictedPopulation = population;
+        while(years > 0 && predictedPopulation > 0) {
+            predictedPopulation += (yearlyGrowthRatePercentage / 100)
+                    * predictedPopulation; 
+            years--;
+        }
+        if(predictedPopulation > 0) {
+            return (int)predictedPopulation;
+        }
+        return 0;
+    }
+
+    // New getter methods for all member variables
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPopulation() {
+        return population;
+    }
+
+    public double getYearlyGrowthRatePercentage() {
+        return yearlyGrowthRatePercentage;
+    }
+}</code></pre>
+
+                    <p>Now we can correct our code from above to use the new getName method we wrote.</p>
+
+                    <pre><code>public class SpeciesTester {
+
+    public static void main(String[] args) {
+        Species cat = new Species("Asiatic Lion", 20000, 2.0);
+        System.out.println(cat.getName() + " population in 100 years: " + 
+                cat.predictPopulation(100));
+
+        //prints 144892
+    }
+}</code></pre>
+
+                    <p>We will not allow Species's name field to be changed, but we do want to provide users of the class the ability to change the population and yearlyGrowthRatePercentage values. As we saw above, we know that population cannot be a negative number, so we will need to ensure this when allowing a user to update the value.</p>
+
+                    <pre><code>public class Species {
+
+    private String name;
+    private int population;
+    private double yearlyGrowthRatePercentage;
+
+    public Species(String name, int population, double yearlyGrowthRatePercentage){
+        this.name = name;
+        if(population < 0) {
+            throw new IllegalArgumentException("Population must be positive.");
+        }
+        this.population = population;
+        this.yearlyGrowthRatePercentage = yearlyGrowthRatePercentage;
+    }
+    
+    public int predictPopulation(int years) {
+        int result = 0;
+        double predictedPopulation = population;
+        while(years > 0 && predictedPopulation > 0) {
+            predictedPopulation += (yearlyGrowthRatePercentage / 100)
+                    * predictedPopulation; 
+            years--;
+        }
+        if(predictedPopulation > 0) {
+            return (int)predictedPopulation;
+        }
+        return 0;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPopulation() {
+        return population;
+    }
+
+    public double getYearlyGrowthRatePercentage() {
+        return yearlyGrowthRatePercentage;
+    }
+
+    // Setters that check for invalid state
+
+    public void setPopulation(int population) {
+        if(population < 0) {
+            throw new IllegalArgumentException("Population must be positive.");
+        }
+        this.population = population;
+    }
+
+    public void setYearlyGrowthRatePercentage(double yearlyGrowthRatePercentage) {
+        this.yearlyGrowthRatePercentage = yearlyGrowthRatePercentage;
+    }
+}</code></pre>
+
+                    <p>Hmmm. It seems like we've duplicated the code to validate the population field. Any time we copy code, we should consider if there is something we can do to refactor (change our code) to eliminate this duplication. Instead of having the constructor also have the code to do the validation, we can call our population setter method. This will do the validation and assign the population value. You can see the change below.</p>
+
+                    <pre><code>public class Species {
+
+    private String name;
+    private int population;
+    private double yearlyGrowthRatePercentage;
+
+    public Species(String name, int population, double yearlyGrowthRatePercentage){
+        this.name = name;
+        // Use setter so we get validation
+        setPopulation(population);
+        this.yearlyGrowthRatePercentage = yearlyGrowthRatePercentage;
+    }
+    
+    public int predictPopulation(int years) {
+        int result = 0;
+        double predictedPopulation = population;
+        while(years > 0 && predictedPopulation > 0) {
+            predictedPopulation += (yearlyGrowthRatePercentage / 100)
+                    * predictedPopulation; 
+            years--;
+        }
+        if(predictedPopulation > 0) {
+            return (int)predictedPopulation;
+        }
+        return 0;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPopulation() {
+        return population;
+    }
+
+    public double getYearlyGrowthRatePercentage() {
+        return yearlyGrowthRatePercentage;
+    }
+
+    public void setPopulation(int population) {
+        if(population < 0) {
+            throw new IllegalArgumentException("Population must be positive.");
+        }
+        this.population = population;
+    }
+
+    public void setYearlyGrowthRatePercentage(double yearlyGrowthRatePercentage) {
+        this.yearlyGrowthRatePercentage = yearlyGrowthRatePercentage;
+    }
+}</code></pre>
+
+                    <p>Now our Species class is well encapsulated 😃</p>
+
+                    <h3>AmazonLockerCell Example</h3>
+                    <p>When designing an encapsulated class, you should not expose setter and getter methods to all of your class's fields by default. Consider the unfinished AmazonLockerCell class below.</p>
+
+                    <pre><code>/**
+* A class representing an individual cell in an amazon locker. When a locker is not
+* empty it will have an unlock code, meaning it is locked until the emptyLockerCell
+* method is called. 
+*/
+public class AmazonLockerCell {
+
+    private String unlockCode = "";
+    private boolean isEmpty = true;
+
+    public String fill() {
+        if(isEmpty) {
+            isEmpty = false;
+            unlockCode = generateLockerCellCode();
+            return unlockCode;
+        } else {
+            throw new InvalidStateException("Locker Cell is already occupied.");
+        }
+    }
+
+    public boolean emptyLockerCell(String code) {
+        if(code.isEmpty()) {
+            throw new IllegalArgumentException("An unlock code must be provided.");
+        }
+        if(code.equals(unlockCode)) {
+            unlockCode = "";
+            isEmpty = true;
+            return true;
+        }
+        return false;
+    }
+
+    private String generateLockerCellCode() {
+        // code to generate a unique locker code
+    }
+}</code></pre>
+
+                    <p>Currently, the internal state of the AmazonLockerCell can only be changed by calling the public methods fill and emptyLockerCell. Allowing setter methods that update the unlockCode or isEmpty values outside of the fill and emptyLockerCell methods would result in an invalid state. For example, you could end up filling a locker cell that is not actually empty by editing the isEmpty field to be incorrectly true. In this case, it is the right choice not to provide setter methods. How about getter methods? Should we allow the users of our class to get the values of the locker cell's unlock code or whether it is empty? It certainly seems reasonable to allow a caller to check if a locker cell is empty before trying to fill it. Who should be able to see the locker cell's unlock code, and when? The person who fills it should be able to, so it makes sense that the fill method returns it, but it seems unsafe to reveal the unlock code to any arbitrary weirdo! Based on this reasoning, we will finish the AmazonLockerCell class by adding no setter methods and only a getter for the isEmpty field.</p>
+
+                    <pre><code>/**
+* A class representing an individual cell in an amazon locker. When a locker is not
+* empty it will have an unlock code, meaning it is locked until the emptyLockerCell
+* method is called. 
+*/
+public class AmazonLockerCell {
+
+    private String unlockCode = "";
+    private boolean isEmpty = true;
+
+    public String fill() {
+        if(isEmpty) {
+            isEmpty = false;
+            unlockCode = generateLockerCellCode();
+            return unlockCode;
+        } else {
+            throw new InvalidStateException("Locker Cell is already occupied.");
+        }
+    }
+
+    public boolean emptyLockerCell(String code) {
+        if(code.isEmpty()) {
+            throw new IllegalArgumentException("An unlock code must be provided.");
+        }
+        if(code.equals(unlockCode)) {
+            unlockCode = "";
+            isEmpty = true;
+            return true;
+        }
+        return false;
+    }
+
+    private String generateLockerCellCode() {
+        // code to generate a unique locker code
+    }
+
+    public boolean isEmpty() {
+        return isEmpty;
+    }
+}</code></pre>
+
+                    <h3>TimeSpan Example</h3>
+                    <p>One of the benefits of encapsulation is that we can change the internal representation of a class without changing any of its callers. Consider the TimeSpan class below.</p>
+
+                    <pre><code>public class TimeSpan {
+    private int minutes;
+
+    // Contructs an empty time span 
+    public TimeSpan() {
+        this.minutes = 0;
+    }
+
+    public void add(int minutes) {
+        if (minutes < 0) {
+            throw new IllegalArgumentException("A positive number of "
+                + "minutes must be added.");
+        }
+
+        this.minutes += minutes;
+    }
+
+    public double getTotalTimeInHours() {
+        return minutes / (1.0 * 60);
+    }
+
+    public int getHours() {
+        return minutes / 60;
+    }
+
+    public int getMinutes() {
+        return minutes % 60;
+    }
+
+    public String toString() {
+        return String.format("Timespan - [H: %d, M: %d]", getHours(), getMinutes());
+    }
+}</code></pre>
+
+                    <p>Since int primitive values have a maximum value, the TimeSpan class above can accommodate time spans of about 4000 years. What if Blue Origin wanted to use this class to calculate the time to reach the nearest star? Instead of keeping track of just minutes, we could store hours and minutes separately! This would allow us to keep track of time spans of around 249,000 years. Let's take a look at the new implementation below.</p>
+
+                    <pre><code>public class TimeSpan {
+    private final BigInteger sixty = new BigInteger("60");
+    private int minutes;
+    private int hours;
+
+    // Contructs an empty time span
+    public TimeSpan() {
+        this.minutes = 0;
+        this.hours = 0;
+    }
+
+    public void add(int minutes) {
+        if (minutes < 0) {
+            throw new IllegalArgumentException("Minutes cannot be negative.");
+        }
+
+        BigInteger timeSpanInMinutes = getTimeSpanInMinutes();
+        BigInteger minutesToAdd = new BigInteger(Integer.toString(minutes));
+
+        BigInteger totalMinutes =  timeSpanInMinutes.add(minutesToAdd);
+
+        this.hours = totalMinutes.divide(sixty).intValue();
+        this.minutes = totalMinutes.mod(sixty).intValue();
+    }
+
+    private BigInteger getTimeSpanInMinutes() {
+        BigInteger hoursBI = new BigInteger(Integer.toString(this.hours));
+        BigInteger minutesBI = new BigInteger(Integer.toString(this.minutes));
+
+        BigInteger hoursInMinutes = hoursBI.multiply(sixty);
+
+        return hoursInMinutes.add(minutesBI);
+    }
+
+    public double getTotalTimeInHours() {
+        return getTimeSpanInMinutes().divide(sixty).doubleValue();
+    }
+
+    public int getHours() {
+        return hours;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public String toString() {
+        return String.format("Timespan - [H: %d, M: %d]", getHours(), getMinutes());
+    }
+}</code></pre>
+
+                    <p>We just saw a major benefit of encapsulation in action! The designer of the class was able to update the code of TimeSpan and no caller was affected. The public methods all remained the same; just how the time span is kept track of was changed. Since no user of the class could directly access any internal state, these changes were made easily!</p>
+
+                    <p>Go forth and encapsulate your classes! Good luck!</p>
+                </div>
             </div>
 
             <div class="content-box">
@@ -196,10 +657,21 @@ originalList.add("Black Rhino"); // This would affect the internal list!
 
 // With proper defensive copying, the original list changes won't affect the internal list
                 </code></pre>
+
+                <div class="resource-links">
+                    <a href="https://github.com/albertattard/what-is-defensive-copying" target="_blank" rel="noopener" class="resource-link">
+                        What is Defensive Copying?
+                    </a>
+                </div>
             </div>
 
             <div class="content-box">
                 <h3>The Final Keyword</h3>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Sprint 6 Final Keyword Video" src="https://fast.wistia.net/embed/iframe/2z92r3lw9a" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
                 <p>The <code>final</code> keyword can be applied to variables, methods, and classes to restrict their modification.</p>
                 
                 <h4>Final Variables:</h4>
@@ -259,7 +731,17 @@ final class ImmutablePoint {
 }
                 </code></pre>
             </div>
-            
+
+            <div class="content-box">
+                <h2>Practice</h2>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-encapsulation-rational-number" target="_blank" rel="noopener" class="resource-link">
+                        RationalNumber
+                    </a>
+                </div>
+            </div>
+
             <div class="content-box">
                 <h2>Guided Projects</h2>
 
