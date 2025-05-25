@@ -35,13 +35,176 @@
                 <h2>Module Overview</h2>
                 <p>Master working with AWS Lambda functions, cloud logging, and how to effectively test serverless applications.</p>
             </div>
-            
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Sprint 11 AWS Lambda Video" src="https://fast.wistia.net/embed/iframe/r36pxs0hfx" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+
+            <div class="content-box">
+                <h2>What is Logging?</h2>
+                <p>If we think about computer applications, we typically picture the way we, as users, interact with those applications - the user interface. For a desktop application, like Outlook, we imagine the application we open on our operating system. For web applications, like Code Browser, the user interface is presented via the browser. Let's imagine we own Code Browser. There may be a lot of information we want to keep track of that we don't want to expose to users. For example, if someone types in the name of a Gradle package that doesn't exist, we may show them a friendly error message just saying this package doesn't exist. But we may want to track who made the request and what they attempted to search for. Or if we aren't able to connect to another service that we need to get information about Gradle packages, we may show a user an error message just letting them know to try again later. But we probably want to keep track of what failed and why. We will use this information to help us answer customer questions about what they experienced or identify and fix issues our customers are experiencing.</p>
+
+                <p>The application requires a secondary interface for communication. Logging is the process of recording application actions and state to a secondary interface. Note: We do not mean a Java interface when we use the term "interface" here. We mean a shared boundary that is used for communication. This can be a user interface - a point and click visual. Or, as we are about to discuss, we can use something as simple as a file to share communication between an application and a developer.</p>
+
+                <p>We are recording application actions and state. Which actions and what state should we record? We are recording these to a secondary interface, which could be a file, another service, or a web application like CloudWatch in AWS. The nature of the interface is not important; what is important is that this is a secondary interface. The user who sees this interface is the developer supporting the application. They will be looking at this interface when they are trying to diagnose an issue with the application. This means that what is detailed in this log is very important; it is often the main source of information when diagnosing a problem.</p>
+
+                <p>As a developer, you will choose to record certain actions and values in your logs. We will show you how to do that below. In addition to the log statements you create, the code you depend on will also write information to the logs. So you'll find lots of additional information there. One thing you'll likely find most helpful as you develop and debug code is the exceptions that will be written there when your code breaks!</p>
+
+                <h3>Log Levels</h3>
+                <p>Some state changes or actions performed by an application are more important than others. To differentiate between importance, logging frameworks provide different classifications or levels associated with the information being sent to the log. These log levels gradually increase in severity, DEBUG, INFO, WARN, ERROR, and FATAL. WARN, ERROR, and FATAL communicate errors, while INFO is used for general information purposes, and DEBUG is used for debugging.</p>
+
+                <p>Logging frameworks write to the log in a structured manner, making it easier to search for entries relating to a certain level. Sometimes, certain log information is only useful in a beta (team testing) environment, though. DEBUG and INFO logs can help a lot when new code is being developed. We can log lots of information to help diagnose issues or see the flow of information through different code paths. However, our production systems receive a lot more traffic, so including this can cause a lot of noise in our logs when trying to solve actual customers' issues. To allow for this, logging frameworks allow you to configure the lowest level to log at, depending on your stage. You will configure your projects to log at the DEBUG level.</p>
+
+                <h4>INFO</h4>
+                <p>As the name suggests, these are purely informational messages; you should not use them to indicate an issue or error state in the application. To use this log level effectively, try to think about what general information would be useful for diagnosing an application error. This level is often used for usage information. Some examples are who is using the application, what API was requested, the inputs to an API or method, or when an external service is called.</p>
+
+                <h4>DEBUG</h4>
+                <p>This log level is used to indicate that the logged message is to be used for debugging purposes - in other words, these messages are aimed squarely at the developer. What you use this for really depends on the application you are developing. Many problems can be resolved via the debugger, making the use of DEBUG messages redundant; however, there are situations where you will not be able to attach a debugger.</p>
+
+                <p>In this situation, it can be useful to print out the value of variables or indications of which code path a request follows through branching logic or various methods.</p>
+
+                <h4>WARN</h4>
+                <p>This is the first level that indicates some form of application failure. WARN level messages should indicate that the application faced a potential problem; however, the user experience has not been affected in any way, and the user can continue. The user may not have even realized anything went wrong in this case. For example, a WARN message might be appropriate if we could not use an external service; however, a secondary service that performs the same functions was available. Also, a WARN message is appropriate if repeated attempts were required to access an external service, but the external service was eventually accessed successfully.</p>
+
+                <h4>ERROR</h4>
+                <p>This is the second level of failure, and by its very name, it should indicate that something more critical has occurred. ERROR messages should indicate that the application faced a significant problem and that, as a result, the user experience was somehow affected. The user will be affected by this error. For example, a database connection could have failed, resulting in parts of the application being rendered unusable.</p>
+
+                <h4>FATAL</h4>
+                <p>This third level of failure should be used to indicate a fatal error. The user experience was not just affected; it has entirely ceased! For example, a component that is central to the operation of the application has failed in a way that leaves it in an unstable state, with the only possible course of action being to terminate the application altogether.</p>
+
+                <h3>What Should Be Logged?</h3>
+                <p>We now have a definition of logging and some guidelines for how to use each log level. Now, it is time for the big question: "What should I be logging?" This is not an easy question to answer, and it depends very much on the nature of the application being developed.</p>
+
+                <p>Is logging important? Anyone who has been in the position of debugging a live application armed with just a log file will tell you, "yes!" There is nothing more frustrating than finding a log file swamped with noisy, extra detail, or worse still, lacking that vital piece of information you require to diagnose the fault.</p>
+
+                <p>If the application log is the only detailed source of information available when diagnosing a failure, it probably needs to be quite detailed. However, if other tools are available for monitoring user activities like metrics, the logged information could be more sparse. Either way, regardless of the required level of detail, each individual logged message's quality is important, which is what this section will primarily focus on.</p>
+
+                <h3>The Importance of Context</h3>
+                <p>Whether an application executes a task successfully or not is often highly dependent on the input from the user. As a result, this contextual information may be vital when trying to diagnose a problem. Unfortunately, these vital last bits of information are often missing. Take the example of an Automated Teller Machine (ATM - or cashpoint). An application log might look like this:</p>
+
+                <pre><code>2009-06-05 08:15:23 [INFO] User credentials entered
+2009-06-05 08:15:23 [WARN] Incorrect PIN
+2009-06-05 08:15:57 [INFO] User credentials entered
+2009-06-05 08:15:57 [INFO] User credentials validated
+2009-06-05 08:16:33 [INFO] Cash withdrawal requested
+2009-06-05 08:16:34 [ERROR] Communication failure
+Acme.ATM.Integration.ServerException: Unable to connect to bank server at Acme.ATM.Integration.WithdrawalService.Connect(): line 23 ...</code></pre>
+
+                <p>If we were performing a daily audit of the ATM logs in identifying issues, what does the above log file excerpt tell us? It could be that some user logged on successfully after two attempts and requested a cash withdrawal. However, this request could not be serviced due to a communication error. Or did one user fail to log in and stop trying, and then a second user logged in successfully but failed to be serviced. The logged stack trace gives us the line of code where the exception was thrown; however, this same code may have been executed a few thousand times successfully in the same day. Basically, the above tells us very little; it informs us that a problem occurred but gives us little information to diagnose and hopefully fix it. The problem could relate to the specific user, a specific bank server, or something else.</p>
+
+                <p>The main piece of information missing in the above log is context. If we added the user's credentials, this would probably lead us to a wealth of information, such as their account details or the bank with which they have an account (could it be that bank's server that is down?). A few simple additional details relating to the context make a world of difference:</p>
+
+                <pre><code>2009-06-05 08:15:23 [INFO] User credentials entered, Acc=123765987
+2009-06-05 08:15:23 [WARN] Incorrect PIN
+2009-06-05 08:15:57 [INFO] User credentials entered, Acc=123765987
+2009-06-05 08:15:57 [INFO] User credentials validated
+2009-06-05 08:16:33 [INFO] Cash withdrawal requested, Amount=450.00
+2009-06-05 08:16:34 [ERROR] Communication failure, unable to connect to acmebank
+Acme.ATM.Integration.ServerException: Unable to connect to bank server at Acme.ATM.Integration.WithdrawalService.Connect(): line 23 ...</code></pre>
+
+                <p>This time, we know which user, how much was requested, and the bank contacted for the withdrawal. With this additional information, we now stand a fighting chance of tracking the bug down. Or, even if we are unable to from this log message, a pattern may emerge from future failures, leading us to the issue.</p>
+
+                <p>Each time we write a log, there are a few things we should check:</p>
+
+                <ul>
+                    <li><strong>Security.</strong> We want to think about the security of the data we log. We should never log any data that has been classified as highly confidential or more secure. You can see examples of data classifications in the Data Classification Catalog. For example, in the logs above, we would never want to log a customer's PIN.</li>
+                    <li><strong>Exceptions.</strong> If we are writing a log because an exception has been thrown. We should always include the exception in the log. You want to be sure to include this full context. If you have a catch block similar to:
+                        <pre><code>catch(Exception e) {
+    log.error("Communication failure, unable to connect to " + bankName, e);
+}</code></pre>
+                        you would pass e to the log statement as one of the parameters.</li>
+                    <li><strong>Overriding toString().</strong> When we add context to a log, we will often want to include an object to see its value. In that case, we need to make sure that toString() is defined for that class. Without toString() the memory location of the object will be printed in the log. We need to make sure that toString() is overridden to see the values of the variables in that object. Customer@458ad742 is not very helpful when what we would like is the id of the customer!</li>
+                </ul>
+
+                <h3>Why Not Log Everything?</h3>
+                <p>The more information we have at our disposal, the easier it is to diagnose an issue, so the question "why not log everything?" does sound like quite a reasonable one. What might logging "everything" look like? This might mean that you log the start and end of each method, the start/end of code blocks within the method, the method arguments, etc.</p>
+
+                <p>Long and detailed log files full of unnecessary information can take a long time to analyze and make finding the critical information challenging and time-consuming. Code files full of lines that write information to logs can make our code less readable and crowded.</p>
+
+                <h3>How to Log</h3>
+                <p>We will use a framework called Log4j for logging. When a new Gradle package or service is first being set up, some configuration needs to be done to set up logging. As discussed earlier, this may include specifying the log level to write (including different log levels depending on the stage, beta vs. prod). Your unit project is configured to log all levels, including INFO and DEBUG. This overall set-up of a logging framework is beyond the scope of our discussion for this lesson, but we will discuss how to write logs from a class once logging is set up in your service. To log information from your service, you need to do two things in each class you want to log from.</p>
+
+                <h4>Create a Logger</h4>
+                <p>To write logs, we need to create a Logger. We can create a Logger instance using the LogManager. We want to create a Logger whose name is the class emitting the logs. We can do this by using the getLogger(...) method and passing it the current class. This will include the name of the class in the line that gets emitted to the log file.</p>
+
+                <pre><code>import org.apache.logging.log4j.LogManager; 
+import org.apache.logging.log4j.Logger;
+
+public class AuthenticationService {
+    private Logger log = LogManager.getLogger(AuthenticationService.class);
+}</code></pre>
+
+                <p>By calling AuthenticationService.class we actually get an object of type Class&lt;AuthenticationService&gt;. Class&lt;T&gt; is a generic type that represents classes or interfaces in a running Java application. So our Class&lt;AuthenticationService&gt; doesn't represent a particular instance of the AuthenticationService, but the overall concept of the class.</p>
+
+                <h4>Write Log Messages</h4>
+                <p>The Logger class has methods mapping to each of our log levels - .info(...), .debug(...), .warn(...), .error(...), and .fatal(...) among others. Let's take a look at how this works in the AuthenticationService class:</p>
+
+                <pre><code>public class AuthenticationService {
+    private Logger log = LogManager.getLogger(AuthenticationService.class);
+
+    public boolean authenticate(int attempt) {
+        String account = getAccount();
+        int pin = getPin();
+        boolean authenticated = checkPin(account, pin);
+        if (authenticated) {
+            log.info("Account=" + account + ", credentials validated");
+            return true;
+        } else {
+            log.error("Incorrect PIN used for Account=" + account);
+            return false;
+        }
+    }
+
+    private boolean checkPin(String account, int pin) {...}
+}</code></pre>
+
+                <p>Our log statements above provide context, which is great! However, instead of using string concatenation to add context, a preferred way is to do this with log4j. You can add "{}" to a string as a placeholder. The Logger methods then accept a comma-separated list of variables to substitute into the string.</p>
+
+                <p>Let's add a log statement that uses this type of substitution:</p>
+
+                <pre><code>public class AuthenticationService {
+    private Logger log = LogManager.getLogger(AuthenticationService.class);
+
+    public boolean authenticate(int attempt) {
+        String account = getAccount();
+        int pin = getPin();
+        boolean authenticated = checkPin(account, pin);
+        if (authenticated) {
+            log.info("Account={}, credentials validated", account);
+            return true;
+        } else {
+            log.error("Incorrect PIN used for Account={}", account);
+            return false;
+        }
+    }
+
+    private boolean checkPin(String account, int pin) {...}
+}</code></pre>
+
+                <p>A logline that you would see in the logs from the above code might look like:</p>
+
+                <pre><code>09 Feb 2021 22:42:13,535 [INFO ]  (main) com.amazon.atacurriculumatm.service.AuthenticationService:67: Account=123765987, credentials validated</code></pre>
             </div>
 
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Testing AWS Lambda Functions Video" src="https://fast.wistia.net/embed/iframe/9jdh0cxgre" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div class="content-box">
+                <h3>Intro to grep</h3>
+                <p><a href="https://vimeo.com/370119372" target="_blank" rel="noopener" class="external-link-icon">grep</a> is a tool we will often use to find information within log files. Log files can be giant, and we will often use grep with the context we talked about in the first reading to find the right lines in the log files. You may know the customer ID that is experiencing a problem. You can use grep to find log files with that customer ID.</p>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Intro to grep" src="https://www.youtube.com/embed/VGgTmxXp7xQ?end=630" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
+                <p>You can find the complete files used in this example <a href="https://github.com/CoreyMSchafer/code_snippets/tree/master/Terminal/Grep" target="_blank" rel="noopener noreferrer">here<span class="external-link-icon"></span></a>.</p>
+
+                <p>The presenter has a grep option enabled by default (--color) that highlights the matching part of the line returned by grep. If you execute his commands exactly, you likely won't see the same highlighting. If you'd like to know more about the color option, you can read <a href="https://linuxcommando.blogspot.com/2007/10/grep-with-color-output.html" target="_blank" rel="noopener noreferrer">"Grep with color output"<span class="external-link-icon"></span></a>.</p>
+
+                <p>They also show an example of a recursive search using the -r flag. Effectively, when this option is provided and the search targets include a directory, the grep command will be run on all files within that directory. If there are more directories inside that, then the process will continue until every file in the directory tree has been searched. We will cover recursion as a programming concept in detail in a later lesson.</p>
+            </div>
+
+            <div class="content-box">
+                <h3>less</h3>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Intro to grep" src="https://www.youtube.com/embed/06GsFVeuWNk" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
+                <p>This video opens with a quick mention of the cat command, which prints the contents of a file to the console. The log files we will be inspecting with less will often be large like the file the presenter uses in this video, which he demonstrates cat is not suitable for, so don't worry about learning cat at the moment.</p>
             </div>
 
             <div class="content-box">
@@ -183,6 +346,237 @@ public class ImprovedLambdaFunction implements RequestHandler&lt;APIGatewayProxy
         return response;
     }
 }</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h2>Practice</h2>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-logging-grep-less-examine-logs" target="_blank" rel="noopener" class="resource-link">
+                        Using grep and less to examine logs
+                    </a>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Guided Project</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Intro to grep" src="https://fast.wistia.net/embed/iframe/th52jp93ng" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
+                <p>Additional Resources:</p>
+                <p><a href="https://github.com/BloomTechBackend/bd-AWS-Lambda-Sample-Project" target="_blank" rel="noopener">AWS Lambda Functions Sample Project</a></p>
+
+                <h3>Create and Test AWS Lambda Functions in the Cloud</h3>
+                <p>Everything you will do here will be discussed by your instructor in the Guided Project session of class. Be sure to jot down any questions or problems you encounter for the Guided Project or Office Hours sessions.</p>
+
+                <p>This task is not included in the Sprint project and will not be evaluated in CodeGrade. Hence the"Pseudo" in the title. This is a standalone task whose skills you may use at your discretion and as necessary through your training here and your I.T. career.</p>
+
+                <p>Fork and clone this Git Repo: <a href="https://github.com/BloomTechBackend/bd-AWS-Lambda-Sample-Project" target="_blank" rel="noopener">AWS Lambda Functions</a> down to your machine.</p>
+
+                <h3>Milestone 1 - Login to your Bloom Tech AWS Account</h3>
+                <ol>
+                    <li>Go to Okta.</li>
+                    <li>Choose the AWS Single Sign-on application.</li>
+                    <li>Click on the entry with your name appended to it.</li>
+                    <li>Choose the entry that says BD-your-name-Unit-3</li>
+                    <li>Click on the Management console link.</li>
+                    <li>You should now be logged into the AWS management console</li>
+                </ol>
+
+                <h3>Milestone 2 - Generate the zip file to be uploaded to AWS Lambda:</h3>
+                <ol>
+                    <li>Open the project bd_unit_3_preparedness_task in Intellij.</li>
+                    <li>Verify the Project SDK is set to corretto-11:
+                        <ul>
+                            <li>Go to the IntelliJ File menu and choose Project structure.</li>
+                            <li>Be sure the Project SDK is set to corretto-11. Change it if it is something else.</li>
+                            <li>Click OK to leave the dialog.</li>
+                        </ul>
+                    </li>
+                    <li>Open the build.gradle file (double-click it in the file list).</li>
+                    <li>Click on the green arrow next to the task buildZip(type Zip) entry in the build.gradle file. Then click on the entry in the pop-up window that says Run bd_unit_3_preparedness. This will create a distribution zip file of the code.</li>
+                    <li>Look in the project file list for a folder name build. Click on the arrow next to build. Click on the arrow next to distributions.</li>
+                    <li>You should see a file called Unit_3_Preparedness_Task-1.0-SNAPSHOT.zip. This is the file containing the code you will upload to AWS Lambda.</li>
+                </ol>
+
+                <h3>Milestone 3 - Create a serverless function in AWS Lambda</h3>
+                <ol>
+                    <li><a href="https://aws.amazon.com/console/" target="_blank" rel="noopener">Login</a> to the AWS Management Console (if you are not already logged in).</li>
+                    <li>Click on the Lambda service. It will be listed on the left as recently visited or under All services, Compute. You should now be viewing the AWS Lambda console. It will say AWS Lambda in the upper left corner of the page.</li>
+                    <li>Click on Functions in the list of choices on the left side of the page. You should now be viewing the Functions page. Look for Lambda > Functions at the top of the page.</li>
+                    <li>Click on the Create function button in the upper right corner of the page.</li>
+                    <li>You should now be viewing the Create Function page. Look for Lambda > Functions > Create function at the top of the page.</li>
+                    <li>Click on the box that says Author from scratch.</li>
+                    <li>In the Basic Information section be sure choose the following:
+                        <ul>
+                            <li>In the Function name field enter the name: BD_Unit_3_Preparedness_Task_Function</li>
+                            <li>In the Runtime field choose: Java 11 (Corretto)</li>
+                            <li>In the Architecture field choose: x86_64</li>
+                        </ul>
+                    </li>
+                    <li>Click the Create function button in the bottom right corner of the page.</li>
+                    <li>Be patient, it sometimes takes a few seconds to create the function.</li>
+                    <li>When the function has been created you see the function management page with a message near the top of the page that indicates the function has been successfully created.</li>
+                    <li>Click on the Upload from drop down on the right side of the Code source section of the page. Choose the zip or jar file option.</li>
+                    <li>Click the Upload button in the bottom left corner of the dialog.</li>
+                    <li>Navigate to the distributions folder for the project ( bd_unit_3_preparedness_task/build/distributions) and select the Unit_3_Preparedness_Task-1.0-SNAPSHOT.zip file you created in IntelliJ. Click Open in the lower right corner of the file list.</li>
+                    <li>Verify the SNAPSHOT file name is displayed next to the Upload button and click Save in the lower right corner.</li>
+                    <li>Scroll down to the Runtime settings section of the page and click Edit in the upper right corner of Runtime settings.</li>
+                    <li>Verify the Runtime value is Java 11 (Corretto). Change it, if it is not.</li>
+                    <li>Change the Handler value to lambdaapp.LambdaHandler::handleRequest. Be sure everything is spelled correctly and the punctuation is correct.</li>
+                    <li>Click Save in the lower right corner.</li>
+                    <li>Verify the runtime settings section of the page has the following values:
+                        <ul>
+                            <li>Runtime: Java 11 (Corretto)</li>
+                            <li>Handler: lambdaapp.LambdaHandler::handleRequest</li>
+                            <li>Architecture: x86_64</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h3>Milestone 4 - Test your serverless function in AWS Lambda</h3>
+                <p>If you are not already there, go to your AWS Lambda Function page. You will see Lambda > Functions > BD_Unit_3_Preparedness_Task at the top of the page with the function name (BD_Unit_3_Preparedness_Task) underneath it in larger bold letters.</p>
+
+                <ol>
+                    <li>Click on the Test option (next to Code) above the Code Source section.</li>
+                    <li>If the template shown is not hello-world, choose the hello-world template from the drop down list.</li>
+                    <li>Enter BD_Preparedness_Task_Test in the *Name field. Replace whatever is in the text box under the *Name field with the following JSON object:</li>
+                </ol>
+
+                <pre><code>{ 
+"firstName" : "Java", 
+"lastName"  : "Language", 
+"dob"       : "01/23/1996" 
+}</code></pre>
+
+                <p>There is a file in the project named requestData.json containing this data. You may open that file in Intellij (double click it in the file list) then copy and paste it from there into the text box.</p>
+
+                <ol start="4">
+                    <li>Click the Save changes button in the upper right corner of the Test Event section of the page.</li>
+                    <li>Click the Test button in the upper right corner of the Test Event section to test the AWS Lambda function with the data in the test event.</li>
+                    <li>Above the Test Event section of the page you will see a message indicating whether the test succeeded or failed. You want to see Execution result: succeeded(logs).</li>
+                    <li>Click details drop down under the Execution result message for information related to the test. If your test was successful, in the The area below shows the result returned by your function execution. Learn more about returning results from your function you should see:</li>
+                </ol>
+
+                <pre><code>{ 
+"creationTimeStamp": "2021-11-16 16:17:35.363", 
+"fullName": "Java Language", 
+"dob": "01/23/1996" 
+}</code></pre>
+
+                <p>Note: Your creationTimeStamp will have a different value than shown above.</p>
+
+                <p>Scroll down to the Log Output section. Under The section below shows the logging calls in your code. Click here to view the corresponding CloudWatch log group. you should see:</p>
+
+                <pre><code>START RequestId: a0f99857-bc2c-4835-9402-e0906f3c4f95 Version: $LATEST 
+Request Received: RequestData{firstName='Java', lastName='Language', dob='01/23/1996' 
+------------------------------------------------------------------------------------- 
+Hello there Java Language 
+Welcome to BD Unit_3 Preparedness Task AWS Lambda App 
+I see were born on 01/23/1996 
+------------------------------------------------------------------------------------- 
+Response was: ResponseData{creationTimeStamp='2021-11-16 16:17:35.363', fullName='Java Language', dob='01/23/1996' 
+END RequestId: a0f99857-bc2c-4835-9402-e0906f3c4f95 REPORT RequestId: a0f99857-bc2c-4835-9402-e0906f3c4f95 Duration: 613.96 ms Billed Duration: 614 ms Memory Size: 512 MB Max Memory Used: 81 MB Init Duration: 346.35 ms</code></pre>
+
+                <p>Congratulations! You have successfully uploaded and tested an AWS Lamdba function!</p>
+
+                <h3>Optional: View the function log in CloudWatch</h3>
+                <ol>
+                    <li>Click on the Services dropdown in the upper left corner of the AWS menu at the top of the page.</li>
+                    <li>Find and click on the CloudWatch service to get to the CloudWatch page.</li>
+                    <li>Click on the Logs dropdown on the left side of the page and then the Log Groups choice.</li>
+                    <li>You should see a list of log groups for the account. Look for the /aws/lambda/BD_Unit_3_Preparedness_Task group and click on it.</li>
+                    <li>Choose the log with the Last event timestamp (right side of page) of the function execution you would like to view. The timestamp will most likely not be your local time as the time is the AWS server time that ran your function which is probably in a different time zone.</li>
+                    <li>You should see the same output you viewed in the Log output window when you tested your Lambda function.</li>
+                </ol>
+
+                <h3>Stretch Task: Review the code in the preparedness task project so you become familiar with what it does.</h3>
+                <p>The code in the preparedness task project is an example of the fundamentals required for an AWS Lambda function. It will serve as a good model for any AWS Lambda function you may code in the future.</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Pseudo Mastery Task 1: Logging to the Cloud</h2>
+
+                <div class="content-section">
+                    <h3>Mastery Task Guidelines</h3>
+                    <p>Mastery Tasks are opportunities to test your knowledge and understanding through code. When a mastery task is shown in a module, it means that we've covered all the concepts that you need to complete that task. You will want to make sure you finish them by the end of the week to stay on track and complete the unit.</p>
+
+                    <p>This mastery task is a little different from others you have done in prior units:</p>
+                    <ul>
+                        <li>This is a stand alone task. It is not part of the Sprint project nor is it included in the evaluation of successful completion of the Sprint project. Hence the "Pseudo" in it's name.</li>
+                        <li>It does not have automated style checks nor coding tests.</li>
+                        <li>You will demonstrate your completion of this task by copying output from the task into a text file and saving it with your code. (Instructions below)</li>
+                        <li>Your instructor will evaluate your results individually</li>
+                    </ul>
+
+                    <p>Due to some recent reorganization of this unit and time constraints to complete those changes, the number of this task (1) has not been updated. So although it is numbered Task 1, it is actually the last Task. Do not let this confuse you. Just refer to it as the "AWS Lambda Task".</p>
+
+                    <p>The purpose of this task is to help you become familiar with creating and testing an AWS Lambda Function and logging using the log4j framework. You will be using AWS Lambda Functions often in the next Unit and will have opportunity to incorporate logging into subsequent Unit Mastery Tasks as you deem appropriate.</p>
+
+                    <a href="https://github.com/BloomTechBackend/bd-unit-3-mastery-task-1" target="_blank" rel="noopener" class="resource-link">
+                        Click Here and Fork and Clone the Mastery Task Repository
+                    </a>
+                    
+                    <p>For this task we will be adding simple log4j logging messages for errors to an existing application.</p>
+
+                    <h3>Milestone 0: Create an AWS Lambda Function for this task.</h3>
+                    <p>This task will use a new AWS Lambda Function for the code given to implement and test the functionality. The AWS Lambda function should be named: bd_unit_3_logging-to-the-cloud</p>
+                    <p>Please refer to Milestone-1, Milestone-2 and Milestone-3 in the Preparedness Task: Setup to Use AWS Lambda Functions document to do so.</p>
+                    <p>Note: There is a file in the project called: TestExamples.json with sample json objects you may use or model for your test executions.</p>
+
+                    <h3>Milestone 1: Add Logging to an Existing Application</h3>
+                    <ol>
+                        <li>Open the task project in Intellij.</li>
+                        <li>Find the AppFunctions.java code in the lambdaapp package.</li>
+                        <li>Perform all tasks indicated by the // TODO comments in the code.</li>
+                        <li>Upload and test your code in AWS Lambda. Be sure to test each error condition:
+                            <ul>
+                                <li>Try to find a customer not in the datastore. Customer ID 98765 would work.</li>
+                                <li>Try to add a new customer with no values in the payload.</li>
+                                <li>Use an action not defined for the application. delete would work.</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <p>Be sure to include all the attributes expected in your test data:</p>
+                    <ul>
+                        <li>actionRequested</li>
+                        <li>customerID</li>
+                        <li>payload</li>
+                    </ul>
+                    <p>Note: You may have alter the logic of the existing code slightly to successfully complete this task.</p>
+
+                    <h3>Milestone 2: Review Log Entries in AWS Cloudwatch</h3>
+                    <p>Login to AWS Cloudwatch and find the log entries created by your code. It should look something like this:</p>
+                    <pre><code>2021-11-22T10:44:51.426-07:00 START RequestId: 2f8d7873-21f9-4fb2-821c-510620d3259b Version: $LATEST 
+2021-11-22T10:44:51.439-07:00 Request Received: RequestData{actionRequested='find', customerId=98765, payload=''} 
+2021-11-22T10:44:51.439-07:00 17:44:51.432 [main] ERROR lambdaapp.AppFunctions - Customer Id: 98765 not found! 
+2021-11-22T10:44:51.439-07:00 Response was: ResponseData{returnCode=404, aCustomer=null, message='Customer Id: 98765 not found!', creationTimeStamp='
+2021-11-22 17:44:51.432'} 
+2021-11-22T10:44:51.495-07:00 END RequestId: 2f8d7873-21f9-4fb2-821c-510620d3259b 
+2021-11-22T10:44:51.495-07:00 REPORT RequestId: 2f8d7873-21f9-4fb2-821c-510620d3259b Duration: 48.75 ms Billed Duration: 49 ms Memory Size: 128 MB Max Memory Used: 108 MB 
+2021-11-22T10:46:39.335-07:00 START RequestId: f4e4f874-d9a7-4d34-a506-3c2bf96be5e8 Version: $LATEST 
+2021-11-22T10:46:39.339-07:00 Request Received: RequestData{actionRequested='add', customerId=0, payload=''} 
+2021-11-22T10:46:39.340-07:00 17:46:39.339 [main] ERROR lambdaapp.AppFunctions - Cannot add a new Customer without at least a name 
+2021-11-22T10:46:39.360-07:00 Response was: ResponseData{returnCode=400, aCustomer=null, message='Cannot add a new Customer without at least a name', creationTimeStamp='
+2021-11-22 17:46:39.34'} 
+2021-11-22T10:46:39.381-07:00 END RequestId: f4e4f874-d9a7-4d34-a506-3c2bf96be5e8 
+2021-11-22T10:46:39.381-07:00 REPORT RequestId: f4e4f874-d9a7-4d34-a506-3c2bf96be5e8 Duration: 41.55 ms Billed Duration: 42 ms Memory Size: 128 MB Max Memory Used: 108 MB 
+2021-11-22T10:54:46.815-07:00 START RequestId: 16523f93-ba1a-4b67-91e8-cbc627bb88d5 Version: $LATEST 
+2021-11-22T10:55:03.849-07:00 Request Received: RequestData{actionRequested='delete', customerId=11111, payload=''} 
+2021-11-22T10:55:04.109-07:00 17:55:04.049 [main] ERROR lambdaapp.AppFunctions - Invalid action: delete 
+2021-11-22T10:55:04.690-07:00 Response was: ResponseData{returnCode=400, aCustomer=null, message='Invalid action: delete', creationTimeStamp='
+2021-11-22 17:55:04.128'} 2021-11-22T10:55:04.870-07:00 END RequestId: 16523f93-ba1a-4b67-91e8-cbc627bb88d5 
+2021-11-22T10:55:04.870-07:00 REPORT RequestId: 16523f93-ba1a-4b67-91e8-cbc627bb88d5 Duration: 18052.70 ms Billed Duration: 18053 ms Memory Size: 128 MB Max Memory Used: 107 MB Init Duration: 352.15 ms</code></pre>
+
+                    <p>Once you have verified the log entries are what you expected:</p>
+                    <ol>
+                        <li>Create a new text file in your IntelliJ project.</li>
+                        <li>Copy and paste the log entries from Cloudwatch into the text file.</li>
+                        <li>(the text file will be used to grade your project)</li>
+                    </ol>
+                </div>
             </div>
 
             <section class="resource-section">

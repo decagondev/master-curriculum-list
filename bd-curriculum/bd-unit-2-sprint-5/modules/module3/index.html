@@ -64,6 +64,133 @@
             </div>
 
             <div class="content-box">
+                <h2>Overview</h2>
+                <p>Unit testing is a critical skill for modern software developers. This lesson will cover unit tests, a common unit test pattern, the basic anatomy of JUnit tests, and how to run JUnit tests in IntelliJ.</p>
+                
+                <p><em>Note: This material was adapted from <a href="https://www.codementor.io/wbsimms/unit-testing-foundations-programming-beginners-du107q81d" target="_blank" rel="noopener">this article</a> to simplify, clarify, and use Java examples.</em></p>
+
+                <div class="content-section">
+                    <h3>What is Unit Testing?</h3>
+                    <p>Unit testing is the code you write to test individual pieces of your production code. Each time you write a new class in Java, you should also create a test class. The test class will contain all of the unit tests that test your new class. Unit testing is just the process of writing these unit tests and running them. It's used to ensure the quality of your working product. Imagine being a chef who never tastes your own food. Seems crazy, right? Unit testing is what you do as a developer to ensure your code is working as desired but more automated.</p>
+
+                    <p>Other developers also use your tests to learn how to use your code. They can read and run your tests to learn how it works. A full suite of unit tests is often more useful than documentation or large quantities of comments.</p>
+
+                    <p>Finally, your tests ensure that changes don't unintentionally break existing code through what's called regression testing. A regression defect is a bug that breaks existing working code. Regression testing is running existing, working unit tests when changing code. It is good to run all unit tests when changing code, as you may have changed how two classes interact. In fact, it's such a good practice that Amazon's build tools default to running unit tests every time you re-compile!</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>Three Parts of a unit test: Given, When, Then</h3>
+                    <p>Unit tests follow a common pattern - GIVEN, WHEN, THEN. First, set up any required data for the test case you're writing, often the inputs to the method you're testing (GIVEN). Next, call the method that you're testing (WHEN). Lastly, verify that the correct things happened (THEN). We'll follow this pattern and explore it more in the next coding activity.</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>What we use to write tests and where to put them</h3>
+                    <p>Most developers put unit tests in that tst/ top-level directory and declare test classes in the same Java package as the classes that they test. Follow this convention! (Note: There is a slightly different version for packages built via gradle -- you'll see src/main/java/com/amazon... containing the source code and src/test/java/com/amazon/... containing the unit tests.)</p>
+
+                    <p>We're using <a href="https://junit.org/junit5/" target="_blank" rel="noopener">JUnit5</a> for our unit tests. There are other unit testing frameworks, but JUnit is used heavily at Amazon and throughout the industry.</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>JUnit test anatomy and some "Happy" test cases</h3>
+                    <p>It's always good to start with some simple cases, often the "happy" cases where things go exactly as planned and the calling code provides typical inputs. Let's look at two tests in a test class AtaAdditionTest:</p>
+
+                    <pre><code>package com.amazon.ata.unittesting.prework.beginningunittesting;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+public class AtaAdditionTest {
+    @Test
+    public void add_singleInteger_returnsTheInteger() {
+        // GIVEN
+        int[] oneInteger = {42};
+        AtaAddition ataAddition = new AtaAddition();
+
+        // WHEN
+        int result = ataAddition.add(oneInteger);
+
+        // THEN
+        Assertions.assertEquals(42, result,
+                                "Expected adding a single int to return the int");
+    }
+
+    @Test
+    public void add_twoIntegers_returnsTheirSum() {
+        // GIVEN
+        int[] tuple = {6, 9};
+        AtaAddition ataAddition = new AtaAddition();
+
+        // WHEN
+        int result = ataAddition.add(tuple);
+
+        // THEN
+        Assertions.assertEquals(15, result,
+                                "Expected adding two ints to return their sum");
+    }
+}</code></pre>
+
+                    <p>Some unit test anatomy to notice:</p>
+                    <ul>
+                        <li>The name of the unit test class is &lt;ClassUnderTest&gt;Test (here AtaAdditionTest is testing AtaAddition)</li>
+                        <li>JUnit tests are public methods that return void</li>
+                        <li>JUnit tests are annotated with @Test to indicate to JUnit that they're unit tests to be run. If you don't annotate the method with @Test, then it'll get skipped. Note that if you wanted to create a helper method to be used by your tests, you can add that method to your test class without the @Test annotation, and make it a private method.</li>
+                        <li>Here we're using the method naming convention of methodUnderTest_descriptiveTestCondition_expectedBehavior (we're testing the add() method and the first example above is the case of one int, where we expect the result to be that same integer). There are other conventions out there; when you join an Amazon team, follow their conventions. In ATA, we'll use this one.</li>
+                        <li>In the assertEquals() method, we follow the best practice of providing a message (the String parameter) indicating what the test is expecting to see in the assert statement. If that assertion fails, this message is printed out, so it's a good idea to make it informative.</li>
+                    </ul>
+
+                    <p>Note that at the top of our test class, we have the following imports. The first provides the class with the assertXXX() methods we use in the THEN sections to verify the results we expect from the WHEN section. The second gives us the @Test annotation to mark our tests:</p>
+                    <pre><code>import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;</code></pre>
+                </div>
+
+                <div class="content-section">
+                    <h3>Running individual tests in IntelliJ</h3>
+                    <p>To run an individual unit test, click on the arrow in the margin next to the method declaration and select Run '&lt;method&gt;', replacing &lt;method&gt; with the name of your method. In this example, it would be add_singleInteger_returnsTheInteger():</p>
+
+                    <p>Run Triangle</p>
+
+                    <p>If the test succeeds, you should see the test results in the console at the bottom of the IntelliJ window:</p>
+
+                    <p>Test Results</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>Running test classes in IntelliJ</h3>
+                    <p>It is best practice to run ALL of your unit tests for a class at once. To do so, click on the arrow next to the test class declaration (in our example, it would be public class AtaAdditionTest..., above the first test), and select Run &lt;class&gt;, replacing &lt;class&gt; with the name of your test class (in this example, AtaAdditionTest). IntelliJ will show the results of each test in the console at the bottom of the IntelliJ window:</p>
+
+                    <p>Run All Results</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>Testing beyond the "Happy" cases</h3>
+                    <p>It's important to test the breadth of cases that your code might need to contend with, including cases where someone might have made a mistake or use your class in unintended ways. We will consider some more test cases in this lesson's coding activity.</p>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Practice</h2>
+
+                <h3>AtaAddition</h3>
+                <a href="https://github.com/BloomTechBackend/bd-unit-testing-ata-addition" title="unit-testing-ata-addition" target="_blank" rel="noopener" class="resource-link">Repo</a>
+                
+                <h3>TextTruncator</h3>
+                <a href="https://github.com/BloomTechBackend/bd-unit-testing-text-truncator" title="unit-testing-text-truncator" target="_blank" rel="noopener" class="resource-link">Repo</a>
+
+            </div>
+
+            <div class="content-box">
+                <h2>Guided Projects</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Guided Project Video" src="https://fast.wistia.net/embed/iframe/1jbidspga0" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-unit-testing-lambda-math" title="testing-subscribe-and-save" target="_blank" rel="noopener" class="resource-link">ATA Math Test</a>
+                    <a href="https://github.com/BloomTechBackend/bd-unit-testing-subscribe-and-save" title="testing-subscribe-and-save" target="_blank" rel="noopener" class="resource-link">Subscribe and Save Testing</a>
+                </div>
+            </div>
+            <div class="content-box">
                 <h2>Mastery Task 1: Grace Under Pressure - Milestone 2-4</h2>
                 
                 <div class="content-section">
@@ -112,32 +239,6 @@ Thank you for using the Promise History CLI. Have a great day!</code></pre>
                         <li>You have pushed your code</li>
                         <li>Mastery Task 1's TCTs are passing on CodeGrade</li>
                     </ul>
-                </div>
-            </div>
-
-            <div class="module-cards">
-                <div class="module-card module3-accent">
-                    <h3>Unit Testing Fundamentals</h3>
-                    <p>Learn the basics of unit testing with JUnit, including test structure, assertions, and test runners.</p>
-                    <a href="unit-testing-fundamentals.html" class="btn">Read More</a>
-                </div>
-                
-                <div class="module-card module3-accent">
-                    <h3>Test-Driven Development</h3>
-                    <p>Understand the principles of test-driven development (TDD) and how to apply them to improve code quality.</p>
-                    <a href="test-driven-development.html" class="btn">Read More</a>
-                </div>
-                
-                <div class="module-card module3-accent">
-                    <h3>Integration Testing</h3>
-                    <p>Learn how to test the interaction between components and ensure the system works together as expected.</p>
-                    <a href="integration-testing.html" class="btn">Read More</a>
-                </div>
-                
-                <div class="module-card module3-accent">
-                    <h3>Testing Best Practices</h3>
-                    <p>Master best practices for writing effective, maintainable, and reliable tests.</p>
-                    <a href="testing-best-practices.html" class="btn">Read More</a>
                 </div>
             </div>
         </section>

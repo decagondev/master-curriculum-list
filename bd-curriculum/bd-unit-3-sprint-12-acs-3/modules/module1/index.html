@@ -35,7 +35,7 @@
                 <h2>Module Overview</h2>
                 <p>Learn about the dependency injection design pattern and how it can be used to create more maintainable and testable code.</p>
             </div>
-            
+
             <div class="video-container">
                 <iframe class="wistia_embed" title="Sprint 12 Dependency Injection Recorded Guided Project Video" src="https://fast.wistia.net/embed/iframe/pbyet6mbk8" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
@@ -69,6 +69,224 @@
                     <li>Practice using Spring DI annotations effectively</li>
                     <li>Understand ApplicationContext and its role in Spring's DI container</li>
                 </ul>
+            </div>
+
+            <div class="content-box">
+                <h3>Introduction to Dependency Injection</h3>
+                <h4>What is dependency injection?</h4>
+                <p>If you look up a definition for dependency injection (DI) you will find an accurate but perhaps unhelpful definition that says something like: "DI is a set of design principles that allows a choice of component to be made at runtime rather than compile time" And while this is the fundamental goal at the heart of the DI design pattern, it's not so clear exactly what the issue is that we are trying to avoid.</p>
+
+                <p>In this lesson, we are going to look at dependency injection as: A solution to "tight-coupling" in applications with composite objects which rely on each other in order to function.</p>
+
+                <p>And so before we dive into the solution, let's first understand the problem.</p>
+
+                <h4>What is tight vs loose coupling?</h4>
+                <p>At this point, you should be familiar with "separation of concern", that is to say, each class has a specific, singular purpose in our applications. And this is a great first step to maintaining extensible, modular code! However, even if you have a solid separation of concern, your classes may still become entangled in one other. Tight-coupling occurs when one class becomes responsible for the behavior of another. When this happens, it can be hard to extend or modify the behavior of one class without also having to refactor its dependent classes.</p>
+
+                <p>Let's take a look at an example where we have two tightly coupled classes, a Remote and a TV class.</p>
+
+                <pre><code>class Remote {
+  private TV tv;
+
+  public Remote() {
+    this.tv = new TV();
+  }
+
+  public turnOn() {
+    tv.on = true;
+  }
+}
+
+class TV {
+  public boolean on;
+
+  public TV() {
+    on = false;
+  }
+}</code></pre>
+
+                <p>Here the Remote class requires a TV object in order to function, it has a TV as a dependency. So the Remote instantiates a TV instance for itself (the Remote is controlling the instantiation of its own dependency). Additionally, the Remotes turnOn() method is responsible for the behavior of the TV, modifying it's on property.</p>
+
+                <p>This may all seem fine for now but now let's say we (or maybe even another team) modify the TV class so that it now has a StreamingDevice as a dependency. Now we need to also modify the constructor for the Remote class because it is responsible for instantiating a TV. Something like this:</p>
+
+                <pre><code>class Remote {
+  private TV tv;
+
+  public Remote() {
+    StreamingDevice streamingDevice = new StreamingDevice();
+    this.tv = new TV(streamingDevice);
+  }
+
+  ...
+}</code></pre>
+
+                <p>Now, not only did we have to modify our Remote when extending the behavior of the TV class, we are also having the Remote be responsible for the StreamingDevice which it otherwise should have nothing to do with! This issue continues to propagate as our application is extended further. What if the StreamingDevice now requires a StreamingServiceManager dependency, now our Remote has to do that too? And imagine if a different team was responsible for all of the StreamingDevice related code and now it becomes a cross-functional effort for them to communicate to the Remote team how to update their code. This is quickly becoming a total disaster...</p>
+
+                <h4>Enter Dependency Injection</h4>
+                <p>A solution for the above situation is to avoid instantiating the TV class inside the Remote class. Imagine instead that we pass a TV instance to the Remotes constructor. Just like that the Remote will no longer have to figure out how to build a TV object, it won't be responsible for creating or passing along any StreamingDevice or StreamingServiceManager classes. Instead it will work with the TV provided.</p>
+
+                <pre><code>class Remote {
+  private TV tv;
+
+  public Remote(TV _tv) {
+    this.tv = _tv;
+  }
+
+  ...</code></pre>
+
+                <p>This is, in it's simplest form, what dependency injection is all about- here we are instantiating a dependency (the TV) externally and then providing it the the class, or in other words injecting it into the class. It may seem like a small change, but the consequences are far-reaching. Let's take it one step further though before we talk about how much of an improvement this really is. Let's say the Remote control we have been developing works so well, that our company decides to expand its usage beyond just TVs. As an example that is far different than a TV, let's say we want to use our Remote to control a garage door. The way we have built our Remote class so far would require some significant changes.</p>
+
+                <p>First of all, the constructor is taking in an object of type TV which obviously won't work for a garage door remote.<br>
+                The turnOn method is attempting to modify the on property of its TV which also doesn't really make sense for a door.</p>
+
+                <p>Some naive solutions here would be to make a second constructor, a separate openDoor() method, or a if statements to try to call different methods based on what physical object the remote is controlling. But solutions like these are coupling our objects tighter and tighter. The more functionality we add to our Remote the more entangled and difficult it is to add more.</p>
+
+                <p>What's happening here, is that our Remote still needs to "know" about the behaviors of the Objects it controls. Ideally, our Remote class wouldn't know much of anything about what it's even controlling and still be able to handle it properly. (This example by the way, has been an analogy for a Web service API, which never knows what type of information it's about to receive from the user).</p>
+
+                <h4>Using Interfaces - The Dependency Inversion principles</h4>
+                <p>"The Dependency Inversion principle says that components that depend on each other should interact via an abstraction, not directly with a concrete implementation."</p>
+
+                <p>In this case, we should represent the dependency between the Remote and the TV through an interface, rather than explicitly requiring a TV instance. This may be the first time an Interface directly helps you, rather than being something an instructor has told you to do.</p>
+
+                <p>Let's go back in time and design our Remote from the very beginning to be as extensible and flexible as it may need to be. The means following the design principles of DI where the object we'd like the remote to control is injected into the constructor. And since we don't want to have to know anything about the object other than that is can be controlled by a remote, let's require the type to simply conform to an interface we'll name, IRemote.</p>
+
+                <pre><code>public interface IRemote {
+    void onPower();
+}</code></pre>
+
+                <p>The IRemote interface is currently promising only that whatever object implements this interface, it will have some operation that responds to onPower(). So a TV can toggle on/off when it performs onPower(), and a garage door can open/close and toggle the garage light etc when it onPowers.</p>
+
+                <p>So now our full code looks like the following:</p>
+
+                <pre><code>public class Remote {
+    private final IRemote remoteObject;
+
+    public Remote(IRemote remoteObject) {
+        this.remoteObject = remoteObject;
+    }
+
+    public void powerButton() {
+        remoteObject.onPower();
+    }
+}
+
+public class TV implements IRemote {
+    private boolean on;
+
+    private StreamingDevice streamingDevice;
+
+    public TV(StreamingDevice streamingDevice) {
+        on = false;
+        this.streamingDevice = streamingDevice;
+    }
+
+    @Override
+    public void onPower() {
+        on = !on;
+    }
+}
+
+public class GargageDoor implements IRemote {
+    private boolean open;
+
+    public GargageDoor() {
+        open = false;
+    }
+
+    @Override
+    public void onPower() {
+        open = !open;
+    }
+}</code></pre>
+
+                <p>With this setup, we've now achieved loose-coupling through the principles of DI. To demonstrate the effectiveness of this system, we'll add functionality to our system and see how painless it can be (relative to the fiasco described earlier in this reading). Let's say our remote controller has some generic buttons such as an up/down adjuster switch, or a pair of them like channel and volume adjusters. We represent this by adding a method to our IRemote interface adjusterSwitch1(bool up). Now any IRemote device can specify an implementation of this method and decide what to do from there.</p>
+
+                <p>The TV might implement it's adjusterSwitch1(bool up) method to increment or decrement a channel or volume property by 1. While a GarageDoor might not utilize these button, or have some other implementation such as adjusting the brightness of the garage light.</p>
+
+                <p>Lastly our Remote just needs some way to allow users to press this button. We could implement a generic buttonPressed() method that perhaps takes in something like a ButtonType enum and calls the respective interface method from there, or we could just create an individual method for each available button. (Our lessons learned about not building extensible systems from the start should hopefully have you leaning towards the former).</p>
+
+                <p>And there you have it, a loosely coupled composition of objects whose behaviors are each entirely dictated by their own class. If the TV team wants to change how the television works, or add new features, the remote controller team doesn't need to know anything about it. If we go ahead and add a StreamingDevice dependency to the TV we will inject it directly into the TVs constructor, and the TV will in turn be injected into the Remote all the same, without requiring the Remote to change anything about how it works.</p>
+
+                <h4>Wrap up and Concluding Remarks</h4>
+                <p>In this reading, we demonstrated the value of avoiding tight-coupling between our objects from the very beginning. We used the example of a Remote controller whose features are progressively developed over time, and which can handle controlling multiple types of objects whether it's a TV or something totally different such as a garage door.</p>
+
+                <p>Often times, when working with multi-layered service applications such as our REST APIs, we have several chains of dependencies, and we have several types of requests and responses that need to flow in and back out of our application. By keeping each layer separate and isolated from the behaviors and implementations of its dependencies, we avoid a lot of the problems that can occur when a small part of the application is updated or created.</p>
+
+                <p>Now, there is much more to dependency injection than just the basics as outlined here. And there are other methods of injecting a dependency, be it through a property injection or a method injection.</p>
+
+                <p>A teaser question for you to consider is, "If we are handling all object creation and injection externally, then who is responsible for managing these dependencies?"</p>
+
+                <p>In the next reading we will discuss Spring as a dependency injection framework, and see how a framework can save us time and energy writing uninteresting supporting code that could be generated automatically.</p>
+            </div>
+            
+            <div class="content-box">
+                <h3>DI with Spring</h3>
+                <h4>Spring as a Dependency Injection Framework</h4>
+                <p>We've actually already (secretly) used DI features in Spring which may have confused you if you are the observant type who prefers not to simply accept hand-waving (sorry!). You may have noticed that the application layer classes in your spring app don't have any constructors! Additionally, you may have noticed the @Autowired keyword that seems to magically instantiate objects for you. In this reading we will reveal a bit more about what is going on under the hood, e.g. what the framework is doing automatically for us. Not to give too much away here but the @Autowired annotation is analogous to the javax standard library @Inject annotation...</p>
+
+                <h4>Spring Application Context</h4>
+                <p>If you read about the Spring framework, you will often see the phrase "inversion of control" (IoC) in reference to DI. This refers to the framework managing the instantiation, injection, and lifecycle of your applications dependencies for you. DI is an implementation of the IoC pattern but is not itself the IoC pattern. The container responsible for managing dependencies in Spring is called the ApplicationContext. This component is automatically generated and configured by the Spring framework annotations included in the user's code.</p>
+
+                <p>By tagging a class with the @Component annotation, the ApplicationContext knows that this is intended to be used as a dependency and will manage the lifecycle of this object. For example creating a CompanyData component and using the @Component annotation, the ApplicationContext will create an instance of CompanyData which can be injected into any class that needs to use it.</p>
+
+                <pre><code>@Component
+public class CompanyData {
+    public final List<Company> companyData = new ArrayList<>();
+
+    public CompanyData() {
+        Company company1 = new Company("Grant Inc");
+        Company company2 = new Company("Baily PLC");
+
+        companyData.add(company1);
+        companyData.add(company2);
+    }
+}</code></pre>
+
+                <p>The CompanyRepository class can now @Autowire in a CompanyData component. This is property-based dependency injection. It's the same idea as constructor-based DI, but our CompanyRepository does not define its own constructor, instead the property is instantiated directly.</p>
+
+                <pre><code>@Repository
+public class CompanyRepo {
+    @Autowired
+    private CompanyData datasource;
+
+    public Company findByName(String name) {
+        Optional<Company> company = datasource.companyData
+        .stream()
+        .filter(c -> c.getName().equals(name))
+        .findFirst();
+
+        if (company.isEmpty()) {
+            throw new RuntimeException("No company found with name: " + name);
+        }
+        return company.get();
+    }</code></pre>
+
+                <p>The CompanyRepository and the implied CompanyService and CompanyController will also need to be marked as @Components. You'll notice that we use @Repository, @Service, and @RestController which are all extensions of the @Component annotation.</p>
+
+                <h4>What Does the Spring Framework Do?</h4>
+                <p>Spring Boot follows a multi-layered application architecture. These layers form a loosely-coupled dependency chain from the controller layer, which depends on the service layer, which depends on the repository layer, which depends on a data layer. Each of these layers are objects (actually a specific type of object know in Java as a "bean") which are managed automatically by the ApplicationContext.</p>
+
+                <p>If we were not using a DI framework, we would have to create the ApplicationContext container ourselves, which comes with the requirement to create factory objects which instantiate and configure each dependency object. We'd also have to manage injecting each dependency, and track the lifecycle of these objects to make sure they are destroyed safely.</p>
+
+                <p>The code to do all of this is "uninteresting", that is to say the implementation is the same idea for every project, so there's no reason you're implementation would be significantly different than someone else's. Instead, Spring will generate all of this code for you at compile time. In order to do that, it needs prompting from the user to indicate what is a component (what should be made a "bean"), and where and how to inject the dependencies. This saves you a ton of work and significantly speeds up development time, in addition to benefitting from all of the positives of using the DI design pattern.</p>
+
+                <h4>Recap and Quick Notes</h4>
+                <p>In the last two sections we discussed Dependency Injection in general and as implemented by the Spring framework. We discussed loose vs tight-coupling, how it tight-coupling can occur, and what we stand to gain from loosely coupled systems.</p>
+
+                <p>Let's leave you with some quick notes to take away from these lessons:</p>
+
+                <p>The primary benefits of loose coupling are:</p>
+                <ul>
+                    <li>Extensibility: We can update well-isolated component classes without having to propagate any changes to dependent classes.</li>
+                    <li>Maintainability: Bugs in the code will be isolated to specific classes rather than spread out over several entangled classes.</li>
+                    <li>Testability: In that same vein, classes are well-isolated and thus can be unit tested while mocking their dependencies.</li>
+                    <li>Parallel Development: Classes do not need to know the business logic of their dependencies, only their interfaces, and therefore can be developed separately by different teams.</li>
+                    <li>Late Binding: We have the ability to choose dependent components at run time rather than at compile time, i.e. we do not have to specify in our code which implementation of a dependency our class is going to use, instead it can be ready for any compatible object.</li>
+                </ul>
+
+                <p>Dependency Injection achieves loose coupling by requiring that dependencies are managed externally and injected into classes that rely on them, and by requiring classes to communicate in abstraction via an Interface rather than calling upon each other directly.</p>
+
+                <p>Spring Boot is a Dependency Injection Framework, it uses @Component annotations and configuration files to generate a substantial amount of code with the purpose of managing a dependency graph.</p>
             </div>
 
             <div class="content-box">
@@ -110,6 +328,82 @@ public class OrderService {
         repository.save(order);
     }
 }</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h2>Guided Projects</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Sprint 12 Dependency Injection Recorded Guided Project Video" src="https://fast.wistia.net/embed/iframe/pbyet6mbk8" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/di-remote-controller" target="_blank" rel="noopener" class="resource-link">
+                        DI Remote Controller
+                    </a>
+                    <a href="https://github.com/BloomTechBackend/dependency-injection" target="_blank" rel="noopener" class="resource-link">
+                        DI with Spring
+                    </a>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Setup Your Sprint 12 Challenge Repo</h2>
+
+                <p>This Sprint culminates in a Sprint Challenge project. You should begin by forking and cloning the Sprint Challenge starter repo.</p>
+
+                <p>This will be your project repo for Sprint 12.</p>
+
+                <p>This resource is also visible under the Sprint Challenge section of the course page.</p>
+
+                <p>After each module, you will be assigned a mastery task with instructions on adding to or modifying the starter code for the challenge. Upon completion of all mastery tasks, the Sprint Challenge project will be complete and ready for you to submit to CodeGrade. The CodeGrade submission page is available under the Sprint Challenge section on the modules page.</p>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/Sprint-12-Challenge-LibraryService" target="_blank" rel="noopener" class="resource-link">
+                        Sprint 12 Challenge Starter Repo
+                    </a>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Mastery Task 1: Implement Dependency Injection</h2>
+
+                <h3>Review the Implementation of Dependency Injection</h3>
+                <p>The starter repo for this project has already implemented Spring Boot's DI framework. Take some time to look at the dependency autowiring in the starter code for this project and see that every Service, Repository, and Controller component classes contain @Autowired annotations which act to inject dependencies into each component.</p>
+
+                <p>In order for a class to be injected with @Autowired it must be marked with one of the following component annotations:</p>
+
+                <ul>
+                    <li><code>@RestController</code> for any controller who needs to be routed to</li>
+                    <li><code>@Service</code> for any service a controller may need to call</li>
+                    <li><code>@Repository</code> for any repositories</li>
+                    <li><code>@Component</code> for generic components whose lifecycle needs to be managed by the Application context.</li>
+                </ul>
+
+                <p><strong>NOTE:</strong> These are SeedData and Datastore</p>
+
+                <p>Classes who are marked as a component will be automatically intantiated and managed by Spring's ApplicationContext. Additionally, they will now be injectable using the @Autowired field-injection annotation.</p>
+
+                <p>After completing these steps and removing the unnecessary code, you should have no constructors in any Spring component class and your App.main method should begin the Spring application.</p>
+
+                <p>After running the App::main method you will be able to access endpoints through Postman by sending a GET request to an endpoint such as http://localhost:8080/checkables</p>
+
+                <h3>Naming conventions</h3>
+                <p>Check out the Naming Conventions section in the README.md. The MT01 Tests are Reflection tests ensuring component names are set up properly. These tests need to know the name of your fields and classes, so do not change any class names and use full camelCased names for each component:</p>
+
+                <p>e.g. patronService not patServ</p>
+
+                <p>Reading any failing Reflection tests output will indicate if it is failing due to a naming mismatch by returning a NoSuchFieldException and indicating the name it was looking for.</p>
+
+                <h3>Completion</h3>
+                <p>The dependency injection functionality of this project should already be implemented and thus the MT01 tests should all pass. You should take this time to familiarize yourself with the @Autowired injection procedure.</p>
+
+                <ul>
+                    <li>Take a look at the controller classes and notice what types of components are being injected.</li>
+                    <li>Notice how the service components also have repositories as dependencies injected via @Autowired.</li>
+                    <li>Notice as well that none of these components have constructors. They are instantiated by the framework.</li>
+                    <li>Run the gradle command: <code>./gradlew -q clean :test --tests 'com.tct.MT01*'</code> and make sure all tests pass.</li>
+                </ul>
             </div>
 
             <section class="resource-section">

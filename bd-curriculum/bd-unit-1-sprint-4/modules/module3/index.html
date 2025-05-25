@@ -36,10 +36,6 @@
                 <p>Gradle is a powerful and flexible build automation tool that enables developers to manage dependencies, compile code, run tests, and package applications efficiently. In this module, you'll learn how to use Gradle to streamline your Java development workflow.</p>
             </div>
 
-            <div class="video-container">
-                <iframe src="https://fast.wistia.net/embed/iframe/jmm84ah6l2" title="Gradle Introduction Video" allowfullscreen></iframe>
-            </div>
-
             <div class="content-box">
                 <h2>Learning Objectives</h2>
                 <ul>
@@ -68,6 +64,187 @@
                         <li><strong>Extensibility:</strong> Rich plugin ecosystem to extend functionality</li>
                         <li><strong>Multi-Project Builds:</strong> Efficient handling of complex, multi-module projects</li>
                     </ul>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Introduction to Gradle</h2>
+                <div class="content-section">
+                    <h3>Introduction</h3>
+                    <p>When creating Java applications, there can be a lot of additional complexity and overhead beyond simply writing Java code. Although we'd like to focus our effort on the codebase of our project, we still need to consider things such as building our project, installing and managing libraries, testing, and sharing our project with coworkers. While we could meticulously handle these tasks, using an application manager to perform them can be much easier. The application manager we use in this course is Gradle. In this lesson, we will discuss how Gradle can help you save time and effort with your projects, and you will learn to create a project using Gradle.</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>Prerequisite Knowledge</h3>
+                    <p>At this point, you should have some knowledge of writing simple scripts in Java and be comfortable using your command line (or terminal) to navigate file directories and install packages.</p>
+                    <p>You may have used Gradle before in a previous project; however, no prior knowledge of Gradle or how it works will be necessary.</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>What can Gradle do for you?</h3>
+                    <p>Let's first discuss why we would use Gradle in the first place.</p>
+                    <p>Primarily, Gradle streamlines the process of building your project. Gradle can perform various build functions, such as build, test, and run. Additionally, Gradle manages your dependencies for you. A dependency is any code from an outside resource. These resources are often called libraries. It's important to distinguish between a library and a dependency since the two are related and often used interchangably. A library is a group of code that performs a set of actions while a dependency is a library that your code needs to run. Nearly every project you encounter will rely on dependencies your code will need to download and install. These tasks can be tedious and tiresome if done manually, but Gradle can gracefully build, test, run, and import dependencies into your project.</p>
+                    <p>Gradle uses a single file to hold nearly all of its project configurations: the build script. This file ensures the project is set up the same way every time - with all the correct dependencies and build specifications. The build script is handy when multiple developers work on the same project because everyone is building the project with the same configuration. Without Gradle and the build script, each team member would probably configure their projects differently, causing each project to behave differently.</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>Building a Project Without Gradle</h3>
+                    <p>Before we use Gradle, let's take a quick look at what it takes to run a Java project without Gradle.</p>
+                    <p>For this coding example, create a folder on your computer named hello-world using the command line. Mimic the following folder structure by adding a srs/main/java directory structure. Open hello-world/src/main/java in any text editor (such as Atom or VSCode) and create a new file named Greeter.java.</p>
+                    <p>Your file structure should look like this:</p>
+                    <pre><code>hello-world
+└── src
+    └── main
+        └── java
+            └── Greeter.java</code></pre>
+
+                    <p>Copy the following code so that our Greeter.java file defines a Greeter class:</p>
+                    <pre><code>public class Greeter {
+  public static void main(String[] args) {
+    greetUser("BloomtechStudent");
+  }
+
+  public static void greetUser(String username) {
+    System.out.println("Hello " + username + "! Welcome to the server!");
+  }
+}</code></pre>
+
+                    <p>We can't run this java file just yet. We first need to convert it into a .class binary file. Then we can use the Java Virtual Machine (JVM) from our command line to run the program.</p>
+                    <p>In your command line, navigate to hello-world/src/main/java where our Greeter.java file lives. Enter the following command to compile this file into a Greeter.class binary file.</p>
+                    <pre><code>javac Greeter.java</code></pre>
+                    <p>javac stands for "Java Compile" and it takes java files and turns them into class files that the computer can run. With our newly created class file, we can run our Java code with the following command:</p>
+                    <pre><code>java Greeter</code></pre>
+                    <p>You should see that it outputs: Hello BloomtechStudent! Welcome to the server!</p>
+                    <p>You did it! Since this project doesn't use Gradle, we would need to repeat this process for each new Java file, and any time we changed our program. If we were using any dependencies, we'd have to manually download and do extra work to make sure those compiled as well. If you image this process in a project with 100's of Java files, you can start to see this doesn't scale well. It can become a dizzying task trying to build a large project.</p>
+                    <p>Hopefully, you can start to appreciate how much nicer it'd be if we had a single configurable command to do all of this for us. This is what an application manager such as Gradle can provide.</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>Creating a Gradle Project</h3>
+                    <p>In this section, we will create a similar application to the one above, this time using Gradle to manage the building of our project. Additionally, we will add a dependency and see how Gradle manages our dependencies.</p>
+                    <p>We will be using Gradle version 7.0.2 in this course. You can follow the tutorial on this page<a href="https://gradle.org/install/">Links to an external site</a> for instructions specific to your operating system. Replace the listed version number with 7.0.2 to be consistent with our projects.</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>Initializing a Java Project Using Gradle</h3>
+                    <p>From your command line and with Gradle installed<a href="https://gradle.org/install/">Links to an external site</a>, create a new project folder named intro-to-gradle. Go into this folder and run the following command:</p>
+                    <pre><code>gradle init</code></pre>
+                    <p>You'll be prompted first for the type of project, select 1 for basic.</p>
+                    <pre><code>Select type of project to generate:
+  1: basic
+  2: application
+  3: library
+  4: Gradle plugin
+Enter selection (default: basic) [1..4] 1</code></pre>
+                    <p>Next, you will be asked which build script language you will use. In this course, we will uae Groovy for all of our build scripts. With Groovy, we'll only be using simple commands so there's no need to learn it in-depth as we've done for Java.</p>
+                    <pre><code>Select build script DSL:
+  1: Groovy
+  2: Kotlin
+Enter selection (default: Groovy) [1..2] 1</code></pre>
+                    <p>Finally, you will be prompted for a project name, with the directory's name as the default option. You can pass in any empty character (just press enter/return) to use the default name.</p>
+                    <p>After finishing the prompts, your complete command history should look something like this:</p>
+                    <pre><code>gradle init
+
+Select type of project to generate:
+  1: basic
+  2: application
+  3: library
+  4: Gradle plugin
+Enter selection (default: basic) [1..4] 1
+
+Select build script DSL:
+  1: Groovy
+  2: Kotlin
+Enter selection (default: Groovy) [1..2] 1
+
+Project name (default: intro-to-gradle):
+
+> Task :init
+Get more help with your project: Learn more about Gradle by exploring our samples at https://docs.gradle.org/7.0.2/samples
+
+BUILD SUCCESSFUL in 4s
+2 actionable tasks: 2 executed</code></pre>
+                    <p>You should now see that your directory contains several new files and folders:</p>
+                    <pre><code>build.gradle
+gradle		
+gradlew		
+gradlew.bat
+settings.gradle</code></pre>
+                    <p>The build.gradle file is where we can configure how Gradle builds and runs your project. Open build.gradle in a text editor and add the Java and application plugins by writing the following command:</p>
+                    <pre><code>plugins {
+    id 'java'
+    id 'application'
+}</code></pre>
+                    <p>These lines tell Gradle that this is a Java application.</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>Adding Our Java Source Code</h3>
+                    <p>Now we can write some Java code! Gradle will look for Java code under the directory src/main/java by default. Create the same src/main/java file structure we did before. Within the java folder, add the Greeter.java file we used in the previous example. The project's file structure should look like this:</p>
+                    <pre><code>├── build
+├── build.gradle
+├── gradle
+├── gradlew
+├── gradlew.bat
+├── settings.gradle
+└── src
+    └── main
+        └── java
+            └── Greeter.java</code></pre>
+                    <p>You can now run the project using gradle run, but you will see an error with the message: No main class specified and classpath is not an executable jar. This means we need to specify in our build script the class which contains the entry point for our application. Of course, we only have one class, and we can specify this in build.gradle by adding the following script:</p>
+                    <pre><code>application {
+   mainClass = 'Greeter'
+}</code></pre>
+                    <p>Run the project again by entering gradle run into the terminal. You should see now that it outputs the message to the console.</p>
+                    <pre><code>Hello BloomtechStudent! Welcome to the server!</code></pre>
+                    <p>Anytime you change code, all you will need to run is gradle run.</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>Adding a Dependency</h3>
+                    <p>Currently, we have a Greeter application that uses a greetUser method to welcome a user to the (pretend) server. Let's say we want to validate that usernames contain only alphanumeric characters. There's a library for that! It's called the Apache Commons lang3 library. Manually bringing in a dependency can require a lot of steps, but Gradle makes it easy. We only need to tell Gradle where to find it.</p>
+                    <p>We'll first need to specify where the library is hosted. Many hosting networks exist that house many popular libraries and we need to specify which hosts Gradle should look at to search for libraries. The host that we'll use is mavenCentral.</p>
+                    <p>In our build script we first add mavenCentral to our list of repositories like so:</p>
+                    <pre><code>repositories {
+    mavenCentral()
+}</code></pre>
+                    <p>With the repository listed, we can now add our Apache Commons dependency. A quick Google search for "StringUtils gradle dependency" will usually lead you to the line you need to add. Doing this we can find the library on Maven Repository's site<a href="https://mvnrepository.com/artifact/org.apache.commons/commons-lang3/3.0">Links to an external site</a> and we can copy the provided Groovy instruction.</p>
+                    <pre><code>dependencies {
+    implementation 'org.apache.commons:commons-lang3:3.0'
+}</code></pre>
+                    <p>With the dependency in place, enter gradle build and after a successful build, the Apache Commons lang3 library is now available in your project. Notice that we did not run the gradle run command. That's because running gradle build will get those dependencies for us without running the project, saving us some time.</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>Using Our Dependency in Our Code</h3>
+                    <p>In the greetUser method of our Greeter class, we want to check that our username only contains alphanumeric values. Let's use our new dependency's StringUtils class to validate our usernames:</p>
+                    <pre><code>public static void greetUser(String username) {
+    if (StringUtils.isAlphanumeric(username)) {
+        System.out.println("Hello " + username + "! Welcome to the server!");
+    } else {
+        throw new RuntimeException("Invalid username!");
+    }
+}</code></pre>
+                    <p>Java will likely import StringUtils, but in case it doesn't, add this line to the top of your file:</p>
+                    <pre><code>import org.apache.commons.lang3.StringUtils;</code></pre>
+                    <p>In the main method of the Greeter class, add another greetUser call with the invalid user "Bloom_Admin@email.com":</p>
+                    <pre><code>public static void main(String[] args) {
+  greetUser("BloomtechStudent");
+  greetUser("Bloom_Admin@email.com");
+}</code></pre>
+                    <p>Now we can run gradle run and run the jar file. Note: This is what the green arrow is doing for us in IntelliJ</p>
+                    <p>You should see we get an Exception for "Bloom_Admin@email.com" and that it greets "BloomtechStudent".</p>
+                    <p>Expected Output:</p>
+                    <pre><code>Hello Bloomtech! Welcome to the server!
+Exception in thread "main" java.lang.RuntimeException: Invalid username!
+	at Greeter.greetUser(Greeter.java:13)
+	at Greeter.main(Greeter.java:6)</code></pre>
+                    <p>If you got the error message, your code is working with the new dependency as exepected.</p>
+                </div>
+
+                <div class="content-section">
+                    <h3>Summary</h3>
+                    <p>We've now seen how an application manager like Gradle can simplify the process of building our Java projects. You won't be spending much time configuring Gradle in your job. However, understanding some of Gradle's basic configurations can be helpful when you need to add dependencies and share build settings. Gradle can do so much more, but for now, you have enough knowledge to move on.</p>
                 </div>
             </div>
 
