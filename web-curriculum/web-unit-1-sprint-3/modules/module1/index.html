@@ -21,7 +21,7 @@
                         <a href="../module4/index.html">Module 4: HTML & CSS III</a>
                     </div>
                 </li>
-                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="https://github.com/bloominstituteoftechnology/web-s03-practice-problems">Practice Problems</a></li>
                 <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
         </nav>
@@ -31,81 +31,707 @@
         <section class="welcome">
             <h1>Module 1: Advanced Objects</h1>
 
-            <div class="content-box">
-                <h2>Object-Oriented Programming Fundamentals</h2>
+            <div class="content-box module1-accent">
+                <h2>Properties and Methods</h2>
                 
-                <p>Object-Oriented Programming (OOP) is a programming paradigm based on the concept of "objects", which can contain data and code that manipulates this data. In JavaScript, OOP revolves around creating and managing objects that model real-world entities.</p>
-                
-                <div class="note-box">
-                    <h3>Key Principles of OOP</h3>
-                    
-                    <div class="key-concept">
-                        <div class="key-concept-title">Encapsulation</div>
-                        <div class="key-concept-content">Bundling of data &amp; methods that operate on that data into a single object</div>
-                    </div>
-                    
-                    <div class="key-concept">
-                        <div class="key-concept-title">Inheritance</div>
-                        <div class="key-concept-content">Creating new classes that inherit properties and methods from existing classes</div>
-                    </div>
-                    
-                    <div class="key-concept">
-                        <div class="key-concept-title">Polymorphism</div>
-                        <div class="key-concept-content">Using a single interface to represent different underlying forms (data types)</div>
-                    </div>
-                    
-                    <div class="key-concept">
-                        <div class="key-concept-title">Abstraction</div>
-                        <div class="key-concept-content">Hiding complex implementation details and showing only essential features</div>
-                    </div>
-                </div>
-                
-                <p>In JavaScript, objects can be created in several ways:</p>
-                
-                <pre>// Object literals
-const person = {
-  name: 'John',
-  age: 30,
-  greet() {
-    console.log(`Hello, my name is ${this.name}`);
-  }
-};
+                <p>So far, we have learned how objects can be used as a great tool to store information, especially when that information contains multiple properties, each with a specified key with a specific value. This is great when you want to, say, save not only the names of all the students in the class, but the name, age, birthdate, grade, and address of each student. But what happens if this information changes? Would you need to rewrite the object over again from scratch?</p>
 
-// Constructor functions
-function Person(name, age) {
-  this.name = name;
-  this.age = age;
-  this.greet = function() {
-    console.log(`Hello, my name is ${this.name}`);
-  };
+                <p>In this reading, you will learn about how objects can not only store property values, but also functions, more accurately called “methods.” And even more important, you will learn how properties and methods can be linked within an object; so that whenever a method is later called in your code, that method can dynamically update property values and store those new values.</p>
+
+                <h3>Building objects with functionality</h3>
+
+                <p>Along with properties (keys and values), objects can store functions, better-called methods. These methods work just like regular functions. Here is how a simple object method can be created and later called on:</p>
+
+                <pre><code>
+const sampleObject = {
+  sampleKey: "sampleValue", // example of a property
+  sampleMethod: function () {
+    return 'I am a method that you can use!' //
+  }  //example of a method
 }
-const john = new Person('John', 30);</pre>
-                
-                <div class="video-container">
-                    <iframe src="https://fast.wistia.net/embed/iframe/li44qmzo0k" allow="autoplay; fullscreen" loading="lazy"></iframe>
-                </div>
-                
+
+const returnValue = sampleObject.sampleMethod() // how you call a method and saving its return value in a variable
+console.log(returnValue) // prints out “I am a method that you can use!”
+                </code></pre>
+
+                <p>Creating a method, as we see from the example above, might be new to you; but calling or using a method is not. In fact, every time you print a value to the console, such as <code>console.log(“Hello World”)</code>, you are calling the <code>log()</code> method on the object <code>console</code>. These are called “built-in” methods because they are already built into the Javascript language. And there are many more, can you think of any others you have already used?</p>
+
                 <div class="note-box">
-                    <h3>The 'this' Keyword</h3>
-                    <p>In JavaScript objects, 'this' refers to the object the method belongs to. It allows methods to access other properties and methods within the same object. The value of 'this' depends on how a function is called, not where it is defined.</p>
+                  <h3>How to Build It</h3>
+
+                <p>At Vortex Games, you are working on the newest developing game, "Dungeon Lock". In this game, we are trying to keep track of the room the main character is in. Let's create an object called “dungeonLockCharacter”, and in this object a method that will be called every time a player has entered a new room.</p>
+
+                <pre><code>
+const dungeonLockCharacter = {
+  newRoom: function (roomType) { //notice that we can accept parameters
+    return `You have now entered the ${roomType} room.`
+  }
+}
+
+const currentRoom = dungeonLockCharacter.newRoom('dungeon') // 'dungeon' is entered as a parameter
+console.log(currentRoom) // will print “You have now entered the dungeon room.”
+                </code></pre>
+
+                <p>Very similar to our initial example, but with one major change: accepting a parameter. Just like ordinary functions, methods can also take in parameters that you can then reference in the body of the function. We used a string template literal here to dynamically change that room name to the room name that was passed in the method when it was called.</p>
+
+                <p>Also, returning a value in your method is always optional. If you simply wanted to print your message to the console automatically each time the method is called, you can add <code>console.log(`You have now entered the ${roomType} room.`)</code> into the function itself.</p>
+
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/k4rcg5le7z?seo=false" title="Using pop to remove elements from an array" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+                </div>
+
+                <h3>Referencing the object using this inside methods</h3>
+
+                <p>So far, we have only been storing static values in the properties of our objects: values that do not update in response to any particular method being called. However, it is very common to use objects to represent real-life entities that have some internal state that changes over time.</p>
+
+                <p>An object representing a car might have an "odometer" property, and a "drive" method that increases the distance stored in the odometer. This is possible if the drive method has a way to access the odometer property on the object in order to increase it. Methods can do this using the keyword <code>this</code> just before the property name, as in <code>this.odometer</code>. From inside the method of an object, the <code>this</code> keyword represents the object itself.</p>
+
+                <p>Here is an example:</p>
+
+                <pre><code>
+const car = {
+  odometer: 0, // adding a property with an initial value
+  drive: function (miles) {
+    this.odometer += miles // "this" refer to the object itself
+  }
+}
+console.log(car.odometer) // prints 0
+car.drive(7)
+console.log(car.odometer) // prints 7
+car.drive(3)
+console.log(car.odometer) // prints 10
+                </code></pre>
+
+                <p>In other scenarios, the object does not have any state that changes over time, but its methods still need a way to access properties on the object.</p>
+
+                <p>Here is an example of this:</p>
+
+                <pre><code>
+const person = {
+  fname: 'Ada',
+  lname: 'Lovelace',
+  greet() { // a more common syntax for methods, skipping the colon and the function keyword
+    return `My name is ${this.fname} ${this.lname}` "this" refer to the object itself
+  }
+}
+console.log(person.greet()) // prints "My name is Ada Lovelace"
+                </code></pre>
+
+                <p>In programming, the concept of referring to the object itself within its own methods is common, but the term used to achieve this varies from language to language. For example, in Python and Ruby the term is self, while in Java and Scala the term is this, same as in JavaScript.</p>
+
+                <p>Note that it is bad practice to refer back to the object using a variable name:</p>
+
+                <pre><code>
+const tv = {
+  on: true,
+  switch() {
+    tv.on = !tv.on // Unreliable and coupled to the name "tv".
+  }
+}
+                </code></pre>
+
+                <div class="note-box">
+                  <h3>How to Build It</h3>
+
+                <p>Let's return to the new game you have been developing, 'Dungeon Lock', and revamp the object you have already created. To start, let's create a property in that object called <code>location</code> that stores that room name, and let's give that first location a value, say <code>dungeon</code>.</p>
+
+                <pre><code>
+const dungeonLockCharacter = {
+  location: "dungeon", // adding a property for location
+}
+console.log(dungeonLockCharacter.location) // prints “dungeon”
+                </code></pre>
+
+                <p>Nothing new here. Now let's add our method that will dynamically change the room name each time we call it, using the keyword <code>this</code>:</p>
+
+                <pre><code>
+const dungeonLockCharacter = {
+  location: "dungeon",
+  changeRoom: function (newRoom) { //adding method to change location
+    this.location = newRoom
+  }
+}
+dungeonLockCharacter.changeRoom("arsenal")
+console.log(dungeonLockCharacter.location) // now prints “arsenal”
+                </code></pre>
+
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/g905uwzbij" title="Referencing the Object Using this Inside Methods" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+                </div>
+
+                <h3>Conclusion</h3>
+
+                <p>Giving objects functionality gives your code life. It allows the things you build to have actions, giving each object its own set of rules. Much like teams are organized by position, you can organize your objects to each have their own special roles, and together these objects can do great things. It's like creating your own little world, and its empowering. You're getting to the meat of Javascript, and it is amazing. Keep up the great work!</p>
+            </div>
+
+            <div class="content-box module1-accent">
+                <h2>Classes</h2>
+
+                <p>One of the most common patterns we see in software development is using templates. Templates not only allow developers to use the same code to organize virtually indefinite possible inputs, but they also allow for developers to quickly sort through that organized code to quickly extract the values they need.</p>
+                <p>For example, let us say you wanted to include a simple account sign-in page on a web application. All you really need from this sign-in page is the user's name, email, and created a password, so they can re-access the same account each time they want to use your application. It goes without saying that if you opted to have all your new users talk about themselves in a paragraph to register their accounts, you would have a nightmare trying to find those key values and organize them all to keep your users distinguishable. Ouch! So templates, like registration forms, really come in handy when they are reused repeatedly.</p>
+                <p>This brings us to another template common to Javascript: classes. Classes allow developers to create templates for objects with similar properties, like names, emails, and passwords. Furthermore, every individual copy, called “instance,” that uses that class template will forever be connected to that class. Thus, if you need to add a new method -or change the behavior of an existing one- to 100 existing copies, you can easily do that by updating the class configuration itself.</p>
+                <p>In this reading, you will learn about two methods that help create classes: the “constructor” and “class” methods.</p>
+
+                <h3>Building instances of objects using a class</h3>
+
+                <p>We will start with “classes.” Classes are technically a template for creating objects, a means to create instances of objects, and are not custom objects in themselves. This is a nuance that is important to understand but not essential to remember when using classes. Let's now take a look at how we can create a class with generic placeholders:</p>
+
+                <pre><code>
+class CustomClass { // syntax: (1) class keyword (2) class name, typically capitalized
+  sampleKey = 'sampleValue' //adding sample property
+  currentNumber = 0 // adding sample counter
+  addNumber(num) { // adding sample method
+    this.currentNumber += num
+    return `Your total is now: ${this.currentNumber}`
+  }
+}
+                </code></pre>
+
+                <p>The class has now been created, but so far, we have not made any objects using this class. Let's now use this class to create a new object:</p>
+
+                <pre><code>
+const sampleObject = new CustomClass() // this creates a new object (or instance) based on the CustomClass class
+                </code></pre>
+
+                <p>Now the object with our “CustomClass” class has been created. Let's test it:</p>
+
+                <pre><code>
+sampleObject.addNumber(12)
+sampleObject.addNumber(3)
+console.log(sampleObject.currentNumber) // prints 15
+console.log(sampleObject.sampleKey) // prints “sampleValue”
+                </code></pre>
+
+                <p>As you can see now our created object “sampleClass” has inherited the <code>.addNumber()</code> method and both the <code>sampleKey</code> and <code>currentNumber</code> properties. We could create as many of these objects as we want, and they'd all have the same method and property. That's the power of classes!</p>
+
+                <div class="note-box">
+                  <h3>How to Build It</h3>
+
+                <p>The time has come for you to spruce up your old code on the EduGate application and create a class for each student object to inherit. Let's start by creating a class for new students with a few basic properties and one method:</p>
+
+                <pre><code>
+class Student {
+  name = 'unknown' // each property has a default value set
+  age = 16
+  present = false;
+  changeAttendance() { // method that will change attendance when called
+    this.present = !this.present
+  }
+}
+                </code></pre>
+
+                <p>Now let's use this class for a new student object to see how that object inherits these properties and method:</p>
+
+                <pre><code>
+const damian = new Student() // syntax: (1) new keyword (2) invocation of the class, as a class is actually a function underneath
+console.log(damian.name) // still prints “unknown”
+console.log(damian.age) // still prints “16”, the default
+console.log(damian.present) // prints false
+damian.changeAttendance() //method called to change today's attendance
+console.log(damian.present) // now prints true
+                </code></pre>
+
+                <p>So it seems that our new object did inherit the properties and method of the class it belonged to, but it inherited them exactly as they were specified when we wrote the class template. We could now easily update Damian's name and age with the following:</p>
+
+                <pre><code>
+damian.name = "Damian" // updates the name property value from “unknown” to “Damian”
+damian.age = 14 // updates the age property value from “16” to “14
+
+console.log(damian.name) // prints “Damian”
+console.log(damian.age) // prints “14”
+                </code></pre>
+
+                <p>Using classes to create templates for objects can be handy if you were to create a lot of object instances where you want to share all the same initial properties and methods. But using it for this purpose, other than demonstration might seem too static if we need to immediately update the name and age of each student. Well, there is a way to create templates for objects with custom values, and that is using the other method we had introduced, the “constructor” method, which we will discuss in the next section.</p>
+
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/hh5aw6hepl" title="Building Instances of Objects Using a Class" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
                 </div>
                 
+                <h3>Building custom objects using the constructor</h3>
+
+                <p>A second way to build an object from a class is using the constructor method. Before, we talked about using <code>new ClassName()</code> to create an object. If we wanted to then update any properties of the object, we would do that after we created it. That seems straightforward, but we can simplify the process using the constructor method. So instead of:</p>
+
+                <pre><code>
+const sampleObject = new SampleClass()
+sampleObject.sampleKey = “abc”
+                </code></pre>
+
+                <p>we can use a constructor to “pass in” the properties for us:</p>
+
+                <pre><code>
+const sampleObject = new SampleClass(“abc”) // sets “abc” to “sampleKey” for us
+                </code></pre>
+
+                <p>As you can see, using a constructor can lead to a simpler building process by creating the object and setting the values all at once (instead of setting each property separately). To have a class's constructor take values and set them to properties, we need to add the constructor method to our class. Lets first see how a class constructor is added to the class object and then talk about what we see:
+                </p>
+
+                <pre><code>
+class SampleClass {
+  constructor(sampleValue) { // the constructor method
+    this.sampleKey = sampleValue // see below for clarification
+  }
+  sampleMethod () {
+    console.log(this.sampleKey)  //prints sampleKey
+  }
+}
+
+const sampleObject = new SampleClass('A custom value') // this calls the constructor method and the string “A custom value” gets passed as a parameter
+
+console.log(sampleObject.sampleKey) // prints "A custom value"
+sampleObject.sampleMethod() // also prints out "A custom value"
+                </code></pre>
+
+                <p>A few things to elaborate on here. <strong>First</strong>, the constructor method takes the parameter sampleValue. The name of the parameter can be whatever we want, but typically it's named the same as the property it will be saved to to avoid confusion.
+                </p>
+                <p><strong>Second</strong>, we use the <code>this</code> keyword before the property's name to set the parameter to a property (so we can use it later).  Doing so creates the property for us and saves the parameter to it.</p>
+                <p><strong>Finally</strong>, just like we saw in the previous section, the class method is still used when creating the object <code>(new SampleClass(...))</code>, but we can now pass in a value and that value will be used in our constructor method.</p>                
+
+                <div class="note-box">
+                  <h3>How to Build It</h3>
+
+                <p>Let's see how creating a class with a constructor method can be a useful tool for enrolling students with the “EduGate” application. You want to create roughly the exact same object as before, though this time you would like to input a constructor method into your “Student” class so that you can pass custom values to the name and age of the student when creating a new object. Thus:</p>
+
+                <pre><code>
+class Student {
+  constructor(name, age) {
+  this.name = name // accepts the name parameter as the initial value for name
+  this.age = age // accepts the age parameter as the initial value for age  
+}
+  present = false
+  changeAttendance() {
+    this.present = !this.present
+  }
+}
+                </code></pre>
+
+                <p>Now you can create a new instance, or copy, of a “Student” object for your new student, Damian:</p>
+
+                <pre><code>
+const Damian = new Student("Damian", 14) // creates new object named “Damian”
+
+console.log(Damian.name) // prints out “Damian”
+console.log(Damian.age) // prints out 14
+                </code></pre>
+
+                <p>You can also use methods you created in your class to update values that were once set by a constructor method when you initially created the object. Let's add an address property to the constructor method and a <code>changeAddress()</code> method to the Student class.</p>
+
+                <pre><code>
+class Student {
+  constructor(name, age, address) {
+    this.name = name
+    this.age = age
+    this.address = address
+    this.present = false
+  }
+  present = false
+  changeAttendance() {
+    this.present = !this.present
+  }
+  changeAddress(newAddress) {
+    this.address = newAddress
+  }
+}
+                </code></pre>
+
+                <p>Now let's use the <code>changeAddress()</code> method for Damian since he has recently moved:</p>
+
+                <pre><code>
+const Damian = new Student("Damian", 14, "1458 Tulsa St.")
+console.log(Damian.address) // prints “1458 Tulsa St.”
+
+Damian.changeAddress("5678 Mercury Dr.")
+console.log(Damian.address) // not prints “5678 Mercury Dr.”
+                </code></pre>
+
                 <div class="video-container">
-                    <iframe src="https://fast.wistia.net/embed/iframe/hh5aw6hepl" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe src="https://fast.wistia.net/embed/iframe/vczjb8q26b" title="Building Custom Objects Using the Constructor" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+                </div>
+
+                <h3>Conclusion</h3>
+
+                <p>Classes are powerful tools in JavaScript, enabling developers to efficiently manage code and simplify modifications. By using classes, you can organize a myriad of inputs and swiftly extract required values. Classes take this concept further, providing a blueprint for objects with shared properties and allowing easy updates to multiple instances simultaneously. As you explore the "constructor" and "class" methods in this reading, remember that mastering these techniques will significantly enhance your proficiency as a developer. Embrace the potential of these foundational concepts and unlock the full potential of JavaScript.</p>
+
+            </div>
+
+            <div class="content-box module1-accent">
+
+                <h2>Object References</h2>
+
+                <p>A concept that may seem of little importance now, but will undoubtedly come up later in your career is understanding the different types of values we can save to variables in Javascript.</p>
+                <p>For one, there are “immutable” values, such as strings and numbers, to name a few. Immutable values should be thought of as physical documents. When you first assign a variable to an immutable value, you are, in essence, creating an original, physical document. Even more so, let's say you then photocopy that document, duplicating its contents exactly; you are still creating a physically distinct document from the original. This also suggests that if the person makes any changes to any of the copied documents, it will not affect any of the other copies nor the original, hence the term: “immutable”.</p>
+                <p>In contrast, there are also “mutable” values, such as objects and arrays. Mutable values should be considered as security clearances to access one document only. Each time you create a copy of a mutable value, you are essentially giving security clearance to another person to access that same original document. This also suggests that if any person with security clearance makes any changes to the document, the document will naturally change for everyone else, hence “mutable.”</p>
+                <p>In this reading, you will learn why the contrast between immutable and mutable values is important to understand, especially when declaring and changing variables, and how we can accurately compare their values in an equality operator.</p>
+
+                <h3>Immutable values</h3>
+
+                <p>As one might expect from the term “immutable,” immutable values can not be changed. Examples include all primitive values such as strings, numbers, booleans, and others like: “null” and “undefined.”</p>
+                <p>When you assign a variable to one of these immutable values, you create a new value that stands independent from others. If you were to try and alter this value, say change a variable's string from “Hello” to “Goodbye”, you are, in essence, just reassigning that variable to a different string or value, not changing the value itself, nor influencing any other variables that might also contain that original value.</p>
+                <p>You can really see this concept in action mainly when you make a copy of one variable that holds an immutable value and then try to change the original variable:</p>
+
+                <pre><code>
+let sampleString = "Hello"; // creating variable “sampleString”
+
+let sampleStringCopy = sampleString;  //making a copy of “sampleString”
+                </code></pre>
+
+                <p>Now let us change the first variable to see how the copy responds.</p>
+
+                <pre><code>
+sampleString = “Goodbye” // changed value of first variable above
+
+console.log(sampleString) // prints out “Goodbye”
+console.log(sampleStringCopy) //prints out “Hello” still
+                </code></pre>
+
+                <p>Notice that even though we changed, or reassigned to be more accurate, the value of the first variable, the copied variable's value did not change. This is because the copied variable was assigned, in fact, its own free-standing, immutable value when it was created. In other words, when making a copy of a variable that holds an immutable value, you are not creating a new gateway to that original variable, or value; instead, you are simply creating a variable with a brand new value that is just a duplicate to the original variable's value, like you would if you tried photocopying a document.</p>
+
+                <div class="note-box">
+                  <h3>How to Build It</h3>
+
+                <p>With your new “Ruby on Wall Street” app, you're creating a few variables that will keep track of the amount of money your client is willing to invest in the stock market. First, you email your client asking for the total amount he would like to invest. He replies, "All the extra money I have: $100,000!”. So you create a variable to hold that value:</p>
+
+                <pre><code>
+let totalMoney = 100000                    
+                </code></pre>
+
+                <p>You then ask him how much of that money would he be willing to invest in “high-risk/high-reward” stocks. Feeling lucky, he replies, “All of it! Why not?!” Reluctantly, you still create a new variable that points to your old variable:</p>
+
+                <pre><code>
+let highRiskMoney = totalMoney                    
+                </code></pre>
+
+                <p>The next day, your client informs you that his daughter has asked him for a sizable amount of money, $95,000, for graduate school. Since he desires his children to succeed more than anything else, he agrees and tells you that his new total investment budget is now $5,000. So you reassign your variable <code>totalMoney</code> to 5000:</p>
+
+                <pre><code>
+totalMoney = 5000
+                </code></pre>
+
+                <p>The next day, with permission from your client, you decide to take the entire value of his “highRiskMoney” and invest it in a few “high-risk/high-reward” stocks. Was that the right move to make? Put the following lines in your terminal as you consider the following questions:</p>
+
+                <pre><code>
+let totalMoney = 100000
+let highRiskMoney = totalMoney
+totalMoney = 5000
+                </code></pre>
+
+                <ol>
+                    <li>What do you expect to print if you <code>console.log(totalMoney)</code>?</li>
+                    <li>What do you expect to print if you <code>console.log(highRiskMoney)</code>?</li>
+                    <li>Why you think the two variables printed out different values?</li>
+                </ol>
+
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/1n6jblkijy" title="Immutable Values" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+                </div>
+
+                <h3>Mutable values</h3>
+
+                <p>On the other end of the pendulum are mutable values. Unlike immutable values, mutable values can be changed and copied many times over, but still give “reference” to one original value. These include objects and arrays. When an object stores information, as in:</p>
+
+                <pre><code>
+let sampleObject = { sampleString: “Hello” }
+                </code></pre>
+
+                <p>…the <code>sampleObject</code> is initially assigning a value for its property to access (in this case, the property <code>sampleString</code> receives the value of “Hello”); however, and this is most important, the object itself, which is a mutable value, is not the end holder of that value. Instead, the object only points to, or “references”, that value that was created elsewhere. As we saw with immutable values, you can understand this concept more when making copies of a mutable value and changing one of them:</p>
+
+                <pre><code>
+let sampleObject = { // creating a sample object
+  sampleString: "Hello" // giving that object a sample property
+}
+
+let sampleObjectCopy = sampleObject // copying that sample object
+                </code></pre>
+
+                <p>Now let us change one of these objects, does not matter which one, and see how the value of the other changes.</p>
+
+                <pre><code>
+sampleObject['sampleString'] = "Goodbye"; // change value of the property of the first object
+
+console.log(sampleObject.sampleString) // prints out “Goodbye”
+console.log(sampleObjectCopy.sampleString) // prints out “Goodbye”
+                </code></pre>
+
+                <p>In sharp contrast to variables that hold immutable values, an object will only store a reference to one original value; meaning, if you copy that object and change the property value of either the original or the copy, you change the same property value for both because they share the same reference. We refer to this when we use the term “object reference”.</p>
+
+               <div class="note-box">
+                <h3>How to Build It</h3>
+
+                <p>We can only imagine how costly the mistake in the first “How to Build It” section would have been. Now let's revisit the exact same scenario, but creating objects for managing the investment options, rather than strict values. Here is what that would look like:</p>
+
+                <pre><code>
+let investmentCapital = { //create new object
+  totalMoney: 100000, //create one property with a number value
+}
+
+let highRiskCapital = investmentCapital; //copied “investmentCapital” object
+                </code></pre>
+
+                <p>This situation so far looks very similar to the last, but with objects. We created a new variable <code>investmentCapital</code> that has a property of <code>totalMoney</code> with a number value of 100000; and, since the client wants to invest everything in high-risk stocks, we copied that object into a new variable called <code>highRiskCapital</code> which now holds all the <code></code> value of <code>investmentCapital</code>.</p>
+
+                <p>So let's return to our same scenario where our client gives $95,000 to his daughter for graduate school, and we now need to reduce his total money to $5,000.</p>
+
+                <pre><code>
+investmentCapital.totalMoney = 5000 // reassign totalMoney property to the value of 5000
+                </code></pre>
+
+                <p>As we did in the last section, take a few moments to ponder the following questions. First, here's a summary of the code above:</p>
+
+                <pre><code>
+let investmentCapital = {
+  totalMoney: 100000,
+}
+
+let highRiskCapital = investmentCapital
+
+investmentCapital.totalMoney = 5000
+                </code></pre>
+
+                <p>Please copy the code above, paste it into your console, and answer the following questions:</p>
+
+                <ol>
+                    <li>What do you expect to print if you <code>console.log(investmentCapital.totalMoney)</code>? Try it! Were you correct?</li>
+                    <li>What do you expect to print if you <code>console.log(highRiskCapital.totalMoney)</code>? Try it! Were you correct?</li>
+                    <li>Why did the two variables printed out the same value here, rather than different values that we saw with immutable values?</li>
+                </ol>
+                <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/5fsbz8f1pk" title="Mutable Values" allow="autoplay; fullscreen" loading="lazy"></iframe>
+              </div>
+               </div>
+
+                <h3>Values and references</h3>
+
+                <p>Perhaps the entire purpose of introducing immutable and mutable values is to point out how they would equally compare with each other. Knowing whether variables of immutable or mutable objects will <code>===</code> true between each other is paramount to know when it comes up in your career. Here are a few basic rules to follow:</p>
+
+                <p><strong>Immutable values</strong>, such as strings and numbers, will always equal each other if they are identical:</p>
+
+                <pre><code>
+"sampleString" === "sampleString" // true for strings 0 === 0 // true for numbers false === false // true for boolean values
+                </code></pre>
+
+                <p><strong>Mutable values</strong> will never equal each other unless they reference the exact same object or array, even if they are identical. Let's see examples of each:</p>
+
+                <pre><code>
+{ } = { } // false, even if both objects are empty {sampleKey: "sampleValue"} = {sampleKey: "SampleValue"} // still false, even if both properties are identical
+                </code></pre>
+
+                <p>The same with arrays:</p>
+
+                <pre><code>
+[1, 2, 3] === [1, 2, 3] // false, even if the numbers are identical
+[false] === [false] // still false, even if both arrays contain the false boolean
+                </code></pre>
+
+                <p>Now, what if mutable values do reference the same object or array as in:</p>
+
+                <pre><code>
+let sampleObject = {sampleKey: "sampleValue"}
+let anotherObject = sampleObject
+sampleObject === anotherObject // true because both objects reference the same values                    
+                </code></pre>
+
+                <p>And with arrays:</p>
+
+                <pre><code>
+let sampleArray = [1, 2, 3] // creating array
+let anotherArray = sampleArray
+sampleArray === sampleArrayCopy // true because both arrays reference the same values                    
+                </code></pre>
+
+                <div class="note-box">
+                  <h3>How to Build It</h3>
+
+                <p>Let's look at this concept more thoroughly by returning to our case study.</p>
+                <p>Previously, when discussing immutable values, you, as the former financial advisor turned software engineer, wrote the following in response to your conversations with your client:</p>
+
+                <pre><code>
+let totalMoney = 100000
+let highRiskMoney = totalMoney
+totalMoney = 5000                    
+                </code></pre>
+
+                <p>You learned that when we <code>console.log(totalMoney)</code> you got 5000, but when you <code>console.log(highRiskMoney)</code> you got the original 100000. Looking at how these variables compare, would this be true?</p>
+
+                <pre><code>
+totalMoney === highRiskMoney                    
+                </code></pre>
+
+                <p>Surprisingly enough, they wouldn't. It would return false if you added it to a conditional statement. But how can this be? Didn't you set <code>highRiskMoney</code> to equal <code>totalMoney</code>? You did, but since we are dealing with immutable values, when you created the <code>highRiskMoney</code> variable, in actuality you created a brand new value and did essentially the following:</p>
+
+                <pre><code>
+let totalMoney = 100000
+let highRiskMoney = 100000
+
+totalMoney = 5000
+                </code></pre>
+
+                <p>Now you can see that when you reassigned the <code>totalMoney</code> variable to 5000, the <code>highRiskMoney</code> variable would have simply stayed with 100000 which is why it printed 100000 in the console.</p>
+                <p>Let's look at the same scenario, but with mutable values, such as objects. Previously, we had written:</p>
+
+                <pre><code>
+let investmentCapital = {
+  totalMoney: 100000,
+}
+
+let highRiskCapital = investmentCapital
+
+investmentCapital.totalMoney = 5000
+                </code></pre>
+
+                <p>When you <code>console.log(investmentCapital.totalMoney)</code> and <code>console.log(highRiskCapital.totalMoney)</code> the two printed the same, updated value of 5000. Now looking at these two variables and their properties how do you think they would compare?</p>
+
+                <pre><code>
+investmentCapital.totalMoney === highRiskCapital.totalMoney                    
+                </code></pre>
+
+                <p>The answer is <code>true</code>. Why? Because both objects point to the same reference that exists elsewhere in memory.</p>
+
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/a7dy8eh8cc" title="Values and References" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
+                </div>
+
+                <h3>Conclusion</h3>
+
+                <p>Knowing how code references variables and values lets you leverage Javascript. When you assign the object to two variables, you know that changing one will change the other. You can plan around that knowledge and make your code more robust. In contrast, a string shared between two variables is two independent values, and you can also use that knowledge to your advantage. These topics provide a deeper understanding of how JavaScript works and allow you to build better code, both here at BloomTech and in your career.</p>
+
+            </div>
+
+            <div class="content-box module1-accent">
+              <h2>Guided Project</h2>
+              <p>Welcome to this guided project, where we will delve into the powerful world of classes in JavaScript, a concept widely used throughout the industry. Classes provide a structured approach to object-oriented programming, allowing developers to create reusable blueprints for objects with shared properties and methods. Throughout this video, you will gain hands-on experience building and utilizing classes in real-world programs, solidifying your understanding of this essential JavaScript concept. By mastering classes, you'll be well-equipped to develop efficient and organized applications, making a lasting impact in your career.</p>
+              <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/myasko3w9a?seo=false" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+              </div>
+
+              <div>
+                <button onclick="toggleSolution()" class="resource-link">View Solution Code</button>
+                <pre><code id="solutionCode" style="display: none;">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+
+&lt;head&gt;
+  &lt;title&gt;Advanced Objects Guided Project Solution&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+  &lt;h1&gt;Advanced Objects Guided Project Solution&lt;/h1&gt;
+
+  &lt;script&gt;
+    // 👉 1- Intro to classes
+    class Player {
+      constructor(desiredNick) {
+        this.nick = desiredNick
+        this.points = 0
+      }
+      greet() {
+        console.log(`Hello, I am ${this.nick}`)
+      }
+      play() {
+        let randomNum = Math.floor(Math.random() * 10)
+        this.points += randomNum
+        return `I gained ${randomNum} points and I am at ${this.points}`
+      }
+    }
+    const foo = new Player('Foo')
+    const fizz = new Player('Fizz')
+
+    // 👉 2- Classes as containers of state (and the means to change it)
+    class VolumeRocker {
+      constructor() {
+        this.state = ''
+      }
+      print() {
+        console.log(`${this.state} (${this.state.length})`)
+      }
+      up() {
+        this.state += '▮'
+        this.print()
+      }
+      down() {
+        this.state = this.state.slice(0, this.state.length - 1)
+        this.print()
+      }
+    }
+    const rocker = new VolumeRocker
+
+    // 👉 3- Classes with more advanced logic
+    class TrafficLight {
+      constructor(address) {
+        this.address = address
+        this.colors = ['red', 'green', 'orange']
+        this.color = this.colors[0]
+      }
+      print() {
+        console.log(`the color is ${this.color}`)
+      }
+      change() {
+        let currentIndex = this.colors.indexOf(this.color)
+        let nextIndex = currentIndex + 1
+        if (nextIndex > 2) nextIndex = 0
+        this.color = this.colors[nextIndex]
+        this.print()
+      }
+    }
+    const light = new TrafficLight('NYC')
+  &lt;/script&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+                </code></pre>
+                <script>
+                  function toggleSolution() {
+                    const codeBlock = document.getElementById("solutionCode");
+                    if (codeBlock.style.display === "none") {
+                      codeBlock.style.display = "block";
+                    } else {
+                      codeBlock.style.display = "none";
+                    }
+                  }
+                </script>
+              </div>
+          </div>
+
+            <div class="content-box module1-accent">
+                <h3>Module 1 Project: Advanced Objects</h3>
+
+                <p>Properties, methods, and classes in Javascript are essential for creating reusable, organized, and maintainable code. Without them, coding can become repetitive, hard to understand, and difficult to scale. However, with a proper understanding of how to use these concepts, you will be able to write more efficient and professional code.</p>
+                <p>The module project contains advanced problems that will challenge and stretch your understanding of the module's content. The project has built-in tests for you to check your work, and the solution video is available in case you need help or want to see how we solved each challenge, but remember, there is always more than one way to solve a problem. Before reviewing the solution video, be sure to attempt the project and try solving the challenges yourself.</p>
+                <p>If you can successfully get through all the Module Projects in a sprint, you are ready for the Sprint Challenge and Sprint Assessment, which you must pass to move on to the next Sprint.</p>
+
+                <h3>Instructions</h3>
+
+                <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
+                <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/W_S3M1_Project" target="_blank">Advanced Objects</a></p>
+
+                <ul>
+                    <li>Fork the repository, and then use the green button and your terminal to clone the project down to your computer.</li>
+                    <li>Next, open the <code>index.html</code> file in both VSCode and the Chrome Browser. VSCode is where you will make code changes, and Chrome is where you will check if your code is passing all the tests.</li>
+                    <li>To check the tests, right-click on a Chrome window, select "Inspect," and ensure the console is visible. Then return to VSCode and start coding a solution to the first challenge. When you want to check if your code is correct, go to Chrome and refresh the page to run the tests and see your results.</li>
+                </ul>
+
+                <h3>Solution</h3>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/08lqv6mpzt" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
             </div>
 
-            <section class="resource-section">
+            <section class="content-box">
                 <h2 class="resource-section-title">Additional Resources</h2>
                 <div class="resource-links">
-                    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this" target="_blank" rel="noopener" class="resource-link">
-                        MDN Web Docs - The 'this' keyword
+                    <a href="https://www.w3schools.com/Js/js_object_properties.asp" target="_blank" rel="noopener" class="resource-link">
+                        Object Properties
                     </a>
-                    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes" target="_blank" rel="noopener" class="resource-link">
-                        MDN Web Docs - JavaScript Classes
+                    <a href="https://www.w3schools.com/Js/js_object_methods.asp" target="_blank" rel="noopener" class="resource-link">
+                        Object Methods
                     </a>
-                    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer" target="_blank" rel="noopener" class="resource-link">
-                        MDN Web Docs - Object Initializer
+                    <a href="https://www.w3schools.com/Js/js_class_intro.asp" target="_blank" rel="noopener" class="resource-link">
+                        Intro to Classes
                     </a>
                 </div>
             </section>
