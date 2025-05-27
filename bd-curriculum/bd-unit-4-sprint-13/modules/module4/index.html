@@ -66,6 +66,62 @@
                 <div class="video-container">
                     <iframe class="wistia_embed" title="Making a Request to a RESTful API Video" src="https://fast.wistia.net/embed/iframe/mgco0h2ep4" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
+
+                <h3>Understanding HTTP and RESTful APIs</h3>
+                <p>In the last reading, we introduced HTTP (Hypertext Transfer Protocol), a request-response protocol between a client and server, and RESTful APIs (Representational State Transfer), a design pattern used by developers to create understandable APIs. In this reading, we will discuss HTTP requests and responses and how they're used in general and in RESTful APIs.</p>
+
+                <div class="image-container">
+                    <img src="https://tk-assets.lambdaschool.com/78ad7297-1d0f-450c-971f-3d280c3b761d_image1.png" alt="Figure 1: Diagram representation of HTTP Request Model, showing a client sending a GET request to a service endpoint and receiving a JSON response." loading="lazy">
+                    <p class="caption">Figure 1: Diagram representation of HTTP Request Model, showing a client sending a GET request to a service endpoint and receiving a JSON response.</p>
+                </div>
+
+                <p>You may recall this image from the previous reading. We've changed it slightly to show that communicating with a RESTful API uses the same process (HTTP) but can send back different data than communicating with a web server might. Before we start working with our own API, we're going to use the GitHub API as we work our way through understanding HTTP requests and responses.</p>
+
+                <h3>The HTTP Message Format</h3>
+                <p>To transfer data between the server and client we use HTTP messages. There are two types of HTTP messages: requests, which are sent by the client to retrieve information or trigger an action on the server, and responses, which are the server's answers.</p>
+
+                <p>One of the benefits of HTTP is that it provides a standard format for transferring these messages. You can see an example of the structure here in the headers for our request to the Github API:</p>
+
+                <pre><code>GET /users/defunct HTTP/1.1
+Host: api.github.com
+Connection: keep-alive</code></pre>
+
+                <p>These lines represent part of the request header. They specify the server we're accessing and what we're doing. What action we're doing is determined by the method that's used. There are four request methods that we'll be discussing in this reading: GET, POST, PUT, and DELETE (we'll explain these methods in more detail in the next section). In the first line above we see the Method (GET), the end point (/users/defunct) and the protocol (HTTP). The next line is the server we're accessing (api.github.com) and the last line is asking what type of connection we want. In this case, we are expecting a response, so the connection is kept alive in order to receive that response.</p>
+
+                <h3>The HTTP Response</h3>
+                <p>When you send out an HTTP request to the server, you'll get an HTTP response in reply. All HTTP responses include a response code that classifies what kind of response it is. These codes come in the form of a three-digit number and are broken into three primary categories:</p>
+
+                <ul>
+                    <li><strong>2xx</strong> — Success!</li>
+                    <li><strong>4xx</strong> — You messed up your request.</li>
+                    <li><strong>5xx</strong> — The server messed up.</li>
+                </ul>
+
+                <p>The most common response codes that you'll see are:</p>
+
+                <ul>
+                    <li><strong>200</strong> — OK</li>
+                    <li><strong>404</strong> — Not Found</li>
+                    <li><strong>500</strong> — Server Error</li>
+                </ul>
+
+                <h3>Using Curl to Test HTTP Requests/Responses</h3>
+                <p>cURL or curl, which stands for client URL, is a command line tool for sending and receiving data using a wide variety of protocols, including HTTP. We'll be using it to make HTTP requests and view their HTTP responses.</p>
+
+                <p>The following is the curl command structure and some common flags:</p>
+
+                <pre><code>curl &lt;flags&gt; &lt;URL&gt;
+
+-G — use the GET HTTP method for the request
+-d — specifies the data to pass in the body of the request, and will use the POST HTTP method for the request by default
+-i — include headers in the output
+-I — only show headers in the output (NOTE: this is a capital i)
+-X PUT — -X changes the HTTP method based on the provided value, commonly used with -d</code></pre>
+
+                <h3>HTTP Request Idempotence</h3>
+                <p>Another important property of certain HTTP requests is idempotence. Idempotence describes an operation that in response to the same input will always result in the system having the same end state.</p>
+
+                <p>The way that the GET, PUT and DELETE methods are used in RESTful services is idempotent. If we make multiple, identical GET or PUT requests, we expect the result to always be the same. On the other hand, the way that POST methods are usually implemented in RESTful services is not idempotent. If you make multiple, identical POST requests, you will not always get the same result.</p>
                 
                 <h3>HTTP Methods and RESTful API Requests</h3>
                 <p>HTTP methods define the type of operation being performed on a resource in a RESTful API. Each method has specific semantics and use cases:</p>
@@ -99,7 +155,7 @@ System.out.println("Response body: " + response.body());
                     <li><strong>Includes a request body</strong> - Contains the data for the new resource</li>
                 </ul>
                 <p>Example of a POST request:</p>
-                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+                <code>
 String jsonBody = """
     {
         "artist": "Imagine Dragons",
@@ -130,7 +186,7 @@ System.out.println("Response body: " + postResponse.body());
                     <li><strong>Requires the complete resource</strong> - All fields should be provided</li>
                 </ul>
                 <p>Example of a PUT request:</p>
-                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+                <code>
 String updateJson = """
     {
         "artist": "Imagine Dragons",
@@ -159,7 +215,7 @@ System.out.println("Status code: " + putResponse.statusCode());
                     <li><strong>Typically don't include a request body</strong> - The resource to delete is identified by the URL</li>
                 </ul>
                 <p>Example of a DELETE request:</p>
-                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+                <code>
 HttpRequest deleteRequest = HttpRequest.newBuilder()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;.uri(URI.create("https://api.example.com/songs/imagine-dragons/believer"))<br>
 &nbsp;&nbsp;&nbsp;&nbsp;.DELETE()<br>
@@ -199,13 +255,144 @@ System.out.println("Status code: " + deleteResponse.statusCode());
                 </ul>
             </div>
             
-            <h2>Consuming a RESTful API</h2>
-            <iframe class="wistia_embed" title="Consuming a RESTful API" src="https://fast.wistia.net/embed/iframe/m0t47jfudb" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            
-            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
+            <div class="content-box">
+                <h2>Consuming a RESTful API</h2>
+                <iframe class="wistia_embed" title="Consuming a RESTful API" src="https://fast.wistia.net/embed/iframe/m0t47jfudb" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+
+                <div class="content-box">
+                    <h2>Consuming a RESTful API</h2>
+                    <p>Take a small break and just observe on this one. The original link is down, however the concepts we cover here can be used in many situations.</p>
+                    
+                    <p>In the previous two readings, you learned about how RESTful APIs use HTTP requests and responses. In this reading you will look at a mock social media RESTful API we have created and learn about consuming a RESTful API.</p>
+
+                    <p>To consume an API means to make use of it in the program you are writing. The ease of consuming an API largely relies on the APIs documentation. API documentation is important because it contains information for the developer about how to effectively use and integrate the API.</p>
+
+                    <h3>Social Media API Documentation</h3>
+                    <p>We want to help you create your own social media web app for your friends. We've gone ahead and built a mock RESTful API to represent this social media app and give you some experience with API documentation.</p>
+
+                    <p>Our API supports the ability to create a new user, create statuses, see other users and their statuses, and edit and delete statuses. To support this functionality there are two GET methods, two POST methods, one PUT method, and one DELETE method.</p>
+
+                    <p>You can find the API documentation to reference in Warmup 04 - Social Media API Documentation.</p>
+
+                    <h3>GET status</h3>
+                    <p>To help us become familiar with reading API documentation we're going to walk through the GET status method.</p>
+
+                    <p>This method is an HTTP GET method and its purpose is to return the data from a status. You would use this method any time you want to display a certain status, which could be on a status feed or on a user's profile.</p>
+
+                    <p>In the documentation, the relevant endpoint is described as the Resource URL.</p>
+
+                    <code>
+https://nzbzh3a24d.execute-api.us-east-1.amazonaws.com/socialmediaexample/status (link currently down)</code>
+
+                    <p>This describes the path that is used to access the requested resource and must be present in the curl command. Note that this URL is not accessible, but it will be used in the examples below.</p>
+
+                    <p>There are two parameters listed: userId and statusId. Both are tagged as 'required', which means the request will only be accepted by the server with both parameters. Otherwise, you will receive an error message. The examples in the documentation are userId=1 and statusId=1 which must be added to the endpoint described above. A question mark is appended to the endpoint and the parameters are combined using an ampersand, &, as shown: ?userId=1&statusId=1. Providing data this way is sometimes referred to as URL parameters since the data is a part of the URL.</p>
+
+                    <p>The fully formed request:</p>
+
+                    <code>
+curl -G "https://nzbzh3a24d.execute-api.us-east-1.amazonaws.com/socialmediaexample/status?&statusId=1&userId=1"</code>
+
+                    <p>The response is returned as one JSON object as described in the resource information, given below.</p>
+
+                    <code>
+{
+  "status": {
+    "userId": 1,
+    "statusId": 1,
+    "message": "About to test a REST API, wish me luck!"
+  }
+}</code>
+
+                    <p>Notice that the user id and status id are returned in the JSON format that matches the input parameters. The other variable belonging to the JSON object is the user's status message, "About to test a REST API, wish me luck!".</p>
+
+                    <p>Now let's put this command in the terminal and watch the result,</p>
+
+                    <code>
+ATA-Mac:~ ata-user$ curl -G "https://nzbzh3a24d.execute-api.us-east-1.amazonaws.com/socialmediaexample/status?&statusId=1&userId=1"
+{
+  "status": {
+    "userId": 1,
+    "statusId": 1,
+    "message": "About to test a REST API, wish me luck!"
+  }
+}</code>
+
+                    <p>The following sequence diagram shows the steps that take place when we make the above curl command.</p>
+
+                    <img src="https://tk-assets.lambdaschool.com/5748fdfa-3c63-42a1-b292-1e83f0afbd72_GetRequestSD.png" alt="Figure 1: Sequence diagram of a curl request to a GET endpoint. Human-readable source below." loading="lazy">
+                    <p>Figure 1: Sequence diagram of a curl request to a GET endpoint. <a href="https://plantuml.corp.amazon.com/plantuml/form/encoded.html#encoded=LP6nJWCn38RtUmghCxn01rH44J0KLVGabbkid54ZvPnWE-thuvJUGPT8jdz__krir52iJgcpQ8dWvRa7JrdLhiDWMM1B9qgva7J5bJ74WcmGggIRnFRzS1El7ZyFG3oM7DbMW0fuTkP2W_k72mJMhZAFBq78quGy3XmPF3b5njHTAdzo4sJzoZ91v5BDNyi3l_Rz7eI-Awaj7MxA6zHjm4szvRtiZhoyGmj7Q1q-zAg0SxJZmCZmjWSSHo7LE_2XPvGHx4W3pqhBxbg4WlaWEVcT6dQXFs4ADQ6HexLaLcgOUGxvglEHm1S7Fo5EvAlhZBbk_K5MfVdJclujk9np3KKQv5VGN6aG8kusplV__G40" target="_blank" rel="noopener">Human-readable diagram source</a></p>
+
+                    <h3>POST status</h3>
+                    <p>We're also going to walk through the POST status method to discuss the method's authentication information.</p>
+
+                    <p>This method is an HTTP POST method and the purpose of it is to create a new status and populate it with the given data. Social media platforms often allow anyone to view statuses, therefore you don't need authentication for the GET requests. However, in order to create a status, you need to be logged in to your account. The POST status method uses HTTP authentication.</p>
+
+                    <p>Authentication is the process of providing a login and password to a server that will validate that you are allowed to make the request. Instead of a plain text password, it is best practice to authenticate using hashed values that represent your account information, called an authentication token. This process is similar to hashing an object's data to store in a HashSet. There are several authentication methods that can generate this information and are used in different ways. Each authentication method has a standard that has been developed and is publicly available so that developers don't have to design their own authentication methods, they may choose one that already exists. This API uses a method called OAuth, and will be shown below.</p>
+
+                    <p>In the documentation the relevant endpoint is described as the Resource URL.</p>
+
+                    <code>
+https://nzbzh3a24d.execute-api.us-east-1.amazonaws.com/socialmediaexample/status (Link currently down)</code>
+
+                    <p>This describes the path that is used to access the requested resource and must be present in a curl command. Notice how the endpoint is the same as the GET method for status. The server will know which action you are performing by the HTTP method used, in this case POST.</p>
+
+                    <p>There are two parameters listed, userId and status. They are both tagged as 'required', which means the request is only valid with the parameters, otherwise, you will receive an error message. The examples in the documentation are userId=1 and status=Hello which must be added to the endpoint described above. A question mark is appended to the endpoint, and the parameters are combined using an ampersand, &, as shown: ?userId=1&status=Hello.</p>
+
+                    <p>Note that this is one way to provide data in an HTTP request, we will explore other ways of passing data such as in the body of the request later in this unit.</p>
+
+                    <p>This method also requires authentication through OAuth. For our purposes, the example values listed below will work. This lesson will not cover how to generate an OAuth token or the specifics behind what each value means, but this lesson will provide sample data that is used correctly in standard OAuth authentication. You are not expected to know this at this time. Each key-value pair must be appended to the curl command with the --header notation:</p>
+
+                    <code>
+--header oauth_consumer_key:"0685abc22" --header oauth_token:"ad180lru7" --header oauth_signature_method:"HMAC-SHA1"
+    --header oauth_signature:"wOJIO9A2W5mF" --header oauth_timestamp:"137131200</code>
+
+                    <p>The fully formed request uses the -X flag combined with "POST". This allows us to make a POST request without needing to provide data with the -d flag, since we are providing it through the parameters:</p>
+
+                    <code>
+curl -X POST "https://nzbzh3a24d.execute-api.us-east-1.amazonaws.com/socialmediaexample/status?userId=1&status=Hello"
+    --header oauth_consumer_key:"0685abc22" --header oauth_token:"ad180lru7" --header oauth_signature_method:"HMAC-SHA1" 
+    --header oauth_signature:"wOJIO9A2W5mF" --header oauth_timestamp:"137131200" --header oauth_nonce:"4572616e48"
+    --header oauth_version:"1.0"</code>
+
+                    <p>The example response is listed and returned as one JSON object as described in the resource information.</p>
+
+                    <code>
+{
+  "status": {
+    "userId": 1,
+    "statusId": 2,
+    "message": "Hello"
+  }
+}</code>
+
+                    <p>Notice the user id and status is returned in the JSON format that matches the input parameters. The other field in the JSON object is the user's status id, which was created upon completion of the method.</p>
+
+                    <p>Now let's test out this command in the terminal by posting a new status with the message "Hello".</p>
+
+                    <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+ATA-Mac:~ ata-user$ curl -X POST "https://nzbzh3a24d.execute-api.us-east-1.amazonaws.com/socialmediaexample/status?userId=1&status=Hello"
+    --header oauth_consumer_key:"0685abc22" --header oauth_token:"ad180lru7" --header oauth_signature_method:"HMAC-SHA1"
+    --header oauth_signature:"wOJIO9A2W5mF" --header oauth_timestamp:"137131200" --header oauth_nonce:"4572616e48"
+    --header oauth_version:"1.0"
+
+{
+    "status": {
+        "id" : 1,
+        "statusId" : 2,
+        "message" : Hello
+    }
+}</code>
+
+                    <h3>Summary</h3>
+                    <p>You've seen one example of a REST API and learned how to use it. Although other API's will be set up differently, there should always be documentation and guidelines for using them. They all follow the basic principles of making HTTP calls to a server and receiving responses. What you are trying to accomplish will determine what resource and method you need to call. The API reference is a great place to start when dealing with new APIs as it will have valuable information on how to use them. The key things to look for are what endpoint needs to be called, what HTTP method, the parameters, the response format, and whether authentication is required.</p>
+                </div>
+            </div>
+
+            <div class="content-box">
                 <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">Processing API Responses</h3>
                 <p>When consuming RESTful APIs, you need to properly handle and process the responses:</p>
-                <h4 style="color: #ffffff; margin-top: 15px;">Response Formats</h4>
+                <h4>Response Formats</h4>
                 <p>RESTful APIs typically return data in JSON or XML format. JSON is the most common format due to its simplicity and compatibility with JavaScript:</p>
                 <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
 // Example JSON response for a GET request to /songs/imagine-dragons/radioactive<br>
@@ -218,7 +405,7 @@ System.out.println("Status code: " + deleteResponse.statusCode());
 &nbsp;&nbsp;"playCount": 10452687<br>
 }
                 </code>
-                <h4 style="color: #ffffff; margin-top: 15px;">Parsing JSON Responses</h4>
+                <h4>Parsing JSON Responses</h4>
                 <p>In Java, you can parse JSON responses using libraries like Jackson or Gson:</p>
                 <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
 // Using Jackson for JSON processing<br>
@@ -241,7 +428,7 @@ if (response.statusCode() == 200) {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;// Handle error based on status code<br>
 }
                 </code>
-                <h4 style="color: #ffffff; margin-top: 15px;">Error Handling</h4>
+                <h4>Error Handling</h4>
                 <p>Proper error handling is crucial when working with APIs:</p>
                 <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
 try {<br>
@@ -272,7 +459,7 @@ try {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Thread.currentThread().interrupt();<br>
 }
                 </code>
-                <h4 style="color: #ffffff; margin-top: 15px;">Testing with cURL</h4>
+                <h4>Testing with cURL</h4>
                 <p>cURL is a command-line tool for making HTTP requests, useful for testing APIs:</p>
                 <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
 # GET request<br>
@@ -293,21 +480,23 @@ curl -X DELETE https://api.example.com/songs/imagine-dragons/believer
                 </code>
             </div>
             
-            <h2>HTTP and RESTful Services Overview</h2>
-            <iframe class="wistia_embed" title="Sprint 13 HTTP and RESTful Services Video" src="https://fast.wistia.net/embed/iframe/j9ymuf1eq3" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div class="content-box">
+                <h2>HTTP and RESTful Services Overview</h2>
+                <iframe class="wistia_embed" title="Sprint 13 HTTP and RESTful Services Video" src="https://fast.wistia.net/embed/iframe/j9ymuf1eq3" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>  
             
-            <div style="margin: 15px 0 30px; padding: 15px; background-color: #333a47; border-radius: 4px; color: #b3b3b3;">
-                <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 10px;">RESTful API Design Best Practices</h3>
+            <div class="content-box">
+                <h3>RESTful API Design Best Practices</h3>
                 <p>When designing or working with RESTful APIs, keep these best practices in mind:</p>
-                <h4 style="color: #ffffff; margin-top: 15px;">1. Resource Naming</h4>
+                <h4>1. Resource Naming</h4>
                 <ul>
                     <li><strong>Use nouns, not verbs</strong> - Resources should be named as nouns, not actions</li>
                     <li><strong>Use plurals</strong> - Collections should be plural (e.g., /songs, not /song)</li>
                     <li><strong>Use lowercase</strong> - All URLs should be lowercase</li>
                     <li><strong>Use hyphens for readability</strong> - Use hyphens (-) instead of underscores (_)</li>
                 </ul>
-                <h4 style="color: #ffffff; margin-top: 15px;">2. Resource Hierarchy</h4>
-                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+                <h4>2. Resource Hierarchy</h4>
+                <code>
 # Good examples of RESTful URL patterns<br>
 /artists                         # List all artists<br>
 /artists/123                     # Get a specific artist<br>
@@ -315,7 +504,7 @@ curl -X DELETE https://api.example.com/songs/imagine-dragons/believer
 /artists/123/albums/456          # Get a specific album by artist 123<br>
 /artists/123/albums/456/songs    # List all songs in album 456 by artist 123
                 </code>
-                <h4 style="color: #ffffff; margin-top: 15px;">3. Use HTTP Methods Correctly</h4>
+                <h4>3. Use HTTP Methods Correctly</h4>
                 <ul>
                     <li><strong>GET</strong> for reading (never for modifying)</li>
                     <li><strong>POST</strong> for creating</li>
@@ -323,18 +512,18 @@ curl -X DELETE https://api.example.com/songs/imagine-dragons/believer
                     <li><strong>PATCH</strong> for partial updates</li>
                     <li><strong>DELETE</strong> for removing</li>
                 </ul>
-                <h4 style="color: #ffffff; margin-top: 15px;">4. Always Use HTTPS</h4>
+                <h4>4. Always Use HTTPS</h4>
                 <p>Secure your API with HTTPS to protect data in transit. This is not optional in production environments.</p>
-                <h4 style="color: #ffffff; margin-top: 15px;">5. Versioning</h4>
+                <h4>5. Versioning</h4>
                 <p>Include API versioning to make changes without breaking existing clients:</p>
-                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+                <code>
 # Versioning in URL path<br>
 /api/v1/songs<br>
 <br>
 # Versioning in header<br>
 curl -H "Accept: application/vnd.example.v1+json" https://api.example.com/songs
                 </code>
-                <h4 style="color: #ffffff; margin-top: 15px;">6. Use Proper Status Codes</h4>
+                <h4>6. Use Proper Status Codes</h4>
                 <p>Return appropriate HTTP status codes for different scenarios:</p>
                 <ul>
                     <li>200 OK for successful GET, PUT, or PATCH</li>
@@ -346,9 +535,9 @@ curl -H "Accept: application/vnd.example.v1+json" https://api.example.com/songs
                     <li>404 Not Found for non-existent resources</li>
                     <li>500 Internal Server Error for server-side issues</li>
                 </ul>
-                <h4 style="color: #ffffff; margin-top: 15px;">7. Pagination, Filtering, and Sorting</h4>
+                <h4>7. Pagination, Filtering, and Sorting</h4>
                 <p>For collections, support pagination, filtering, and sorting via query parameters:</p>
-                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+                <code>
 # Pagination<br>
 /songs?page=2&limit=10<br>
 <br>
@@ -358,9 +547,9 @@ curl -H "Accept: application/vnd.example.v1+json" https://api.example.com/songs
 # Sorting<br>
 /songs?sort=yearReleased:desc
                 </code>
-                <h4 style="color: #ffffff; margin-top: 15px;">8. Error Handling</h4>
+                <h4>8. Error Handling</h4>
                 <p>Return descriptive error responses with appropriate status codes:</p>
-                <code style="display: block; margin: 15px 0; padding: 10px; background-color: #2a303c; border-radius: 4px;">
+                <code>
 # Example error response<br>
 {<br>
 &nbsp;&nbsp;"status": 400,<br>
@@ -376,7 +565,7 @@ curl -H "Accept: application/vnd.example.v1+json" https://api.example.com/songs
 &nbsp;&nbsp;"path": "/songs"<br>
 }
                 </code>
-                <h4 style="color: #ffffff; margin-top: 15px;">9. Idempotency</h4>
+                <h4>9. Idempotency</h4>
                 <p>Understand and respect idempotency:</p>
                 <ul>
                     <li><strong>Idempotent operations</strong> produce the same result regardless of how many times they're called</li>
@@ -386,6 +575,14 @@ curl -H "Accept: application/vnd.example.v1+json" https://api.example.com/songs
                 <p>This is especially important for error handling and retries. If a request fails due to a network issue, idempotent operations can be safely retried without side effects.</p>
             </div>
         </section>
+
+        <div class="content-box">
+            <h2>Guided Project</h2>
+
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Sprint 13 Guided Project Video" src="https://fast.wistia.net/embed/iframe/j9ymuf1eq3" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            </div>
+        </div>
 
         <section class="resource-section">
             <h2 class="resource-section-title">Additional Resources</h2>

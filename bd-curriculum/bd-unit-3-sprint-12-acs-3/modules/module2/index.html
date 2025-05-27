@@ -35,10 +35,6 @@
                 <h2>Module Overview</h2>
                 <p>Explore the test-driven development approach and learn how to write tests before implementing features.</p>
             </div>
-            
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Sprint 12 Test Driven Development Recorded Guided Project Video" src="https://fast.wistia.net/embed/iframe/7q2vgp1odg" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
 
             <div class="content-box">
                 <h2>Learning Objectives</h2>
@@ -66,6 +62,146 @@
                     </li>
                     <li>Develop skills for writing clean, testable code</li>
                 </ul>
+            </div>
+
+            <div class="content-box">
+                <h3>Test Driven Development</h3>
+                <p>At this point, you're used to reading tests and having your code pass those tests.</p>
+
+                <p>Ever wonder why those instructors make those tests so hard to pass? What about writing those tests yourself?</p>
+
+                <p>Test Driven Development is a cyclical process that can be invaluable in any software engineering team to make sure that code stays robust and is scalable as time passes.</p>
+
+                <p>Code..... Code always changes.</p>
+
+                <p>Even in interviews where solutions are less than 100 lines long, assumptions and edge cases are commonly lost. What about real life code!?</p>
+
+                <p>Commonly, developers are scarred by bloated, complicated unit tests and don't write any at all. They host that a summer intern and give them a small ticket. The intern refactors a utility function like the ticket says. And BAM! The entire system crashes, paging the developer in the middle of the night. Why? Because there aren't any unit tests!</p>
+
+                <p>To make sure we aren't breaking any edge cases and keep the behavior of our code consistent, we want to write unit tests that are simple, and test the behavior of our code.</p>
+
+                <p>By keeping our unit tests limited to testing one logical concept and only behavior, we keep our units(core pieces of our code):</p>
+                <ul>
+                    <li>easy and safe to refactor</li>
+                    <li>decoupled from other units</li>
+                    <li>continuously documented</li>
+                </ul>
+
+                <h4>What is Test Driven Development?</h4>
+                <p>Test Driven Development is the process of:</p>
+                <ol>
+                    <li>Writing a test case for a small, tightly scoped, expected behavior.</li>
+                    <li>Checking that test fails.</li>
+                    <li>Writing code so that the test passes.</li>
+                    <li>Refactoring if needed.</li>
+                    <li>Repeat</li>
+                </ol>
+
+                <h4>Hello Test Driven Development</h4>
+                <p>Here we have the classic Hello World Java program.</p>
+
+                <pre><code>class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!"); 
+    }
+}</code></pre>
+
+                <p>Imagine we're building a SAAS (Software as a Service) startup where we want to expand and sell the functionality of our Hello World program. We just received funding for our start-up with the program we built above!</p>
+
+                <p>We might want to start separating the functionality of our code and turn it into a function.</p>
+
+                <pre><code>class HelloWorld {
+
+    public static String hello() {
+        return "Hello, World!";
+    }
+
+    public static void main(String[] args) {
+        System.out.println(hello()); 
+    }
+}</code></pre>
+
+                <p>We're really going to have to scale big but we still have to take things one step at a time.</p>
+
+                <p>After lots of back and forth between you and your founder, we decide to add a dash of TDD due to that one unforgettable summer experience.</p>
+
+                <pre><code>import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class HelloWorldTest {
+
+    @Test
+    void hello(){
+        String expected = "Hello, World!";
+        String actual = hello();
+
+        assertEquals(expected, actual);
+
+    }
+
+}</code></pre>
+
+                <p>One of your early customers, Bob, makes a requests that this program work for individuals. Of course, they don't want to say hello to the entire world.</p>
+
+                <p>Abiding by TDD, we write this failing test:</p>
+
+                <pre><code>class HelloWorldTest {
+
+    @Test
+    void hello(){
+        String expected = "Hello, World!";
+        String actual = hello();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void helloBob(){
+        String expected = "Hello, Bob!";
+        String actual = hello("Bob");
+
+        assertEquals(expected, actual);
+
+    }
+
+}</code></pre>
+
+                <p>Now, we can refactor our code so that this test passes:</p>
+
+                <pre><code>class HelloWorld {
+
+    public static String hello(String name) {
+        return "Hello, " + name + "!";
+    }
+
+    public static void main(String[] args) {
+        System.out.println(hello()); 
+    }
+}</code></pre>
+
+                <p>Our customer will be happy! However, because of TDD, you notice you would be missing our default case and disappoint all of your legacy customers.</p>
+
+                <p>Instead of hiring another engineer to help you out, you refactor it to:</p>
+
+                <pre><code>class HelloWorld {
+
+    public static String hello(String name) {
+        if(name == null){
+            name = "World";
+        }
+
+        return "Hello, " + name + "!";
+    }
+
+    public static void main(String[] args) {
+        System.out.println(hello()); 
+    }
+}</code></pre>
+
+                <p>Congrats! You have added that dash of critical unit testing that keeps your startup's code robust without slowing down development.</p>
+
+                <p>Surely, telling your investors this will get you more funding!</p>
             </div>
 
             <div class="content-box">
@@ -125,12 +261,39 @@ class CalculatorTests {
 }</code></pre>
             </div>
 
+            <div class="content-box">
+                <h2>Guided Project</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Sprint 12 Test Driven Development Recorded Guided Project Video" src="https://fast.wistia.net/embed/iframe/7q2vgp1odg" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/test-driven-development" target="_blank" rel="noopener" class="resource-link">
+                        TDD Project Repository
+                    </a>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Mastery Task 2: Implement TDD Unit Test Behavior</h2>
+                <p>Test Driven Development takes place over two parts, testing, and developing. For this Mastery Task, the testing has been done for you, and it is up to you now to do the development.</p>
+
+                <p>The LibraryService is lacking in functionality, only the save() method has been implemented correctly, the rest of the methods are returning null values or dummy data.</p>
+
+                <p>Open the tst.com.bloomtech.library.services.LibraryServiceTest file and read through the unit tests. Each test describes a particular behavior the LibraryService methods should be able to perform. First understand these behaviors and then develop the LibraryService class in order to make the tests all pass.</p>
+
+                <h3>Completion</h3>
+                <p>Run the gradle command:</p>
+
+                <pre><code>./gradlew -q clean :test --tests 'com.bloomtech.library.services.LibraryServiceTest'</code></pre>
+
+                <p>and make sure all tests pass.</p>
+            </div>
+
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
-                    <a href="https://github.com/BloomTechBackend/unit3-sprint12-test-driven-development" target="_blank" rel="noopener" class="resource-link">
-                        TDD Project Repository
-                    </a>
                     <a href="https://junit.org/junit5/docs/current/user-guide/" target="_blank" rel="noopener" class="resource-link">
                         JUnit 5 User Guide
                     </a>

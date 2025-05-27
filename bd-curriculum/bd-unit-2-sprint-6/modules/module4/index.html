@@ -65,7 +65,133 @@
                     <li><strong>Map</strong> - An object that maps keys to values, with no duplicate keys allowed</li>
                 </ul>
             </div>
-            
+
+            <div class="content-box">
+                <h3>Primitive Wrapper Classes</h3>
+                <h4>What are they?</h4>
+                <p>There is a set of classes that we refer to as "primitive wrapper" classes that correspond to the primitive types in Java. For example, the double primitive type has a corresponding Double class.</p>
+
+                <p>They're classes that contain a member variable of the relevant primitive type and some helpful additional methods.</p>
+
+                <p>Note that primitive types are not objects and are thus stored by value. The wrapper types are objects and are thus stored by reference. So a variable of type, Integer , actually contains a reference to an Integer object. But a variable of type, int , simply contains the integer value of that int. Because the wrapper classes are object types, remember to use equals() when comparing instances of these wrapper classes: do NOT use == (which will make a reference comparison instead of a value comparison!)</p>
+
+                <h4>Primitive Types and Their Wrapper Classes:</h4>
+                <table>
+                    <tr>
+                        <th>Primitive Type</th>
+                        <th>Wrapper class</th>
+                    </tr>
+                    <tr><td>boolean</td><td>Boolean</td></tr>
+                    <tr><td>byte</td><td>Byte</td></tr>
+                    <tr><td>char</td><td>Character</td></tr>
+                    <tr><td>short</td><td>Short</td></tr>
+                    <tr><td>int</td><td>Integer</td></tr>
+                    <tr><td>long</td><td>Long</td></tr>
+                    <tr><td>float</td><td>Float</td></tr>
+                    <tr><td>double</td><td>Double</td></tr>
+                </table>
+
+                <p>Notice that most of the wrapper class names match the primitive type names, but just with a capital letter, denoting it as a class. The two exceptions are char / Character and int / Integer. These primitive names are historical, coming from the C programming language, and you'll just need to remember that their primitives have the shortened name and the wrapper class uses the full word name for those two cases. But it probably won't be too hard as you're already familiar with int s and probably won't use char / Character all that often.</p>
+
+                <h4>Why do they exist?</h4>
+                <p>These wrapper classes offer a few things:</p>
+                <ul>
+                    <li>You can set a wrapper object reference to null, but you cannot set a primitive to null</li>
+                    <li>Some classes accept only objects, so they cannot accept an int/float/double... (e.g. ArrayList), so to use them, you'll need to use the wrapper classes</li>
+                    <li>The wrapper classes offer some helpful methods: converting between types, to/from String etc.</li>
+                </ul>
+
+                <h4>Immutability</h4>
+                <p>We may have discussed the concept of immutability--a class whose instances cannot be modified in any way once they are constructed. If you want to "modify" the value/state of an immutable class instance, you'll need to call a method or operation that creates a new instance. This applies to each of these primitive wrapper classes: All primitive wrapper classes are immutable.</p>
+
+                <h4>Some primitive wrapper methods for conversion</h4>
+                <p>Explicitly converting between primitives, wrappers, String (using int/Integer as an example):</p>
+
+                <h5>Between primitive/wrapper types:</h5>
+                <ul>
+                    <li><strong>int -> Integer:</strong> Integer's class method, valueOf(int), converts an int to an Integer:
+                        <pre><code>Integer wrapperInteger = Integer.valueOf(22);</code></pre>
+                        This is done by Java behind the scenes in:
+                        <pre><code>Integer wrapperInteger = 22;</code></pre>
+                    </li>
+                    <li><strong>Integer -> int:</strong> Integer's instance method, intValue(), converts an Integer to an int:
+                        <pre><code>Integer wrapperInteger = new Integer(22);
+int primitiveInt = wrapperInteger.intValue();</code></pre>
+                        This is done by Java behind the scenes in:
+                        <pre><code>int primitiveInt = wrapperInteger;</code></pre>
+                    </li>
+                </ul>
+
+                <h5>From String to different types:</h5>
+                <ul>
+                    <li><strong>String -> int:</strong> Use Integer's class method, parseInt(String):
+                        <pre><code>int primitiveInt = Integer.parseInt("22");</code></pre>
+                    </li>
+                    <li><strong>String -> Integer:</strong> Use valueOf(String):
+                        <pre><code>Integer wrapperInteger = Integer.valueOf("22");</code></pre>
+                    </li>
+                </ul>
+
+                <h5>From different types to String:</h5>
+                <ul>
+                    <li><strong>int -> String:</strong> Use Integer.toString(int):
+                        <pre><code>String intString = Integer.toString(22);</code></pre>
+                    </li>
+                    <li><strong>Integer -> String:</strong> Use toString() instance method:
+                        <pre><code>Integer wrapperInteger = Integer.valueOf(22);
+String integerString = wrapperInteger.toString();</code></pre>
+                    </li>
+                </ul>
+
+                <h5>Summary of Conversions:</h5>
+                <table>
+                    <tr>
+                        <th>From Type</th>
+                        <th>To Type</th>
+                        <th>method</th>
+                        <th>Example</th>
+                    </tr>
+                    <tr>
+                        <td>int</td>
+                        <td>Integer</td>
+                        <td>Integer.valueOf(int)</td>
+                        <td>Integer wrapperInteger = Integer.valueOf(22);</td>
+                    </tr>
+                    <tr>
+                        <td>Integer</td>
+                        <td>int</td>
+                        <td>Integer#intValue()</td>
+                        <td>Integer wrapperInteger = new Integer(22); int primitiveInt = wrapperInteger.intValue();</td>
+                    </tr>
+                    <tr>
+                        <td>String</td>
+                        <td>int</td>
+                        <td>Integer.parseInt(String)</td>
+                        <td>int primitiveInt = Integer.parseInt("22");</td>
+                    </tr>
+                    <tr>
+                        <td>String</td>
+                        <td>Integer</td>
+                        <td>Integer.valueOf(String)</td>
+                        <td>Integer wrapperInteger = Integer.valueOf("22");</td>
+                    </tr>
+                    <tr>
+                        <td>int</td>
+                        <td>String</td>
+                        <td>Integer.toString(int)</td>
+                        <td>String intString = Integer.toString(22);</td>
+                    </tr>
+                    <tr>
+                        <td>Integer</td>
+                        <td>String</td>
+                        <td>Integer#toString()</td>
+                        <td>Integer wrapperInteger = Integer.valueOf(22); String integerString = wrapperInteger.toString();</td>
+                    </tr>
+                </table>
+
+                <p>There are analogous conversion methods for the other wrapper types. For example, Double.valueOf(double), doublePrimitive.doubleValue()... search google for "Java Double class" or "Java Boolean class" and you should quickly find the javadoc documentation from Oracle on the relevant class.</p>
+            </div>
+
             <div class="content-box">
                 <h3>Lists</h3>
                 <p>Lists are ordered collections that allow duplicate elements. Elements can be accessed by their integer index.</p>

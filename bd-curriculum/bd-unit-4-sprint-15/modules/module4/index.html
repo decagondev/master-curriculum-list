@@ -54,11 +54,78 @@
                 </ul>
             </div>
 
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Sprint 15 Deploying 2 Video" src="https://fast.wistia.net/embed/iframe/ryhwg7echf" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div class="content-box">
+                <h3>Adventures in the Deployment Pipeline</h3>
+                
+                <img src="https://tk-assets.lambdaschool.com/f06135aa-bd95-4a86-a0c5-4814f71e9d88_image1.png" alt="Figure 1: An overview of the development pipeline showing the flow from the Source stage - where we develop the code, complete local testing, get a code review, and finally push to the remote code repository - to the Build stage - where an automated build runs our unit tests and static code analysis to verify our code change - to the Beta stage - where new changes are tested in an experimental stage - to the Gamma stage - where new changes are run against production data without facing actual customers - and finally to the Production stage - where our code goes live and actual customers see the change." loading="lazy" style="width: 100%; height: auto;">
+                
+                <p><strong>Figure 1:</strong> An overview of the development pipeline showing the flow from the Source stage - where we develop the code, complete local testing, get a code review, and finally push to the remote code repository - to the Build stage - where an automated build runs our unit tests and static code analysis to verify our code change - to the Beta stage - where new changes are tested in an experimental stage - to the Gamma stage - where new changes are run against production data without facing actual customers - and finally to the Production stage - where our code goes live and actual customers see the change.</p>
+
+                <p>In order to get a feel for how all the stages described in the previous reading play out in real life as a developer, let's take a look at an example with Paulo, a developer on the Amazon Prime Video team. Paulo has been working on a new feature for Amazon Prime Video that tags a video if the user has watched most of a movie or series but not all of it. This information will then be used to show users a reminder of movies or series that they could finish watching. Paulo is tasked with making changes to the Prime Video service, making additions to the information saved when a user watches a movie or show.</p>
+
+                <h4>During the Source stage</h4>
+                
+                <img src="https://tk-assets.lambdaschool.com/b0441bfe-81cf-4091-80eb-2a74572e7b40_image2.png" alt="Figure 2: A close up of the Source stage showing the task going through development, local tests, code review and finally a push to the remote repository. Lacking an approved code review would block the deployment process." loading="lazy" style="width: 100%; height: auto;">
+                
+                <p><strong>Figure 2:</strong> A close up of the Source stage showing the task going through development, local tests, code review and finally a push to the remote repository. Lacking an approved code review would block the deployment process.</p>
+
+                <p>Most of Paulo's responsibilities take place in the Source stage. He begins by writing the code that will save the "Almost Done" information to DynamoDB. He also adds an endpoint to the Prime Video API to allow the UI developers to retrieve "Almost Done" shows or movies for a given user. After the code is written, he builds and tests it in his local environment. He writes unit tests to cover his new code, and updates any unit tests for classes he has touched. Building confirms his code matches the checkstyle rules and validates he has reached the required code coverage percentage. He also writes integration tests for his new code and runs the integration tests to ensure everything will work before it enters Beta.</p>
+
+                <p>Once everything looks good, he commits the code for his new feature locally and publishes a code review. His teammate, Jane, sees the code review request and reviews the diff of the changes Paulo has made. She sees a way to improve the DynamoDB calls made in the new API operation and publishes comments with this feedback on Paulo's code review. Paulo appreciates the suggestion and implements the proposed changes. After testing again locally, he publishes a new revision of the code review. With the suggested improvements made, Jane approves the code review and merges it into the remote repository.</p>
+
+                <h4>During the Build Stage</h4>
+                
+                <img src="https://tk-assets.lambdaschool.com/2a901648-3eb1-4be5-9f5d-7b143ef07a6e_image3.png" alt="Figure 3: A close up of the Build stage. A failing build (due to compilation, checkstyle, findbugs, or unit test issues) or failing approval workflow (due to lack of CR or inadequate code coverage) at this stage would block the pipeline." loading="lazy" style="width: 50%; height: auto;">
+                
+                <p><strong>Figure 3:</strong> A close up of the Build stage. A failing build (due to compilation, checkstyle, findbugs, or unit test issues) or failing approval workflow (due to lack of CR or inadequate code coverage) at this stage would block the pipeline.</p>
+
+                <p>The PrimeVideoService pipeline detects the new change that Paulo has pushed, and triggers a build of his changes. The build system builds his changes and sends the build out to the pipeline for the pipeline to process through the Test & Deploy stages. Before the pipeline can deploy the code, the build must succeed. After that, Static Code Validation is performed on the code. This process includes making sure that all code has been code reviewed. Paulo's code has been, and the systems sees that. It then makes sure that code coverage is sufficient for all changed packages. The pipeline will fail and stop promotions if the build fails (which could happen if the code cannot compile, checkstyle fails, findbugs fails, or unit tests fail) or if the approval workflow fails (which could happen if code coverage is inadequate or the changes do not have a corresponding approved code review).</p>
+
+                <h5>An issue is found</h5>
+                <p>In this case, the automated build system has determined that Paulo's code coverage is insufficient. It's important for code coverage to be as high as possible. We want to test every possible method we can as early as we can in the process. Paulo knows this, but when he implemented the changes that Jane suggested he forgot to add a new unit test, and the code coverage check noticed this miss. The build stage fails and the deployment process is automatically paused. Paulo gets a notification that his code has blocked the pipeline and he will need to fix it before the deployment process can proceed. While he fixes his code, none of the code that his peers developed will move through the deployment process either. The pipeline is blocked for Jane and everyone else until Paulo adds tests to meet the code coverage requirement.</p>
+
+                <p>It is important to see how issues like this affect the process. No code for this package can proceed in the deployment until all errors are fixed. Paulo has learned from this experience. He knows that this sort of thing happens, and nobody ever wants to block the pipeline. The process is here to catch these issues and finding this issue now leads to better code later. After all, the intention of the code coverage check is to require unit tests that can catch bugs early, before the code reaches Gamma or Production.</p>
+
+                <h5>The process resumes</h5>
+                <p>Once Paulo updates his unit test and tests everything again, he can create another code review. It's the same process to fix a bug as it is to create a new feature. The updated code will go through the same build process as before. Once it passes the code coverage test, the pipeline will no longer be blocked. Again, this is why it is important to catch these issues early. We maintain a high bar for code quality and test coverage so that issues can be caught quickly and fewer bugs reach our customers.</p>
+
+                <p>Paulo's second code review is approved, and he commits his changes to the source code repository. The Build stage is started again, and this time the code coverage check passes as his new API methods now have sufficient code coverage. Now that Static Validation has been successfully completed, the build containing the new code developed by Paulo and his team can be promoted to the Beta Stage.</p>
+
+                <h4>In the Beta stage</h4>
+                
+                <img src="https://tk-assets.lambdaschool.com/96924a7a-a8d9-4907-966f-387a2c743819_image4.png" alt="Figure 4: A close up of the Beta stage showing that the integration tests run here could block the pipeline if they fail." loading="lazy" style="width: 50%; height: auto;">
+                
+                <p><strong>Figure 4:</strong> A close up of the Beta stage showing that the integration tests run here could block the pipeline if they fail.</p>
+
+                <p>As part of his original development, Paulo created new integration tests for and updated existing integration tests impacted by his new feature. These integration tests, along with other tests written by his peers, are be run in the Beta stage to ensure that the service is working correctly. This could be the first time that Paulo's new code is tested alongside a new feature developed by Jane. Integration tests should verify that their changes behave well together.</p>
+
+                <p>Since Paulo's feature requires new data in the database, his integration tests populate DynamoDB with some test data for verification. His code runs against a real database on Beta, but the data used is set up with specific values for testing the new API. In this case the data might be arbitrary values used only by the new integration test, and not connected to an actual video.</p>
+
+                <p>If any of the integration tests fail, the deployment stops like it did in the Build stage, and a fix must be made. Paulo's integration tests are working fine, the build passes Beta, and the pipeline promotes the changes to Gamma.</p>
+
+                <h4>In the Gamma stage</h4>
+                
+                <img src="https://tk-assets.lambdaschool.com/99f044e6-1e01-4e0d-8956-1da3f2083892_image5.png" alt="Figure 5: A close up of the Gamma and Production stages showing that tests in Gamma could block the pipeline if they fail. After Gamma is approved, the feature is ready to be promoted to Production." loading="lazy" style="width: 50%; height: auto;">
+                
+                <p><strong>Figure 5:</strong> A close up of the Gamma and Production stages showing that tests in Gamma could block the pipeline if they fail. After Gamma is approved, the feature is ready to be promoted to Production.</p>
+
+                <p>Before he ever started writing code, Paulo would have been involved in the design of the new feature based on requirements from the product owner. The Gamma stage is our last opportunity to test that our code meets those requirements. Testing these requirements can take various forms. Usually, it is possible to write integration tests that cover the requirements and can run and approve changes as long as no problems are found. These integration tests usually require different data than integration tests run on Beta, since the data in Beta and Gamma is different. In addition to integration tests, we sometimes run load tests, which simulate customer traffic to test that our service can handle the expected requests (or some version of our worst-case traffic).</p>
+
+                <p>When it is not possible to write integration tests to exercise our use cases, we turn to manual testing. Whether manual testing or automated, teams sometimes have Quality Assurance Engineers (QAEs) dedicated to ensuring we thoroughly test our service. Whether we have a QAE or not, the same testing practices should be in place. In Paulo's case a QAE performs holistic tests of how this new feature fits into the overall user experience. As part of these tests, the QAS works to make the test data as realistic as possible. For Paulo's feature that may require watching some shows part way through for different test users to make sure they're properly marked as "Almost Done". Whatever the QAE can do to simulate a real user will be done to test everything works. As part of this process, the QAE may work directly with Paulo or another member of his team to develop a test plan that validates the features of their service. They may also perform load testing to ensure it will hold up when released to the public. In addition to testing Paulo's code, there will be code from many other developers or development teams being tested to see how they behave together.</p>
+
+                <p>If automated or manual tests fail, the pipeline is blocked, and the changes are not promoted to Production. This is unfortunate, but not unheard of. Some bugs just can't be found until the features are tested in a (close to) production environment.</p>
+
+                <p>Now that the build has reached Gamma and the final tests are passing, Paulo's boss is getting excited about the new features her team has been working on. She even asks Paulo to demo the feature at a Stakeholders meeting. Things are heating up; the stakeholders are excited, and the build has passed Gamma stage testing!</p>
+
+                <p>At this point the change is considered Production Ready. Usually, this means the change flows to Production without any more human interaction. But changes are not always promoted to production automatically. Depending on the team and product, it may require a manual approval for Gamma to be promoted to Production. With Production being live to our customers, we need to be careful about how code is pushed out. At the next scheduled release of Amazon Prime Video, Paulo's new feature, along with other features his team worked on, is pushed out to the Production servers, available to users around the world.</p>
+
+                <h4>Release to Production</h4>
+                <p>While Paulo's changes has reached production, a bug might still turn up. If that bug appears immediately, monitors set up tracking Prime Video Service can alarm if something appears to be going wrong (like a sudden drop in traffic or spike in errors). If such an issue is detected, the deployment goes into rollback, at which point the previous working version of the service is re-deployed.</p>
+
+                <p>However, in this case, no problems appear immediately after Paulo's change reaches Production. At this point, Paulo may still need to perform maintenance or additional updates on his feature. There may even be bugs that are only discovered in production which were not discovered in the deployment process. That absolutely has a lower chance than without a Continuous Deployment process, and thanks to it, there is also a clear path to quickly address the bug. Before that happens though, Paulo and his team take some well-earned vacation time after launching a new feature!</p>
             </div>
             
-            <div class="content-box module4-accent">
+            <div class="content-box">
                 <h3>Advanced CI/CD Pipeline Strategies</h3>
                 <p>Continuous Integration and Continuous Deployment (CI/CD) pipelines automate the software delivery process. Advanced CI/CD pipelines include sophisticated testing, deployment, and monitoring strategies.</p>
                 
@@ -74,7 +141,7 @@
                 <p>Modern CI/CD pipelines balance speed with quality by implementing comprehensive testing while keeping the pipeline efficient enough to enable multiple deployments per day.</p>
             </div>
             
-            <div class="content-box module4-accent">
+            <div class="content-box">
                 <h3>Advanced Deployment Strategies</h3>
                 <p>Modern deployment practices go beyond simple updates to minimize risk and downtime when deploying to production environments.</p>
                 
@@ -108,7 +175,7 @@
                 </ul>
             </div>
             
-            <div class="content-box module4-accent">
+            <div class="content-box">
                 <h3>Auto-Scaling Strategies</h3>
                 <p>Auto-scaling automatically adjusts the number of computing resources based on current demand, optimizing cost and performance.</p>
                 
@@ -131,7 +198,7 @@
                 <p>Auto-scaling helps ensure applications remain responsive during traffic spikes while optimizing costs during low-demand periods.</p>
             </div>
             
-            <div class="content-box module4-accent">
+            <div class="content-box">
                 <h3>Monitoring and Alerting</h3>
                 <p>Comprehensive monitoring and alerting systems are essential for maintaining reliable production applications.</p>
                 
@@ -155,6 +222,128 @@
                 <p>Effective monitoring not only helps detect issues quickly but also provides data for performance optimization and capacity planning.</p>
             </div>
 
+            <div class="content-box">
+                <h2>Guided Project</h2>
+                
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Sprint 15 Deploying 2 Video" src="https://fast.wistia.net/embed/iframe/ryhwg7echf" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
+                <h3>Creating an API Gateway on AWS</h3>
+                <p>An API Gateway is an AWS service that allows us to publish an accessible REST API. We can use this API to connect our Lambda functions to endpoints accessed via URL. We can use cURL commands, an API client such as Postman, or even create a webpage to access these URLs.</p>
+                
+                <p>This lesson will briefly cover how to get started using Gateway.</p>
+                
+                <h4>Creating the Gateway</h4>
+                <ol>
+                    <li>Log in to your AWS Console and navigate to API Gateway.</li>
+                    <li>Select Create API in the top right corner.</li>
+                    <li>Scroll down to REST API and press Build.</li>
+                    <li>Make sure " New API " is selected under the header "Create new API", make sure "New API" is selected.</li>
+                    <li>Give your API a name. Something like MusicPlaylistServiceAPI.</li>
+                    <li>Once you've created the REST API, AWS will bring you to a page that looks like this (as of Jan 2022).</li>
+                </ol>
+
+                <p>The essential items on this page are the following:</p>
+                
+                <ul>
+                    <li><strong>Resources</strong>: Endpoints for the models in your service. Our API will have a playlists resource (by convention, we pluralize resource names unless there can be only one). The resource name becomes part of the path in our endpoint (e.g. /playlists).</li>
+                    <li><strong>Methods</strong>: HTTP methods allow users to request or send data to/from the API. Today these methods are GET, POST, PUT, and eventually DELETE. If we want users to be able to GET from /playlists we will need to create a GET method here.</li>
+                    <li><strong>Actions</strong>: This dropdown allows us to create Resources and Methods and modify settings for the selected resource.</li>
+                    <li><strong>Stages</strong>: Stages allow for different configurations of your API. You may want a dev and a prod stage, where you test changes on dev before being pushed to prod. For our project, there isn't a need to use a dev stage, and we'll only make prod.</li>
+                </ul>
+                
+                <h4>Creating Resources</h4>
+                <ol>
+                    <li>With the root directory selected (the /), click on the Actions dropdown and select Create Resource.</li>
+                    <li>Create the endpoint /playlists (you need to name it "playlists" without the "/") and make sure to Enable CORS.</li>
+                    <li>You won't access this endpoint from an external frontend client without enabling CORS.</li>
+                    <li>Enabling CORS will create an OPTIONS method under the playlists resource. If you missed this step, you can select playlists and then use the Actions dropdown to select "Enable CORS".</li>
+                </ol>
+                
+                <h4>Creating Methods</h4>
+                <p>You'll need to think about which methods you need to include for each endpoint. For the /playlists endpoint, we want to have a POST method. That way, users can create a new playlist at the /playlists endpoint. If we included a GET method here, we should expect to receive a list of all playlists in our database. Our service does not allow this action. Instead, we'd like to allow users to get a specific playlist by providing a playlist id within the path. We'll handle this in the next section.</p>
+                
+                <p>For now, let's start with the POST method.</p>
+                
+                <ol>
+                    <li>With /playlists selected, select Actions > Create Method</li>
+                    <li>Select POST from the empty dropdown box that appears. Press the little checkmark icon.</li>
+                    <li>Select the POST method and ensure the Integration type is set to "Lambda Function".</li>
+                    <li>Ensure the Lambda Region is correct</li>
+                    <li>Enter the name of the Lambda Function for this method. In this case "CreatePlaylistActivity".</li>
+                    <li>Users are now able to make POST requests at the /playlist endpoint, which will invoke the CreatePlaylistActivity Lambda function.</li>
+                </ol>
+                
+                <p>Because this request requires only a JSON object to complete, the default configuration for this method is sufficient. However, we will see that when an endpoint requires information from both a path parameter and a JSON object, an additional step will be necessary.</p>
+                
+                <p>With our POST method created, we will now move to our GET method, and for that, we'll need to use a path parameter.</p>
+                
+                <h4>Path Parameters</h4>
+                <p>Path parameters let users pass values in the URL that are then used when finding a resource. For example, a playlist may have the randomly generated id aufnP. To GET this playlist, users should make a GET request to the endpoint /playlists/aufnP. Note that the id is part of the path. Does this mean we need to create a new path for each id?? Thankfully, we don't. Instead, we can use a path parameter, which acts as a variable in our URI. We can define our endpoint as /playlists/{id} where id can be any playlist id.</p>
+                
+                <p>We will allow users to GET and PUT at a specific playlist using this endpoint.</p>
+                
+                <ol>
+                    <li>With /playlists selected, choose Actions > Create Resource</li>
+                    <li>Give this new resource the name id (without the curly brackets).</li>
+                    <li>Change the auto-generated path to include the brackets: {id}</li>
+                    <li>Select Enable API Gateway CORS.</li>
+                    <li>Create the Resource.</li>
+                    <li>With /{id} selected, create GET and PUT methods.</li>
+                    <li>Select the appropriate Lambda Functions for each.</li>
+                    <li>Go to the GET method and click on the Integration Request.</li>
+                    <li>Navigate to the Mapping Templates section and select "When there are no templates defined".</li>
+                    <li>Add a new mapping template named application/json. After you add it, you may need to scroll down to complete the next step.</li>
+                </ol>
+                
+                <p>We need to inform our API that it should be looking at the path parameter for the id of the playlist. For a GET request, the user will not be supplying JSON. However, our PUT request will use both a path parameter and JSON, so our mapping template will have to direct the API to parse both types of information. For now, we will continue with the GET method.</p>
+                
+                <p>Open the application/json template and scroll down to the code text field that appears. We create a JSON object with the field "id" and set its value to the path parameter named "id".</p>
+                
+                <pre><code>{
+    "id": "$input.params('id')"
+}</code></pre>
+                
+                <p>With our JSON now defined, we've completed the mapping template for our GET request.</p>
+                
+                <p>Next, repeat the above steps for the PUT request. This time we require a JSON request body in addition to a path parameter for the playlist id.</p>
+                
+                <pre><code>{
+    "id": "$input.params('id')",
+    "customerId": $input.json('$.customerId'),
+    "name": $input.json('$.name')
+}</code></pre>
+                
+                <p>To update a playlist, we must provide the existing customerId, but we can change the playlist's name. We check the path parameter for the "id", and we review the JSON for the "customerId" and the "name" of the playlist.</p>
+                
+                <p>NOTE: I've found that for boolean values, I needed to add $util.escapeJavaScript(...) around the $input.json(...).</p>
+                
+                <h4>Nested Resources</h4>
+                <p>Our playlist service also allows us to access the songs within each playlist. We can say that songs are a nested resource within playlists. If we want to GET a playlist's songs or POST a song to a playlist, we need to access the endpoint /playlists/{id}/songs.</p>
+                
+                <ol>
+                    <li>Create a new resource under /playlists/{id} named songs.</li>
+                    <li>Add GET and POST methods.</li>
+                    <li>Point each method to its corresponding Lambda Function.</li>
+                    <li>Add Mapping Templates for each request, including the path params and the necessary JSON fields.</li>
+                </ol>
+                
+                <h4>Deploying your API</h4>
+                <p>You can access the root of your API using the link provided under Dashboard on the lefthand navigation bar. You should see a blue header that says:</p>
+                
+                <p>Invoke this API at https://{your-unique-id}.execute-api.us-west-2.amazonaws.com/{stage-name}/</p>
+                
+                <p>Before applying your changes to your API, you must deploy them. You can select Actions > Deploy API. This deployment should take around 30 seconds to complete.</p>
+                
+                <h4>Accessing your API</h4>
+                <p>One of the easiest ways to test your API is to use a client such as Postman. With Postman, we can make a request as demonstrated in the image below</p>
+                
+                <p>Here we are making a post request  /playlists/{id}/songs which requires the asin and tracknumber of an existing album track to add to the playlist. We also include a boolean, queueNext. (See the Note at the end of the Path Parameter section about booleans in template mapping).</p>
+                
+                <p>Eventually, we will learn to make a frontend which will require us to create and provide an API key. For now, if your project works in Postman (or if you'd like, you can look up how to use cURL), then you're all set.</p>
+            </div>
+
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
@@ -169,9 +358,6 @@
                     </a>
                     <a href="https://martinfowler.com/bliki/CanaryRelease.html" target="_blank" rel="noopener" class="resource-link">
                         Canary Releases
-                    </a>
-                    <a href="../../sprint-challenge/index.html" class="resource-link">
-                        Sprint Challenge
                     </a>
                 </div>
             </section>

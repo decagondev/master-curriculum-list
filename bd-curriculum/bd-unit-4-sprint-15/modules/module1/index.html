@@ -52,14 +52,29 @@
                     <li>Determine if a given algorithm has logarithmic time complexity</li>
                 </ul>
             </div>
-
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Linear and Binary Searching" src="https://fast.wistia.net/embed/iframe/qusbjb7nyg" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
             
-            <div class="content-box module1-accent">
+            <div class="content-box">
+                <h2>Linear Search and Binary Search</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Linear and Binary Searching" src="https://fast.wistia.net/embed/iframe/qusbjb7nyg" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
                 <h3>Linear Search</h3>
                 <p>Linear search is a simple search algorithm that checks each element in a list sequentially until the desired element is found. It's straightforward but can be inefficient for large data sets.</p>
+
+                <p>A linear search is a process that checks every element in a list sequentially until the desired element is found. Let's walk through an example.</p>
+
+                <p>Figure 1 depicts a row of eight packages on a table where each package has one object inside it.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/56fbc610-2c10-4540-8a38-412a05a13d7b_image1.png" alt="Figure 1: Table with packages (linear search) - Each package has an index marking its location. We do not know what is in each package." loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><strong>Figure 1: Table with packages (linear search)</strong> - Each package has an index marking its location. We do not know what is in each package.<br>
+                <strong>Figure 1: Table with packages (linear search)</strong> - Each package has an index marking its location. We do not know what is in each package.</p>
+
+                <p>You are asked to find a package containing an object matching some search criteria. You may not find the object at all. In that case, the answer is "none of them". Starting with the package on the left, you open each package to check the object inside and evaluate whether it matches the criteria. If it's not what you're looking for, you close the package and move on to the next package on the right, keeping track of the packages you've looked at so far. If you find a match, you return the current package and you're done. If you check all the packages and do not find what you're looking for, you return "none of them".</p>
+
+                <p>A linear search makes sense in this case because we don't know how (or if) the objects are ordered. However, every time we run the search, there's the possibility that every package will need to be opened. This runs in linear O(n) time, since the potential effort increases linearly with the number of packages. Consider how this applies to searching for a phrase in a book. Imagine there's no table of contents and no page numbers. Early manuscripts didn't have these, and people typically went through one page at a time looking for what they needed. As written materials became more common, a table of contents and page numbers allowed people to find information much faster.</p>
                 
                 <p>When using linear search:</p>
                 <ul>
@@ -77,12 +92,48 @@
     }
     return -1; // Target not found
 }</code></pre>
-            </div>
-            
-            <div class="content-box module1-accent">
                 <h3>Binary Search</h3>
                 <p>Binary search is an efficient algorithm that works on sorted arrays by repeatedly dividing the search interval in half. It has a logarithmic time complexity, making it much faster than linear search for large datasets.</p>
+
+                <p>A binary search takes advantage of knowledge about how the elements are organized. The main idea here is that an algorithm that divides the number of elements in half with each iteration (hence "binary") is going to be more efficient on average than an algorithm that steps through one element at a time.</p>
+
+                <p>Continuing to think about books, if someone tells you to turn to page 236 in a 500-page book, you don't flip through the book one page at a time. You probably open the book around its middle, look at the page number, and either go backward or forward another "block" of pages. In a few flips, you find the page you're looking for. The reason this works is that the pages are labeled and in order. A binary search is similar, except the "block" size determination is more systematic and precise, always going halfway through the remaining items.</p>
+
+                <p>Going back to the packages example, with a binary search you are still looking for a specific package. This time you know that the boxes are ordered in some way. In addition, you have the ability to go straight to the n-th box, like you could flip to the middle of a book, but with more precision. For example, your search criteria might be a name, and the blocks may be ordered alphabetically by name. In Figure 2, we have just that scenario, with packages ordered starting from As on the left to Zs on the right.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/56713a24-4b48-44a7-a4a6-1f88e89ee1d6_image2.png" alt="Figure 2: Table with packages (binary search) - Each package has an index marking its location. We do not know what is in each package, but we know that they are sorted alphabetically by name." loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><strong>Figure 2: Table with packages (binary search)</strong> - Each package has an index marking its location. We do not know what is in each package, but we know that they are sorted alphabetically by name.</p>
+
+                <p>Now imagine that you've been asked to find the package with name = "Paulo". The first iteration of this search is depicted in Figure 3A. Rather than starting with the first package (index=0), the search tries the center of the list (Package 3) and compares the name found ("Mary") to "Paulo"; this comparison is labeled 'C1'. At this point you didn't find the name requested, but you've split the remaining packages in half (here's that "binary" again). Since the packages are alphabetized, you know you can ignore all the packages in the left half, because their names must fall before "Mary" alphabetically, You've eliminated packages 0, 1, 2 and 3, or half the packages, after making only one comparison!. Packages 4 through 7 remain to be searched using the same approach.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/85b39ec4-bb09-4812-a94c-f5be9216a2ad_image3.png" alt="Figure 3A: Table with packages (binary search) - Each package has an index marking its location. We do not know what is in each package, but we know that they are sorted alphabetically by name. The package at index 3 has been revealed to contain the name &quot;Mary&quot;." loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><strong>Figure 3A: Table with packages (binary search)</strong> - Each package has an index marking its location. We do not know what is in each package, but we know that they are sorted alphabetically by name. The package at index 3 has been revealed to contain the name "Mary".</p>
+
+                <p>Figures 3B and 3C show the rest of the search. In Figure 3B package 5 is tested since it's near the center of the remaining list, with 'C2' representing the comparison between "Paulo" and "Rick". Iteration 3 will have to move to the left (earlier in the alphabet), but with packages 5, 6, and 7 eliminated already, there's only one package left to test. The third comparison 'C3' , finds that the name in package 4, "Nikhil", is also not "Paulo". We didn't find "Paulo" and will return "none of them", but unlike the linear search, we took only 3 iterations to figure it out.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/5b38627f-424a-472a-8df5-5ff5ba43c5a9_image4.png" alt="Figure 3A: Table with packages (binary search) - Each package has an index marking its location. We do not know what is in each package, but we know that they are sorted alphabetically by name. The package at index 3 has been revealed to contain the name &quot;Mary&quot;." loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><strong>Figure 3B: Table with packages (binary search)</strong> - Each package has an index marking its location. We do not know what is in each package, but we know that they are sorted alphabetically by name. The package at index 3 has been revealed to contain the name "Mary". Packages from index 0 through 3 have been crossed out because they cannot contain "Paulo". Package 5 has been revealed to contain the name "Rick".</p>
+
+                <img src="https://tk-assets.lambdaschool.com/b4952810-dabc-4806-9a17-793df40e24ec_image5.png" alt="Figure 3B: Table with packages (binary search) - Each package has an index marking its location. We do not know what is in each package, but we know that they are sorted alphabetically by name. The package at index 3 has been revealed to contain the name &quot;Mary&quot;. Packages from index 0 through 3 have been crossed out because they cannot contain &quot;Paulo&quot;. Package 5 has been revealed to contain the name &quot;Rick&quot;." loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><strong>Figure 3C: Table with packages (binary search)</strong> - Each package has an index marking its location. We do not know what is in each package, but we know that they are sorted alphabetically by name. The package at index 3 has been revealed to contain the name "Mary". Packages from index 0 through 3 have been crossed out because they cannot contain "Paulo". Package 5 has been revealed to contain the name "Rick". Packages 5 through 7 have been crossed out because they cannot contain "Paulo". Package 4 has been revealed to contain the name "Nikhil".</p>
+
+                <p>Figure 3D shows the entire binary search with the progression of iterations.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/885acbd1-2564-4fe9-a2c0-53e0fab5116e_image6.png" alt="Figure 3D: Table with packages (binary search) - Each package has an index marking its location. A series of arrows, labeled C1, C2, and C3 show the sequence of comparisons, to packages 3, 5, and 4, that the algorithm completed. In each case, the name &quot;Paulo&quot; was not found and more packages were crossed off. In the end, all packages have been crossed off." loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><strong>Figure 3D: Table with packages (binary search)</strong> - Each package has an index marking its location. A series of arrows, labeled C1, C2, and C3 show the sequence of comparisons, to packages 3, 5, and 4, that the algorithm completed. In each case, the name "Paulo" was not found and more packages were crossed off. In the end, all packages have been crossed off.</p>
+
+                <p>Each access/comparison is performed on half the number of elements as the previous iteration. This corresponds to logarithmic time complexity, denoted by O(log n), which we apply to algorithms that divide problems in half at each step. These are commonly referred to as Divide and Conquer Algorithms, and you'll see the term again when we talk about merge sort in the next reading. The main idea here is that an algorithm that divides the number of elements in half with each iteration is going to be more efficient on average than an algorithm that steps through one element at a time. This becomes especially noticeable when our inputs are large.</p>
+
+                <p>In the small list depicted in this lesson, if we have the worst case where the element won't be found, the unoptimized linear search took 7 iterations to determine a match didn't exist, while the binary search took 3. What if the list had 1,000,000 elements? Dividing the list in half with each iteration, the binary search would take about 20 iterations to determine that the element couldn't be found. The linear search would take 1,000,000 iterations to check all the items, or 50,000x longer! O(log n) is much faster than O(n) at large input sizes.</p>
                 
+                <h4>Binary Searches on a sorted LinkedList</h4>
+                <p>A sorted LinkedList meets the sorting criteria needed to execute our Binary Search algorithm. However, accessing an element by index in a LinkedList is not a constant time operation, which it is in ArrayList. It's a linear time operation to access a LinkedList element by index. A LinkedList element must be found by traversing the LinkedList. Let's walk through Figure 3A pretending the list was a LinkedList. You can still start with element 3 because the list is sorted, but you have to step through the LinkedList to find it, and then do the comparison. While you eliminated half the elements in iteration 1, you still had to traverse each of those same elements to perform the next comparison. In subsequent iterations, the best you can hope for is the same traversing effort, and if your list doesn't contain head and tail pointers, or forward and backward element pointers, you might do worse. Effectively, you've canceled out the benefit of knowing the elements are sorted. As with linear search, the effort to find an object in a sorted LinkedList grows linearly with size, running in O(n) time. Therefore, when searching a LinkedList, it's best to use a linear search, because linear search has simpler code and the same time complexity as binary search.</p>
+
                 <p>When using binary search:</p>
                 <ul>
                     <li>The data must be sorted</li>
@@ -117,20 +168,396 @@
     // Target not found
     return -1;
 }</code></pre>
-            </div>
-            
-            <div class="content-box module1-accent">
                 <h3>Binary Search on LinkedList</h3>
                 <p>While binary search is highly efficient for ArrayList (with O(log n) time complexity), it performs poorly on LinkedList due to the lack of random access. In a LinkedList, each element access requires traversal from the beginning or end of the list, resulting in O(n) time complexity for access operations.</p>
                 
                 <p>For LinkedLists, linear search is often more appropriate despite its theoretical inefficiency because the overhead of element access in binary search negates its advantages.</p>
             </div>
-            
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Sprint 15 Searching and Big O Part B Video" src="https://fast.wistia.net/embed/iframe/dwd88dma3j" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+
+            <div class="content-box">
+                <h3>Selection Sorts, Merge Sorts and Time Complexity</h3>
+                <p>In the previous reading, we discussed linear and binary searching and emphasized the benefits of searching a list that is already sorted. However, sorting a list takes work, and some sorting algorithms are more efficient than others. This reading describes two common sorting algorithms and compares their time complexity.</p>
+
+                <h4>Selection Sort</h4>
+                <p>Selection sort creates a sorted list by finding the item with the lowest value in the starting unsorted list, moving that item to the beginning of the list, marking the first 1 items in the list as sorted, the repeating with the remaining unsorted items. When complete, the items in the list have been sorted from smallest to largest.</p>
+
+                <p>Let's walk through an example. Below, we have an unsorted list, represented by a table of indexes and values.</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>index</th>
+                            <th>0</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>value</td>
+                            <td>J</td>
+                            <td>A</td>
+                            <td>C</td>
+                            <td>B</td>
+                            <td>E</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>In the first step, we iterate through the list to find the smallest element.</p>
+
+                <ul>
+                    <li>First, smallest = J, because that is the first index we check</li>
+                    <li>When we compare our current smallest, J to the item at index 1, A we find a smaller item. we update smallest to point to the A at index 1.</li>
+                    <li>When we compare our current smallest, A to the item at index 2, C, our current smallest is smaller, so we continue.</li>
+                    <li>When we compare our current smallest, A to the item at index 3, B, our current smallest is smaller, so we continue.</li>
+                    <li>When we compare our current smallest, A to the item at index 4, E, our current smallest is smaller, so we continue.</li>
+                </ul>
+
+                <p>Now that we've checked the entire list, we know that our current smallest, A is the smallest item in the list.</p>
+
+                <p>Next, we swap A with the item currently in the 0th index of our array, J. A is now in its final, sorted position. We'll indicate a value has been sorted by writing it in italics.</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>index</th>
+                            <th>0</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>value</td>
+                            <td><em>A</em></td>
+                            <td>J</td>
+                            <td>C</td>
+                            <td>B</td>
+                            <td>E</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>Now that the first item in our array is sorted, we continue the process, ignoring the 0th index of our array.</p>
+
+                <p>In the second iteration, we find that B is the smallest item in the array. After B has been swapped into its final place, our array looks like:</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>index</th>
+                            <th>0</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>value</td>
+                            <td><em>A</em></td>
+                            <td><em>B</em></td>
+                            <td>C</td>
+                            <td>J</td>
+                            <td>E</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>We continue, now ignoring the first 2 indexes of our array.</p>
+
+                <p>End of 3rd iteration:</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>index</th>
+                            <th>0</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>value</td>
+                            <td><em>A</em></td>
+                            <td><em>B</em></td>
+                            <td><em>C</em></td>
+                            <td>J</td>
+                            <td>E</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>End of 4th iteration:</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>index</th>
+                            <th>0</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>value</td>
+                            <td><em>A</em></td>
+                            <td><em>B</em></td>
+                            <td><em>C</em></td>
+                            <td><em>E</em></td>
+                            <td>J</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>End of 5th iteration:</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>index</th>
+                            <th>0</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>value</td>
+                            <td><em>A</em></td>
+                            <td><em>B</em></td>
+                            <td><em>C</em></td>
+                            <td><em>E</em></td>
+                            <td><em>J</em></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>At the end of the fifth iteration, we've finished sorting the entire list!</p>
+
+                <p>For additional examples of selection sort, you can check out <a href="https://www.youtube.com/watch?v=xWBP4lzkoyM" target="_blank" rel="noopener noreferrer">this brief selection sort example animation from GeeksforGeeks</a> and <a href="https://www.hackerearth.com/practice/algorithms/sorting/selection-sort/visualize/" target="_blank" rel="noopener noreferrer">this selection sort visualizer that can step through the algorithm on a list you provide</a> (note: the visualizer's implementation of selection sort finds the largest element and moves it to the end of the list, instead of finding the smallest element and moving it to the front of the list. While they work from different directions, these two variations both sort the list and have the same runtime complexity!).</p>
+
+                <p>In the selection sort algorithm, the total number of comparisons equals (the number of iterations) times (the number of comparisons per iteration). In our example there are 5 iterations. The number of comparisons starts at 5 for the first iteration, decreases to 4 for the second iteration, and so on down to 1 for the last iteration. Since the number of items decreases by one with each iteration, the total number of compares is not 5 * 5 = 25. It's only 15, because we do 5 + 4 + 3 + 2 + 1 = 15. We can calculate the total comparisons for lists with different numbers of items:</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Number of Items</th>
+                            <th>Number of Compares</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>15</td>
+                        </tr>
+                        <tr>
+                            <td>25</td>
+                            <td>325</td>
+                        </tr>
+                        <tr>
+                            <td>100</td>
+                            <td>5050</td>
+                        </tr>
+                        <tr>
+                            <td>1000</td>
+                            <td>500500</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p><strong>Table 1:</strong> Selection sort compares needed for different numbers of boxes</p>
+
+                <p>This is clearly not scaling linearly, as the number of comparisons increases much faster than the number of items. This pattern is quadratic O(n^2) time complexity, even though our number of operations is not exactly equal to n * n. The exact rate is n^2/2 + n/2, but remember that we ignore coefficients (1/2) and only care about the highest order argument (n^2). Selection sort, while simple, does not scale well. Fortunately, there are other sorting methods that scale better.</p>
+
+                <h4>Merge Sort</h4>
+                <p>Merge sort is a sorting algorithm that scales better than selection sort. In the previous reading we introduced Divide and Conquer algorithm, or algorithms that divide problems into smaller versions of themselves with each iteration. The merge sort algorithm uses the same principle.</p>
+
+                <p>The high-level steps are:</p>
+
+                <ol>
+                    <li>Divide the unsorted list into sub-lists that are half (or close) to the size of the original list, then keep dividing until there an n (length of the original list) lists each containing a single element</li>
+                    <li>Repeatedly merge the sub-lists to construct a sorted list with the original size</li>
+                </ol>
+
+                <h5>Divide Step of a Merge Sort</h5>
+                <p>How do we perform step 1 to divide our unsorted list?</p>
+
+                <ul>
+                    <li>We divide the initial unsorted list in half</li>
+                    <li>Any sub-list that has more than one element gets divided in half again.</li>
+                    <li>This process repeats until all sub-lists have a single element. For each division, we also know which two sub-lists were split apart.</li>
+                </ul>
+
+                <p>Figure 3 shows an example of this for a small list of numbers. Here's how this works:</p>
+
+                <ul>
+                    <li>The initial list has four unsorted elements [5, 3, 2, 8].</li>
+                    <li>The horizontal solid line divides the list in half, so we have [5, 3] and [2, 8]. We know these may still be unsorted. We also know each list has more than one element, so we're not done.</li>
+                    <li>The vertical dashed line divides the list in half again, so we have [5], [3], [2] and [8]. That's four sub-lists, one element each. The divide step is done.</li>
+                </ul>
+
+                <img src="https://tk-assets.lambdaschool.com/92d61b1c-1b35-445d-b961-53f64608e18c_divide-to-sublists.png" alt="Figure 1. Diagram illustrating a list split multiple times, from [5, 3, 2, 8], to [5, 3] and [2, 8], to [5], [3], [2] and [8]" loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><strong>Figure 1.</strong> Diagram illustrating a list split multiple times, from [5, 3, 2, 8], to [5, 3] and [2, 8], to [5], [3], [2] and [8]</p>
+
+                <p>By getting the sub-lists down to a single element, we're guaranteeing that we start with sorted lists, since a list with only 1 item is always a sorted list (there's only 1 way to arrange a list with 1 item). Now the merging can start.</p>
+
+                <h5>Time complexity of divide steps (how many divides do we have to do?)</h5>
+                <p>The time complexity of the divide step depends on how many sets of divides we do. Remember that with each divide step the effect is to divide the list in half, and we've seen this pattern with binary search in the previous reading. The time complexity ends up being O(log n). With a list of 4 elements we end up doing 2 sets of divides. With a list of 1,000,000 elements we would do about 20 sets of divides.</p>
+
+                <h5>"In-place" Sorting</h5>
+                <p>As we talk about dividing into sub-lists during merge sort, it is worth mentioning that that doesn't necessarily mean creating new List objects for each sub-list. We often implement sorting algorithms "in-place". "In-place" sorting means that we don't create additional data structures while we sort our collection.</p>
+
+                <p>We can accomplish "in-place" sorting by narrowing what part of a collection we are inspecting. Say we had a list [3, 8, 7, 2]. We could "split" this list in half by only inspecting the first or second half of the list, instead of by creating 2 new lists. In that case, our first half would have starting index 0 and ending index 1, and our second half would have starting index 2 and ending index 3. Using those indexes as blinders, the first list would look like [3, 8] and the second would look like [7, 2], all without creating new Lists.</p>
+
+                <p>It's OK if you find this concept confusing. We won't ask you to write an "in-place" implementation of merge sort. The key takeaway here is that when we talk about all of these sub-lists, that doesn't actually mean we are using more space by creating new List objects.</p>
+
+                <h5>Merge Step in a Merge Sort</h5>
+                <p>Once we've divided a list down to n lists of size 1, we can start merging them back together into a sorted list.</p>
+
+                <p>Take a starting list, [L, O, F, A, J, N, D, B]. When we get to the first merge, we need to combine the lists [L] and [O] into a merged list, currently empty [].</p>
+
+                <p>First, we compare the first element in both lists. L comes before O, so L is selected and added to the merged list. We also note that the first item in the first list has been merged by italicizing it and striking it through. At the end of this step, our lists look like:</p>
+
+                <p>First list: [<em><s>L</s></em>], Second list: [O], Merged list: [L]</p>
+
+                <p>Second, we compare the second item in the first list with the first item in the second list. The first list does not contain a second item, so O is selected and added to the merged list. At the end of this step, our lists look like:</p>
+
+                <p>First list:[<em><s>L</s></em>], Second list: [<em><s>O</s></em>], Merged list: [L, O]</p>
+
+                <p>Since we've used all the elements in our first and second lists, our merged list is complete!</p>
+
+                <p>Let's say we've followed the same steps for the next pair of singleton lists, [F] and [A], to create the sorted, merged list [A, F]. How do we combine these two merged lists?</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Iteration</th>
+                            <th>List 1</th>
+                            <th>List 2</th>
+                            <th>Sorted merged list</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>[L, O]</td>
+                            <td>[A, F]</td>
+                            <td>[]</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>[<em><s>L</s></em>, O]</td>
+                            <td>[A, F]</td>
+                            <td>[A]</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>[<em><s>L</s></em>, O]</td>
+                            <td>[<em><s>A</s></em>, F]</td>
+                            <td>[A, F]</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>[<em><s>L</s></em>, O]</td>
+                            <td>[<em><s>A</s></em>, <em><s>F</s></em>]</td>
+                            <td>[A, F, L]</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>[<em><s>L</s></em>, <em><s>O</s></em>]</td>
+                            <td>[<em><s>A</s></em>, <em><s>F</s></em>]</td>
+                            <td>[A, F, L, O]</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>At each iteration, we check the earliest unmerged item in each list, take the lesser of the two, and add it to the merged list.</p>
+
+                <p>Figure 2A depicts the state as we start merging the last two sub-lists. Each half of the original list has now been sorted using the divide and merge process above. Table 1 contains the two lists to be merged, [A, F, L, O] and [B, D, J, M], and Table 2 contains the empty merged list.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/e2ece2ad-3d96-4463-a8d6-f3b02f66262b_merge-initial.png" alt="Figure 2A: Merge step of merge sort - initial state: two sorted sub-lists and an empty merge list" loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><strong>Figure 2A:</strong> Merge step of merge sort - initial state: two sorted sub-lists and an empty merge list</p>
+
+                <p>Figure 2B depicts the first iteration, where the minimum element in each list is compared (A to B). A is the smaller of the two, so is placed in the merged list at index 0.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/225b0218-3950-479f-9d46-8b59fd755e2b_merge-01.png" alt="Figure 2B: First iteration of merge step - A from first sub-lists added to merge list at index 0" loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><strong>Figure 2B:</strong> First iteration of merge step, A from first sub-list added to merge list at index 0</p>
+
+                <p>Figure 2C depicts the second iteration. With A already merged, we look at the next element, F. F from the first list and B from the second list are compared. B is smaller, so is placed in the merged list at index 1.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/58fd9705-40d8-41de-8085-432c12dc1e1d_merge-02.png" alt="Figure 2C: Second iteration of merge step - B from second sub-list added to merge list at index 1" loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><strong>Figure 2C:</strong> Second iteration of merge step - B from second sub-list added to merge list at index 1</p>
+
+                <p>Figure 2D depicts iteration 3. Now that B in the second list has been merged, we look at the next element in the second list, D. F is compared to D, and since D is smaller, D is placed in the merged list at index 2.</p>
+
+                <p>This process repeats until all of the elements in each of the lists have been added to the merged list.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/fd7ed4bc-85e5-4e46-92d9-87ca32eba158_merge-03.png" alt="Figure 2D: Iteration 3 of merge step - D from second sub-list added to merge list at index 2" loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><strong>Figure 2D:</strong> Iteration 3 of merge step - D from second sub-list added to merge list at index 2</p>
+
+                <p>Figure 2E depicts the final state with the merged, sorted items in the completed merge list.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/d30c3162-55cd-4263-85a0-993ac3852c46_merge-final.png" alt="Figure 2E: Final state of merge step - all items from sub-lists added to merge list in sorted order" loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><strong>Figure 2E:</strong> Final state of merge step - all items from sub-lists added to merge list in sorted order</p>
+
+                <p>For additional examples of merge sort, you can check out <a href="https://www.youtube.com/watch?v=JSceec-wEyw" target="_blank" rel="noopener noreferrer">this brief merge sort example animation from GeeksforGeeks</a> and <a href="https://www.hackerearth.com/practice/algorithms/sorting/merge-sort/visualize/" target="_blank" rel="noopener noreferrer">this merge sort visualizer that can step through the algorithm on a list you provide</a> (note: the visualizer's implementation of merge sort merges the lists from smallest to largest, instead of from largest to smallest. While they work from different directions, these two variations both sort the list and have the same runtime complexity!).</p>
+
+                <h5>Time Complexity of Each Merge Step</h5>
+                <p>If we depicted the entire merge step by step starting with Figure 2B, how many figures would we have? In this case, it's equal to the number of boxes. That's actually the worst case, because if you completely exhaust one list you don't have to do any more compares. You just move the elements in the remaining list (remember they are already sorted) to the second table, keeping the order the same. With 10,000 boxes, you will do at most 10,000 compares. This is a linear O(n) runtime.</p>
+
+                <h5>Time Complexity of Entire Merge Sort</h5>
+                <p>Each time we divide the list in merge sort there will be a corresponding merge step. For time complexity, you can think of the divide and merge as one complicated step. Remember that time complexity is for evaluating how the processing time increases relative to increasing input size. Putting the pieces together leaves us with:</p>
+
+                <ul>
+                    <li>Each divide/merge step has time complexity O(n) because the effort (the number of compares) increases at the same rate the size does.</li>
+                    <li>The number of divide/merge steps has time complexity O(log n) because we're dividing the list in half with each divide, and "undoing" that divide with each merge.</li>
+                    <li>The total time complexity is driven by A * B, which is the time complexity of the number of steps times the time complexity of each step.</li>
+                </ul>
+
+                <p>That results is an overall merge sort time complexity of O(n log n).</p>
+
+                <h4>What does time complexity really mean?</h4>
+                <p>This lesson has discussed several types of algorithms that are commonly performed on collections. All have different time complexities due to the different goals of the operations and element assumptions. We've hinted at this, but it's worth noting again that time complexity is not an exact prediction of the number of operations an algorithm will take. Rather, it estimates what the average performance of the algorithm will be relative to an algorithm with a different time complexity. Figure 4 graphically depicts this idea and compares the time complexities of the algorithms in this Lesson. The number of elements is on the horizontal axis, and the number of operations (and by extension time it would take for the algorithm to complete) is on the vertical axis.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/3c819fa6-871e-436d-aad9-0a87601ecc3f_image11.png" alt="Figure 3: Comparison of time complexities of algorithms discussed in this lesson. n^2 - selection sort rises fastest.n log n - merge sort rises slightly slower. n - linear search rises at 45 degrees. log n - binary search rises slowest,rising less and less as number of items increases. 1 - ArrayList element access remains constant throughout." loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><strong>Figure 3:</strong> Comparison of time complexities of algorithms discussed in this lesson. n^2 - selection sort rises fastest.n log n - merge sort rises slightly slower. n - linear search rises at 45 degrees. log n - binary search rises slowest, rising less and less as number of items increases. 1 - ArrayList element access remains constant throughout.</p>
+
+                <p>The graph illustrates the following conclusions for these algorithms:</p>
+
+                <ul>
+                    <li>On average, sorting (where we have to consider every element) will take more operations than searching (where we're looking for a single element) for the same number of elements.</li>
+                    <li>On average, algorithms that can take advantage of presorted lists require fewer operations than algorithms operating on unsorted lists of the same size. For example, a binary search (time complexity O(log n), will on average be more efficient than a linear search (time complexity O(n)).</li>
+                    <li>Most algorithms take more time as the number of elements increases.</li>
+                </ul>
             </div>
             
-            <div class="content-box module1-accent">
+            <div class="content-box">
                 <h3>Big O Analysis</h3>
                 <p>Big O notation is used to classify algorithms according to how their run time or space requirements grow as the input size grows.</p>
                 
@@ -153,21 +580,45 @@
                 </ul>
             </div>
 
+            <div class="content-box">
+                <h2>Practice</h2>
+                
+                <a href="https://github.com/BloomTechBackend/bd-searching-big-o-part-b-searching-products-order" target="_blank" rel="noopener noreferrer" class="resource-link">Implementing Linear and Binary Search</a>
+            </div>
+            
+            <div class="content-box">
+                <h2>Guided Practice</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Sprint 15 Searching and Big O Part B Video" src="https://fast.wistia.net/embed/iframe/dwd88dma3j" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Mastery Task 5: Zoom, Enhance</h2>
+                
+                <h3>Milestone 1: Enhance AddSongToPlaylist</h3>
+                <p>We've finished the base functionality of all our APIs! We can successfully create, retrieve, and update playlists, as well as add songs to them and retrieve their song list. Before we call our Lambdas complete, our last task is to implement the remaining features to make sure we present a truly lovable product. One such feature is to queue a song to be played in the front of the playlist.</p>
+                
+                <p>Update the AddSongToPlaylist endpoint to read the AddSongToPlaylistRequest#queueNext flag, if it is true, insert the song in front of list in O(1) time. DynamoDBMapper will convert lists to an ArrayList when loading data, perfect for most use cases. However, we've gone ahead and configured the DynamoDBMapper to use the LinkedList implementation that we've covered in class. Because we know that it is using a LinkedList as the List interface's implementation, it's safe to cast it in this case. Casting to LinkedList allows us to use the methods in LinkedList that are not in the List interface. The process of casting an interface to an implementation class is known as downcasting.</p>
+                
+                <p>In general, be very careful when downcasting. It's dependent on the underlying implementation class, which isn't always known ahead of time. Furthermore, it's challenging to catch casting mistakes during compilation, so it's possible to push unstable code without realizing it!</p>
+                
+                <h3>Milestone 2: Enhance GetPlaylistSongs</h3>
+                <p>And the final minimum lovable feature is to update the GetPlaylistSongs endpoint to return songs in shuffled or reversed order based on the value of GetPlaylistSongsRequest#order. Notice that order is a String type, but we can use the SongOrder class, which declares constant String values to compare. SongOrder is generated by Coral, our service framework, so you won't find its code in your project package. You can view the source by hitting Command-click with your mouse over the class name in IntelliJ.</p>
+                
+                <p>We've seen and used Collections#sort already. The Collections class also contains other static methods that operate on data structures. The two methods you might find useful are Collections#shuffle and Collections#reverse. Use these based on the value of the order field in GetPlaylistSongsRequest to modify the list before returning it in the API.</p>
+                
+                <h3>Doneness Checklist</h3>
+                <ul>
+                    <li>You've updated AddSongToPlaylist's functionality to allow adding songs to the front of the playlist</li>
+                    <li>You've updated GetPlaylistSongs functionality to allow retrieving the playlist songs in default, shuffled, or reversed order</li>
+                </ul>
+            </div>
+
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
-                    <a href="../../code-alongs/index.html#code-along-1" class="resource-link">
-                        Code-Along 1: Sorting
-                    </a>
-                    <a href="https://github.com/BloomTechBackend/bd-code-along-15-1-Sorting-Starter" target="_blank" rel="noopener" class="resource-link">
-                        Sorting Code-Along Starter
-                    </a>
-                    <a href="https://github.com/BloomTechBackend/SortingRecursion" target="_blank" rel="noopener" class="resource-link">
-                        Sorting Code-Along Solution
-                    </a>
-                    <a href="../../sprint-challenge/index.html" class="resource-link">
-                        Sprint Challenge
-                    </a>
                     <a href="https://www.geeksforgeeks.org/searching-algorithms/" target="_blank" rel="noopener" class="resource-link">
                         Searching Algorithms - GeeksforGeeks
                     </a>

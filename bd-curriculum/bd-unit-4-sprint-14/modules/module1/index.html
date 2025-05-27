@@ -78,6 +78,142 @@
     }
 }</code></pre>
                 <p>This example shows a custom exception that extends the standard Exception class, including the recommended constructor signatures that match the base Exception class. The serialVersionUID is essential for serialization compatibility.</p>
+
+                <h3>Exception Handling: A Review of Previous Units</h3>
+                <p>In previous units you've learned that an exception is thrown when the application encounters an error condition that disrupts a program's flow. In some cases, this causes the program to crash. However, often the error condition can be handled, and the program can continue. A physical analogy of this is a snowstorm causing a disruption to an Amazon package delivery. Rather than failing to deliver the package entirely, the error case can be handled by routing the request to a different fulfillment center.</p>
+
+                <p>Exceptions can take two primary forms, checked exceptions where the Java compiler enforces certain handling rules (such as declaring that a method throws the exception), and unchecked exceptions that don't have compiler-enforced handling restrictions. Exceptions rely heavily on inheritance to create a hierarchy of detail, allowing some exceptions to be quite general and others to call out specific error conditions. When calling code that may throw an exception, there is an important design choice whether to handle the exception locally and gracefully, as opposed to throwing the exception up to the calling method, often with some additional logging or other helpful information.</p>
+
+                <h3>Introduction to Throwing Exceptions</h3>
+                <p>You know how to handle them, now we're going to create them! Remember: an exception is an error. It denotes something that "didn't follow the rules". There are several common times when a method may hit an issue causing it to throw an exception. Fatal errors include anything that causes your program to unexpectedly stop running. The infamous Windows "blue screen of death" is an example of a fatal system error in the Windows operating system that could not be caught and handled. Improper arguments or invalid data are other reasons to throw an exception, indicating that your method has not received the proper input. A ResourceUnavailableException might indicate that the method could not reach a resource it expected to find, for example if the connection to a required database is lost. Anything else that causes the method to fail to function the way it was designed should also throw an exception. Java includes and makes use of a variety of exceptions in the JDK but as you are developing your code you may find a need for your own, custom exceptions.</p>
+
+                <p>Before we get deeper into what exceptions can be thrown and when to create custom exceptions, let's briefly address when not to throw an exception. It's important to remember that exceptions are specifically meant to handle errors. Thus, you should avoid writing methods that will throw exceptions when there are no errors. For example, a function call that returns no data may not be an ideal situation, but it is not, strictly speaking, an error. (However, remember to avoid returning null values for container objects like Map, List, and Set. Instead, just return an empty object.)</p>
+
+                <h4>Common Exception Examples</h4>
+                <table>
+                    <tr>
+                        <th>Exception Name</th>
+                        <th>When it is used</th>
+                    </tr>
+                    <tr>
+                        <td>IndexOutOfBoundsException</td>
+                        <td>If array access or String manipulation is a critical part of the method and indexes provided as arguments are outside the range of the existing array/String.</td>
+                    </tr>
+                    <tr>
+                        <td>IllegalArgumentException</td>
+                        <td>Invalid value passed as an argument to a method</td>
+                    </tr>
+                    <tr>
+                        <td>ResourceNotFoundException</td>
+                        <td>DynamoDB Exception. If you try to access a DynamoDB resource (such as a table) that doesn't exist. Often from mistyping a table name.</td>
+                    </tr>
+                    <tr>
+                        <td>UnsupportedOperationException</td>
+                        <td>When a particular method (perhaps inherited from a superclass or implemented interface) is not supported in a particular class. For example, when trying to modify an ImmutableMap</td>
+                    </tr>
+                </table>
+
+                <h3>Detecting Errors</h3>
+                <p>So far, you've encountered exceptions thrown by code you were calling. You've had to determine how to proceed when an exception has been thrown. As you write more complex code, you will be in charge of deciding what is an error condition and when to throw an exception. For example, imagine we had a service managing gym memberships. Every membership ID follows the pattern last name followed by 5 digits. If our service receives a request for ID ombrellaro123, we already know that won't work, since it only has 3 digits at the end. Instead of doing any more processing, we would throw a new IllegalArgumentException. This way, we know at the earliest point where something has gone wrong, which makes it easier to debug the root cause (a bad input). Imagine instead we tried to process the bad ID. Something else in our code would fail eventually, but it could be very far away (logically) from the input to our service. Connecting the dots back to that bad input could be difficult.</p>
+
+                <h3>Custom Exceptions: Why and How?</h3>
+                <p>All exceptions in Java extend java.lang.Exception. Any class that extends Exception (or a subclass) can be handled and thrown just like one of the built-in exceptions. Any new class extending Exception can be used to respond to error conditions. There are many reasons why making custom exceptions for your methods may be helpful in the debugging process.</p>
+
+                <ul>
+                    <li><strong>Clarity:</strong> Exceptions are situations where your method is not executing properly. Thus, the more specific you can make an exception, the easier it will be to track down what is going wrong in the code. Project-specific error codes can help trace an error back to a specific API or feature set.</li>
+                    <li><strong>Detail:</strong> Using a custom exception can allow you to include additional detail or data fields in the exception itself about what caused an error, which could also help in resolving the issue.</li>
+                    <li><strong>Functionality:</strong> Custom exceptions can include utility methods to manipulate specific data formats and assist in debugging.</li>
+                    <li><strong>Organization:</strong> API-specific exceptions can help you tell exactly where the exception is coming from.</li>
+                    <li><strong>Hide Implementation:</strong> In rare cases, you may wish to use a custom Exception to obscure the exact database or file causing your method to throw an exception. You would want to avoid using an exception type that would indicate that you're accessing the file system directly, as this might pose a security risk by revealing more implementation details than necessary.</li>
+                </ul>
+
+                <h3>Transforming Exceptions</h3>
+                <p>You may find yourself in a situation where it will be useful to catch one exception and throw a different exception type to calling code (often wrapping the original exception inside the new one). This might be to hide implementation, as described above. It might also be to provide clarify, detail, functionality or organization in a case that the error case is detected by catching an exception, rather than testing for an error condition. As this is a common and useful practice, let's dive in a little deeper.</p>
+
+                <p>You may find yourself wanting your exception messages to contain more information or different information than the exception that you are catching. Further, you may wish to improve your application security by monitoring and adjusting what information your exceptions convey. There are two ways to accomplish these aims. While it is important to understand both, the first strategy is far more common.</p>
+
+                <h4>Chaining (or Wrapping) Exceptions</h4>
+                <p>Chaining exceptions means wrapping one exception in the "cause" field of a new exception (passed in as an additional constructor argument). When you wrap an exception like this, each exception retains its own stack trace, allowing you to see where each exception originated. If an error might cause issues in multiple layers of your program, chaining exceptions can help you locate where the error began, as well as trace its path through the code, even when it's wrapped. Chaining exceptions is a practice that can preserve and even add information to exceptions. Let's look at an example.</p>
+
+                <pre><code>public void setBirthday(int year, int month, int day) throws InvalidBirthdayException {
+    try {
+        LocalDate birthday = LocalDate.of(year, month, day);
+    } catch (DateTimeException e) {
+        throw new InvalidBirthdayException(String.format("One of the Date of Birth components is invalid. Year: " + year + " Month: " + month + " Day: " + day), e);
+    }
+}</code></pre>
+
+                <p>In this code, the setBirthday() method takes in 3 ints specifying the date of birth and attempts to construct a LocalDate object. There may be several reasons why this may fail, for example if one of the date of birth arguments is negative. The method above catches a DateTimeException and throws a new custom exception called InvalidBirthdayException. InvalidBirthdayException is defined below.</p>
+
+                <pre><code>public class InvalidBirthdayException extends Exception {
+    
+    public InvalidBirthdayException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}</code></pre>
+
+                <p>The InvalidBirthdayException takes in both a String, message, and a Throwable, cause. Throwable is a superclass of Exception that implements the Serializable interface (we'll introduce serialization in the next reading). Any exception you pass into InvalidBirthdayException will be a subclass of Throwable, so this is a safe way to accept previously caught exceptions. It also corresponds to the relevant constructor in the superclass, Exception, which is a good model to follow when creating your custom exception class constructors. In the setBirthDay() method, the original caught DateTimeException is passed in to InvalidBirthdayException's constructor to provide details on where exactly the parsing failed.</p>
+
+                <h4>Translating Exceptions</h4>
+                <p>Unlike chained (wrapped) exceptions, which preserve the cause of the exception, translating exceptions drops the original cause of an exception. It is rare that you will want to do this, as dropping the cause also causes you to lose the original stack trace. In other words, while chaining exceptions preserves information, translating exceptions intentionally loses information.</p>
+
+                <p>If translating exceptions loses information, when would you want to? The most common situations are when the original exception might expose specific information that could reveal security-sensitive information, perhaps even a security hole, and you're returning the exception to a code base that you don't own. This may happen with database exceptions and file IO exceptions, for example, by revealing the specific storage systems or versions being used, some of which may have known vulnerabilities. Since translating the exception loses all previous stack trace information, it is important to log enough information to know where the translated exception was thrown from so that you, as the developer, can track down the error.</p>
+
+                <p>Below is an example of a translated exception. The method getRecord() catches the original AmazonDynamoDbException. However, imagine in this case that there are business and security reasons not to expose the fact that an Amazon database is being used. The message from the AmazonDynamoDbException is logged, then a custom RecordAccessNotFoundException is thrown with a message that gives the calling routine a chance to handle the exception but does not disclose the details of the original exception for security reasons.</p>
+
+                <pre><code>public class ItemAccessUtilty {
+    private Logger logger;
+
+    // Constructor and other methods omitted
+
+    /**
+     * Retrieves a record from some unspecified datastore.
+     * @throws RecordAccessFailedException when attempt to access data fails
+     */
+    public Record getRecord() throws RecordAccessFailedException {
+        //
+        try {
+            Record record = getItemFromDynamoDbDatabaseAndConvertToRecord();
+        } catch (AmazonDynamoDbException e) {
+            logger.log(Level.INFO, e.getMessage(), e);
+            throw new RecordAccessFailedException ("The record could not be accessed.");
+        }
+
+    return record;
+    }
+}</code></pre>
+
+                <h3>Defining Your Error Cases</h3>
+                <p>When designing a class or a method, it is just as important to look at how it can fail as it is to make sure it handles the happy path correctly. As you are designing your method, ask yourself the following questions:</p>
+
+                <ul>
+                    <li>What can possibly go wrong? What are the edge cases you want to check for or handle? As you are defining your use and test cases, include the possible scenarios that might make your method fail, and how your method should respond.</li>
+                    <li>Then, for each case in your list: Should my method handle or throw an exception?</li>
+                    <li>If it should throw an exception:
+                        <ul>
+                            <li>is there an existing exception that covers the situation? If so, it probably makes sense to use the existing exception.</li>
+                        </ul>
+                    </li>
+                    <li>Finally, consider the types of information calling code may need to solve each issue: does it make sense to add any additional details to the exception? If so, you might well want to create a custom exception.</li>
+                </ul>
+
+                <p>In either case, plan to include enough information in the exception via the exception type, the exception message, additional fields, or the wrapped original cause exception for another developer to diagnose the error condition if it occurs.</p>
+
+                <p>The scenarios below will describe four examples of throwing exceptions to contrast when it is appropriate to throw a pre-existing Java exception, a custom exception, or chained or translated exceptions.</p>
+
+                <p>For these scenarios, imagine you are writing a service to store and access data for pet stores. The stores can then use the API to suggest relevant products and services to interested customers. This relevant product suggestion is powered by a machine learning algorithm. Different types of errors can occur during the service's operations, and you want to use exceptions appropriately to handle these errors.</p>
+
+                <h4>Scenario 1: Throwing an existing Java exception -- Can an existing exception class meet your needs?</h4>
+                <p>Imagine the service uses an API that connects to an AWS database. The software stores customer names, the formats of those names are specific (e.g. no numbers are allowed in last names). That means if "12345" is entered as a last name the API should throw an exception. It turns out that our old friend, the IllegalArgumentException, was built for this case. It can be thrown with a message that explains the rules around name formatting.</p>
+
+                <h4>Scenario 2: Throw a basic custom exception -- Do you have API-specific information or handling needs?</h4>
+                <p>Over time, the service continues to monitor customer behavior and incorporates machine learning algorithms to determine customer trends. However, this requires many nodes (computers) to perform associated calculations and from time to time individual nodes will be temporarily unavailable. Since the nodes are implementing a specific API function, the standard Java Exceptions may not conveniently convey the specific information the controller server needs to optimize the use of the nodes. Alternatively, a custom Exception called PetLearningNodeUnavailableException could be built to trigger the controller to reroute machine learning calculations to other available nodes.</p>
+
+                <h4>Scenario 3: Throw a custom chained exception -- Do you need to enhance an existing exception in special cases?</h4>
+                <p>The pet store's machine learning nodes also need access to the same database at the same time. Under certain conditions, this can create bottlenecks and timeouts. Database timeout events are common in large systems, and standard exceptions exist to notify the calling software of these errors. However, imagine in this situation you incorporate a multi-step recover strategy. For example, you might wait and retry the database request after a standard exception is caught. If the retry fails, you could then wrap the original database exception into a custom DatabaseConnectionOverloadException (which contains the original stack trace), signaling the calling method to give up and mark the computation as incomplete, perhaps to be re-tried at a later time. A developer could later investigate the incident using both exceptions and their stack traces, as well as the timing of the failure to compare with information about the performance of the database during that time.</p>
+
+                <h4>Scenario 4: Throw a custom translated exception -- Do you need to hide information from 3rd parties?</h4>
+                <p>Imagine that the pet store algorithm got popular, and it got extended for use in more general consumer applications. Then imagine that a 3rd party wanted to license the software, but one of the conditions of the arrangement is you need to hide that you are interfacing with an AWS database (lawyers can come up with lots of creative terms in contracts that turn into your business requirements). During the course of normal usage, a database connection error is encountered and a com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException is thrown. This Exception is AWS-specific and must be hidden from the service API by agreement. In this case, you can catch the AWS exception, then throw a new custom exception (maybe a generic-sounding DatabaseConnectionException) to the calling method while hiding any AWS-specific information that the ResourceNotFoundException contained.</p>
             </div>
 
             <div class="content-box">
@@ -113,6 +249,158 @@ public class InvalidInputException extends ServiceException {
     }
 }</code></pre>
                 <p>This code demonstrates how to create a hierarchy of exceptions with a base service exception and more specific child exceptions. Exception chaining (wrapping) is shown, which helps preserve the original cause while presenting a more appropriate exception to the caller.</p>
+
+                <h3>Creating a Custom Exception</h3>
+                <p>In the last reading, we reviewed exceptions and discussed how to decide when to use a custom exception. This reading will cover designing your own custom exception after you've determined that you need one.</p>
+
+                <h4>Exception Class Name</h4>
+                <p>Naming your exception clearly will help you and other designers interpret what is going on quickly. Follow the format of SomethingException, being sure to include the word Exception in your name (not required by the compiler, but a widespread convention). In the previous reading, we saw the example of InvalidBirthdayException. This name identifies both the problem (InvalidBirthdate) and the fact that this object is an Exception subclass.</p>
+
+                <h4>Checked or Unchecked Exception?</h4>
+                <p>Custom exceptions ultimately extend one of the two base Exception classes. Recall that Java has two types of Exceptions:</p>
+                <ul>
+                    <li>Checked exceptions where handling rules are enforced by the compiler. These extend Exception</li>
+                    <li>Unchecked exceptions where the handling rules are not compiler enforced. These extend RuntimeException</li>
+                </ul>
+
+                <p>Figure 1 shows where these two types exist in the Java Exception Class Hierarchy. RuntimeException class is a subclass of the base Exception class, and it overrides the compiler checking mechanism, so handling is not enforced. As a result, you don't need to declare your method throws any RuntimeExceptions that it might throw.</p>
+
+                <p>At Amazon, you are encouraged to consider whether an existing exception class is available before creating your own. In particular, see if a standard Java RuntimeException subclass is suitable for your use case before writing a custom unchecked exception. This is because it can be difficult for a developer to determine the possible exceptions that your method will throw without any throws clause declaring thrown exceptions.</p>
+
+                <p>More importantly, be sure to check with your dev team on their conventions/standards, and we recommend following them unless you have compelling reasons not to that you've reviewed with a more tenured team member. (Note that this includes how they document exception-throwing in javadoc.) Some teams like to write custom checked exceptions that inherit from a common service-specific base class. You accomplish this by creating a base exception that inherits from Exception, as the AtaBaseException Class does in Figure 1. For this Lesson, the AtaBaseException class is the base class for all custom Exceptions you will be creating.</p>
+
+                <h4>Structuring an Exception Hierarchy</h4>
+                <p>It is best to name your Exceptions so that they're consistent with the code they reside in. In this Lesson, you will be working in the com.amazon.ata.creatingexceptions package, and we'll use a base Exception subclass for this package called AtaBaseException. In a larger programming project, there might be multiple services interacting with one another. Each service might have its own base Exception subclass, which may in turn inherit from a global base exception.</p>
+
+                <p>For example, for the AWS client library (SDK, or Software Development Kit) that you'll use to call AWS services like DynamoDB, the AmazonServiceException lives in the com.amazonaws package, and serves as a base exception type for all AWS client libraries. There is often a subclass of AmazonServiceException for each specific AWS service that that service's exceptions inherit from.</p>
+
+                <p>We won't be using multiple services or packages in our coding exercise. However, it is common to find a library that declares hierarchy of Exceptions based on a logical structure.</p>
+
+                <p>Imagine we're building a service that requires customers to log in before using its features. Figure 2 illustrates one possible hierarchy we'll consider for this lesson. AtaBaseException has 3 subclass exceptions each representing types of error conditions:</p>
+
+                <ul>
+                    <li>AtaUserException -- Thrown if a user unexpectedly exists, or unexpectedly doesn't exist. This is discussed in more detail below.</li>
+                    <li>AtaResourceException -- Thrown if an error associated with a resource (for this Lesson a database) occurs.</li>
+                    <li>AtaAccessException -- Thrown if the user doesn't have privileges for the requested operation. Everyone can access their own data, but not everyone can access someone else's personal data.</li>
+                </ul>
+
+                <p>Remember in Figure 1 the AtaBaseException superclass is Exception, therefore all 3 of its subclasses are checked exceptions, with an expectation that the associated issues can be handled and the program can continue. All 3 of the subclasses could be split into finer detail as requirements evolve. As an example, the AtaUserException is already the superclass for two more custom checked exceptions. AtaUserAlreadyExistsException is thrown when a duplicate user already exists (e.g. when creating a new user). AtaCustomerNotFoundException is thrown when looking for a particular customer, but that customer doesn't exist.</p>
+
+                <h4>Designing a Custom Exception</h4>
+                <p>Now let's walk through the process of creating a custom Exception. Shirley is developing a customer lookup method using username as the search parameter. She identifies one common error scenario: the customer not being found in the database. If this occurs, it is possible that some unrecoverable errors could occur:</p>
+
+                <ul>
+                    <li>A method could return a null string that a calling method might not support.</li>
+                    <li>The search engine might keep looking for a customer that will never be found.</li>
+                </ul>
+
+                <p>However, several recovery options exist for this situation that could be discussed with a product owner before proceeding. One of them is to have the software prompt the customer to create a new account if it doesn't exist, another is to display an error message requesting that the customer reenter the account ID. In either case, let's assume the product owner liked the suggestions, but confirmed with Shirley that it isn't the job of the lookup algorithm to do those things. They agree that the API should throw an API-specific AtaCustomerNotFoundException to inform the calling method that a customer-facing recovery action should occur. The customer-facing user interface that calls the customer lookup API can handle it from there.</p>
+
+                <p>Figure 3 shows what this custom exception class might look like. The AtaCustomerNotFoundException extends the AtaUserException class. Custom Exceptions can contain additional fields as needed; this one includes the customer ID field, username.</p>
+
+                <pre><code>package com.amazon.ata.creatingexceptions.prework;
+
+public class AtaCustomerNotFoundException extends AtaUserException {
+
+    private static final long serialVersionUID = 1952705374572855798L;
+    private String username;
+
+    /**
+     * Constructs exception with username.
+     * @param username - username representing customer ID
+     */
+    public AtaCustomerNotFoundException(String username) {
+        super("User with " + username + " cannot be found.");
+        this.username = username;
+    }
+
+    /**
+     * Constructs exception with username, message and cause.
+     * @param username - username representing customer ID
+     * @param message - Description of the error encountered, in this case the requested customer could not be found.
+     * @param cause - The Exception that caused this exception to be thrown. Used in Exception chaining.
+     */
+    public AtaCustomerNotFoundException(String username, String message, Throwable cause) {
+        super("Username " + username + " cannot be found. " + message, cause);
+        this.username = username;
+    }
+
+    /**
+     * Constructs exception with username and message.
+     * @param username - username representing customer ID
+     * @param message - Description of the error encountered, in this case the requested customer could not be found.
+     */
+    public AtaCustomerNotFoundException(String username, String message) {
+        super("Username " + username + " cannot be found. " + message);
+        this.username = username;
+    }
+
+    /**
+     * Constructs exception with username and cause.
+     * @param username - username representing customer ID
+     * @param cause - The Exception that caused this exception to be thrown. Used in Exception chaining.
+     */
+    public AtaCustomerNotFoundException(String username, Throwable cause) {
+        super("User with " + username + " cannot be found.", cause);
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+}</code></pre>
+
+                <h4>What is serialVersionUID?</h4>
+                <p>The AtaCustomerNotFoundException class contains the private static final long constant, serialVersionUID. The Java Exception class implements an interface called Serializable that requires this parameter. You can think of this as a version ID for the current exception class's design, and it gets used when the exception is passed back from the server to the client to ensure both codebases have compatible versions of the class. You will be learning more about serialization in a later lesson, it is being introduced here because it is typically declared in all custom Exceptions (and any class implements the Serializable interface, even if via a superclass). It is highly recommended that you declare the serialVersionUID explicitly, rather than let Java do it automatically.</p>
+
+                <h4>The Custom Exception Constructors and Getters</h4>
+                <p>To build out the rest of the class, you'll want to implement getters for any instance variables, and build out all of the following constructors unless there is a compelling reason not to. The Exception Javadoc includes the following constructors you should consider emulating in your custom exception classes:</p>
+
+                <ul>
+                    <li>Exception() -- constructs a new exception without a cause, nor message (not that helpful on its own...)</li>
+                    <li>Exception(String message) - Constructs a new exception with the specified detail message.</li>
+                    <li>Exception(String message, Throwable cause) - Constructs a new exception with the specified detail message and cause.</li>
+                    <li>Exception(Throwable cause) - Constructs a new exception with the specified cause, but the default message will be null.</li>
+                </ul>
+
+                <p>The String message communicates the reason that the exception was thrown. The Throwable cause in this case is usually another Exception that can be chained to the AtaCustomerNotFoundException, or translated (i.e. hidden). Both chaining and translating were described in the first reading. Remember that the Throwable cause in the constructor enables exception chaining/wrapping. If you are using a constructor that doesn't have a Throwable cause, you should either be detecting your own error condition (rather than catching an exception), or are explicitly translating the exception instead of chaining it.</p>
+
+                <p>In Figure 3 there the AtaCustomerNotFoundException has four constructors:</p>
+
+                <ul>
+                    <li>AtaCustomerNotFoundException(String username) -- It doesn't accept message or cause, but does include the class field, username.</li>
+                    <li>AtaCustomerNotFoundException(String username, String message, Throwable cause) -- It accepts all the standard Exception arguments along with the custom field, username.</li>
+                    <li>AtaCustomerNotFoundException(String username, String message) -- It accepts only username and message.</li>
+                    <li>AtaCustomerNotFoundException(String username, Throwable cause) -- It accepts only username and cause.</li>
+                </ul>
+
+                <p>The class field, username, is included in all four constructors, including constructor without message nor cause (which corresponds to the Exception() no-argument constructor). The first line in each constructor is a call to the superclass constructor, with the username somehow incorporated into a default message. Then the username instance variable is then set.</p>
+
+                <p>Note that it is unusual for exceptions to have custom methods aside from simple getters, because exceptions usually announce that an error has occurred rather than handle any details about the error.</p>
+
+                <h4>Declaring Your New Exception</h4>
+                <p>The new Exception class is now ready to try out. Figure 4 illustrates a simple way to do this using a method called customerNotFound().</p>
+
+                <pre><code>@Test
+public void searchUser_customerNotFound_exceptionThrownWithExpectedMessage() {
+    try {
+        customerNotFound();
+    } catch (AtaCustomerNotFoundException e) {
+        Assertions.assertEquals("The customer was not found.", e.getMessage(), "Wrong Exception message");
+    }
+    // code not shown that would cause the test to fail if the Exception didn't get thrown
+}
+
+/**
+ * Simple method to ensure a AtaCustomerNotFoundException can be thrown.
+ * @throws AtaCustomerNotFoundException - Stores the username ID
+ * and informs the caller ID that it wasn't found with associated message.
+ */
+public void customerNotFound() throws AtaCustomerNotFoundException {
+    throw new AtaCustomerNotFoundException("badusername", "The customer was not found.");
+}</code></pre>
+
+                <p>Figure 4 shows a JUnit test that calls customerNotFound() in a try catch block. The customerNotFound() declaration includes the statement throws AtaCustomerNotFoundException. The effect is this is that the calling routine will have to either catch the Exception or throw it to its calling routine. The customerNotFound() method then simply throws the Exception using the constructor with arguments, username and message. The JUnit then asserts the message contents. There is also a Javadoc included for the method, if you autogenerate the Javadoc in IntelliJ you'll notice that the @throws statement is added, reminding you to describe when it throws this checked exception.</p>
             </div>
             
             <div class="content-box">
@@ -145,31 +433,51 @@ public class UserService {
     }
 }</code></pre>
                 <p>This example shows custom exceptions in action within a service class. The code demonstrates how to throw custom exceptions in error cases and how to wrap lower-level exceptions to provide more context while preserving the original cause information.</p>
-            </div>
 
-            <section class="resource-section">
-                <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
-                    <a href="../../code-alongs/index.html#code-along-1" class="resource-link">
-                        Code-Along 1: Custom Exception
-                    </a>
-                    <a href="https://github.com/BloomTechBackend/bd-14-1-codealong-CustomException-starter" target="_blank" rel="noopener" class="resource-link">
-                        Custom Exception Code-Along Starter
-                    </a>
-                    <a href="https://github.com/BloomTechBackend/bd-14-1-codealong-CustomException-solution" target="_blank" rel="noopener" class="resource-link">
-                        Custom Exception Code-Along Solution
-                    </a>
                     <a href="https://github.com/BloomTechBackend/bd-creating-exceptions-ice-cream-parlor" target="_blank" rel="noopener" class="resource-link">
-                        Ice Cream Parlor Guided Project
-                    </a>
-                    <a href="../../sprint-challenge/index.html" class="resource-link">
-                        Sprint Challenge
-                    </a>
-                    <a href="https://docs.oracle.com/javase/tutorial/essential/exceptions/creating.html" target="_blank" rel="noopener" class="resource-link">
-                        Oracle Java Tutorial: Creating Exception Classes
+                        Ice Cream Parlor
                     </a>
                 </div>
-            </section>
+            </div>
+
+            <div class="content-box">
+                <h2>Mastery Task 2: I'll Give You an Exception This Time</h2>
+                
+                <h3>Milestone 1: Designing an exception hierarchy</h3>
+                <p>After a project check-in, your senior engineer pointed out that before starting on the UpdatePlaylist API, we should first validate if the request is somehow providing a different customerId value that is different than the stored Playlist's value.</p>
+                
+                <p>The customer ID field is important to verify who is making the request, and a different one could mean a bug in the music client, or a larger security issue. It would be a very negative experience if someone could accidentally (or maliciously) affect another user's data, even if it's as relatively benign as a music playlist. Letting bugs like that slip could cause us to lose our customers' trust, not only in our playlist service but Amazon Music as a whole! Thus, the "Music Playlist Service API Implementation Notes" section of the design document documents that you will add this validation to the activity.</p>
+
+                <p>Let's propose a new exception class, InvalidAttributeChangeException. However, your senior engineer points out the similarity between the new exception and InvalidAttributeValueException. He suggests creating a hierarchy with a third, more generic exception class. He suggests that this can prove useful when we eventually centralize our validation logic in its own class (which we will do after finishing the API). Classes that use this validation logic would have the flexibility to catch either exception subclasses, or our new generic exception, depending on the needs.</p>
+
+                <p>Update the plantUML class diagram at src/resources/mastery-task1-music-playlist-CD.puml with the two new exceptions and updated hierarchy.</p>
+
+                <p>When you are done, verify that the MT2DesignIntrospectionTests pass before implementing your design.</p>
+
+                <h3>Milestone 2: Implement UpdatePlaylistActivity</h3>
+                <p>Let's implement the exception hierarchy and the UpdatePlaylistActivity class based on our design document</p>
+
+                <p>Implement the validation logic discussed above and documented in the "Music Playlist Service API Implementation Notes" section of the design document</p>
+
+                <p>Also, review the design to understand the exact requirements (e.g., which field(s) are actually updated by this activity).</p>
+
+                <p>Verify that MT2IntrospectionTests passes before moving on.</p>
+
+                <p>Implement UpdatePlaylistActivity's handleRequest method and add unit tests to cover your new code.</p>
+
+                <p>Remember that DynamoDBMapper's save operation is idempotent, similar to a PUT call. If your PlaylistDao's save method that you create for the CreatePlaylist use case is general enough, you should be able to use it for the UpdatePlaylist case as well!</p>
+
+                <p>Uncomment and run the UpdatePlaylistActivity unit tests. Upload your code to your UpdatePlaylistActivity Lambda and verify it works by updating a playlist.</p>
+
+                <h3>Doneness Checklist</h3>
+                <ul>
+                    <li>Your exception hierarchy design passes MT2DesignIntrospectionTests</li>
+                    <li>Your exception hierarchy implementation passes MT2IntrospectionTests</li>
+                    <li>You've implemented UpdatePlaylist's functionality</li>
+                    <li>The UpdatePlaylistActivty unit tests are passing.</li>
+                </ul>
+            </div>
         </section>
     </main>
 </body>

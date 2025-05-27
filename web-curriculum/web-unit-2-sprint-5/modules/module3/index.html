@@ -36,9 +36,7 @@
             <div class="content-box">
                 <h2>Introduction to Components</h2>
                 <p>Learn what components are and why they're important in modern web development. Components are reusable building blocks that encapsulate HTML, CSS, and JavaScript functionality, making code more maintainable and promoting the DRY (Don't Repeat Yourself) principle.</p>
-                <div class="video-container">
-                    <iframe src="https://fast.wistia.net/embed/iframe/d3k6yw9agw" allow="autoplay; fullscreen" loading="lazy"></iframe>
-                </div>
+                
                 <div class="concept-details">
                     <h3>What Are Components?</h3>
                     <p>A component is a self-contained, reusable piece of UI that encapsulates HTML structure, styling, and behavior. Components help organize code into logical, reusable units and form the foundation of modern UI development.</p>
@@ -50,6 +48,384 @@
                         <li><strong>Composability</strong>: Components can be combined to create more complex UIs</li>
                     </ul>
                     <p>Examples of components include navigation bars, cards, buttons, modal dialogs, tabs, and more. By breaking down interfaces into component parts, we can build applications that are easier to develop, test, and maintain.</p>
+                </div>
+            </div>
+
+            
+            <div class="content-box module3-accent">
+                <h2>Combining HTML, CSS and JavaScript</h2>
+                <div class="concept-details">
+                    <h3>Overview</h3>
+                    <p>The traditional way of incorporating styles and scripts into your web app is to add &lt;style&gt; and &lt;script&gt; tags to the HTML file. In this Learning Objective, you will learn how to properly add styles and scripts into the HTML file by using these tags. Later, you will learn how to link and separate HTML, CSS and JS in different files.</p>
+
+                    <h3>Styles</h3>
+                    <p>Styles are supposed to be declared inside the &lt;head&gt; of the HTML document.</p>
+                    <p>If you include multiple &lt;style&gt; elements in your document, they will be applied to the DOM in the order they are included in the HTML — so be aware of unexpected cascade issues.</p>
+                    <p>Here's an example of styling paragraphs:</p>
+                    <pre><code>&lt;!doctype html&gt;
+&lt;html lang="en-US"&gt;
+
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;title&gt;Test page&lt;/title&gt;
+    &lt;style&gt;
+      p {
+        color: red;
+      }
+    &lt;/style&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;p&gt;This is my paragraph.&lt;/p&gt;
+  &lt;/body&gt;
+
+&lt;/html&gt;</code></pre>
+
+                    <h3>Scripts</h3>
+                    <p>Scripts, on the other hand, are supposed to be included inside the &lt;body&gt; of the document. While there's no requirement for where they appear inside the body, keep in mind that most browsers will execute them in order of appearance.</p>
+                    <p>If your script depends on a certain element being created and available in the DOM, you should always "delay" its execution to make sure the page will load properly.</p>
+                    <p>In most cases, scripts should be executed when all of the HTML and Styles are already rendered in the DOM, that's why they usually appear in the end of the body. Let's compare two cases:</p>
+                    <pre><code>&lt;!doctype html&gt;
+&lt;html lang="en-US"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;p id="target"&gt;This is a paragraph.&lt;/p&gt;
+    &lt;p&gt;This is another paragraph.&lt;/p&gt;
+    &lt;script&gt;
+        document.querySelector('#target').innerText = "This paragraph was changed by JS!";
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                    <p>In the first example above, the script selects the first paragraph by ID and updates its text content. It works!</p>
+                    <p>Now if you move the script to the beginning of the body, like this:</p>
+                    <pre><code>&lt;!doctype html&gt;
+&lt;html lang="en-US"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;script&gt;
+        document.querySelector('#target').innerText = "This paragraph was changed by JS!";
+    &lt;/script&gt;
+    &lt;p id="target"&gt;This is a paragraph.&lt;/p&gt;
+    &lt;p&gt;This is another paragraph.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                    <p>You will probably end up with the original HTML paragraph, as the script won't be able to find the target and select it while the page is parsing. Check the dev tools console and you should find an error message!</p>
+
+                    <div class="note-box">
+                        <h3>How to Build It</h3>
+                        <h4>Note on Code Organization</h4>
+                        <p>Currently, the Kolors application is a rather large HTML file, with all body elements, styles and JS script. You have to be careful with the script position in the body, and the order of declarations. For instance, you should declare the event handler functions before attaching them to elements, to avoid issues and/or warnings.</p>
+
+                        <p>You have streamlined the code and moved some static elements from JS to HTML.</p>
+
+                        <p>The current HTML looks like this:</p>
+
+                        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;title&gt;Kolors Palette Selector&lt;/title&gt;
+    &lt;style&gt;
+      .container {
+        display: flex;
+        justify-content: center;
+      }
+      .rectangle {
+        border: 1px solid black;
+        margin: 2px;
+        width: 10vw;
+        height: 50vh;
+        text-align: center;
+        padding-top: 10px;
+        font-weight: 700;
+        color: white;
+        text-shadow: 1px 1px black;
+      }
+      .dark-theme {
+        background-color: black;
+        color: white;
+      }
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Kolors Palette Selector&lt;/h1&gt;
+    &lt;button type="button" id="togglebtn"&gt;Dark Theme OFF&lt;/button&gt;
+    &lt;button type="button" id="palettebtn"&gt;Change Palette&lt;/button&gt;
+    &lt;div class="container"&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;script&gt;
+      const palette = [
+        {
+          name: "Charcoal",
+          hex: "264653",
+          cmyk: "(22,5,122,43)",
+          rgb: "(120,34,65)",
+          family: "Dark Minerals",
+        },
+        { name: "Persian green", hex: "2a9d8f" },
+        {
+          name: "Saffron",
+          hex: "e9c46a",
+          cmyk: "(23,121,43,45)",
+          rgb: "(12,223,67)",
+          family: "Pale Yellows",
+        },
+        {
+          name: "Sandy brown",
+          hex: "f4a261",
+        },
+        {
+          name: "Burnt sienna",
+          hex: "e76f51",
+        },
+      ];
+      const containerNode = document.querySelector(".container");
+      const paletteBtn = document.getElementById("palettebtn");
+      const toggleBtn = document.getElementById("togglebtn");
+      const colorBars = document.querySelectorAll(".rectangle");
+      const welcomeMsg = document.createElement("h2");
+      welcomeMsg.textContent =
+        "Welcome, we are excited to help you choose the perfect palette! Use the button to shuffle through some beautiful color combinations.";
+      welcomeMsg.style.border = "1px solid grey";
+      welcomeMsg.style.padding = "0.5em";
+      //handlers
+      const toggleTheme = () => {
+        document.querySelector("body").classList.toggle("dark-theme");
+        if (toggleBtn.textContent == "Dark Theme OFF") {
+          toggleBtn.textContent = "Dark Theme ON";
+        } else {
+          toggleBtn.textContent = "Dark Theme OFF";
+        }
+      };
+      const changePalette = () => {
+        colorBars.forEach((bar, index) => {
+          bar.textContent = palette[index].name;
+          bar.title =
+            palette[index].family +
+            " - HEX: 0x" +
+            palette[index].hex +
+            " - CMYK: " +
+            palette[index].cmyk +
+            " - RGB: " +
+            palette[index].rgb;
+          bar.style.backgroundColor = "#" + palette[index].hex;
+          bar.id = palette[index + 1];
+        });
+      };
+      //attaching handlers
+      paletteBtn.addEventListener("click", changePalette);
+      toggleBtn.addEventListener("click", toggleTheme);
+      // inserting elements into DOM
+      document
+        .querySelector("h1")
+        .insertAdjacentElement("afterend", welcomeMsg);
+      document
+        .querySelector("#palettebtn")
+        .insertAdjacentElement("beforebegin", toggleBtn);
+      changePalette();
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+                        <p>Notice how the styles are properly inserted inside the &lt;head&gt;, and how the script is the last item in the body. Inside the script, you are first declaring some data structures, then selecting and updating elements, defining the handler functions, attaching them, inserting elements into the DOM, and finally calling the changePalette() function to initialize the color bars. This is a good ordering!</p>
+
+                        <p>However, most of this app is really JS... the actual HTML is pretty simple, small, and should not require many edits through the development cycle. How can you improve the workflow and readability? That's what you will learn next!</p>
+
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/ziw5vk5hpq?seo=false&videoFoam=false" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                        <h3>Splitting HTML, CSS, JS into Separate Files</h3>
+                        
+                        <p>You will now learn how to improve readability and maintenance of your code by splitting HTML, CSS and JavaScript into separate files.</p>
+
+                        <p>As your application evolves, your code grows and tends to become hard to read and maintain. Adding styling and JS directly into your HTML file is not always the best solution, and it's not uncommon to end up with hundreds of lines of code in a single file!</p>
+
+                        <p>Using different files is one of the key concepts of building components! The HTML file will be responsible for "linking" all of the styles and scripts, making it easy to bring-in existing CSS templates and JS functions/objects to your project.</p>
+
+                        <p>These external files can be quickly re-used by different applications, while developers can concentrate on designing and debugging code in a modular fashion.</p>
+
+                        <p>Remember that coding in real life is often more about reading existing code than writing new code. By using external and independent files, you will be able to come back to any existing project and quickly understand the pieces, instead of going through hundreds of lines of code. This modular approach will also help other developers who may be collaborating in your project, today, or in the future.</p>
+
+                        <p>Let's use the previous example and break it down into three files:</p>
+
+                        <div class="code-example">
+                            <p><strong>styles.css</strong></p>
+                            <pre><code>#target {
+   color: red;
+}</code></pre>
+
+                            <p><strong>scripts.js</strong></p>
+                            <pre><code>document.querySelector('#target').innerText = "This paragraph's style and content was changed by external CSS and JS files!";</code></pre>
+
+                            <p><strong>index.html</strong></p>
+                            <pre><code>&lt;!doctype html&gt;
+&lt;html lang="en-US"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;link rel="stylesheet" href="styles.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;p id="target"&gt;This is a paragraph.&lt;/p&gt;
+    &lt;p&gt;This is another paragraph.&lt;/p&gt;
+    &lt;script src="scripts.js" defer&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                        </div>
+
+                        <p>You might want to create these 3 files in your editor and check the results by loading the index.html page in a live server VSCode extension. The result is the same!</p>
+
+                        <p>Let's understand what's happening here.</p>
+
+                        <p>First, you are linking an external stylesheet (CSS file) with the &lt;link&gt; tag, still inside the &lt;head&gt;, as it should be. The rel attribute informs that this is in fact a CSS file, as other types of files could be linked. The href points to the file location - in this case, the styles.css file is in the same directory as the index.html.</p>
+
+                        <p>Next, inside the body, you are linking the JS script with the src attribute, which points to the actual file. Notice the defer keyword, which will force the script to execute only after the page is parsed, meaning you could add this &lt;script&gt; element anywhere in the body!</p>
+
+                        <p>At this point, no matter how complex the styling gets, or how the script evolves in the future, you won't need to come back to the HTML file. You could have a CSS ninja working on your project, and as long as the styling targets the #target id, the HTML can stay the same.</p>
+
+                        <p>Similarly, you can add all kinds of functionalities to your script, like fetching data from external servers, making calculations, concatenating strings etc., and as long as the script is selecting and manipulating the #target element, you will be fine.</p>
+
+                        <div class="note-box">
+                            <h3>How to Build It</h3>
+                            <h4>Breaking Down the Kolors App</h4>
+                            <p>You decide to break down the Kolors code into three separate files. Easy! And it feels good:</p>
+
+                            <p><strong>index.html</strong></p>
+                            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;title&gt;Kolors Palette Selector&lt;/title&gt;
+    &lt;link rel="stylesheet" href="kolors.css" /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Kolors Palette Selector&lt;/h1&gt;
+    &lt;button type="button" id="togglebtn"&gt;Dark Theme OFF&lt;/button&gt;
+    &lt;button type="button" id="palettebtn"&gt;Change Palette&lt;/button&gt;
+    &lt;div class="container"&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;script src="kolors.js" defer&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+                            <p><strong>kolors.css</strong></p>
+                            <pre><code>.container {
+  display: flex;
+  justify-content: center;
+}
+.rectangle {
+  border: 1px solid black;
+  margin: 2px;
+  width: 10vw;
+  height: 50vh;
+  text-align: center;
+  padding-top: 10px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 1px 1px black;
+}
+.dark-theme {
+  background-color: black;
+  color: white;
+}</code></pre>
+
+                            <p><strong>kolors.js</strong></p>
+                            <pre><code>const palette = [
+  {
+    name: "Charcoal",
+    hex: "264653",
+    cmyk: "(22,5,122,43)",
+    rgb: "(120,34,65)",
+    family: "Dark Minerals",
+  },
+  { name: "Persian green", hex: "2a9d8f" },
+  {
+    name: "Saffron",
+    hex: "e9c46a",
+    cmyk: "(23,121,43,45)",
+    rgb: "(12,223,67)",
+    family: "Pale Yellows",
+  },
+  {
+    name: "Sandy brown",
+    hex: "f4a261",
+  },
+  {
+    name: "Burnt sienna",
+    hex: "e76f51",
+  },
+];
+const containerNode = document.querySelector(".container");
+const paletteBtn = document.getElementById("palettebtn");
+const toggleBtn = document.getElementById("togglebtn");
+const colorBars = document.querySelectorAll(".rectangle");
+const welcomeMsg = document.createElement("h2");
+welcomeMsg.textContent =
+  "Welcome, we are excited to help you choose the perfect palette! Use the button to shuffle through some beautiful color combinations.";
+welcomeMsg.style.border = "1px solid grey";
+welcomeMsg.style.padding = "0.5em";
+//handlers
+const toggleTheme = () => {
+  document.querySelector("body").classList.toggle("dark-theme");
+  if (toggleBtn.textContent == "Dark Theme OFF") {
+    toggleBtn.textContent = "Dark Theme ON";
+  } else {
+    toggleBtn.textContent = "Dark Theme OFF";
+  }
+};
+const changePalette = () => {
+  colorBars.forEach((bar, index) => {
+    bar.textContent = palette[index].name;
+    bar.title =
+      palette[index].family +
+      " - HEX: 0x" +
+      palette[index].hex +
+      " - CMYK: " +
+      palette[index].cmyk +
+      " - RGB: " +
+      palette[index].rgb;
+    bar.style.backgroundColor = "#" + palette[index].hex;
+    bar.id = palette[index + 1];
+  });
+};
+//attaching handlers
+paletteBtn.addEventListener("click", changePalette);
+toggleBtn.addEventListener("click", toggleTheme);
+// inserting elements into DOM
+document.querySelector("h1").insertAdjacentElement("afterend", welcomeMsg);
+document
+  .querySelector("#palettebtn")
+  .insertAdjacentElement("beforebegin", toggleBtn);
+changePalette();</code></pre>
+
+<div class="video-container">
+    <iframe src="https://fast.wistia.net/embed/iframe/rpo2k15p6v?seo=false&videoFoam=false" allow="autoplay; fullscreen" loading="lazy"></iframe>
+</div>
+                        </div>
+                        <h3>Conclusion</h3>
+
+                    <p>In reality, you have just created your first component!</p>
+
+                    <p>If you rename the files from the Overview section to target.css and target.js, any application in the future will be able to re-use these two files to deal with any element with the id #target. In other words, the CSS and the JS files are in fact the component, specifically designed to style and manipulate the #target element of any page.</p>
+
+                    <p>Components can also be designed to target specific class names, making them very versatile. Using components in your application is just a matter of linking the correct files and understanding the "API" of the component - which elements in my page will be targeted by the component? How do I design the initial HTML elements tree with the correct classes and IDs?</p>
+
+                    <p>And remember that the JS code can also create new elements on the fly, so the HTML could be very simple to begin with!</p>
+
+                    <p>That's the beauty of breaking down the code into separate files and concerns: easy to read, quick to maintain, flexible to re-use, agile to develop.</p>
+                    
                 </div>
             </div>
 
