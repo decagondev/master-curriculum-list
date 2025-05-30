@@ -35,10 +35,6 @@
                 <iframe class="wistia_embed" title="Introduction to Databases" src="https://fast.wistia.net/embed/iframe/jluniam362" allow="autoplay; fullscreen" allowfullscreen></iframe>
             </div>
             
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Sprint 21 Iterators Video" src="https://fast.wistia.net/embed/iframe/azizzmaa25" allow="autoplay; fullscreen" allowfullscreen></iframe>
-            </div>
-            
             <div class="note-box">
                 <h3>Learning Objectives</h3>
                 <ul>
@@ -134,55 +130,188 @@
             </div>
 
             <div class="content-box">
-                <h2>Practical Iterator Examples</h2>
+                <h2>Understanding Iterators</h2>
+                <p>Iterator&lt;E&gt; is an interface which belongs to the Collections framework and is used to retrieve items one by one. Iterators are useful because they give us the ability to traverse a given collection and access and remove data elements from the collection. The iterator includes certain methods to iterate through the collection and a cursor that keeps track of the current place in the collection. This reading will cover all these points in more detail.</p>
+
+                <h3>Why use Iterators?</h3>
+                <p>Iterators provide a way to safely add and remove elements while iterating through a collection. Have you ever tried to call add() or remove() on a list while iterating through it with a for-each loop, like the example below?</p>
+
+                <pre><code>List&lt;String&gt; letters = Arrays.asList("A", "B", "C");
+    
+for (String letters : letters) {
+    letters.remove("A"); // ConcurrentModificationException thrown!
+}</code></pre>
+
+                <p>The above code will result in a ConcurrentModificationException being thrown at runtime. Java prevents us from directly adding to or removing from a list while iterating though it. In this reading, you'll learn how to use Iterators to add and remove elements while iterating through a collection.</p>
+
+                <h3>Iterator Methods</h3>
+                <p>The iterator includes three methods that help us traverse a collection.</p>
+                <ul>
+                    <li><code>boolean hasNext()</code>: returns true if the iterator has at least one more element to iterate through.</li>
+                    <li><code>E next()</code>: returns the next element in the collection as long as hasNext() is true and throws a NoSuchElementException if hasNext() is false. Iterators are defined as a generic class using the type E. So here E represents the type held by the iterator.</li>
+                    <li><code>void remove()</code>: removes the current element in the collection and throws an IllegalStateException if the method is called again after it's already removed the current element.</li>
+                </ul>
+
+                <h3>next()</h3>
+                <p>All these methods depend upon the cursor to determine where the iterator currently is within the collection. The cursor functions just as the cursor on your computer does when you type. If you're editing text in an application such as Microsoft Word, the next key you press will appear wherever your cursor is currently located. The next() method functions like hitting the right arrow key--it moves from the current character to the next character, as long as there is another character, which functions like the hasNext() method returning true. If you get to the last character then the cursor no longer moves, which functions like the hasNext() method returning false.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/0557dfea-a410-4d21-9579-e2915a264a2a_image1.png" alt="Figure 1" loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><i>Figure 1. Diagram of calling the next() method on elements: s e n t e n c e. The cursor starts at the beginning of the list.</i></p>
+
+                <p>Each time the next() method is called, it returns the next element in the collection, which is the element it moved over. In the initial step of the above example, next() hasn't been called yet so it hasn't returned any elements. When we call next() the first time, the value returned is the first element, which has value 's'. When we call next() a second time, the value returned is now the second element, which has value 'e'. As next() is called, the cursor also moves so that it is just to the right of the last value it returned.</p>
+
+                <h3>remove() with next()</h3>
+                <p>The remove() method functions more similarly to deleting elements from an Excel table than a text editing document. Once you delete the contents in a cell, you must press the arrow key to move to the next cell. If you keep pressing the delete key in an empty cell, nothing will happen until you manually move to the next cell using the right arrow key. This is how the remove() method functions---you have to manually use the next() method to give the remove() method another value to delete. This is because the remove() method operates on the last element returned by the next() method. If you don't call the next() method again, there is no element for the remove() method to operate on! The remove() method, however, will return an IllegalStateException if you try to delete the empty cell, instead of just doing nothing.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/80d72892-0c83-431c-a3f4-4d93d8c9cf49_image2.png" alt="Figure 2" loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><i>Figure 2. Diagram of calling the remove() method on the elements: s e n t e n c e. The cursor starts at the beginning of the list.</i></p>
+
+                <p>In the above example, you can see that the cursor starts at the beginning of the list and next() hasn't returned any values. If you called the remove() method now, you would get an IllegalStateException because next() hasn't returned a value to remove. So instead we call the next() method---returning the element with value 's' and moving the cursor between the 's' and the 'e'. Now when we call the remove() method, it will delete the element with value 's' because that's the last element returned by the next() method. Once we've removed the element, the last value next() returned is no longer a valid element, because it's been deleted! So we need to call the next() method again, which returns the element with value 'e' and moves the cursor between the 'e' and 'n'. Finally, we call remove() one more time, which deletes the 'e', since that was the last value returned by the next() method.</p>
+
+                <h3>ListIterator</h3>
+                <p>The ListIterator&lt;E&gt; is an Iterator&lt;E&gt; which provides additional functionality when working with List&lt;E&gt; classes. It allows you to traverse the list forward or backward and the ability to add and update elements in the list, in addition to the other iterator methods.</p>
+
+                <p>The ListIterator&lt;E&gt; includes the following methods to help us traverse a list.</p>
+                <ul>
+                    <li>The three methods previously discussed: hasNext(), next(), and remove()</li>
+                    <li><code>void add(E element)</code>: inserts an object immediately before the current cursor position. It must be of type E, the type that the iterator has said it holds.</li>
+                    <li><code>void set(E element)</code>: replaces (updates) the last element returned by next() and throws an IllegalStateException if the method is called before an element has been returned by next().</li>
+                </ul>
+
+                <p>ListIterator also has the methods hasPrevious() and previous() to support traversing backwards through a list. We will not go over these methods in detail here, but feel free to review their Javadoc!</p>
+                <p>These methods also use the iterators cursor, which we can relate back to our example of the computer cursor in a text editing software, such as Microsoft Word. The hasNext() and next() methods work just as we described for Iterator.</p>
+
+                <h3>add()</h3>
+
+                <img src="https://tk-assets.lambdaschool.com/01af1feb-def8-48bb-92e4-7308d8211d31_image3.png" alt="Figure 3" loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><i>Figure 3. Diagram of calling the add() method on the elements: s e n t e c e. The cursor starts at the beginning of the list.</i></p>
                 
-                <h3>Traversing Collections with Iterators</h3>
-                <p>You can iterate over a list using either a for loop or a while loop. Here's what it looks like:</p>
-                
-                <pre><code>// Using a for loop with ListIterator
+                <p>If you have the misspelled word 'sentece' and you want to add the 'n' in to spell the word properly, you use the arrow keys to align the cursor before the character 'c'. Then when you press the 'n' key, the character will be added in the correct location. This is the way the add() method works---it adds an element just before the element that is returned by the next() method, which is the 'c' character in our example.</p>
+
+                <p>In the initial step of the above example, the ListIterator&lt;E&gt; cursor starts at the beginning of the list. We then call the next() method five times to move the cursor between the 'e' and 'c'. Next, we call the add() method, which inserts the 'n' just before the cursor. This corrects the spelling of our list and gives us the elements: s e n t e n c e. Since we added the 'n' before the cursor, the cursor is now between the newly added 'n' and the 'c'.</p>
+
+                <h3>set() with next()</h3>
+
+                <img src="https://tk-assets.lambdaschool.com/5ec53cb9-737c-4954-9e3c-13980a1839a7_image4.png" alt="Figure 4" loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p><i>Figure 4. Diagram of calling the set() method on the elements: s e n r e n c e. The cursor starts at the beginning of the list.</i></p>
+
+                <p>The set() method works a bit differently. You now have the misspelled word 'senrence' and you want to replace the 'r' with a 't' to spell the word properly. One possible way to fix this is to use the arrow keys to align the cursor before the 'r', hold the shift key and press the right arrow key to highlight the 'r', and then press the 't' key to replace the 'r'. Similar to the remove() method, the set() method in this example operates on the element that is returned by next() (which in this case is 'r'). After calling the set() method in this way the cursor ends up to the right of the updated element.</p>
+
+                <p>In the above example, you can see that the cursor starts at the beginning of the list and next() hasn't returned any values. If you called the set() method now, you would get an IllegalStateException because next() hasn't returned a value to update. We call the next() method four times, moving the cursor between the 'r' and 'e'. The last value returned by the next() method is the element with value 'r'. When we call the set() method, we update the 'r' because it's the last element that was returned by the next() method. Our list is now spelled correctly, and we have the elements: s e n t e n c e.</p>
+
+                <p>When you call the set() method, the cursor remains in the same position. In this example, where the set() method updated the element using the last element returned by the next() method, the cursor remains between the newly updated 't' and the 'e'. If you call the set() method again, it will continue to update the element with the value 't', because that is still the last element returned by the next() method. The next() method doesn't care what the value is in that element, it only cares about the element itself, which is represented by the box in our drawing. Since the element still exists, the set() method will continue to update that element until the next() method returns a new element to update!</p>
+
+                <h3>Iterating over a List</h3>
+                <p>There are many situations where you may need to iterate. For example, you may want to print all the values, or add together the numeric values in a list, etc. Iterators not only helps us traverse a collection, but you can also update (add/remove/set) values in the collection, which you can't do using a normal for loop.</p>
+
+                <p>While the Iterator&lt;E&gt; can be used on any Collection, for the rest of this reading we will be discussing the ListIterator&lt;E&gt;, since it has additional methods and functionality.</p>
+
+                <p>You can iterate over a list using either a for loop or a while loop. Here's what it looks like using a for loop:</p>
+
+                <pre><code>//Iterating over List list using ListIterator
 for (ListIterator&lt;String&gt; iterator = list.listIterator(); iterator.hasNext();) {
     System.out.println(iterator.next() + " ");
-}
+}</code></pre>
 
-// Using a while loop with ListIterator
+                <p>The for loop uses the hasNext() method to continue iterating until hasNext() is false, meaning there are no more values in the list. Inside the loop, we're just printing out the values using the next() method.</p>
+
+                <p>Here's what the code looks like using a while loop:</p>
+
+                <pre><code>//ListIterator to traverse the list
 ListIterator&lt;String&gt; iterator = list.listIterator();
-while (iterator.hasNext()) {
+while (iterator.hasNext()){
     System.out.print(iterator.next() + " ");
 }</code></pre>
-                
-                <h3>Manipulating Lists with ListIterator</h3>
-                <p>Here are examples of using ListIterator to add, update, and remove elements from a list:</p>
-                
-                <h4>Adding Elements</h4>
+
+                <p>You will likely see a while loop used to iterate over the list instead of the for loop. This is because the hasNext() method returns a boolean value and therefore has the perfect condition for the while loop.</p>
+
+                <h3>Manipulating a List</h3>
+                <p>You're creating a grocery list app that allows you to add, remove, and update items on the list using a ListIterator&lt;E&gt;. We're going to walk through using the add(), remove(), and set() methods on a list.</p>
+
+                <h4>Adding an Element to a List</h4>
+                <p>To add a grocery item to the list, you would do the following:</p>
+
                 <pre><code>List&lt;String&gt; groceryList = new ArrayList&lt;&gt;();
 ListIterator&lt;String&gt; groceryIterator = groceryList.listIterator();
 groceryIterator.add("apples");
-groceryIterator.add("bananas");
-// List now contains: apples bananas</code></pre>
-                
-                <h4>Updating Elements</h4>
+groceryIterator.add("bananas");</code></pre>
+
+                <p>If you printed out this list, it would look like:</p>
+
+                <pre><code>apples bananas</code></pre>
+
+                <p>It's important to remember that each item is added before the cursor. Once you add 'apples' to the list, the cursor is after 'apples', so when you add 'bananas', it is placed after 'apples'. You can add as many items to your list as you want, and you can also add duplicates. You could put apples on your list 60 times, if you want!</p>
+
+                <h4>Updating an Element in a List</h4>
+                <p>We've added apples and bananas to our list, which now looks like this:</p>
+
+                <pre><code>apples bananas</code></pre>
+
+                <p>You've decided that you've eaten enough apples in the past few weeks and you want to update the list to have oranges, instead.</p>
+
+                <p>To update the first element in a list, you could do the following:</p>
+
                 <pre><code>ListIterator&lt;String&gt; groceryIterator = groceryList.listIterator();
 if (groceryIterator.hasNext()) {
-    groceryIterator.next();      // returns "apples"
+    groceryIterator.next();
     groceryIterator.set("oranges");
-}
-// List now contains: oranges bananas</code></pre>
-                
-                <h4>Removing Elements</h4>
+}</code></pre>
+
+                <p>In this code snippet, we're checking to make sure hasNext() returns true, and if so, we're going to that next() value and then updating the value to 'oranges'. Since we're creating a new instance of ListIterator&lt;String&gt;, the cursor is currently at the beginning of the list, which means the element returned by next() is 'apples'. The set() method therefore updates 'apples' to 'oranges' and our list now looks like this:</p>
+
+                <pre><code>oranges bananas</code></pre>
+
+                <p>The set() method can only be used, if we've called next() after calling remove() or add(). If remove() or add() have just been called, we need to then use next() so that the set() method knows which element to update.</p>
+
+                <h4>Remove an Element from a List</h4>
+                <p>You need to be able to delete items from your grocery list as you shop. Let's recreate our shopping list:</p>
+
+                <pre><code>List&lt;String&gt; groceryList = new ArrayList&lt;&gt;();
+ListIterator&lt;String&gt; groceryIterator = groceryList.listIterator();
+groceryIterator.add("oranges");
+groceryIterator.add("bananas");</code></pre>
+
+                <p>Our list currently looks like this:</p>
+
+                <pre><code>oranges bananas</code></pre>
+
+                <p>Now, let's delete the oranges from our list:</p>
+
                 <pre><code>ListIterator&lt;String&gt; groceryIterator = groceryList.listIterator();
 if (groceryIterator.hasNext()) {
-    groceryIterator.next();      // returns the first element
+    groceryIterator.next(); // returns the element with the value oranges
     groceryIterator.remove();
-}
-// First element has been removed</code></pre>
-                
-                <h3>Common Pitfalls to Avoid</h3>
-                <ul>
-                    <li>Calling <code>remove()</code> without first calling <code>next()</code> will throw an <code>IllegalStateException</code></li>
-                    <li>Calling <code>remove()</code> twice in a row without calling <code>next()</code> in between will throw an <code>IllegalStateException</code></li>
-                    <li>Calling <code>set()</code> before calling <code>next()</code> or after calling <code>remove()</code> will throw an <code>IllegalStateException</code></li>
+}</code></pre>
+
+                <p>Our list now looks like this:</p>
+
+                <pre><code>bananas</code></pre>
+
+                <p>Similar to the set() method, the remove() method deletes the element last returned by the next() method. The remove() method can only be called once before you need to call next() again, otherwise you will be attempting to remove the element you just removed and it will throw an IllegalStateException.</p>
+
+                <h3>Summary</h3>
+                <p>In this reading, we've covered how to use the Iterator&lt;E&gt; and the ListIterator&lt;E&gt; to traverse a given collection and safely access and remove data elements from the collection. Iterator&lt;E&gt; allows you to traverse through any type of collection, although you can only do so in one direction (forward). ListIterator&lt;E&gt; only works for lists, but it's bi-directional so you can traverse a list forward and backwards. Both iterators use a cursor to keep track of your current place in the collection. There are lots of real-world applications for the Iterator&lt;E&gt;--we can use it to maintain a HashMap&lt;K, V&gt; collection of flashcards or use a ListIterator&lt;E&gt; to implement and maintain a grocery list!</p>
+            </div>
                     <li>Attempting to modify a collection directly during iteration (without using an iterator) will throw a <code>ConcurrentModificationException</code></li>
                 </ul>
+            </div>
+
+            <div class="content-box">
+                <h2>Guided Project</h2>
+                
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Sprint 21 Guided Project Video" src="https://fast.wistia.net/embed/iframe/azizzmaa25" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                </div>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-iterators-cousin-ITT-erators" class="resource-link" target="_blank" rel="noopener">
+                        Cousin-ITT-erators
+                    </a>
+                </div>
             </div>
 
             <section class="resource-section">
@@ -193,12 +322,6 @@ if (groceryIterator.hasNext()) {
                     </a>
                     <a href="https://github.com/BloomTechBackend/bd-iterators-code-along-solution" class="resource-link" target="_blank" rel="noopener">
                         Iterators Code-Along Solution
-                    </a>
-                    <a href="../../code-alongs/index.html" class="resource-link">
-                        Code-Alongs
-                    </a>
-                    <a href="../../sprint-challenge/index.html" class="resource-link">
-                        Sprint Challenge
                     </a>
                 </div>
             </section>
