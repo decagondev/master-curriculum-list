@@ -35,85 +35,438 @@
                 <h2>Module Overview</h2>
                 <p>Learn about DynamoDB scan operations and best practices for efficiently querying and filtering data from your DynamoDB tables.</p>
             </div>
-            
-            <div class="video-container">
-                <iframe class="wistia_embed" title="DynamoDB Scan Introduction" src="https://fast.wistia.net/embed/iframe/n6hsdtm3qp" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-            <div class="content-box">
-                <p>This introduction video covers the basics of DynamoDB scan operations. You'll learn about the purpose of scan operations, their capabilities and limitations, and when to use them versus query operations for better performance.</p>
-            </div>
 
             <div class="content-box">
                 <h2>Learning Objectives</h2>
-                <ul class="learning-objectives-list">
-                    <li>Understand DynamoDB Scan operation basics
-                        <div class="learning-objective-description">
-                            The Scan operation examines all items in a table or a secondary index, returning items that satisfy filter criteria. While powerful, scans can be resource-intensive for large tables.
-                        </div>
-                    </li>
-                    <li>Implement basic scan operations with the AWS SDK
-                        <div class="learning-objective-description">
-                            Learn to use the AWS SDK to perform basic DynamoDB scan operations to retrieve data.
-                            <div class="code-example">
-                            // Create DynamoDB client<br>
-                            DynamoDB dynamoDB = new DynamoDB(AmazonDynamoDBClientBuilder.standard().build());<br>
-                            <br>
-                            // Create a scan request for a table<br>
-                            ScanRequest scanRequest = new ScanRequest()<br>
-                                &nbsp;&nbsp;.withTableName("Products");<br>
-                            <br>
-                            // Execute the scan<br>
-                            ScanResult result = dynamoDB.getClient().scan(scanRequest);<br>
-                            <br>
-                            // Process results<br>
-                            List&lt;Map&lt;String, AttributeValue&gt;&gt; items = result.getItems();<br>
-                            </div>
-                        </div>
-                    </li>
-                    <li>Apply filters to scan operations
-                        <div class="learning-objective-description">
-                            Use filter expressions to selectively retrieve items that match specific conditions.
-                            <div class="code-example">
-                            // Create scan request with filter<br>
-                            ScanRequest scanRequest = new ScanRequest()<br>
-                                &nbsp;&nbsp;.withTableName("Products")<br>
-                                &nbsp;&nbsp;.withFilterExpression("price > :min AND category = :cat")<br>
-                                &nbsp;&nbsp;.withExpressionAttributeValues(Map.of(<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;":min", new AttributeValue().withN("19.99"),<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;":cat", new AttributeValue().withS("Electronics")<br>
-                                &nbsp;&nbsp;));<br>
-                            </div>
-                        </div>
-                    </li>
-                    <li>Handle pagination for large result sets
-                        <div class="learning-objective-description">
-                            DynamoDB limits the number of items returned in a single scan. Learn to handle pagination for large data sets.
-                            <div class="code-example">
-                            // Initial scan request<br>
-                            ScanRequest scanRequest = new ScanRequest()<br>
-                                &nbsp;&nbsp;.withTableName("Products")<br>
-                                &nbsp;&nbsp;.withLimit(100);<br>
-                            <br>
-                            ScanResult result = null;<br>
-                            do {<br>
-                                &nbsp;&nbsp;// If this isn't the first iteration, update the request with the token<br>
-                                &nbsp;&nbsp;if (result != null) {<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;scanRequest.setExclusiveStartKey(result.getLastEvaluatedKey());<br>
-                                &nbsp;&nbsp;}<br>
-                                <br>
-                                &nbsp;&nbsp;// Execute the scan<br>
-                                &nbsp;&nbsp;result = dynamoDB.getClient().scan(scanRequest);<br>
-                                <br>
-                                &nbsp;&nbsp;// Process the current page of results<br>
-                                &nbsp;&nbsp;processItems(result.getItems());<br>
-                                <br>
-                                &nbsp;&nbsp;// Continue until we've processed all items<br>
-                            } while (result.getLastEvaluatedKey() != null);<br>
-                            </div>
-                        </div>
-                    </li>
+                <ul>
+                    <li>Design and implement functionality that uses scan with a filter to retrieve a subset of items from a provided DynamoDB table</li>
+                    <li>Design and implement functionality that uses paginated scan with a limit to retrieve a subset of items from a provided DynamoDB table</li>
+                    <li>Outline when to scan a DynamoDB table</li>
+                    <li>Outline how to use DynamoDBMapper's scan() method</li>
                 </ul>
             </div>
+
+            <div class="content-box">
+                <h2>DynamoDB Scan</h2>
+                <h3>Lesson overview</h3>
+                <p>You've learned several methods for retrieving data from DynamoDB. In this lesson, we're going to expand upon this knowledge with the DynamoDBMapper scan() method. The scan() method grants you maximum flexibility over the data you can access from a table.</p>
+
+                <p>You're going to learn about the DynamoDBMapper scan() method, which searches the table and retrieves the values that meet a condition on any attribute. This method gives you greater flexibility over the data you retrieve and the questions you can ask your table. The scan() method, however, costs a lot more to read items than the query() method does.</p>
+
+                <h3>DynamoDBMapper scan() method</h3>
+                <p>At this point, you've learned several DynamoDBMapper methods to write items to a table (save() and delete()) and to read items from a table (load() and query()). The query() method allows you to search the table and retrieve multiple items when the partition key is equal to some value and the sort key matches some condition. However, you can only perform a query on the table's key attributes. The partition key must always be equal to some value and you can additionally set a condition on the sort key. This specification means that you are unable to use the query() method to retrieve data based on non-key values, which limits the questions you can ask.</p>
+
+                <p>Fortunately, DynamoDBMapper also has the scan() method, which allows you greater flexibility when retrieving information from a table. Before we get into how to use the scan() method, however, let's revisit an example you've previously worked with.</p>
+
+                <p>In the last unit we worked with the OnlineOrders table, which has a partition key of userId, a sort key of orderId, and the additional attribute, totalCost.</p>
+
+                <p>The OnlineOrders table looks like the following:</p>
+
+                <table>
+                    <tr>
+                        <th>userId</th>
+                        <th>orderId</th>
+                        <th>totalCost</th>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20121207-54297</td>
+                        <td>24.89</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20140425-03576</td>
+                        <td>45.87</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20140425-54879</td>
+                        <td>32.01</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20170923-54129</td>
+                        <td>103.87</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20190305-78159</td>
+                        <td>209.13</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20200105-42158</td>
+                        <td>89.65</td>
+                    </tr>
+                    <tr>
+                        <td>d1a93bea</td>
+                        <td>20091204-78216</td>
+                        <td>34.23</td>
+                    </tr>
+                    <tr>
+                        <td>d1a93bea</td>
+                        <td>20130817-45789</td>
+                        <td>17.03</td>
+                    </tr>
+                </table>
+
+                <p>Previously, we could only query items using the key attributes, meaning we could only retrieve results that had the same userId value. What if we want to return all the orders in the table and not just items with the same partition key value? We can do this using the DynamoDBMapper scan() method!</p>
+
+                <p>The scan() method shares some similarities with the query() method, but it reads every item in a table or secondary index. The scan() method also doesn't require a composite primary key (partition and sort key). You can use it on tables that have just a partition key. While the query() method requires you to give a value for the partition key, the scan() method doesn't require any key values and by default returns every item in the table.</p>
+
+                <p>Let's look at the Java class, Order:</p>
+
+                <pre><code>@DynamoDBTable(tableName = "OnlineOrders")
+public class Order {
+
+    private String userId;
+    private String orderId;
+    private BigDecimal totalCost;
+
+    @DynamoDBHashKey(attributeName = "userId")
+    public String getUserId() {
+        return userId;
+    }
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    @DynamoDBRangeKey(attributeName = "orderId")
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    @DynamoDBAttribute(attributeName = "totalCost")
+    public BigDecimal getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(BigDecimal totalCost) {
+        this.totalCost = totalCost;
+    }
+}</code></pre>
+
+                <p>Using the scan() method and the above class, returning all the items in the OnlineOrders table looks like the following:</p>
+
+                <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+PaginatedScanList&lt;Order&gt; orderList = mapper.scan(Order.class, scanExpression);</code></pre>
+
+                <p>The above code looks very similar to the code for the query() method, with a few key differences. Firstly, the scan() method uses the DynamoDBScanExpression instead of DynamoDBQueryExpression. The scan() method returns a PaginatedScanList instead of PaginatedQueryList, but still paginates data the same way the query() method does. scan() and query() take advantage of DynamoDB's auto-pagination feature. Results are loaded on demand when the user takes an action that requires them. For explicit pagination, we can use scanPage() which we will cover later in the reading. The scan() method requires a scanExpression as an argument, but since we want all the values in the table, we aren't applying any filters and don't need to specify anything in the expression. We similarly don't need to specify a partition key value because we're retrieving all the items in the table regardless of their partition key value.</p>
+
+                <h3>DynamoDBMapper scan() with filter expression</h3>
+                <p>Retrieving all the items from a table works well with a small table, but many tables have hundreds or thousands of entries. It's more likely that you'll want to retrieve all the items that meet a certain condition, like we do with the query() method.</p>
+
+                <p>Let's say we want to want to get all the orders that are between a certain cost range. Since totalCost isn't a key attribute, we can't perform this search using query() and instead need to use scan(). The filter expression functions very similarly to the withKeyConditionExpression() method you learned when querying. It uses the same comparators, functions, and logical operators. The filter on a scan can be applied to any attribute, not just key attributes. The filter is applied after the scan finishes, but before the results are returned. The scan still looks at each item in the table, but only returns the items that meet the filter condition. This means that you still pay the price (time and money) of reading the entire table whether you apply a filter expression or not. However, it is faster to send back less data, and your code does not need to apply the filtering! Note: filter expressions are not unique to scans and can be applied to queries as well. When applied to a query the filter can not be applied to a key attribute.</p>
+
+                <p>The code to return all the orders that cost between $30 and $70 looks like the following:</p>
+
+                <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+Map&lt;String, AttributeValue&gt; valueMap = new HashMap&lt;&gt;();
+valueMap.put(":minCost", new AttributeValue().withN("30.00"));
+valueMap.put(":maxCost", new AttributeValue().withN("70.00"));
+DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+    .withFilterExpression("cost between :minCost and :maxCost")
+    .withExpressionAttributeValues(valueMap);
+PaginatedScanList&lt;Order&gt; orderList = mapper.scan(Order.class, scanExpression);</code></pre>
+
+                <p>It's likely much of this looks familiar to you, as it is very similar to the query() method. Let's break it down a bit further to make sure you understand all the pieces.</p>
+
+                <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());</code></pre>
+
+                <p>The first line creates a new mapper instance just like we've done for all the DynamoDBMapper methods.</p>
+
+                <pre><code>Map&lt;String, AttributeValue&gt; valueMap = new HashMap&lt;&gt;();
+valueMap.put(":minCost", new AttributeValue().withN("30.00"));
+valueMap.put(":maxCost", new AttributeValue().withN("70.00"));</code></pre>
+
+                <p>The next section creates the HashMap, valueMap, which contains the values we will use in our filter expression. This looks the same as the one we used for the query() method when creating key condition expressions. Notice that we still need to include the ':' in the names of the attributes.</p>
+
+                <pre><code>DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+.withFilterExpression("totalCost between :minCost and :maxCost")
+.withExpressionAttributeValues(valueMap);</code></pre>
+
+                <p>The next section declares the DynamoDBScanExpression, sets the filter expression condition, and provides the expression attribute value map we created above. Since we want to return all the items that have a totalCost between $30 and $70, we want to use the 'between' comparator. Again, the biggest difference is that we do not need to set a value for the partition key and apply the filter on non-key attributes.</p>
+
+                <pre><code>PaginatedScanList&lt;Order&gt; orderList = mapper.scan(Order.class, scanExpression);</code></pre>
+
+                <p>The final line calls the scan() method, which accepts the Order class and the scanExpression we just created.</p>
+
+                <p>The above code returns the following bolded items from the OnlineOrders table:</p>
+
+                <table>
+                    <tr>
+                        <th>userId</th>
+                        <th>orderId</th>
+                        <th>totalCost</th>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20121207-54297</td>
+                        <td>24.89</td>
+                    </tr>
+                    <tr>
+                        <td><strong>62da86ba</strong></td>
+                        <td><strong>20140425-03576</strong></td>
+                        <td><strong>45.87</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>62da86ba</strong></td>
+                        <td><strong>20140425-54879</strong></td>
+                        <td><strong>32.01</strong></td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20170923-54129</td>
+                        <td>103.87</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20190305-78159</td>
+                        <td>209.13</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20200105-42158</td>
+                        <td>89.65</td>
+                    </tr>
+                    <tr>
+                        <td><strong>d1a93bea</strong></td>
+                        <td><strong>20091204-78216</strong></td>
+                        <td><strong>34.23</strong></td>
+                    </tr>
+                    <tr>
+                        <td>d1a93bea</td>
+                        <td>20130817-45789</td>
+                        <td>17.03</td>
+                    </tr>
+                </table>
+
+                <h3>Pagination with DynamoDBMapper scanPage()</h3>
+                <p>There are times when you need to paginate results for a client, returning only a subset of the results at a time. For example, you may be presenting your scan results from above (all online orders) on a webpage for a business team to review. The webpage may only show 50 orders at a time, requiring the user to click the next button to load 50 more. You can achieve this by utilizing the scanPage() method. You can provide it a limit of 50, and utilize the exclusiveStartKey to provide your next scan the correct starting location in your table. The withExclusiveStartKey method for scans requires you to provide a Map of the table's key(s).</p>
+
+                <p>Let's walk through an example. You want to retrieve all orders, 4 at a time. The code looks like the following:</p>
+
+                <pre><code>public List&lt;Order&gt; scanOrdersWithLimit(Order previousEndOrder) {
+    DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+        .withLimit(4);
+
+    if(previousEndOrder != null) {
+        Map&lt;String, AttributeValue&gt; startKeyMap = new HashMap&lt;&gt;();
+        startKeyMap.put("userId", new AttributeValue().withS(previousEndOrder.getUserId()));
+        startKeyMap.put("orderId", new AttributeValue().withS(previousEndOrder.getOrderId()));
+        scanExpression.setExclusiveStartKey(startKeyMap);
+    }
+
+    ScanResultPage&lt;Order&gt; orderPage = mapper.scanPage(Order.class, scanExpression);
+    return orderPage.getResults();
+}</code></pre>
+
+                <p>This code snippet looks very similar to the previous, with the addition of the withExclusiveStartKey() and withLimit() methods. As you can see, we're passing in an previousEndOrder value, which will be null the first time we call the method. Calling scanOrdersWithLimit() from a main() method looks like the following:</p>
+
+                <pre><code>public static void main(String[] args) {
+    //scanning the table the first time
+    List&lt;Order&gt; orders = scanOrdersWithLimit(null);
+}</code></pre>
+
+                <p>Since we passed in null for the value of the previousEndOrder, we don't call setExclusiveStartKey(), and this scan will start at the beginning of the table and scan the first four items. The items that are scanned are bolded in the following table:</p>
+
+                <table>
+                    <tr>
+                        <th>userId</th>
+                        <th>orderId</th>
+                        <th>totalCost</th>
+                    </tr>
+                    <tr>
+                        <td><strong>62da86ba</strong></td>
+                        <td><strong>20121207-54297</strong></td>
+                        <td><strong>24.89</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>62da86ba</strong></td>
+                        <td><strong>20140425-03576</strong></td>
+                        <td><strong>45.87</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>62da86ba</strong></td>
+                        <td><strong>20140425-54879</strong></td>
+                        <td><strong>32.01</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>62da86ba</strong></td>
+                        <td><strong>20170923-54129</strong></td>
+                        <td><strong>103.87</strong></td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20190305-78159</td>
+                        <td>209.13</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20200105-42158</td>
+                        <td>89.65</td>
+                    </tr>
+                    <tr>
+                        <td>d1a93bea</td>
+                        <td>20091204-78216</td>
+                        <td>34.23</td>
+                    </tr>
+                    <tr>
+                        <td>d1a93bea</td>
+                        <td>20130817-45789</td>
+                        <td>17.03</td>
+                    </tr>
+                </table>
+
+                <p>Let's say we now want to get the next four items in our table. We can call scanOrdersWithLimit() a second time from our main() method:</p>
+
+                <pre><code>public static void main(String[] args) {
+    //scanning the table the first time
+    List&lt;Order&gt; orders = scanOrdersWithLimit(null);
+    //scanning the table a second time using the last Order returned from the first scan as the exclusiveStartKey
+    Order previousEndOrder = orders.get(orders.size() - 1);
+    List&lt;Order&gt; orders = scanOrdersWithLimit(previousEndOrder);
+}</code></pre>
+
+                <p>When we call scanOrdersWithLimit() a second time, we pass in the last Order that was returned from the first scan to be converted to our exclusive start key. Now when the table is scanned it will know which item was last scanned and scan the next four values. The items that are scanned are bolded in the following table:</p>
+
+                <table>
+                    <tr>
+                        <th>userId</th>
+                        <th>orderId</th>
+                        <th>totalCost</th>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20121207-54297</td>
+                        <td>24.89</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20140425-03576</td>
+                        <td>45.87</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20140425-54879</td>
+                        <td>32.01</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20170923-54129</td>
+                        <td>103.87</td>
+                    </tr>
+                    <tr>
+                        <td><strong>62da86ba</strong></td>
+                        <td><strong>20190305-78159</strong></td>
+                        <td><strong>209.13</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>62da86ba</strong></td>
+                        <td><strong>20200105-42158</strong></td>
+                        <td><strong>89.65</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>d1a93bea</strong></td>
+                        <td><strong>20091204-78216</strong></td>
+                        <td><strong>34.23</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>d1a93bea</strong></td>
+                        <td><strong>20130817-45789</strong></td>
+                        <td><strong>17.03</strong></td>
+                    </tr>
+                </table>
+
+                <p>Filtering with limits is challenging! Limits are applied to the number of items that DynamoDB reads. Filters are then applied before returning results. If we consider our example above, and add in a filter expression so that the totalCost of an order must be greater than $50 we may not retrieve 4 items. On our first scan we will start at the beginning of the table and read the first four items. The items that are read are bolded in the following table:</p>
+
+                <table>
+                    <tr>
+                        <th>userId</th>
+                        <th>orderId</th>
+                        <th>totalCost</th>
+                    </tr>
+                    <tr>
+                        <td><strong>62da86ba</strong></td>
+                        <td><strong>20121207-54297</strong></td>
+                        <td><strong>24.89</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>62da86ba</strong></td>
+                        <td><strong>20140425-03576</strong></td>
+                        <td><strong>45.87</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>62da86ba</strong></td>
+                        <td><strong>20140425-54879</strong></td>
+                        <td><strong>32.01</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>62da86ba</strong></td>
+                        <td><strong>20170923-54129</strong></td>
+                        <td><strong>103.87</strong></td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20190305-78159</td>
+                        <td>209.13</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20200105-42158</td>
+                        <td>89.65</td>
+                    </tr>
+                    <tr>
+                        <td>d1a93bea</td>
+                        <td>20091204-78216</td>
+                        <td>34.23</td>
+                    </tr>
+                    <tr>
+                        <td>d1a93bea</td>
+                        <td>20130817-45789</td>
+                        <td>17.03</td>
+                    </tr>
+                </table>
+
+                <p>Of these four items, only the last one meets our filter expression (totalCost >= 50). Since only one item meets our condition, only that one item will be returned, as shown in the following table:</p>
+
+                <table>
+                    <tr>
+                        <th>userId</th>
+                        <th>orderId</th>
+                        <th>totalCost</th>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20170923-54129</td>
+                        <td>103.87</td>
+                    </tr>
+                </table>
+
+                <p>In order to get four items to return, this requires a bit of extra massaging. We won't go into the details, however at a high level you might utilize scan() with a filter expression and do the limiting in your code rather than in the request to DynamoDB. scan() also allows you to provide an exclusive start key and so on your next call you can skip over the already scanned items and start your scan at the correct location in your table. This also applies to queries, and a similar approach can be followed.</p>
+
+                <h3>Conclusion</h3>
+                <p>In this reading, we discussed the DynamoDBMapper method scan(). The scan() method is useful because it's a more flexible way to retrieve data from tables. Unfortunately, the scan() method is very expensive because it defaults to searching all the items in a table. You will want to design your tables in such a way that you minimize the need for scans! To help filter your scan, we learned how to use filter expressions. We also learned how to do pagination using scanPage().</p>
+            </div>
+
+            <section class="content-box">
+                <h2>Guided Project</h2>
+
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/tse30y1a8l" title="Guided Project" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-dynamodb-scan-and-serialization" target="_blank" rel="noopener" class="resource-link">
+                        Still in the ice cream business...
+                    </a>
+                </div>
+            </section>
 
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
@@ -123,12 +476,6 @@
                     </a>
                     <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ScanQueryExamples.html" target="_blank" rel="noopener" class="resource-link">
                         DynamoDB Scan Examples - AWS
-                    </a>
-                    <a href="../../code-alongs/index.html" class="resource-link">
-                        Code-Alongs
-                    </a>
-                    <a href="../../sprint-challenge/index.html" class="resource-link">
-                        Sprint Challenge
                     </a>
                 </div>
             </section>

@@ -34,133 +34,485 @@
             <div class="content-box">
                 <h2>Module Overview</h2>
                 <p>Explore the Java Streams API and learn how to perform functional operations on collections of objects with improved readability and performance.</p>
-            </div>
-            
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Streams Introduction" src="https://fast.wistia.net/embed/iframe/153iys9uvr" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-            <div class="content-box">
-                <p>This introduction video covers the fundamentals of Java Streams and their role in modern Java programming. You'll learn how Streams differ from collections, their lazy evaluation model, and the benefits they bring to data processing pipelines. The video explains the key components of the Stream API and how they enable functional-style programming in Java.</p>
+
+                <h3>Learning Objectives</h3>
+                <ul>
+                    <li>Recall that streams are only evaluated when a terminal operation is invoked</li>
+                    <li>Use streams to perform an operation on every object in a Collection</li>
+                    <li>Use streams to find all elements of a Collection that satisfy a provided condition</li>
+                    <li>Use streams to apply a Function to each element of a Collection</li>
+                    <li>Implement code to collect the elements of a Stream into a specified Collection</li>
+                    <li>Design and implement functionality that combines stream operations to satisfy a given use case</li>
+                    <li>Recall that terminal operations are Stream methods that produce a non-Stream result</li>
+                    <li>Compare and contrast stateful and stateless stream operations</li>
+                    <li>Recall that a short-circuiting terminal operation ends the stream as soon as it is satisfied</li>
+                </ul>
             </div>
 
             <div class="content-box">
-                <h2>Learning Objectives</h2>
-                <ul class="learning-objectives-list">
-                    <li>Recall that streams are only evaluated when a terminal operation is invoked
-                        <div class="learning-objective-description">
-                            Streams use lazy evaluation—intermediate operations create a pipeline but don't execute until a terminal operation is called. This allows for optimization and avoids unnecessary computation.
-                            <div class="code-example">
-                            List&lt;String&gt; names = Arrays.asList("John", "Jane", "Adam", "Eve");<br>
-                            <br>
-                            // This creates the pipeline but doesn't execute yet<br>
-                            Stream&lt;String&gt; filteredStream = names.stream()<br>
-                                &nbsp;&nbsp;.filter(name -> {<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Filtering: " + name);<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;return name.startsWith("J");<br>
-                                &nbsp;&nbsp;});<br>
-                            <br>
-                            // Terminal operation - NOW the pipeline executes<br>
-                            filteredStream.count(); // Prints "Filtering: " messages<br>
-                            </div>
-                        </div>
-                    </li>
-                    <li>Use streams to perform an operation on every object in a Collection
-                        <div class="learning-objective-description">
-                            The forEach() terminal operation allows you to execute an action on each element of a stream.
-                            <div class="code-example">
-                            List&lt;Product&gt; products = getProducts();<br>
-                            <br>
-                            // Print all product names<br>
-                            products.stream()<br>
-                                &nbsp;&nbsp;.forEach(product -> System.out.println(product.getName()));<br>
-                            <br>
-                            // Update all products<br>
-                            products.stream()<br>
-                                &nbsp;&nbsp;.forEach(product -> product.applyDiscount(0.1));<br>
-                            </div>
-                        </div>
-                    </li>
-                    <li>Use streams to find all elements of a Collection that satisfy a provided condition
-                        <div class="learning-objective-description">
-                            The filter() method creates a stream consisting only of elements that match a given predicate.
-                            <div class="code-example">
-                            List&lt;User&gt; users = getUsers();<br>
-                            <br>
-                            // Find active premium users<br>
-                            List&lt;User&gt; premiumActiveUsers = users.stream()<br>
-                                &nbsp;&nbsp;.filter(User::isActive)<br>
-                                &nbsp;&nbsp;.filter(user -> user.getSubscriptionType() == SubscriptionType.PREMIUM)<br>
-                                &nbsp;&nbsp;.collect(Collectors.toList());<br>
-                            </div>
-                        </div>
-                    </li>
-                    <li>Use streams to apply a Function to each element of a Collection
-                        <div class="learning-objective-description">
-                            The map() operation transforms each element in a stream by applying a function to it, creating a new stream of the transformed elements.
-                            <div class="code-example">
-                            List&lt;Order&gt; orders = getOrders();<br>
-                            <br>
-                            // Extract order IDs from order objects<br>
-                            List&lt;String&gt; orderIds = orders.stream()<br>
-                                &nbsp;&nbsp;.map(Order::getId)<br>
-                                &nbsp;&nbsp;.collect(Collectors.toList());<br>
-                            <br>
-                            // Calculate total price for each order<br>
-                            List&lt;Double&gt; orderTotals = orders.stream()<br>
-                                &nbsp;&nbsp;.map(order -> order.getItems().stream()<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;.mapToDouble(item -> item.getPrice() * item.getQuantity())<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;.sum())<br>
-                                &nbsp;&nbsp;.collect(Collectors.toList());<br>
-                            </div>
-                        </div>
-                    </li>
-                    <li>Implement code to collect the elements of a Stream into a specified Collection
-                        <div class="learning-objective-description">
-                            The collect() terminal operation allows you to accumulate stream elements into different types of collections or custom containers.
-                            <div class="code-example">
-                            List&lt;String&gt; names = getNames();<br>
-                            <br>
-                            // Collect into a List<br>
-                            List&lt;String&gt; namesList = names.stream()<br>
-                                &nbsp;&nbsp;.filter(name -> name.length() > 3)<br>
-                                &nbsp;&nbsp;.collect(Collectors.toList());<br>
-                            <br>
-                            // Collect into a Set (removes duplicates)<br>
-                            Set&lt;String&gt; namesSet = names.stream()<br>
-                                &nbsp;&nbsp;.collect(Collectors.toSet());<br>
-                            <br>
-                            // Collect into a Map<br>
-                            Map&lt;String, Integer&gt; nameLengthMap = names.stream()<br>
-                                &nbsp;&nbsp;.collect(Collectors.toMap(<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;name -> name,         // Key mapper<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;name -> name.length() // Value mapper<br>
-                                &nbsp;&nbsp;));<br>
-                            </div>
-                        </div>
-                    </li>
-                    <li>Compare and contrast stateful and stateless stream operations
-                        <div class="learning-objective-description">
-                            Stateless operations (like filter, map) don't need to know about other elements, while stateful operations (like sorted, distinct) need knowledge of all elements in the stream, potentially impacting performance.
-                        </div>
-                    </li>
-                    <li>Recall that terminal operations are Stream methods that produce a non-Stream result
-                        <div class="learning-objective-description">
-                            Terminal operations like forEach(), collect(), count(), min(), max(), and reduce() trigger the processing of the stream pipeline and produce a final result or side effect.
-                        </div>
-                    </li>
-                    <li>Recall that a short-circuiting terminal operation ends the stream as soon as it is satisfied
-                        <div class="learning-objective-description">
-                            Operations like findFirst(), findAny(), anyMatch(), allMatch(), and noneMatch() don't need to process the entire stream if they can determine the result early.
-                            <div class="code-example">
-                            boolean hasAdminUser = users.stream()<br>
-                                &nbsp;&nbsp;.anyMatch(user -> user.getRole() == Role.ADMIN);<br>
-                            <br>
-                            Optional&lt;User&gt; firstActiveUser = users.stream()<br>
-                                &nbsp;&nbsp;.filter(User::isActive)<br>
-                                &nbsp;&nbsp;.findFirst();<br>
-                            </div>
-                        </div>
-                    </li>
+                <h2>Introduction to Streams</h2>
+                <h3>Overview</h3>
+                <p>In this lesson, we will be covering the Java Stream API. Streams are a feature of Java that allows us to perform operations on streams of elements, removing the need for iterative code like for loops. We will learn how they function, what we can do with them, and how to best utilize them in our programs.</p>
+
+                <p>In this reading we will dive into how Streams operates and how to create and use them. We'll explain the two types of operations, intermediate and terminal along with examples of each of these types of operations.</p>
+                <p>In the next reading, we will show how to use the Stream API in our programs. We will be covering how Streams can simplify complex operations, and the best practices to use with them.</p>
+
+                <h3>Intro to Streams</h3>
+                <p>In this lesson we are digging into how the Stream API can be used to write operations on streams of elements in place of using our familiar for loops and if statements. What does it mean to have a stream of elements? It just means that we perform some operations on one element (one Java object) after another until there are no elements left in our data source. A stream is almost like a conveyor belt where the elements are the boxes on the conveyor belt being transported one after another. While streams can wrap any data source, we will focus on how streams can be used with Collections, such as an List or Map. The Stream API can perform operations on every element in a collection using only one line of code per operation, simplifying the process and removing the need to have any iteration logic.</p>
+
+                <p>A Stream is not a new collection type and it does not hold any actual data. A stream can be created from an existing collection. Once created, the Stream processes the elements of the collection according to our instructions. Each Stream operation returns either another Stream allowing us to chain more operations together or terminates the Stream in some way. The terminating operation could return a new collection of elements, a single element, or some new computed value. It's important to emphasize that when a collection is returned at end of the execution of a Stream, it is a new collection. The original collection remains unaltered.</p>
+
+                <p>The important thing to keep in mind with the Stream API is that most of its functionality is just a new way of doing things we have already been implementing! The purpose of it is to simplify the code we are writing. Much of its structure just replaces the syntax of code we have been writing. Similar to Java lambda functions, at first this may seem less readable than the iteration you're used to, but with time and exposure this will begin to be more readable. It allows you to focus on just the operations specific to your business logic and not be distracted by reading a for loop for the 100th time.</p>
+
+                <h3>Initializing Streams</h3>
+                <p>The first thing we need to know is how to create a Stream. There are many ways to create a Stream, so we'll only dive into a few of the most common. The first way to create a Stream that we'll dive into is to create a Stream of specified elements using the static method of the Stream class. Below is a stream of Amazonian aliases:</p>
+
+                <pre><code>Stream&lt;String&gt; amazonianStream = Stream.of("jeff", "ajassy", "wilke", "galettib");</code></pre>
+
+                <p>This may look similar to the Arrays.asList method we've used previously. You can think about it in a similar way. A few things to notice:</p>
+
+                <ul>
+                    <li>We need to declare the type of the elements that the Stream will be processing. In this case we declared the Stream as processing Strings. Like other generic types we must include the type on the left side of the equals.</li>
+                    <li>Stream.of accepts a variable-length argument of the type defined in the generics. For this case that means we can provide zero or more arguments of type String.</li>
+                </ul>
+
+                <p>Now that we've created our Stream we could perform some set of operations on these aliases. Perhaps we convert from an alias to an employee object, find everyone who has been at Amazon at least 5 years, and then return that result as a new Collection.</p>
+
+                <p>However, it is not necessary to create a Stream this way. The most common way to create a Stream is from an existing Java Collection. The way to do this is to use the stream() method that is part of all collections.</p>
+
+                <pre><code>List&lt;String&gt; amazonians = Arrays.asList("jeff", "ajassy", "wilke", "galettib");
+Stream&lt;String&gt; amazonianStream = amazonians.stream();</code></pre>
+
+                <p>All collections in the Collection interface have this method, so this method is not limited to just List. This example may look silly since we're using Arrays.asList to initialize the List, but this List could come from anywhere -- the results of calling another service, from our database, etc. Note that the generic type of the Stream will be the same as the generic type of the Collection. Our amazonianStream will allow us to perform some set of operations on every element that was in our List. This could be just the 4 elements listed here, but it could also be hundreds of elements.</p>
+
+                <h3>Types of Stream Operations</h3>
+                <p>When it comes to operating on a collection, a Stream has two different types of operations that can be called. These are intermediate and terminal operations.</p>
+
+                <p>Intermediate operations return a new Stream, which we can add additional operations to. Intermediate operations are intended for when you want to perform multiple steps on a collection or element.</p>
+
+                <p>Terminal operations return a result, such as a collection or single element, or produce some kind of side effect, such as performing an action on each element in the Stream. Terminal operations end the processing of the Stream. After a terminal operation the Stream is considered consumed and can no longer be used. If you needed to perform additional operations you would have to create a brand new stream from the same data source.</p>
+
+                <p>A Stream that is set up with intermediate operations and ending with a terminal operation is called a Stream pipeline.</p>
+
+                <p>A pipeline consists of:</p>
+                <ul>
+                    <li>A source -- what we initialize the stream from.</li>
+                    <li>Zero or more intermediate operations.</li>
+                    <li>A single terminal operation.</li>
+                </ul>
+
+                <h3>Intermediate Operations</h3>
+                <p>Let's say we are trying to find all of the Jane's in a class. We need to alphabetize their names and capitalize them in order to prepare this new list of names for something we want to do later. We'll look at a stream that does exactly this and use it to explore the intermediate operations filter, map, and sorted. Take a look at the stream:</p>
+
+                <pre><code>List&lt;String&gt; names = new ArrayList&lt;&gt;();
+names.add("Jane Roe");
+names.add("Jane Doe");
+names.add("Saanvi Sarkar");
+names.add("Zhang Wei");
+names.add("Shirley Rodriguez");
+names.add("Carlos Salazar");</p>
+
+List&lt;String&gt; processedNames = names.stream()
+    .filter(name -&gt; name.contains("Jane"))
+    .map(String::toUpperCase)
+    .sorted()
+    .collect(Collectors.toList());</code></pre>
+
+                <p>We create a new List&lt;String&gt; processedNames to contain the results of the Stream with three intermediate operations: stream.filter(), stream.map(), and stream.sorted() and close it out with a terminal operation stream.collect(). Notice here that we've chained all the Stream operations together into one procedure. This is the most common way to utilize Streams and it helps make the order of execution clear. It is also a common practice for us to put one operation on each line as you see here.</p>
+
+                <h4>filter</h4>
+                <p>In the first method filter(), we pass in a predicate lambda that selects elements to be filtered into a new Stream. Any element that the predicate returns true for will be in this new Stream. The Stream returned from filter must be the same type as the Stream filter must be called on.</p>
+
+                <pre><code>Stream&lt;T&gt; filter(Predicate&lt;T&gt; predicate)</code></pre>
+
+                <p>In this example we pass in a predicate lambda that returns true when the element contains the string "Jane". Filter is called on a Stream&lt;String&gt;, which means it must use a Predicate&lt;String&gt;. This allows us access to Strings's contains method. Our new Stream returned from filter contains only two elements -- "Jane Roe" and "Jane Doe."</p>
+
+                <pre><code>Stream&lt;String&gt; janes = names.stream().filter(name -&gt; name.contains("Jane"));</code></pre>
+
+                <h4>map</h4>
+                <p>The second method map() takes in a Function that is applied to all elements in the collection. Since Function takes in an object of one type and returns an object of another type, it is often used to convert or map the Stream to another type. So if map is called on a Stream of type T, it returns a brand new Stream that is now of type R.</p>
+
+                <pre><code>Stream&lt;R&gt; map(Function&lt;T, R&gt; mapper)</code></pre>
+
+                <p>In this example we use a static method reference from the String class to make all the elements uppercase. Here our function is operating on a Stream of type String and returning a Stream of type String, but it is taking our existing String and mapping it or converting it to another String. For us that means returning a new String that is capitalized. Since our Streams use functional interfaces as inputs, the operations can take method references or lambdas.</p>
+
+                <p>The only elements that make it to our map operation are "Jane Roe" and "Jane Doe." After our map operation the elements in our new Stream would be "JANE ROE" and "JANE DOE."</p>
+
+                <pre><code>Stream&lt;String&gt; capitalized = janes.map(String::toUpperCase);</code></pre>
+
+                <h4>sorted</h4>
+                <p>The third method, sorted(), sorts the elements in the list. There are two versions of this method, one with no inputs that uses the natural ordering and another that accepts a Comparator to specify how to sort the elements.</p>
+
+                <pre><code>Stream&lt;T&gt; sorted()
+Stream&lt;T&gt; sorted(Comparator&lt;T&gt; comparator)</code></pre>
+
+                <p>Since the elements of our Stream that sorted is called on are of type String, they have a natural ordering. Strings use a lexicographical ordering. That means that after our sorted step, the new Stream would have the elements in the order "JANE DOE" and then "JANE ROE."</p>
+
+                <pre><code>Stream&lt;String&gt; sortedNames = capitalized.sorted();</code></pre>
+
+                <h4>Closing out our example</h4>
+                <p>Finally, the elements processed by the Stream are collected with the collect terminal operation into a new List. We'll talk more about how this works later in this reading.</p>
+
+                <p>For comparison, let's see how we could perform the same operations on the elements of a List without using a Stream.</p>
+
+                <pre><code>List&lt;String&gt; results = new ArrayList&lt;&gt;();
+for (String name : names) {
+    if (name.contains("Jane")) {
+        String capitalizedName = name.toUpperCase();
+        results.add(capitalizedName);
+    }
+}
+
+Collections.sort(results);</code></pre>
+
+                <p>This code is only slightly longer than our Stream code. The biggest difference is how the Stream code allows us to focus on what we want to do to each element of the list and not on the mechanics of iterating and storing the results.</p>
+
+                <p>As mentioned in the pipeline section our stream can have anywhere from zero to infinite intermediate operations and each intermediate operation can be used more than once. Take a look at this example where we go from an alias to an employee object that has tenure information. We use this stream to find all employees that have been at Amazon at least 10 years.</p>
+
+                <pre><code>List&lt;Employee&gt; redBadges = Stream.of("jeff", "ajassy", "wilke", "galettib")
+    // The EmployeeDAO returns null if there is not a matching Employee for a given alias, otherwise it returns an
+    // Employee object
+    .map(alias -&gt; employeeDao.find(alias))
+    .filter(employee -&gt; employee != null)
+    .filter(employee -&gt; employee.tenureInYears() &gt; 10)
+    .collect(Collectors.toList());</code></pre>
+
+                <h3>Terminal Operations</h3>
+                <p>In order to invoke the actions of a Stream, we need to close out the intermediate operations with a terminal one. Terminal operations are the endpoint of a Stream. They can either return a result, such as a collection, or perform a side-effect, such as an external operation. In the code below, we expand on the last example to show a few terminal operations.</p>
+
+                <pre><code>private static Stream&lt;String&gt; createNameStream(List&lt;String&gt; names) {
+    return names.stream()
+        .filter(name -&gt; name.contains("Jane"))
+        .map(String::toUpperCase)
+        .sorted();
+}
+
+public static void main(String[] args) {
+    List&lt;String&gt; names = new ArrayList&lt;&gt;();
+    names.add("Jane Roe");
+    names.add("Jane Doe");
+    names.add("Saanvi Sarkar");
+    names.add("Zhang Wei");
+    names.add("Shirley Rodriguez");
+    names.add("Carlos Salazar");
+
+    //Terminal operations.
+    Optional&lt;String&gt; first = createNameStream(names).findFirst();
+    createNameStream(names).forEach(System.out::println);
+    Set&lt;String&gt; results = createNameStream(names).collect(Collectors.toSet());
+}</code></pre>
+
+                <p>A thing to take note of in this example is that we are creating a brand new Stream from the same data source for each of our terminal operations. A stream can only be used once. After a terminal operation a stream pipeline is considered to be consumed and can no longer be used. To perform another streaming operation we must create a new stream. We can create as many Streams from a single data source as we desire.</p>
+
+                <h4>findFirst</h4>
+                <p>The first terminal method is stream.findFirst(). This returns an Optional containing the first element in the Stream, or an empty Optional if the Stream is empty.</p>
+
+                <pre><code>Optional&lt;T&gt; findFirst()</code></pre>
+
+                <p>For our example stream, findFirst() would return an Optional wrapping the value "JANE DOE." If we changed our filter to look for names containing "John," we would have an empty Stream after this stem and our findFirst() would return an empty Optional.</p>
+
+                <h4>forEach</h4>
+                <p>The second method stream.forEach() is like its namesake, it iterates through each element in the stream and performs an action external to the Stream.</p>
+
+                <pre><code>void forEach(Consumer&lt;T&gt; action)</code></pre>
+
+                <p>Here we used a method reference to print each element to console, but it also can take a lambda, or a method call as well. Note that forEach() does not actually return anything, it just iterates over all elements in the Stream.</p>
+
+                <h4>collect() and the Collectors class</h4>
+                <p>The final terminal method is stream.collect(), this method returns all the elements of a Stream as a new collection. While the datatype of the elements must be matching, collect() can create a collection of any type using the Collectors class. Collectors is a utility class with static methods for the most common ways to collect a Stream.</p>
+
+                <pre><code>R collect(Collector&lt;T, A, R&gt; collector)</code></pre>
+
+                <p>In the above snippet, while the source collection was an ArrayList, we outputted the result as a Set using Collectors.toSet(). The Collectors class has a few native methods such as toList(), toSet(), and toMap() that can be used to create the collections. toCollection() also exists, which can take in a list or set type as a parameter to create the collection. toList() and toSet() are straightforward in that they will just create a collection of those respective types. The toCollection() method creates a list of the specified collection type, as we show this in the example below where we create a LinkedList using a Stream. toCollection should be used when you need to guarantee the implementation of the List, Set, or Map interface being used.</p>
+
+                <pre><code>LinkedList results = sortedStream.collect(Collectors.toCollection(LinkedList::new));</code></pre>
+
+                <p>The toMap() method gets a bit complicated as you must generate keys along with the values for the map. It has two parameters, keyMapper which is a Function to provide keys, and valueMapper which is a Function to provide values. Let's take another look at our employee example and how we might use Collectors.toMap there.</p>
+
+                <pre><code>Map&lt;String, Integer&gt; redBadgeTenures = Stream.of("jeff", "ajassy", "wilke", "galettib")
+    // The EmployeeDAO returns null if there is not a matching Employee for a given alias, otherwise it returns an Employee object
+    .map(alias -&gt; employeeDao.find(alias))
+    .filter(employee -&gt; employee != null)
+    .filter(employee -&gt; employee.tenureInYears() &gt; 10)
+    .collect(Collectors.toMap(employee -&gt; employee.getAlias(), employee.tenureInYears()));</code></pre>
+
+                <p>This stream returns a Map where the employee's alias is the key, and their tenure in years is the value for any employee with at least 10 years of experience.</p>
+
+                <p>If we need to create a Map with a List as it's value we can use the convenient Collectors.groupingBy method. This allows us to specify a function to determine keys. Then any element with that same key is added to a List to be used as the value of that key. If instead of creating a Map of the tenure of each employee, we could create a Map where tenure is the key and the value is a list of all aliases who have been at Amazon for that number of years.</p>
+
+                <pre><code>Map&lt;Integer, List&lt;Employee&gt;&gt; redBadgeTenures = Stream.of("jeff", "ajassy", "wilke", "galettib")
+    // The EmployeeDAO returns null if there is not a matching Employee for a given alias, otherwise it returns an Employee object
+    .map(alias -&gt; employeeDao.find(alias))
+    .filter(employee -&gt; employee != null)
+    .filter(employee -&gt; employee.tenureInYears() &gt; 10)
+    .collect(Collectors.groupingBy(Employee::tenureInYears));</code></pre>
+
+                <p>Now we're starting to see some of the real power of Streams!</p>
+
+                <h3>Summary</h3>
+                <p>In this reading, we learned about the Stream API. We learned about how it's an interface designed to process the elements of a collection through a series of operations. We learned how to create a Stream from an existing collection and apply several operations to get a resulting collection or alter its elements. We learned the difference between intermediate and terminal operations, and their associated methods. With all this we can create streamlined operations on collections and lists, without having to use iterative logic to make it happen. There are many other Stream operations. The Stream JavaDoc is a great way to explore the other operations.</p>
+
+                <h3>Up next</h3>
+                <p>In the next lesson, we will be learning about the applications of the Stream API. We will also be covering the best practices and common mistakes around using a Stream.</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Using Streams</h2>
+
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/153iys9uvr" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <h3>Overview</h3>
+                <p>In this lesson, we will be covering the Java Stream API. Streams are a feature of Java that allow us to perform operations on streams of elements, removing the need for iterative code like for loops. We will learn how they function, what we can do with them, and how to best utilize them in our programs.</p>
+
+                <p>In the previous reading we dug into how Streams operate and how to create and use them. We explained the two types of operations, intermediate and terminal along with examples of each of these types of operations.</p>
+                <p>In this reading, we will show how to use the Stream API in our programs. We will be covering how they can simplify complex operations down to a single line, and the best practices to use with them.</p>
+
+                <h3>What Streams do for us</h3>
+                <p>In the last reading, we covered the syntax of how to use the Stream API, but not much on the purpose of using them. They don't add functionality, most of what they do can be done using for loops, or other iterative logic. But what a Stream can do is reduce our code down to what we want executed, and not bother with the boilerplate iterative logic we normally would use.</p>
+
+                <p>Let's demonstrate this by making a comparison between using a Stream and using iterative code. In the code below, we have a list of names of our clients that holds some bad data. We want to run through the list and remove any elements that contain bad data, and then make the valid elements consistent by capitalizing the first letter of the names.</p>
+
+                <pre><code>public static List&lt;String&gt; validateClientList() {
+    List&lt;String&gt; clients = new ArrayList&lt;&gt;();
+    clients.add("");
+    clients.add("");
+    clients.add("any_CORP");
+    clients.add("");
+    clients.add("carlos ####");
+    clients.add("##### Salazar");
+    clients.add("Jane_InduSTries");
+    clients.add("JOHN ###");
+    clients.add("### ####");
+    clients.add("carlos_INC");
+    List&lt;String&gt; results = new ArrayList&lt;&gt;();
+
+    for (String name : clients) {
+        name.replace('#', '');
+        if (!name.isEmpty()) {
+            name = WordUtils.capitalize(name);
+            results.add(name);
+        }
+    }
+
+    for (String name : results) {
+        System.out.println(name);
+    }
+
+    return results;
+}</code></pre>
+
+                <p>Output:</p>
+
+                <pre><code>Any_corp
+Carlos
+Salazar
+Jane_industries
+John
+Carlos_inc</code></pre>
+
+                <p>None of these tasks individually are very complex. We simply are iterating through the list, filtering out the bad data entries, and applying consistent changes to all valid elements. Then reiterating through them to print the new list. But it still requires a good amount of code. However, we can reduce things down using a Stream, as we'll see in the next example.</p>
+
+                <pre><code>List&lt;String&gt; results = clients.stream()
+    .map(name -&gt; name.replace('#', ''));
+    .filter(name -&gt; !name.isEmpty())
+    .map(WordUtils::capitalize)
+    .collect(Collectors.toList());
+
+results.stream().forEach(System.out::println);</code></pre>
+
+                <p>Comparing these two examples, the operations and logic we're performing on the elements remain almost the same, but we removed the iterative code. The Stream version of this operation is much more straightforward to read. It lets us focus on our business logic, what are the changes that are specific to this use case. The other difference between these two code snippets is that the first is mutating our underlying data source, while the second is leaving that as is in case we may need it again and creating a new data structure. If we were to make the first code snippet non-mutating it would make it even longer and more complex. In practice, it may not be necessary to replace every instance of iterative code with a Stream. It may only make sense to do so in situations where the iteration or comparison is getting more complex than the actual code to perform the operations.</p>
+
+                <h3>Lazy Execution</h3>
+                <p>While a Stream can reduce iterative logic, its usage still has a lot of subtle complexity to understand. Case in point, intermediate operations are lazy. What does that mean? Intermediate operations will not execute unless a terminal operation is present on the Stream. Let's look at our Jane name example from the last reading. A Stream is created and has several intermediate operations:</p>
+
+                <pre><code>Stream&lt;String&gt; nameStream = names.stream()
+    .filter(name -&gt; name.contains("Jane"))
+    .map(String::toUpperCase)
+    .sorted();</code></pre>
+
+                <p>However, while this statement will compile, it won't actually perform the operations shown. Without the terminal operation the Stream will do nothing at all. Let's look at another example to prove it. Here is another Stream made up of entirely intermediate operations. What would you expect to get printed to the console?</p>
+
+                <pre><code>Stream&lt;String&gt; nameStream = names.stream()
+    .filter(name -&gt; {
+        System.out.println("Filter " + name);
+        return name.contains("Jane");
+        })
+    .map(name -&gt; {
+        System.out.println("Map " + name);
+        return name.toUpperCase()
+    })
+    .sorted();</code></pre>
+
+                <p>Nothing would get printed to the console! If we added a terminal operation to this like .collect(Collectors.toSet()) we would see the filter and map Strings printed to the console many times.</p>
+
+                <h3>How Streams Evaluate</h3>
+                <p>The order that the intermediate operations are specified in matters as well. In this example, we have the exact same Stream as the last example. Is one more efficient than the other? Why?</p>
+
+                <pre><code>Optional&lt;String&gt; firstJane = names.stream()
+    .sorted()
+    .filter(name -&gt; name.contains("Jane"))
+    .map(String::toUpperCase)
+    .findFirst();</code></pre>
+
+                <p>The only difference here is that the sorted() operation is called before the Stream has been filtered. Let's imagine there are thousands of names in our names List, but only two with the name Jane. If we sort or even map before filtering we are performing these operations on thousands of names and while the map operation is O(n) just like filter, our sorted operation has a runtime of O(n log n). If we filter first the n for our sort is much smaller.</p>
+
+                <p>It's important to understand that a Stream can evaluate a collection in multiple ways. One element can be evaluated all the way through a Stream, or all elements can be evaluated one step at a time. Let's look at the same examples but add print statements to each of the steps.</p>
+
+                <pre><code>List&lt;String&gt; names = new ArrayList&lt;&gt;();
+names.add("Jane Roe");
+names.add("Jane Doe");
+names.add("Saanvi Sarkar");
+names.add("Zhang Wei");
+names.add("Shirley Rodriguez");
+names.add("Carlos Salazar");
+
+Optional&lt;String&gt; firstJane = names.stream()
+    .filter(name -&gt; {
+        System.out.println("filter " + name);
+        return name.contains("Jane");
+    }).map(name -&gt; {
+        System.out.println("map " + name);
+        return name.toUpperCase();
+    }).sorted((name1, name2) -&gt; {
+        System.out.println(String.format("sorted %s %s", name1, name2));
+        return name1.compareTo(name2);
+    }).findFirst();</code></pre>
+
+                <p>What do you think gets printed here? It's very natural to think that every element goes through each operation one at a time -- filter printed six times followed by map printed twice. But that's not how this would work! One element actually goes as far as it can through a pipeline before the next element starts. The output of this code would be:</p>
+
+                <pre><code>filter Jane Roe
+map Jane Roe
+filter Jane Doe
+map Jane Doe
+filter Saanvi Sarkar
+filter Zhang Wei
+filter Shirley Rodriguez
+filter Carlos Salazar
+sorted JANE DOE JANE ROE</code></pre>
+
+                <p>Let's do an experiment and switch the order of the operations. Let's again move sorted to be our first operation.</p>
+
+                <pre><code>Optional&lt;String&gt; firstJane = names.stream()
+    .sorted((name1, name2) -&gt; {
+        System.out.println(String.format("sorted %s %s", name1, name2));
+        return name1.compareTo(name2);
+    }).filter(name -&gt; {
+        System.out.println("filter " + name);
+        return name.contains("Jane");
+    }).map(name -&gt; {
+        System.out.println("map " + name);
+        return name.toUpperCase();
+    }).findFirst();</code></pre>
+
+                <p>What do you expect would now be printed? Your first thought may be something like: sorted Jane Roe Jane Doe, filter Jane Roe, map Jane Roe, filter Jane Doe, map Jane Doe, etc.</p>
+
+                <p>But that would be wrong! Let's take a look at the actual output:</p>
+
+                <pre><code>sorted Jane Doe Jane Roe
+sorted Saanvi Sarkar Jane Doe
+sorted Saanvi Sarkar Jane Roe
+sorted Zhang Wei Jane Roe
+sorted Zhang Wei Saanvi Sarkar
+sorted Shirley Rodriguez Saanvi Sarkar
+sorted Shirley Rodriguez Zhang Wei
+sorted Carlos Salazar Saanvi Sarkar
+sorted Carlos Salazar Jane Roe
+sorted Carlos Salazar Jane Doe
+filter Carlos Salazar
+filter Jane Doe
+map Jane Doe</code></pre>
+
+                <p>But didn't we just learn that an element goes as far as it can through the pipeline before the next element starts? That's still true, but in this case, the elements initially cannot go any farther than the sorted operation because sorted is a stateful operation.</p>
+
+                <p>There are two types of intermediate operations: stateful and stateless. Stateful operations require knowledge of all the elements, so elements will go as far as they can until they hit either a terminal operation or stateful operation. sorted is a stateful operation because it needs all of the elements available to create a sorted order. When sorted is our last intermediate operation, it waits for all of the elements to complete filtering and mapping before sorting. But when it's our first operation, it performs the sort on all of the elements before restarting the pattern of each element individually going as far through the pipeline as it can. Both filter and map are stateless so they will execute on elements one at a time.</p>
+
+                <p>The other strange thing you may notice in our new output is that only two of the elements are filtered and only Jane Doe is mapped. Why is that? Some terminal operations are short-circuiting terminal operations. findFirst() is a short-circuiting terminal operation, but collect and forEach are not. Since findFirst is a short-circuiting terminal operation, once it has found what it needs it will go ahead and terminate the stream and prevent any unneeded operations from occurring. The result of mapping Jane Doe is passed directly to findFirst. A first element is found, so the Stream can terminate, there's no need to try to filter or map any other elements. This is exactly why elements try to go as far down a pipeline as they can. It may prevent future work!</p>
+
+                <p>The Stream JavaDoc tells you for each method if it is a stateful intermediate operation, an intermediate operation (this means it's stateless), a short-circuiting terminal operation, or a terminal operation, so you don't have to guess.</p>
+
+                <h3>Conclusion</h3>
+                <p>In this lesson, we covered the Stream API. We learned how they can take an inputted collection and perform a wide variety of operations on it. We learned about the unusual way they operate; evaluating with a terminal operation and collecting only the elements we want. While they can seem complex, and perhaps redundant, they offer a great deal of flexibility to our programs. They can greatly improve how we iterate and process collections. They might not be the replacement of for loops or if statements, but they are a powerful functionality to learn.</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Practice</h2>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-streams-drills" target="_blank" rel="noopener noreferrer" class="resource-link">
+                        Streams Warmup Drills
+                    </a>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Guided Project</h2>
+
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/5mgrklim62" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-streams-product-page" target="_blank" rel="noopener noreferrer" class="resource-link">
+                        Product Page Repository
+                    </a>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Setup Your Sprint 25 Challenge Repo</h2>
+
+                <p>This Sprint culminates in a Sprint Challenge project. You should begin by <strong>forking and cloning</strong> the Sprint Challenge starter repo:</p>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-advertising-service" target="_blank" rel="noopener noreferrer" class="resource-link">
+                        Sprint 25 Challenge Starter Repo
+                    </a>
+                </div>
+
+                <p><strong>This will be your project repo for Sprints 25 - 27.</strong></p>
+
+                <p>This resource is also visible under the Sprint Challenge section of the course page. After each module, you will be assigned a mastery task with instructions on adding to or modifying the starter code for the challenge. Upon completion of all mastery tasks, the Sprint Challenge project will be complete and ready for you to submit to CodeGrade. The CodeGrade submission page is available under the Sprint Challenge section on the modules page.</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Mastery Task 1: Filter out the noise</h2>
+
+                <h3>Milestone 1: Update TargetingEvaluator and AddTargetingGroupActivity</h3>
+                <p>While looking over the current service code, you see some instances where we're using a for loop to iterate and process elements in a collection. To help reduce the boilerplate iterative code and make the logic easier to follow, you decide to update the logic to use streams instead!</p>
+
+                <p>For this task, you'll be updating logic in two classes to use a stream instead of a for loop to iterate and process elements.</p>
+
+                <p>TargetingEvaluator's evaluate method determines if all the TargetingPredicates in a given TargetingGroup are true for the given RequestContext.</p>
+
+                <ul>
+                    <li>Update TargetingEvaluator's evaluate method to use a stream instead of a for loop to evaluate the TargetingPredicateResult.</li>
+                </ul>
+
+                <p>AddTargetingGroupActivity is the activity class for the operation that adds a new targeting group to an existing piece of advertising content.</p>
+
+                <ul>
+                    <li>Update AddTargetingGroupActivity's addTargetingGroup method to use a stream when converting the TargetingPredicates from the Coral model to its internal model.</li>
+                </ul>
+
+                <p>We encourage you to take a look at the Stream <a href="https://docs.oracle.com/javase/8/docs/api/?java/util/stream/Stream.html" target="_blank" rel="noopener noreferrer">Javadoc</a> to see what available methods can help implement the logic.</p>
+
+                <h3>Milestone 2: Update AdvertisementSelectionLogic</h3>
+                <p>If you look at our service's AdvertisementSelectionLogic, you'll see that we're currently retrieving all advertisements for a marketplace and randomly showing one of those advertisements to customers. To help increase our ad click through rate, our marketing team has created targeting rules that they think will help show ads to customers who are most likely to click on it. They've created ads specifically for each of these targeting groups. So now we want to only show ads that customers are eligible for, based on the customer being a part of an ad's targeting group.</p>
+
+                <p>Update AdvertisementSelectionLogic's selectAdvertisement method so that it randomly selects only from ads that the customer is eligible for based on the ad content's TargetingGroup. Your solution should use streams to evaluate the targeting groups (again, take a look at the streams javadoc if you need some guidance!). Use TargetingEvaluator to help filter out the ads that a customer is not eligible for. Then randomly return one of the ads that the customer is eligible for (if any).</p>
+
+                <p>If there are no eligible ads for the customer, then return an EmptyGeneratedAdvertisement. Since these ads are being rendered on the retail website, we don't want to return null or throw exceptions if there are no eligible ads for the customer. Instead we return an empty string so that the front-end can handle rendering gracefully.</p>
+
+                <h3>Exit Checklist:</h3>
+                <ul>
+                    <li>You've updated AdvertisementSelectionLogic's selectAdvertisement method so that it randomly selects an ad that the customer is eligible for</li>
+                    <li>You've updated TargetingEvaluator's evaluate method to use a stream instead of a for loop to evaluate the TargetingPredicateResult.</li>
+                    <li>You've set both AdvertisementSelectionLogic and TargetingEvaluator's IMPLEMENTED_STREAM boolean flag to true.</li>
+                    <li>You've updated AddTargetingGroupActivity's addTargetingGroup method to use a stream when building the Map of spend categories to return.</li>
+                    <li>Running the gradle command ./gradlew -q clean :test --tests com.tct.mastery.task1.MasteryTaskOneLogicTests passes.</li>
+                    <li>Running the gradle command ./gradlew -q clean :test --tests com.tct.introspection.MT1IntrospectionTests passes.</li>
                 </ul>
             </div>
 
@@ -172,12 +524,6 @@
                     </a>
                     <a href="https://www.baeldung.com/java-8-streams" target="_blank" rel="noopener" class="resource-link">
                         Java 8 Streams Tutorial - Baeldung
-                    </a>
-                    <a href="../../code-alongs/index.html" class="resource-link">
-                        Code-Alongs
-                    </a>
-                    <a href="../../sprint-challenge/index.html" class="resource-link">
-                        Sprint Challenge
                     </a>
                 </div>
             </section>
