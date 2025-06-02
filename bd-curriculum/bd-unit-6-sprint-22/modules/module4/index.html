@@ -31,46 +31,36 @@
         <section class="welcome">
             <h1>Module 4: In-Memory Caching</h1>
             
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Introduction to In-Memory Caching" src="https://fast.wistia.net/embed/iframe/p27rgbq5wn" allow="autoplay; fullscreen" allowfullscreen></iframe>
-            </div>
-            
-            <div class="content-box module4-accent">
+            <div class="content-box">
                 <h2>Overview</h2>
                 <p>In-memory caching is a technique used to improve application performance by storing frequently accessed data in memory. This module explores caching concepts, implementation strategies, and best practices in Java applications.</p>
                 
                 <div class="note-box">
                     <h3>Learning Objectives</h3>
                     <ul>
-                        <li>Understand the purpose and benefits of in-memory caching</li>
-                        <li>Implement basic caching mechanisms in Java applications</li>
-                        <li>Apply appropriate eviction policies for different use cases</li>
-                        <li>Manage cache consistency and invalidation</li>
-                        <li>Evaluate and implement caching libraries in Java</li>
+                        <li>Predict if a given read will result in a hit or miss given the cache state</li>
+                        <li>Implement functionality that handles cache misses by writing into the in-memory cache</li>
+                        <li>Predict if a given write will result in an eviction given the cache state</li>
+                        <li>Design and implement a cache's key and value structure, given a set of requirements</li>
+                        <li>Design and implement functionality that prevents repeated I/O operations with an in-memory cache</li>
+                        <li>Given a scenario, predict the effects of changing the time-to-live (TTL) on a cache</li>
+                        <li>Given a scenario, predict the effects of changing the size of a cache</li>
+                        <li>Explain what a cache is and when to use it</li>
+                        <li>Define the caching terms: hit, miss, evictions, and TTL</li>
+                        <li>Understand the purpose and principles of in-memory caching</li>
+                        <li>Identify appropriate scenarios for implementing caching</li>
+                        <li>Design caching solutions with appropriate eviction policies</li>
+                        <li>Implement time-to-live (TTL) mechanisms for cache entries</li>
+                        <li>Evaluate and address cache consistency challenges</li>
+                        <li>Implement thread-safe caching mechanisms</li>
+                        <li>Use and configure caching libraries and frameworks</li>
+                        <li>Monitor and optimize cache performance</li>
                     </ul>
                 </div>
             </div>
-            
-            <div class="video-container">
-                <iframe class="wistia_embed" title="In-Memory Caching Code-Along" src="https://fast.wistia.net/embed/iframe/m3huj6opvn" allow="autoplay; fullscreen" allowfullscreen></iframe>
-            </div>
-            
-            <div class="learning-objectives">
-                <h3>Learning Objectives</h3>
-                <ul>
-                    <li>Understand the purpose and principles of in-memory caching</li>
-                    <li>Identify appropriate scenarios for implementing caching</li>
-                    <li>Design caching solutions with appropriate eviction policies</li>
-                    <li>Implement time-to-live (TTL) mechanisms for cache entries</li>
-                    <li>Evaluate and address cache consistency challenges</li>
-                    <li>Implement thread-safe caching mechanisms</li>
-                    <li>Use and configure caching libraries and frameworks</li>
-                    <li>Monitor and optimize cache performance</li>
-                </ul>
-            </div>
-            
+
             <div class="content-box">
-                <h2>Caching Fundamentals</h2>
+                <h2>Introduction to Caching</h2>
                 
                 <p>Caching stores frequently accessed data in memory to reduce computation time, database load, or network requests. An effective cache can dramatically improve application performance and scalability.</p>
                 
@@ -90,11 +80,390 @@
                     <li>To reduce load on databases or external services</li>
                     <li>For data that doesn't need to be 100% up-to-date</li>
                 </ul>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Introduction to In-Memory Caching" src="https://fast.wistia.net/embed/iframe/o05g8m533r" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                </div>
+
+                <h3>Understanding In-Memory Caching</h3>
+                <p>The concept of caching refers to storing data in such a way that you can access the information promptly. For the purposes of this lesson, we will specifically talk about creating an in-memory cache in order to quickly access information as an alternative to repeatedly retrieving data from a remote system, like DynamoDB or a service API. Building a cache in your computer's RAM, known as an in-memory-cache, lets you store data temporarily for easier retrieval.</p>
+
+                <h3>Uses for a cache</h3>
+                <p>The primary use case for adding a cache to your program is when you find yourself frequently accessing the same data from a remote server. Imagine a sales clerk at a bookstore. After being asked repeatedly for the most recent best-selling novel, the sales clerk brings out several copies to keep at the counter. This way when they are asked about the best-seller, the sales clerk can simply hand over one of the copies they have at the desk rather than going to the back to get one each time. This is similar to the problem that caching solves. A cache saves a copy of the data from a remote server in memory, so the next time the program asks for it, it can hand over the copy stored in memory. This is faster than going back to the remote server and getting the data repeatedly.</p>
+
+                <p>Let's look at another example. Think about when you're accessing DynamoDB to retrieve customer information. Each time your application makes a load request, you must wait for the request to be received by DynamoDB, processed, and for DynamoDB to send a response before your code can continue processing. Remember network calls are blocking. So, instead of making a network call each time, store the customer data in RAM so you can take advantage of fast memory access every time you need it. You need to make the first database call to retrieve the data, but from then on it is quickly accessible in memory. Sound good? That's exactly what we're going to learn to do using in-memory caching.</p>
+
+                <h3>Amazon Shared Shipping services</h3>
+                <p>Let's imagine that Amazon is introducing a new service called Amazon Shared Shipping. With this service, packages being sent to an address that is shared with members of a Prime household can be bundled with other members' orders to save on shipping costs and environmental impact. Each time a customer visits the checkout page and selects the delivery address, the service checks the addresses of each member of their household. It then determines if this is a shared address and asks the customer if they want to participate in shared shipping. Since we might access this address information frequently, Amazon Shared Shipping could make use of caching by keeping customers' address information close at hand.</p>
+
+                <p>First, let's take a look at how this works without caching. A customer comes to Amazon to buy light bulbs. They add some to their Cart and visit the checkout page. The checkout page makes a request to Amazon Shared Shipping to see if it should offer shared shipping to the customer checking out. The service checks if the order's delivery address is shared with anyone in their Prime household. For each member of the household, a request is made to the Amazon Address Service to retrieve all of their addresses. If the delivery address is a shared address with another member of the Prime household, the service returns that the order is eligible for shared shipping as shown in Figure 1.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/e6aca1a5-ec8d-44d9-b0bb-e31d5a17c091_image1.png" alt="Figure 1" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+
+                <p>Figure 1: A diagram representing the checkout page's request to Amazon Shared Shipping service and its dependency, Amazon Address Service.</p>
+
+                <p>Five minutes later, imagine that same customer realizes they forgot to order laundry detergent. They return to the Amazon website, add it to their Cart, and visit the checkout page. They choose the same delivery address, and the exact same request is made to the Amazon Shared Shipping service from the checkout page. The Amazon Shared Shipping service makes all the same calls to the Amazon Address Service to get the addresses for each of the members in our forgetful customer's Prime household.</p>
+
+                <p>Now, let's look at how caching can improve this scenario! Instead of always making calls to the Amazon Address Service, Amazon Shared Shipping service will store address information locally, in-memory. From now on the shipping service will check the cache for addresses before it asks the Amazon Address Service. Remember our salesclerk example earlier? The first time a customer asked for the best-seller they still had to go in the back to get a few copies. When a customer checks out the first time, the checkout page needs to know if the customer is eligible for shared shipping, so the shared shipping service checks the cache first. The cache won't have any address information yet, so a call to the Amazon Address Service is made. When data is requested from a cache and it doesn't have it, we call it a miss.</p>
+
+                <p>Here's where you can do something smart! Instead of just using the address information and forgetting about it, the Amazon Shared Shipping service will add it to the cache. This time when our forgetful customer comes back to order laundry detergent, the Amazon Shared Shipping service can rapidly determine if they are eligible for shared shipping. The Amazon Shared Shipping service checks its cache and finds the addresses it stored last time! This is called a hit, when the cache has the data requested. The data flow for this process is shown in Figure 2.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/fdbc603f-348d-4e50-b562-08e0db9fcfd0_image2.png" alt="Figure 2" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                <p>Figure 2: A diagram representing the Amazon Shared Shipping service's use of a cache. It sits in front of the Amazon Address Service.</p>
+
+                <h3>Google Guava caching framework</h3>
+                <p>Guava is a Java library, originally created at Google. Some Amazon applications use it to provide flexible caching. The framework is composed of many classes, but for our purposes we'll look at the following core caching classes: <a href="https://guava.dev/releases/22.0/api/docs/com/google/common/cache/CacheLoader.html" target="_blank" rel="noopener noreferrer">CacheLoader</a>, <a href="https://guava.dev/releases/22.0/api/docs/com/google/common/cache/CacheBuilder.html" target="_blank" rel="noopener noreferrer">CacheBuilder</a>, and <a href="https://guava.dev/releases/22.0/api/docs/com/google/common/cache/LoadingCache.html" target="_blank" rel="noopener noreferrer">LoadingCache</a>. Here's a quick overview of what these classes do.</p>
+
+                <ul>
+                    <li>LoadingCache: This class manages a cache, keeping objects in a Map and automatically retrieving new data from the data store on a cache miss.</li>
+                    <li>CacheBuilder: This factory class creates properly configured instances of LoadingCache.</li>
+                    <li>CacheLoader: LoadingCache uses a CacheLoader that we configure to retrieve new data from the data store.</li>
+                </ul>
+
+                <p>As we look at how to use the Guava framework, we'll be integrating it into our Shared Shipping application. For this example, we've defined the following additional classes:</p>
+
+                <ul>
+                    <li>ShippingAddress: A POJO that contains the shipping address data for a customer. The address service returns a List&lt;ShippingAddress&gt; instance with the addresses a customer has stored in their account.</li>
+                    <li>ShippingAddressDAO: The class responsible for making calls to the remote Amazon Address Service to retrieve the requested List&lt;ShippingAddress&gt; object.</li>
+                    <li>CachingAddressDAO: A class that combines Guava's caching and ShippingAddressDAO's data access.</li>
+                </ul>
+
+                <h3>An overview of how Guava works</h3>
+                <p>Before we dig into the details of the code that creates and manipulates our Guava cache, let's take a big picture look at how the pieces work together. Refer to the diagram in Figure 3 as you review the following steps:</p>
+
+                <img src="https://tk-assets.lambdaschool.com/6f23471e-0134-44db-93e2-2a65917d6524_image3.png" alt="Figure 3" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                <p>Figure 3: Diagram showing the process of using the cache and how the LoadingCache and CacheLoader work together.</p>
+
+                <ol>
+                    <li>Everything starts inside our shared shipping application, requesting customer address information from the CachingAddressDAO using the customer's id.</li>
+                    <li>The web app calls CachingAddressDAO to retrieve a list of addresses using the getShippingAddresses() method.</li>
+                    <li>Our getShippingAddresses() method then calls getUnchecked() on the LoadingCache instance we provided during instantiation. It passes along the key, a customerId.</li>
+                    <li>What the standard Guava LoadingCache does next depends on whether the key exists in its internal cache:
+                        <ul>
+                            <li>If the key exists in the cache, LoadingCache returns the associated value, which is the requested address list.</li>
+                            <li>If the key does not exist in the cache, the LoadingCache passes the request to our CacheLoader, that was set up while building the cache.</li>
+                        </ul>
+                    </li>
+                    <li>We configured the CacheLoader with an instance of ShippingAddressDAO and a reference to the method used to retrieve addresses, getAddresses(). Using the key passed to LoadingCache, it calls getAddresses() in ShippingAddressDAO.</li>
+                    <li>ShippingAddressDAO uses that key to make a call to the Amazon Address Service and returns the resulting List&lt;ShippingAddress&gt; instance to the CacheLoader.</li>
+                    <li>CacheLoader adds the address list to the LoadingCache for future use, and then the LoadingCache finally returns them.</li>
+                </ol>
+
+                <p>Now that we have an overview of how the pieces work together, let's step through the actual implementation.</p>
+
+                <h3>Setting up a Guava cache</h3>
+                <p>Amazon Shared Shipping currently has no cache, and always calls the getAddresses method of the ShippingAddressDAO class to retrieve data from the Amazon Address Service. The method signature is below:</p>
+
+                <pre><code>public List&lt;ShippingAddress&gt; getAddresses(String customerId)</code></pre>
+
+                <p>We will replace that DAO with a similar CachingAddressDAO that caches the results of the getAddresses method. You may recognize this as an example of composition from our Design with Composition lesson; CachingAddressDAO contains a LoadingCache and a ShippingAddressDAO, which it uses to "expose a superset of functionality".</p>
+
+                <p>Let's start by defining the CachingAddressDAO with a constructor that creates the cache for our Amazon Shipping Service using Guava.</p>
+
+                <pre><code>import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
+public class CachingAddressDAO {
+    
+    private final LoadingCache&lt;String, List&lt;ShippingAddress&gt;&gt; addressCache;
+
+    public CachingAddressDAO(ShippingAddressDAO addressDAO) {
+        addressCache = CacheBuilder.newBuilder()
+                .build(CacheLoader.from(addressDAO::getAddresses));
+    }
+}</code></pre>
+
+                <p>Let's dive into the code:</p>
+
+                <pre><code>private final LoadingCache&lt;String, ShippingAddress&gt; addressCache;</code></pre>
+
+                <p>We declare an instance of a LoadingCache named addressCache. LoadingCache is a generic Guava interface that maps keys to values, similar to a Map. We must pick a data type for our key that LoadingCache can use to request information from our remote service. In our example, the Amazon Address Service takes a String customer ID and returns a List&lt;ShippingAddress&gt;. Therefore, we chose String for our key and List&lt;ShippingAddress&gt; for our value.</p>
+
+                <p>Next we define the CachingAddressDAO constructor, which initializes our addressCache using Guava's CacheBuilder class. You may recognize the Builder pattern here.</p>
+
+                <pre><code>public CachingAddressDAO(ShippingAddressDAO addressDAO) {
+    addressCache = CacheBuilder.newBuilder()
+            .build(CacheLoader.from(addressDAO::getAddresses));
+}</code></pre>
+
+                <p>When we request data that isn't in the cache, LoadingCache uses its CacheLoader to get it for us automatically! We just have to provide a compatible CacheLoader in the build() method. Here we use CacheLoader.from(), which you may recognize as a <a href="https://en.wikipedia.org/wiki/Factory_method_pattern" target="_blank" rel="noopener noreferrer">Factory method pattern</a>.</p>
+
+                <pre><code>CacheLoader.from(addressDAO::getAddresses)</code></pre>
+
+                <p>This builds a CacheLoader with a method that retrieves the data. The method must take only one parameter matching the type of our LoadingCache key, and must return a value matching the type of the LoadingCache value.</p>
+
+                <p>We defined our cache specifically to cache calls to the getAddresses method in the ShippingAddressDAO class, so its method signature matches the cache's keys and values.</p>
+
+                <p>When LoadingCache misses, it internally passes the request off to an instance of CacheLoader. CacheLoader needs to know how to get the data, and so we supply it with a method to call:</p>
+
+                <pre><code>addressDAO::getAddresses</code></pre>
+
+                <p>This is a special notation called a method reference. It references the method called getAddresses of this specific addressDAO object. We will learn more about this in a future lesson, but for now just follow the pattern: object::method.</p>
+
+                <h3>Retrieving data from the cache</h3>
+                <p>We would modify Amazon Shared Shipping to call getShippingAddresses() on our CachingAddressDAO. It will pass the same String customer ID that it currently passes to the ShippingAddressDAO, and expect the same List&lt;ShippingAddress&gt; that it currently gets as a result:</p>
+
+                <pre><code>public List&lt;ShippingAddress&gt; getShippingAddresses(String customerId) {
+    return addressCache.getUnchecked(customerId);
+}</code></pre>
+
+                <p>Our getShippingAddresses method uses its LoadingCache instance, addressCache, to retrieve data from the cache. Since we configured our CacheLoader with a method that only throws unchecked exceptions, we call the getUnchecked method. That checks if the provided key exists in the cache. If it is, it returns the key's value. If it isn't, it calls the CacheLoader to get it and then returns the new value.</p>
+
+                <p>Here's our completed CachingAddressDAO, ready to substitute in Amazon Shared Shipping:</p>
+
+                <pre><code>import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
+public class CachingAddressDAO {
+    
+    private final LoadingCache&lt;String, List&lt;ShippingAddress&gt;&gt; addressCache;
+
+    public CachingAddressDAO(ShippingAddressDAO addressDAO) {
+        addressCache = CacheBuilder.newBuilder()
+                .build(CacheLoader.from(addressDAO::getAddresses));
+    }
+
+    public List&lt;ShippingAddress&gt; getShippingAddresses(String customerId) {
+        return addressCache.getUnchecked(customerId);
+    }
+}</code></pre>
+
+                <p>In our second reading, we'll revisit creating our cache and add in some additional configuration parameters related to cache behavior and performance.</p>
+
+                <h3>Key-value pairing</h3>
+                <p>The key-value pair is one of the most important aspects of designing our cache. We mentioned above that the LoadingCache class stores our cached information as key-value pairs. We've seen key-value pairs before when we studied the Map data structure. If you recall, a Map uses key-value pairs to store data by using the key as an index for the data value, similar to how an ArrayList has numeric indexes for each value.</p>
+
+                <p>Like a Map, each key in a LoadingCache is unique. We must also follow the Map rules for the key: it must have consistent implementations of hashcode() and equals(), and neither can depend on mutable data.</p>
+
+                <p>The LoadingCache also uses the key to retrieve values when it misses. Since Amazon Address Service uses only a customerId to retrieve values, we were able to keep our key simple and use a String.</p>
+
+                <p>What if the Amazon Address Service also required a country when requesting address information?</p>
+
+                <p>The getAddresses method header in the ShippingAddressDAO might look like this instead:</p>
+
+                <pre><code>public List&lt;ShippingAddress&gt; getAddresses(String customerId, Country country)</code></pre>
+
+                <p>Since our CacheLoader makes the call to the getAddresses method, and since it only passes the key into the method, our cache cannot call this method that requires two arguments. This structure for the getAddresses method would not work with our cache. Instead, we need a method that accepts a single argument, but still contains both the customerId and the country. Let's make ourselves a new object!</p>
+
+                <pre><code>public class AddressServiceRequest {
+    private final String customerId;
+    private final Country country;
+
+    public AddressServiceRequest(String customerId, Country country) {
+        this.customerId = customerId;
+        this.country = country;
+    }
+
+    public String getCustomerId() {
+        return this.getCustomerId();
+    }
+
+    public Country getCountry() {
+        return this.country;
+    }
+
+    public int hashcode() {
+        return Objects.hash(customerId, country);
+    }
+
+    public boolean equals() {
+        return Objects.equals(customerId, country);
+    }
+
+}</code></pre>
+
+                <p>We can now add a method for our cache to use in ShippingAddressDAO:</p>
+
+                <pre><code>public List&lt;ShippingAddress&gt; getAddresses(AddressServiceRequest request) {
+    return getAddresses(request.getCustomerId(), request.getCountry());
+}</code></pre>
+
+                <p>We can update our LoadingCache key to be AddressServiceRequest and now we have an example of a more complex key.</p>
+
+                <h3>Key-value size considerations</h3>
+                <p>As you design the key structure for your cache, keep in mind that caches have limited storage space and you need to use it efficiently. In the next reading we'll dig into how to manage how many items are in the cache, but the other side of it is how big each item is. This applies to both the key and the value. Notice we made a simple POJO to handle our more complicated key. We could have used an entire Customer object with the customerId, country, and a whole lot of additional information. It would solve our problem, but it would waste space in the cache with a lot of unnecessary data.</p>
+
+                <p>Once you decide on a key, the value is generally whatever the data source returns. Values can be anything from raw JSON to POJO instances. While values can be anything, that does not mean everything should be stored. As we just mentioned, cache space is limited. It's likely that the value that you are storing will be bigger than the key, so you want to be even more considerate of exactly what you are storing.</p>
+
+                <p>Remember, Guava is an in-memory cache. It stores everything in memory on the computer running your application. Your application likely needs to keep other things in memory, so you can't use all of it for your cache.</p>
+
+                <p>As you consider how much memory your cache will require, keep in mind:</p>
+
+                <ul>
+                    <li>The number of records your cache potentially needs to store to be effective</li>
+                    <li>The size of each individual record</li>
+                </ul>
+
+                <p>A small number of large records might be fine, or a large number of tiny records might be fine, but a large number of large records might use up all your memory.</p>
+
+                <p>Shared Shipping Service could realistically expect millions of requests a day, as it is used at checkout. If we kept detailed customer information along with each address, each value could be 10KB of data. 1,000,000 records would require 10GB of memory! If we can reduce each value to 1KB by removing unnecessary data, our total cache goes size down to 1GB, a huge space savings!</p>
+
+                <p>We must be very mindful of how large our in-memory cache could get while designing our cache structure. We'll look at how Guava manages cache size more closely in the next reading.</p>
+
+                <h3>Null values and exceptions</h3>
+                <p>Let's consider how we handle exceptional situations in our caching code.</p>
+
+                <p>If the method we provided to the CacheLoader throws an unchecked exception, Guava wraps it in an UncheckedExecutionException and propagates it. Additionally, if the CacheLoader returns null, the LoadingCache throws an unchecked InvalidCacheLoadException.</p>
+
+                <p>If you expect your loading method (getAddresses(), in our case) to never return null, and your application couldn't recover if it does, you should propagate the exception.</p>
+
+                <p>If you do expect your loading method to return null in certain conditions, you must expect an InvalidCacheLoadException. You may be tempted to handle it, but recall that we don't generally handle unchecked exceptions. Instead, prevent the method from returning null. In our example, we would modify the method to return an empty list when it finds no addresses. If your return type is not a collection, return an Optional. (Since we won't learn about Optional until a later lesson, modify the method to throw a descriptive checked exception.)</p>
+
+                <p>If you cannot modify the method, we receommend using composition to build a delegating class that changes the method's signature.</p>
+
+                <p>If the method provided to the CacheLoader throws a checked exception, you cannot use the getUnchecked() method. Use get() instead. This will wrap the checked exception in an ExecutionException. You can catch the ExecutionException and call getCause() to retrieve and handle the original exception.</p>
+
+                <h3>Caching benefits</h3>
+                <p>We've described how to implement a cache using the Guava framework. In the next reading we'll look at some of Guava's cache configuration options and how they affect the performance of our application. Before we dig into that, let's revisit the reasons to use a cache in the first place.</p>
+
+                <p>Caching provides improved response time and makes our service faster. Retrieving a value from local memory is much faster than making a network call to a remote service or performing a CPU-intensive calculation. Caching these results leads to a faster customer experience.</p>
+
+                <p>From a cost perspective, caching ultimately reduces the number of operations our application performs. We save money by reducing operations that use network bandwidth, utilize resources, or cost money. While a single call to DynamoDB is insignificant, a million calls each day is a large network burden and monetary cost! Remember that Amazon is one of the world's largest online shopping sites. Anything that we do, any program we write, could be used by customers millions of times each day. So, if we can implement a cache that reduces our costs by even 20 or 30%, that translates directly into a significant cost reduction for the company.</p>
+
+                <h3>Summary</h3>
+                <p>To summarize, caching is a way of storing information close at hand in order to save time. Caches provide a limited storage space that, if the cache "hits" (finds what it is looking for), provides information much faster than making a remote call. When the cache "misses" (cannot find what it was looking for), it retrieves the data in the usual way and adds the information to the cache. The cache organizes information as key-value pairs. The most challenging part of using a cache is designing and determining the structure of these key-value pairs so that they are effective and space efficient. Overall, caches reduce time and cost by reducing the number of operations our program performs.</p>
+
+                <h3>Next up</h3>
+                <p>In the next section, we will learn more about the restrictions that affect caches and how that impacts the efficiency of the cache.</p>
             </div>
             
             <div class="content-box">
                 <h2>Simple Cache Implementation</h2>
-                
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Simple Cache Implementation" src="https://fast.wistia.net/embed/iframe/jxudv5jyh4" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                </div>
+
+                <h3>Hits and misses</h3>
+                <p>In the last reading, we described what happens under the hood of a cache. Now let's talk more about the key metric in designing and optimizing you cache: hits and misses. Just to review, a hit is when we request an item that is already cached. When we hit, the cache can quickly return the item from local memory. A miss is when we request an item that is not in the cache. When we miss, we use the regular, slower process to retrieve the data, and add it to the cache so the next request will hit.</p>
+
+                <p>To evaluate the effectiveness of your cache, you typically track the hit-rate and its complement, the miss-rate. The hit-rate refers to the percentage of requests that were hits. So, if we made 100 requests and 90 of them were hits, then the hit-rate would be 90%.</p>
+
+                <p>On the other hand, the miss-rate is the percentage requests that were misses. So, in the same example, if we had 90 hits out of 100 requests then we must have had 10 misses (100 - 90 = 10). The 10 misses out of 100 requests gives us a miss-rate of 10%.</p>
+
+                <p>Caching is most helpful when the system requests the same information repeatedly. You benefit from the cache only if you request the same data again and reuse the previous result. High miss rates indicate that many requests make the expensive request and add overhead to check and update the cache. Programs with high miss rates may improve their cache performance by adjusting the cache's configuration. Below we will talk about cache configuration and its effects on performance.</p>
+
+                <h3>Cache Performance</h3>
+                <p>In the previous reading, we mentioned that you should be aware of how much memory your cache uses and what it stores. Balance the memory your cache uses with the desire for a high hit-rate to maximize the performance benefits of the cache.</p>
+
+                <h3>Eviction</h3>
+                <p>As your cache fills up with data, you will eventually run out of space for new data. When the cache reaches its space limits, it makes room for new elements by removing data through a process called eviction, which is depicted in Figure 1.</p>
+
+                <div class="image-container" style="background-color: #f0f0f0;">
+                    <img src="https://tk-assets.lambdaschool.com/c3b533b7-c680-4f57-b945-778c7c47f599_image1.png" alt="Figure 1" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                </div>
+                <p>Figure 1: If our cache is full when we add new data, it evicts some data.</p>
+
+                <p>With over 100 million Prime subscribers and millions of daily transactions, our Shared Shipping Service cache can fill all available memory. How do we limit how much memory the cache should use? How does it determine which data to evict? Let's take a look!</p>
+
+                <h3>Evicting based on memory usage</h3>
+                <p>The computer running your program has a limited amount of RAM. Memory varies from machine to machine, and everything running on that machine shares it. Guava defaults to using all available RAM as the maximum cache size. Amazon devs always set an upper limit on the amount of memory the cache can use.</p>
+
+                <p>The maximumSize() method in the CacheBuilder sets the maximum amount of memory the cache will consume, in number of entries. Let's see how that fits into our constructor in our CachingAddressDAO:</p>
+
+                <pre><code>public CachingAddressDAO(ShippingAddressDAO addressDAO) {
+    addressCache = CacheBuilder.newBuilder()
+            .maximumSize(1000000)
+            .build(CacheLoader.from(addressDAO::getAddress));
+}</code></pre>
+
+                <p>This is the same constructor we showed in the previous reading with the addition of one line: .maximumSize(1000000). In this example, we allow the cache to contain up to 1,000,000 entries. It does not specify an absolute amount of memory. Guava could still end up using all of the available RAM on the computer, depending on the size of the cache entries.</p>
+
+                <p>When the cache already contains the maximum number of entries, and we request a new key, the cache evicts the least recentely used entry to make space.</p>
+
+                <p>Since our service returns a List&lt;ShippingAddress&gt; object, it's hard to accurately estimate how large each value in the cache will be. As a part of designing our cache, we measured the ShippingAddress objects returned in a single day. We found on average that the size of the address list, combined with the key, is 2KB. This would mean that the average size of our cache, once full, would be about 2GB, and our service must run on a machine with more RAM so that it can run other apps.</p>
+
+                <p>Let's see how this one-million-entry limit might work in production. If customers make one million requests on a nice, slow day, the cache could potentially hold every value requested that day. A "forgetful" customer who makes multiple orders on that day will have a fast experience, since the address request will hit the cache.</p>
+
+                <p>On the other hand, if we receive three million requests on an average day, we will see many more misses: our cache only holds one million records, so records would be evicted (about) a third of the way through the day (about 8 hours). If customers tend to make multiple orders within 8 hours, our cache will still hit; after that, our cache will probably miss, make the expensive call to Amazon Address Service, and evict some other data.</p>
+
+                <p>Amazon sees roughly 36 million orders on Black Friday. In that case, a cache size of one million would cause evictions in less than an hour. Our service will call Amazon Address Service almost as often as if it didn't have a cache.</p>
+
+                <p>As you design your cache, look for the sweet spot of optimization: a balance of memory use vs hit rate. Once you deploy your application, monitor the memory metrics of the application along with the hit/miss ratios of the cache. Adjust the configuration of the cache to better meet your application's needs in production. Reviewing these metrics helps your team identify when your application may need more powerful hardware with a larger cache in order to adequately serve peak times such as the holiday season. Alternatively, you may decide to refactor to reduce the size of entries, so more entries fit in the available memory.</p>
+
+                <h3>Expiring based on time</h3>
+                <p>We've talked about items getting evicted from the cache once it fills up. What if our cache never fills up? Well, we won't ever evict any values. This seems great for our hit rate, but what about staleness?</p>
+
+                <p>"Staleness" refers to data that is out of date and no longer valid. The data has changed on the remote source and now differs from what we have in our cache. In our address example, the addresses we have stored in the cache will become stale if a customer adds or deletes an address from their account. Our cache isn't getting any live updates about the changes, so it won't update or remove the stale data. (Note: cache invalidation is the very difficult process of trying to remove this stale data. We will discuss it in a later lesson).</p>
+
+                <p>We typically solve this issue by expiring data from the cache. Guava provides two methods in CacheBuilder that allow us to define when to mark items as "too old" so that they will no longer be returned to customers. When this happens, Guava will re-load the information from the remote data store even on a cache hit. In caching terminology, the maximum "age" is called Time To Live (TTL), as in "the item will live in the cache for this amount of time."</p>
+
+                <p>Before we dive into the Guava methods, let's look at a couple of examples that illustrate how the target TTL for your cache can vary depending on the data you're putting in the cache.</p>
+
+                <p>To start with, consider a cache that holds books from a library database. The details of those books (author, ISBN, shelf, etc) probably don't change much if at all. If we cache those book details, we could set the TTL to a long duration, weeks perhaps.</p>
+
+                <p>On the other hand, if we cache the most popular items on Amazon, we expect the list to change frequently based on user trends. We might set our TTL to ten minutes.</p>
+
+                <p>From these examples, you can see that the amount of time an item lives in the cache depends on your application's need for fresh data. This is again a tradeoff, between hit rate and staleness.</p>
+
+                <p>CacheBuilder provides expireAfterAccess() and expireAfterWrite() to configure TTL. Both are only used when instantiating your cache, just like maximumSize(). Note that these two methods are similar and that it would not be effective to use both.</p>
+
+                <pre><code>public CachingAddressDAO(ShippingAddressDAO addressDAO) {
+    addressCache = CacheBuilder.newBuilder()
+            .maximumSize(1000000)
+            .expireAfterAccess(6, TimeUnit.HOURS)
+            .build(CacheLoader.from(addressDAO::getAddresses));
+}</code></pre>
+
+                <p>The first method we're going to look at is expireAfterAccess(). Going back to our CachingAddressDAO in our Shared Shipping service, you can see that in addition to the maximumSize() method, we've added the expireAfterAccess() method.</p>
+
+                <pre><code>.expireAfterAccess(6, TimeUnit.HOURS)</code></pre>
+
+                <p>This method specifies the amount of time that can elapse after the last time an item in the cache has been accessed before it's invalidated. In this case, "access" refers to writing to the cache and reading from the cache. As long as callers request the item more often than that TTL, it won't be invalidated. In our example, we decided that if any addresses haven't been used at all in the last six hours they should be invalidated.</p>
+
+                <pre><code>public CachingAddressDAO(ShippingAddressDAO addressDAO) {
+    addressCache = CacheBuilder.newBuilder()
+            .maximumSize(1000000)
+            .expireAfterWrite(6, TimeUnit.HOURS)
+            .build(CacheLoader.from(addressDAO::getAddresses));
+}</code></pre>
+
+                <p>The other method to configure TTL is expireAfterWrite(). As you can see, its syntax looks exactly like expireAfterAccess(). Its behavior differs slightly: expireAfterWrite invalidates an item in the cache a specified amount of time after it was written to the cache regardless of how recently it was read.</p>
+
+                <p>Data that remains relatively static, such as product descriptions, addresses, or other informational type records can generally have a longer TTL. By the same token, data that has a high likelihood of change, such as product ratings, prices, or popularity should have a lower TTL to ensure we're not presenting stale data to our customers. Regardless of how static you think it would be, Amazon's best practice is to expire data after no more than 24 hours.</p>
+
+                <p>If data has a low chance of becoming stale, or if data has a minimal impact when stale, then we can maximize our hit-ratio by keeping records that have been used recently in the cache in case they are needed again. This suggests that we should use the expireAfterAccess method with a nice long duration.</p>
+
+                <p>Data that changes frequently, or which is more sensitive to staleness, benefits more from expireAfterWrite. When we know our data has the potential to have a negative impact when it becomes stale, or that it might become stale more often, we shouldn't make the problem worse by continuing to extend its life each time someone requests it.</p>
+
+                <h3>Eviction from the Amazon Shared Shipping service</h3>
+                <p>To bring this all together, let's see how we would configure the cache for our Amazon Shared Shipping service with the new information we have. We'll think about the data we cache in terms of staleness and potential requests. Let's consider what we know:</p>
+
+                <ul>
+                    <li>We've already established that Amazon averages three million transactions per day.</li>
+                    <li>Customer addresses change, but not very frequently.</li>
+                    <li>It's unlikely a customer would change their address after making a purchase on the same day.</li>
+                    <li>If an address does change, it could mean a customer's order may see a delay waiting for a shared shipping opportunity. For example, Amazon offers you shared shipping because you selected an address that is shared with your household member Ethan. However, Ethan has just removed that address from his account. Now my order is waiting for the shared shipping window to expire, when there is no possibility of sharing a shipment with Ethan anymore.</li>
+                    <li>The average size (in memory) for the list of addresses for one customer is 2KB.</li>
+                    <li>A cache size of 1000000 records would take up 2GB of memory.</li>
+                    <li>A cache size of 2000000 records would take up 4GB of memory.</li>
+                    <li>A cache size of 3000000 records would take up 6GB of memory.</li>
+                </ul>
+
+                <p>Given how important updated addresses are, we decide to expire them every 12 hours no matter what. This would have us use the expireAfterWrite method. If we're expiring every 12 hours, and we have 3 million requests on average in 24 hours, our cache would fill with 1.5 million entries. We decide to cache two million records to give us some room to handle heavier shopping days. With this in mind, our final code for creating our cache would look like this:</p>
+
+                <pre><code>public CachingAddressDAO(ShippingAddressDAO addressDAO) {
+    addressCache = CacheBuilder.newBuilder()
+            .maximumSize(2000000)
+            .expireAfterWrite(12, TimeUnit.HOURS)
+            .build(CacheLoader.from(addressDAO::getAddresses));
+}</code></pre>
+
+                <p>Once our application has been deployed, we need to monitor the memory usage metrics as well as the hit-rate and miss-rate of our cache in order to fine tune our configuration. We'll learn more about how to do that in a future lesson.</p>
+
+                <p>As you can see, there are some tradeoffs we need to make when configuring our cache. The more data your cache contains, the higher the hit-rate. This can come at a cost of using too much memory. The longer your TTL, the higher the hit-rate, but this must be balanced against the cost of returning potentially stale data.</p>
+
+                <h3>Final eviction thoughts</h3>
+                <p>One final piece of advice to keep in mind is that anytime a new build is deployed to production our service will restart and our cache will reset, because the cache resides within the memory allocated to the Java process running our application. If we shut down our application, it clears the memory allocated for that instance, which includes the cache, and it allocates new memory for the new instance when it starts. Some teams within Amazon deploy builds every hour, every day, or as needed. In most cases this just further reinforces the idea that a TTL longer than 24 hours is unnecessary. A shorter TTL could make more sense, depending on your team's deployment schedule.</p>
+
+                <p>If your application is deployed every hour, you'll end up seeing miss-ratios that are always high since the cache isn't in memory long enough to generate many hits. In these situations, there are ways to "warm up" the cache by pre-populating it with data from a previous run. The details of how and when to do this are out of scope for this lesson.</p>
+
+                <p>Remember, the TTL of a cached record and the overall cache size should be determined by analyzing how often the cached data could change, how many requests you expect to handle, and how large each record being stored in the cache might be. When designing a cache for your application, it's good to work with senior developers to make the best decision regarding TTL and size in order to maximize the efficiency of the cache and minimize the miss-rate.</p>
+
+                <h3>Cache cleanup</h3>
+                <p>Once you have your TTL and maximum size set, Guava handles the eviction on its own during reads and writes. It's possible to manually trigger the cache to perform a cleanup using the cleanup() method on LoadingCache but there's no real reason you should need to do this.</p>
                 <p>Let's look at a basic in-memory cache implementation in Java:</p>
                 
                 <pre><code>public class SimpleCache&lt;K, V&gt; {
@@ -163,6 +532,9 @@
 }</code></pre>
                 
                 <p>This implementation includes TTL functionality and uses <code>ConcurrentHashMap</code> for thread safety. However, it doesn't include more advanced features like eviction policies based on size or access frequency.</p>
+
+                <h3>Conclusion</h3>
+                <p>As we've seen, caching is a great tool to help reduce the number of expensive operations and speed up response time in our applications. These types of changes can lead to reduced costs and increased customer satisfaction down the road. You can't just slap a cache together with default settings, though, or Guava will eat up all the memory available. We've discussed the considerations involved in determining the cache size and the TTL for our cached items. We've also looked at how to design a good key-value structure for your cache as well as specific implementation techniques. You should feel more comfortable with using caching in your development while working with senior developers to nail down the best performance settings.</p>
             </div>
             
             <div class="content-box">
@@ -397,6 +769,20 @@ System.out.println("Eviction count: " + evictionCount);</code></pre>
                     <li>Use profiling tools to identify cache-related bottlenecks</li>
                 </ul>
             </div>
+
+            <div class="content-box">
+                <h2>Guided Project</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Guided Project" src="https://fast.wistia.net/embed/iframe/z4cn87u2g2" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                </div>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-in-memory-caching-amazon-gaming-membership" target="_blank" rel="noopener" class="resource-link">
+                        Amazon Gaming Membership
+                    </a>
+                </div>
+            </div>
             
             <section class="resource-section">
                 <h2 class="resource-section-title">Additional Resources</h2>
@@ -409,9 +795,6 @@ System.out.println("Eviction count: " + evictionCount);</code></pre>
                     </a>
                     <a href="https://www.ehcache.org/" target="_blank" rel="noopener" class="resource-link">
                         Ehcache Documentation
-                    </a>
-                    <a href="https://www.baeldung.com/java-caching-patterns" target="_blank" rel="noopener" class="resource-link">
-                        Java Caching Patterns and Implementations
                     </a>
                 </div>
             </section>

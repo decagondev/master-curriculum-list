@@ -31,66 +31,461 @@
         <section class="welcome">
             <h1>Module 2: Metrics</h1>
             
-            <div class="video-container">
-                <iframe class="wistia_embed" title="AWS CloudWatch Metrics" src="https://fast.wistia.net/embed/iframe/2rv3rn75a2" allow="autoplay; fullscreen" allowfullscreen></iframe>
-            </div>
-            
             <div class="content-box">
                 <h2>Learning Objectives</h2>
                 <ul>
-                    <li>Understand AWS CloudWatch metrics and their importance</li>
-                    <li>Learn how to use AWS CloudWatch to monitor application performance</li>
-                    <li>Implement custom metrics in Java applications</li>
-                    <li>Analyze metrics data to identify performance issues and bottlenecks</li>
-                    <li>Configure CloudWatch alarms based on metric thresholds</li>
                     <li>Describe the lifecycle of a metric value from emission to expiration</li>
-                    <li>Implement methods that emit values for metrics and zeros for count metrics</li>
-                    <li>Locate and analyze metrics in CloudWatch emitted to defined namespaces</li>
-                    <li>Examine which aggregation period and statistics to use for specific scenarios</li>
-                    <li>Identify percentile values (p50, p90, p99) in datasets using CloudWatch</li>
-                    <li>Design and implement custom metrics to satisfy business requirements</li>
+                    <li>Implement a method that emits values for a metric</li>
+                    <li>Implement a method that emits zeros for a given count metric to enable the calculation of statistics</li>
+                    <li>Locate a metric in CloudWatch emitted to a defined metric namespace by a specific service</li>
+                    <li>Examine which aggregation period to use in CloudWatch for a given scenario</li>
+                    <li>Examine which statistic out of min, max, sum, avg, n to use in CloudWatch to answer a given question</li>
+                    <li>Manually identify the p-th percentile value of a small dataset</li>
+                    <li>Use CloudWatch to identify the p-th percentile value of a large dataset</li>
+                    <li>Design and implement a custom metric to satisfy a given business requirement</li>
+                    <li>Explain a way in which metrics are used in software development</li>
+                    <li>Explain the CloudWatch concept: namespace</li>
+                    <li>Explain the CloudWatch concept: metric</li>
+                    <li>Explain the CloudWatch concept: dimension</li>
+                    <li>Explain the CloudWatch concept: statistics</li>
+                    <li>Explain the CloudWatch concept: period</li>
+                    <li>Explain the CloudWatch concept: latency</li>
+                    <li>Explain the CloudWatch concept: alarm</li>
+                    <li>Explain the CloudWatch concept: aggregation period</li>
+                    <li>Explain the metrics percentile concept: percentiles</li>
+                    <li>Explain the metrics percentile concepts: p50, p90, p99</li>
+                    <li>Participate in a metric design process</li>
                 </ul>
             </div>
-            
-            <section class="section">
-                <h2 class="section-title">Introduction to Metrics</h2>
-                <div class="video-container">
-                    <iframe class="wistia_embed" title="Introduction to Databases" src="https://fast.wistia.net/embed/iframe/2rv3rn75a2" allow="autoplay; fullscreen" allowfullscreen></iframe>
-                </div>
-                <p>This video introduces the concept of metrics in cloud applications and explains why they are essential for monitoring and maintaining application health.</p>
+
+            <section class="content-box">
+                <h2 class="section-title">Key Topics</h2>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Understanding CloudWatch Concepts</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>AWS CloudWatch is a monitoring and observability service that provides data and actionable insights for your applications. Key CloudWatch concepts include:</p>
-                        <ul>
-                            <li><strong>Namespace</strong>: A container for metrics that share a common purpose or source</li>
-                            <li><strong>Metric</strong>: A time-ordered set of data points representing values being measured</li>
-                            <li><strong>Dimension</strong>: A name/value pair that uniquely identifies a metric</li>
-                            <li><strong>Statistics</strong>: Aggregated data points for a specified period (sum, average, min, max, count)</li>
-                            <li><strong>Period</strong>: The time interval over which statistics are applied</li>
-                            <li><strong>Alarm</strong>: A resource that watches a single metric and performs actions based on the metric's value</li>
-                        </ul>
-                    </div>
-                </div>
+                <ul>
+                    <li>AWS CloudWatch service and its features</li>
+                    <li>Standard vs. custom metrics</li>
+                    <li>Implementing metrics collection in Java applications</li>
+                    <li>Setting up CloudWatch dashboards</li>
+                    <li>Creating and managing CloudWatch alarms</li>
+                    <li>Correlation between metrics and application performance</li>
+                </ul>
+            </section>
+            
+            <section class="content-box">
+                <h2 class="section-title">Introduction to Metrics and CloudWatch</h2>
+                
+                <h3>Understanding CloudWatch Concepts</h3>
+                
+                <p>AWS CloudWatch is a monitoring and observability service that provides data and actionable insights for your applications. Key CloudWatch concepts include:</p>
+                <ul>
+                    <li><strong>Namespace</strong>: A container for metrics that share a common purpose or source</li>
+                    <li><strong>Metric</strong>: A time-ordered set of data points representing values being measured</li>
+                    <li><strong>Dimension</strong>: A name/value pair that uniquely identifies a metric</li>
+                    <li><strong>Statistics</strong>: Aggregated data points for a specified period (sum, average, min, max, count)</li>
+                    <li><strong>Period</strong>: The time interval over which statistics are applied</li>
+                    <li><strong>Alarm</strong>: A resource that watches a single metric and performs actions based on the metric's value</li>
+                </ul>
+
+                <h3>Metrics</h3>
+                <p>Your code has been written, reviewed, deployed, and tested. It is now running in production. Your job is done, right? Not quite. Once code is moved to production, there is still work to be done monitoring the application as well as reacting to busy and slow periods. There is also a need to collect data to help debug issues along with using data to help make business and operations decisions. Logs are one way to track what is going on in production, but is there an easier, more visual way to track how your code is performing? Yes! This is where metrics come in.</p>
+
+                <p>In programming, metrics are just measurement values that are collected over time. A business might track particular resource usage. At another point, they may wish to track the performance of specific pieces of code. Or, there may be something completely custom to track that can help the business make better decisions. At Amazon, Amazon Web Services (AWS) CloudWatch is used to collect and view metrics. This reading will introduce you to CloudWatch and metrics concepts so that you can use them in your own projects.</p>
+
+                <h3>AWS CloudWatch</h3>
+                <p>As mentioned in the introduction, AWS CloudWatch is a metrics collection and monitoring service for use with applications running on AWS. This section outlines the components and concepts needed to understand how to use CloudWatch.</p>
+
+                <h4>CloudWatch Components</h4>
+                <p>There are three main components for accessing and using CloudWatch.</p>
+
+                <h5>Amazon CloudWatch Console</h5>
+                <p>The CloudWatch Console is a browser-based interface for viewing, searching, and managing data in CloudWatch. The CloudWatch Console can be customized to focus in on data you consider most important and can even be used to configure alarms that notify you if thresholds are breached.</p>
+
+                <h5>CloudWatch API</h5>
+                <p>The CloudWatch API allows developers to publish, monitor, and manage metrics in CloudWatch. The API is available in a variety of languages and frameworks including Java, JavaScript, PHP, Python, Ruby, and Windows .NET.</p>
+
+                <h5>AWS Command Line Interface</h5>
+                <p>In addition to its many other functions, the AWS Command Line Interface (CLI) also includes the ability to access CloudWatch. The CLI can be used to push metrics to CloudWatch and pull metrics data from CloudWatch.</p>
+
+                <h4>Built-in AWS Metrics</h4>
+                <p>Many Amazon Services automatically publish metrics to CloudWatch. They show up in CloudWatch with namespaces that begin with "AWS/" and end with the name of the service. For example, Amazon DynamoDB metrics are stored under the namespace "AWS/DynamoDB". CloudWatch namespaces are covered later in this reading. For now, just think of it as a way to organize the data coming into CloudWatch from a variety of sources.</p>
+
+                <h4>Custom Metrics and the CloudWatch API</h4>
+                <p>In addition to built-in metrics, you can publish custom metrics to CloudWatch. These can track whatever you need to track in your project. There are some differences in how long CloudWatch holds on to custom metric data, but for the most part custom metrics are treated the same as any other metric data in CloudWatch. Most often, you'll use the CloudWatch API in your code to publish your custom metrics.</p>
+
+                <h3>CloudWatch Concepts</h3>
+                <p>To understand CloudWatch and how to use it effectively, it's important to understand the terminology and concepts used within CloudWatch.</p>
+
+                <h4>Namespace</h4>
+                <p>Namespaces can be thought of as a container for metrics data in CloudWatch. The namespace is usually just the name of a service or application. As mentioned earlier in this reading, built-in AWS namespaces all begin with "AWS/" and end with a unique service name, such as "AWS/EC2" for Amazon EC2. When you create custom metrics, avoid starting your metrics names with "AWS/". The only other restrictions are that a namespace must be fewer than 256 characters and may contain numbers, letters (uppercase and lowercase), and the special characters period (.), hyphen (-), underscore (_), forward slash (/), hash (#), and colon (:).</p>
+
+                <h4>Metric</h4>
+                <p>A metric is the fundamental data structure in CloudWatch. A metric represents a single measurement made at a single time. By collecting multiple metrics over a time period, comparisons can be made about the state of an application over time. There are two types of data in a single metric. The first is identifying information. A metric is identified by a namespace, zero to ten dimensions (these are explained below), and a name. A metric name identifies what is being measured, for example, ErrorCount or Latency. The second type of data in a metric is the actual measurement data. The data within the metric includes a timestamp, a value, and an optional unit of measure. The unit is used to give context to the metric. For example, if measuring response times, are the units of the metric seconds, milliseconds, or microseconds? CloudWatch provides a number of allowed values for a unit. If none of them fit the metric, the default value is "None". While CloudWatch does not use the unit itself, it does provide additional information to any person or application reading the data.</p>
+
+                <p>Metrics are locked to the region they are created in and cannot be deleted. However, they expire after 15 months. In addition, metric data may be published with timestamps up to two weeks in the past and up to two hours in the future.</p>
+
+                <h4>Dimension</h4>
+                <p>A dimension is just a name and value pair. Dimensions are used to further identify metric data within a namespace and metric name. For example, if you have a service running on multiple servers, you may want to keep track of which server your metric data is coming from. In this example, you could create a dimension named "server" with the server name as the value, such as "Test" or "Production". Common dimensions used at Amazon include stage (to indicate which deployment stage the data is coming from), country (the country of origin for the data), and operationName (to separate metrics measuring the same thing across different operations in a service).</p>
+
+                <p>Below is an example of some error metrics with different dimensions that a service could have in CloudWatch. Here we have a dimension named Stage with values of Gamma and Production, which we use to represent metrics for the different deployment stages of our service. We also have a dimension named Marketplace with values of US, CA, and MX to represent the metrics for the US, Canada, and Mexico marketplaces. Because we have defined separate dimensions for Stage and Marketplace, you can see that we have separate Gamma and Production metrics for each of the different marketplaces.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/ff7e3f34-db50-4fe0-9bce-65391d4aa548_image1.png" alt="Figure 1" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+
+                <p>Figure 1: Examples of dimensions for metrics on CloudWatch on CloudWatch. Here the Kindle Publishing Service has the Stage and Marketplace dimensions to distinguish metrics on the various deployment stages and country marketplaces.</p>
+
+                <h4>Statistics</h4>
+                <p>CloudWatch aggregates data over a time period into statistics. These statistics describe the data including the minimum, maximum, sum, average, sample count, and percentiles. Percentile data can be retrieved with accuracy up to two decimal places (for example, pNN.NN). See the table below for a brief description of each of the available statistics. Note that the set of values refers to all the values over a given time period.</p>
+
+                <table>
+                    <tr>
+                        <th>Statistic</th>
+                        <th>Definition</th>
+                    </tr>
+                    <tr>
+                        <td>Minimum</td>
+                        <td>The lowest value in a set of values.</td>
+                    </tr>
+                    <tr>
+                        <td>Maximum</td>
+                        <td>The highest value in a set of values.</td>
+                    </tr>
+                    <tr>
+                        <td>Sum</td>
+                        <td>The total of all the values added together.</td>
+                    </tr>
+                    <tr>
+                        <td>Sample Count</td>
+                        <td>The number of values in a set.</td>
+                    </tr>
+                    <tr>
+                        <td>Average</td>
+                        <td>The sum divided by the sample count.</td>
+                    </tr>
+                    <tr>
+                        <td>Percentile (pNN.NN)</td>
+                        <td>A value that is a higher than a given percentage of the rest of the values and lower than the rest.</td>
+                    </tr>
+                </table>
+
+                <p>Instead of adding individual metric values to CloudWatch, you may also publish pre-calculated statistics using a sample count, minimum, maximum, and sum.</p>
+
+                <p>Statistics can be retrieved from CloudWatch instead of metric data. When retrieving statistics, define a period, a start time, and an end time. When doing this, be aware that built-in metrics behave differently than custom metric data. For some built-in AWS services, CloudWatch aggregates data into statistics across different dimensions. However, CloudWatch does not do this for custom metrics. For custom data, statistics are only retrieved using the exact matches for the dimensions.</p>
+
+                <h4>Period</h4>
+                <p>A period in CloudWatch is the length of time associated with a statistic. In CloudWatch, you can view data over a time window and display that data grouped into aggregation periods. The time window for your data tells CloudWatch how much data to show. For example, you can choose to view one hour of data, one day of data, or even one month of data. Aggregation periods indicate how small or large a time period each data point represents. Think about looking at how much traffic a service receives is by counting requests. You may want to look at the number of requests per hour over the last day. In this case, you would set a time window of 1 day and an aggregation period of 1 hour. When requesting data from CloudWatch, be sure to choose an appropriate time window along with an appropriate aggregation period.</p>
+
+                <p>Below is an example metric graph on CloudWatch measuring a service's request count with a time window of 1 day and an aggregation period of 1 hour. Each dot on the graph represents 1 hour of data. You can see that this service gets up to 1.6 million requests per hour. The time window is configured at the top of the graph (the 1d in blue represents 1 day). The aggregation period configured at the bottom, under the Period column.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/4628566b-2fa7-49f6-ae5a-c20930f997fe_image2.png" alt="Figure 2" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+
+                <p>Figure 2: A metric graph on CloudWatch measuring a service's request count with a time window of 1 day and an aggregation period of 1 hour.</p>
+
+                <h4>Percentiles</h4>
+                <p>A percentile shows where a value is relative to the rest of the values in a set. A common use of percentiles is to demonstrate how students perform compared to their peers. For example, if a student scored 680 points on a standardized test, and they are told that they are at the 85th percentile in their state. This means their score of 680 is higher than 85 percent of the students in their state. It also means that 15 percent of the students in the state scored 680 or higher. CloudWatch can return percentiles for metrics with two decimal places of accuracy (pNN.NN). There are three percentiles that tend to be used more often than others though. These are p50, p90, and p99.</p>
+
+                <h5>Uses of p50</h5>
+                <p>A percentile of p50 is the median of a set of values. A median is the middle value out of an ordered set of values. Note that this is not the same as the average which must be computed by adding all the values together and dividing by the number of values in the set. A median only shows that half of the values are below this value and half at or above. Refer to Figure 1 below, which shows how to calculate the median compared to the average for a set of data.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/03803253-d002-4890-acf9-514b6a515570_image3.png" alt="Figure 3" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                <p>Figure 3: A comparison of p50 and average for a small set of values.</p>
+
+                <h5>Reducing skewed stats with p90 and p99</h5>
+                <p>The other two commonly used percentiles, p90 and p99, are used to see just how far away from the median extra high values are. Often metrics measure things like response times and how many requests come in at one time. Data sets like this often include some number of extremely high values of noise that can skew the statistics. When talking about these kinds of situations, it is helpful to reference what the typical situation looks like. In this case, you want to remove the extremely high values from consideration as they represent the extraordinary cases. Percentiles like p90 and p99 do just that. The p90 is the value which 90 percent of all values fall under. If you want to make sure an even higher percentage is under a given threshold, p99 will show what value 99 percent of the values are under. The remaining 1 percent could be caused by external factors, noise, or even incorrect measurements.</p>
+
+                <h4>Latency</h4>
+                <p>When monitoring website performance, you usually want to know how long each request takes to generate a response. This is known as latency. However, latency can be affected by more than just your service. Network issues occasionally make some latency measurements fall outside of the normal range of response times. In order to account for this when looking at the maximum latency times, it's helpful to compare it to the p90 and p99 values. The p90 value for latency over a time period tells you that 90 percent of your requests over that period fell under that time. The p99 says the same for 99 percent of your requests. If your p99 is well within your predefined limits, then you may be able to attribute the remaining 1 percent to external issues, such as the network. If your p99 is over the limit, there may be something problematic happening that needs investigation. If your p90 value is over the limit, then even more requests are seeing slow times and could indicate even more widespread problems that need to be resolved.</p>
+
+                <h4>Alarms</h4>
+                <p>While not covered here, CloudWatch includes alarms that can take actions or alert people if thresholds are exceeded. Alarms are just one way that the metrics can be put to use by taking advantage of all the capabilities built into CloudWatch.</p>
+
+                <h3>Metric lifecycle</h3>
+                <p>Like everything else in software development, metrics have a lifecycle as depicted in Figure 2. Knowing the lifecycle can help determine how to collect and store metrics, how often to collect metrics, and what metrics may already be available for a given use case.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/ca6229c2-a792-4516-9e3d-5b557c2246b8_image4.png" alt="Figure 4" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                <p>Figure 4: The CloudWatch metric lifecycle</p>
+
+                <h4>Stages</h4>
+                <p>Built-in metrics are emitted from AWS Services as soon as those services are used. Custom metrics must have publishing code implemented and deployed before metrics will begin showing up in CloudWatch. A metric's lifecycle begins in design. Usually business or operations need to track some aspect of an application. A developer writes code to emit the metric and commits it to the code repository. However, this code must be deployed before it can start emitting metric data.</p>
+
+                <p>The deployment pipeline takes in the developer's changes, builds the application along with other developers' updates, and deploys the code to a test environment. At this point, data can be emitted. A metric typically has a dimension specifying whether the data is coming from a test environment or from production. These keep the data separate, but still allows for testing to verify that the metric is being emitted properly. It also allows the application to be tested against limits that the metrics may be measuring.</p>
+
+                <p>CloudWatch store metrics for a predetermined amount of time before aggregating it. Over time, the minimum period available to search that aggregated data increases until the data is 15 months old. At this point, CloudWatch will clear the expired data. However, anything newer than 15 months is still available.</p>
+
+                <h4>Aggregation Periods</h4>
+                <p>CloudWatch aggregates data when it is published. As time passes, the minimum available aggregation period grows. For example, if you are viewing data with an aggregation period under 1 minute, that data is available for 3 hours. After that, it can be retrieved as aggregated data with a period as small as 60 seconds. Once the data is 15 days old, it can only be retrieved with an aggregation period of 300 seconds (5 minutes). Refer to the table below which shows how long the various aggregation periods are available.</p>
+
+                <table>
+                    <tr>
+                        <th>Aggregation Period</th>
+                        <th>Availability</th>
+                    </tr>
+                    <tr>
+                        <td>< 60 seconds</td>
+                        <td>3 hours</td>
+                    </tr>
+                    <tr>
+                        <td>60 seconds (1 minute)</td>
+                        <td>15 days</td>
+                    </tr>
+                    <tr>
+                        <td>300 seconds (5 minutes)</td>
+                        <td>63 days</td>
+                    </tr>
+                    <tr>
+                        <td>3600 seconds (1 hour)</td>
+                        <td>455 days (15 months)</td>
+                    </tr>
+                </table>
+
+                <h4>Built-in vs custom metric lifecycles</h4>
+                <p>The lifecycles of built-in and custom metrics have a few differences. Some have been mentioned above, but let's review them again. First, only some built-in metrics can be aggregated across dimensions. For custom metrics, the dimensions in a search must match the metric data exactly. Second, only custom metric data with a storage resolution of 1 second supports periods under a minute. Third, custom metrics must be coded and deployed before they start emitting to CloudWatch. Built-in metrics will publish data to CloudWatch when the corresponding AWS Service is used.</p>
+
+                <h3>Summary</h3>
+                <p>This reading covered how metrics allow you to monitor performance of your code and AWS Services. You learned that CloudWatch is Amazon's metric management service. You also read about terminology and concepts used in CloudWatch, including metrics, aggregations, statistics, periods, and percentiles. In future readings, you will learn about the CloudWatch console and how to create your own metrics in Java.</p>
             </section>
 
-            <section class="section">
-                <h2 class="section-title">CloudWatch Metrics Implementation</h2>
+            <section class="content-box">
+                <h2>The AWS CloudWatch Console</h2>
+
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Sprint 23 Metrics Video" src="https://fast.wistia.net/embed/iframe/2rv3rn75a2" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                    <iframe width="560" height="315" src="https://fast.wistia.net/embed/iframe/iwslbdvo18" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
-                <p>In this video, you'll learn how to implement and use CloudWatch metrics in your Java applications, with practical examples and best practices.</p>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Creating Custom Metrics</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Here's a basic example of creating a custom metric in Java using the AWS SDK:</p>
-                        <pre><code>// Create CloudWatch client
+
+                <h3>What is the CloudWatch console?</h3>
+                <p>The Amazon Web Services (AWS) CloudWatch console is a web interface to view and manage the data in CloudWatch. Using the console, you can create and view dashboards with important metric data. You can also search and filter the metric data. While not covered here, the CloudWatch console also allows you to create alarms to react when metrics exceed thresholds.</p>
+
+                <h3>The console homepage</h3>
+                <p>You can access the CloudWatch console by first logging into an AWS account through the <a href="https://access.amazon.com/aws/accounts" target="_blank" rel="noopener noreferrer" >AWS console</a>. Then select CloudWatch from the Services menu to be dropped at the CloudWatch console homepage. The homepage displays some basic snapshot information for services to which you have access. An example of the homepage is shown below in Figure 1. Note that your homepage may look different based on your customizations, what services you are accessing, and the version of the console you are using.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/5effcb2d-6b4a-4fe5-90e3-2fb933bc48fa_image1.png" alt="Figure 1" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+
+                <p>Figure 1: The AWS CloudWatch Console Homepage</p>
+
+                <h4>AWS Services</h4>
+                <p>The first thing presented on the homepage is a listing of AWS Services and the alarms that have been triggered by them. For this lesson we will ignore the alarms. You can click on the service names that appear on the homepage to jump to a dashboard for that service.</p>
+
+                <h4>Metrics</h4>
+                <p>In the toolbar on the left are links to specific types of data available in CloudWatch. One of the most important for searching for specific data is the Metric link. This will take you to an empty graph with a search and filter interface. From here, you can search for metrics and display them on the graph.</p>
+
+                <h3>Finding a metric by name</h3>
+                <p>This example walks through finding a specific metric for a server on the console.</p>
+
+                <ol>
+                    <li>Log into CloudWatch</li>
+                    <img src="https://tk-assets.lambdaschool.com/24498da2-e10c-4971-bdee-9656b9558488_image2.png" alt="Figure 2.1" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                    <p>Figure 2.1: Step 1, log into CloudWatch</p>
+
+                    <li>Click on Metrics</li>
+                    <img src="https://tk-assets.lambdaschool.com/237802a0-70f4-4393-b498-6e1eb209082d_image3.png" alt="Figure 2.2" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                    <p>Figure 2.2: Step 2, click on Metrics in toolbar</p>
+
+                    <li>Select the Namespace for your service</li>
+                    <img src="https://tk-assets.lambdaschool.com/2534dfe2-dfd5-48cc-8435-74df1f5ca3a3_image4.png" alt="Figure 2.3" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                    <p>Figure 2.3: Step 3, Select the namespace for the service</p>
+
+                    <li>Select the dimension to search by</li>
+                    <img src="https://tk-assets.lambdaschool.com/d8f3a0f4-2579-421f-a883-5e3fade4d477_image5.png" alt="Figure 2.4" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                    <p>Figure 2.4: Step 4, select the dimension to search by</p>
+
+                    <li>Check the metric name to view its data</li>
+                    <img src="https://tk-assets.lambdaschool.com/fb683ac1-b515-4d2c-94bc-649d094e9912_image6.png" alt="Figure 2.5" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                    <p>Figure 2.5: Step 5, check the metric you want to view</p>
+
+                    <li>View data, adjust range for graph, if needed</li>
+                    <img src="https://tk-assets.lambdaschool.com/80d5f48a-69d0-42dc-a73c-436a359cbe9e_image7.png" alt="Figure 2.6" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                    <p>Figure 2.6: Step 6, view data and adjust graph range</p>
+                </ol>
+
+                <h3>Accessing Statistical Data</h3>
+                <p>This example walks through getting specific percentiles for an aggregation period of a large metric data set and changing through the aggregation period.</p>
+
+                <ol>
+                    <li>Log into CloudWatch</li>
+                    <li>Click on Metrics</li>
+                    <li>Select the Namespace for your service</li>
+                    <li>Select the dimension to search by</li>
+                    <li>Select the metric name to view data for. For this example we are looking at the latency for AmazonReturnService. This graph below is currently showing the AmazonReturnService's p90 latency metric over the last 3 hours with a 5 minute aggregation period.</li>
+                </ol>
+
+                <img src="https://tk-assets.lambdaschool.com/98d3a8b1-12ff-4414-b6ab-132943743527_image8.png" alt="Figure 2.7" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                <p>Figure 2.7: Viewing p90 latency metric for AmazonReturnService.</p>
+
+                <p>We decide we want to see latency metric data aggregated by the minute instead of 5 minutes, so we update the period to be 1 minute.</p>
+                <img src="https://tk-assets.lambdaschool.com/d4734ecf-f0db-4b57-b637-c2ad6df273e0_image9.png" alt="Figure 2.8" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                <p>Figure 2.8: Changing the aggregation period to 1 minute.</p>
+
+                <p>Below is the updated graph with 1 minute metrics. You'll notice that there are points and spikes in the graph -- that's because since we're looking at metrics aggregated by 1 minute, there are more datapoints in this 3 hour time window than when the metrics were aggregated by 5 minute periods.</p>
+                <img src="https://tk-assets.lambdaschool.com/51c52dca-5757-4205-a240-92dc8753fb49_image10.png" alt="Figure 2.9" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                <p>Figure 2.9: Updated graph with 1 minute aggregation period.</p>
+
+                <p>Now we decide that we want to see the p99 latency instead of p90, so we update the statistic of the metric to p99.</p>
+                <img src="https://tk-assets.lambdaschool.com/7365285e-22f5-49cc-8453-23e39776fd1a_image11.png" alt="Figure 2.10" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                <p>Figure 2.10: Changing the statistic to p99.</p>
+
+                <p>Here is the updated graph with p99 metrics. Note that the values are higher than the p90 metrics, which makes sense since this represents the latency values that 99% of the requests fall under instead of 90%.</p>
+                <img src="https://tk-assets.lambdaschool.com/239ee9b7-3a07-4829-894c-7eca84827761_image12.png" alt="Figure 2.11" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                <p>Figure 2.11: Updated graph with p99 metric.</p>
+
+                <h3>Summary</h3>
+                <p>This reading covered how to log into the CloudWatch console and access metrics data. It also walked through finding data for a specific service and retrieving statistical data for a metric over a specific aggregation period. The next reading will cover publishing custom metrics in Java.</p>
+            </section>
+
+            <section class="content-box">
+                <h2>Creating Custom Metrics</h2>
+
+                <div class="video-container">
+                    <iframe width="560" height="315" src="https://fast.wistia.net/embed/iframe/dhpmmf5inv" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <h3>Publishing custom vs. built-in metrics</h3>
+                <p>While metric data for built-in AWS Services is automatically published to CloudWatch just by using a service, you must manually publish custom metrics if you want to track anything not covered by the AWS Services running your applications. This reading walks you through how to use the AWS CloudWatch API for Java to publish metric data to CloudWatch.</p>
+
+                <h3>How to emit a custom metric in Java</h3>
+                <p>As we learn about emitting metrics in Java, let's follow an example through from requirement to metric collection in CloudWatch.</p>
+
+                <h4>New business requirement</h4>
+                <p>Mary is a developer on the Amazon Alexa team. She just finished working on a project to create a new Amazon Alexa skill that will translate sentences into another language. Now that the application is running in production, the business owner told the team that he would like weekly reports of how long the service takes to translate. Mary has been tasked with designing and implementing the code to solve this request.</p>
+
+                <h4>Metric design process</h4>
+                <p>The first thing Mary does is write up the request from the business owner with her proposed solution. Having just worked on the application, Mary knows there is a class SpeechTranslator with a translateSentence method that acts as an entry point for the application. In her proposal, she suggests adding a method to this class to publish a metric to CloudWatch. All she has to do is add code at the beginning and end of the translateSentence method to measure and report the time it takes the service to process a translation. The application already has a namespace assigned to use in CloudWatch (EXAMPLE/ALEXA_TRANSLATOR). So, Mary just needs a name for this metric. She proposes a metric named "TRANSLATION_TIME" to hold this information.</p>
+
+                <p>Next, Mary schedules a design review for her proposal with the rest of the team. The business owner says it would be helpful to know the languages being translated and see metrics for each separate language pairing. Upon hearing this, Mary suggests using two dimensions to help separate the data, LANGUAGE_TO and LANGUAGE_FROM. This allows the same metric name to be used while keeping the different translations separate. The team and the business owner approve Mary's design.</p>
+
+                <p>Once it is approved, Mary gets to work writing the code, running a code review, and committing her code changes for beta testing. In beta testing, QA verifies that Mary's code is sending a zero-value metric each time the application fails to translate a request. They also test to ensure that this is the only situation that the application reports this metric.</p>
+
+                <h4>Implement the metric</h4>
+                <p>With her newly approved design, Mary sets out to add the necessary code to the SpeechTranslator class.</p>
+
+                <h5>Import the CloudWatch classes</h5>
+                <p>First, she adds imports for the CloudWatch classes she needs. These all live under the com.amazonaws.services.cloudwatch package.</p>
+
+                <pre><code>import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
+import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder;
+import com.amazonaws.services.cloudwatch.model.Dimension;
+import com.amazonaws.services.cloudwatch.model.MetricDatum;
+import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest;
+import com.amazonaws.services.cloudwatch.model.PutMetricDataResult;
+import com.amazonaws.services.cloudwatch.model.StandardUnit;</code></pre>
+
+                <h5>Initialize the CloudWatch client</h5>
+                <p>An AmazonCloudWatch object must be initialized before metrics can be sent to CloudWatch. Building these objects can be resource intensive. With this in mind, Mary sets this up to initialize once when the class is initialized. Then the class can reuse the same object whenever publishing metric data.</p>
+
+                <pre><code>final AmazonCloudWatch cw =
+  AmazonCloudWatchClientBuilder.defaultClient();</code></pre>
+
+                <h5>Build the request</h5>
+                <p>Mary also adds a method to the SpeechTranslator class that builds and sends the metric request to CloudWatch. She also uses the previously mentioned namespace, metric name, and dimensions. She also sets the units to milliseconds. This will add some context to the metric in CloudWatch for anyone looking at the numbers and wondering what the units are. Once the metric request is ready, it can be sent using the AmazonCloudWatch object. Note that a response is returned. Using this PutMetricDataResult object, metadata like the HTTP response code is used to verify that the metric data was successfully sent to CloudWatch.</p>
+
+                <pre><code>public void reportTranslationTime(double timeInMilliseconds, String languageFrom, string languageTo) {
+    Dimension dimension1 = new Dimension()
+      .withName("LANGUAGE_TO")
+      .withValue(languageTo);
+
+    Dimension dimension2 = new Dimension()
+      .withName("LANGUAGE_FROM")
+      .withValue(languageFrom);
+
+    MetricDatum datum = new MetricDatum()
+      .withMetricName("TRANSLATION_TIME")
+      .withUnit(StandardUnit.Milliseconds)
+      .withValue(timeInMilliseconds)
+      .withDimensions(dimension1, dimension2);
+
+    PutMetricDataRequest request = new PutMetricDataRequest()
+      .withNamespace("EXAMPLE/ALEXA_TRANSLATOR")
+      .withMetricData(datum);
+
+     PutMetricDataResult response = cw.putMetricData(request);
+}</code></pre>
+
+                <h5>Measuring the data</h5>
+                <p>One last thing Mary has to do is measure the time and add a call to her new reportTranslationTime method. She does this by taking the time at the start of the translateSentence method and just before the return, computes the elapsed time and calls reportTranslationTime.</p>
+
+                <pre><code>public String translateSentence(String sentence, String languageFrom, String languageTo) {
+  double startTime = System.currentTimeMillis();
+  String translatedSentence;
+
+  // Omitted implementation
+
+  double endTime = System.currentTimeMillis();
+  double timeInMilliseconds = endTime - startTime;
+  reportTranslationTime(timeInMilliseconds, languageTo, languageFrom);
+
+  return translatedSentence;
+}</code></pre>
+
+                <h4>Deploy the metric emitting code</h4>
+                <p>Now that Mary is finished implementing and has committed her code, she can sit back and admire her work, right? Not quite. The metric emitting code is in the codebase, but that codebase must go through the deployment process before it will start sending data to CloudWatch. However, Mary's code passes code review and is deployed through the test environments without incident. The day finally comes where this new metric code is deployed to production. Mary and the business sponsor can log into CloudWatch and verify data has been emitted and collected. Now that the code is working in production and the business sponsor is satisfied, Mary can finally give herself a pat on the back for a job well done. She was able to take a request from the business, turn that into a new metric design, implement that metric, and shepherd the code through the deployment process all the way up to a production release.</p>
+
+                <h4>Measuring counts</h4>
+                <p>The example above emitted a latency metric for the translateSentence operation. Another common metric to measure is an error count measuring the number of times an operation fails. Let's log an error metric for every time translateSentence encounters a TranslationException.</p>
+
+                <p>The team has already built a MetricsPublisher class which sets up a CloudWatch client and has an addMetric method that builds the common metric data for us, so we'll use this to log the count metric. Here's its implementation:</p>
+
+                <pre><code>/**
+ * Publishes the given metric to CloudWatch.
+ *
+ * @param metricName name of metric
+ * @param value value of metric
+ * @param unit unit of metric.
+ */
+public void addMetric(final String metricName, final double value, final StandardUnit unit) {
+
+    final MetricDatum datum = new MetricDatum()
+        .withMetricName(metricName)
+        .withUnit(unit)
+        .withValue(value)
+        .withDimensions(service, marketplace);
+
+    final PutMetricDataRequest request = new PutMetricDataRequest()
+        .withNamespace("EXAMPLE/ALEXA_TRANSLATOR")
+        .withMetricData(datum); 
+
+    cloudWatch.putMetricData(request);
+}</code></pre>
+
+                <p>Now, we'll call the addMetric method above to log the error count metric called "TranslateErrorCount" in translateSentence:</p>
+
+                <pre><code>public String translateSentence(String sentence, String languageFrom, String languageTo) {
+  long startTime = System.currentTimeMillis();
+  String translatedSentence = null;
+  try {
+      // Omitted implementation
+  } catch (TranslationException e) {
+     metricsPublisher.addMetric("TranslateErrorCount", 1, StandardUnit.Count);
+     // Omitted handling of exception
+  }
+  // Omitted translation time metric implementation
+  return translatedSentence;
+}</code></pre>
+
+                <p>In the code snippet above, we added the metricsPublisher.addMetric call in the catch block to log an error metric whenever translateSentence encounters a TranslationException. For the addMetric call, we passed in "TranslateErrorCount" for the metric name, 1 as the metric value (since the error count should increase by 1 every time we get the TranslationException), and StandardUnit.Count as the unit. If we deploy this code to production, we would be able to see the number of translateSentence errors by viewing our service's "TranslateErrorCount" metric on CloudWatch, using the "Sum" statistic.</p>
+
+                <h4>Emitting zeros</h4>
+                <p>With the above code change, we now can keep track of the number of errors from translateSentence. However, we commonly need to know the error rate: the percentage of calls that result in an error. Our current implementation of the "TranslateErrorCount" metric currently only logs an error metric when we see an exception in translateSentence. To measure the error rate, we also need to know when translateSentence doesn't throw an exception, i.e. when the operation completes successfully.</p>
+
+                <p>We track this using the same "TranslateErrorCount" metric as above, but we emit a zero when translateSentence returns successfully as well as emitting a one when it fails.</p>
+
+                <pre><code>public String translateSentence(String sentence, String languageFrom, String languageTo) {
+  long startTime = System.currentTimeMillis();
+  String translatedSentence = null;
+  try {
+      // Omitted implementation
+  } catch (TranslationException e) {
+     metricsPublisher.addMetric("TranslateErrorCount", 1, StandardUnit.Count);
+     // Omitted handling of exception
+  }
+  metricsPublisher.addMetric("TranslateErrorCount", 0, StandardUnit.Count);
+  // Omitted translation time metric implementation
+  return translatedSentence;
+}</code></pre>
+
+                <p>In the code snippet above, you can see that we added a 0 count metric before returning to keep track of when translateSentence completes successfully. Now, when we deploy this code to production, we can see the error rate by viewing the "TranslateErrorCount" metric in CloudWatch with the "Average" statistic set. As mentioned in the first reading, the Average statistic sums all the metric values and then divides by the sample count. Since we're logging a 1 count metric for every failed call and a 0 count metric for every successful call, the Average statistic would show translateSentence's error rate. Note that this metric still also tracks the number of errors using the same "Sum" statistic as before.</p>
+
+                <p>By simply logging the extra zero metric, we were able to get more useful metric data for our "TranslateErrorCount" metric! Logging both one and zero value metrics like we did above is a common way to measure data such as error rates. Other than the value of the metric, emitting a zero value metric is no different than logging any other metric.</p>
+
+                <p>Here's a basic example of creating a custom metric in Java using the AWS SDK:</p>
+
+                <pre><code>// Create CloudWatch client
 AmazonCloudWatch cloudWatch = AmazonCloudWatchClientBuilder.standard()
         .withRegion(Regions.US_WEST_2)
         .build();
@@ -110,82 +505,47 @@ PutMetricDataRequest request = new PutMetricDataRequest()
     .withMetricData(datum);
 
 PutMetricDataResult response = cloudWatch.putMetricData(request);</code></pre>
-                        <p>When implementing metrics, always consider:</p>
-                        <ul>
-                            <li>Using meaningful namespaces and dimensions for proper organization</li>
-                            <li>Selecting appropriate units for your measurements</li>
-                            <li>Emitting zeros for count metrics to enable accurate statistics calculation</li>
-                            <li>Choosing the appropriate aggregation period based on your monitoring needs</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Working with Percentiles</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Percentiles are powerful statistics that help understand the distribution of your metric values:</p>
-                        <ul>
-                            <li><strong>p50 (median)</strong>: 50% of the data points are below this value</li>
-                            <li><strong>p90</strong>: 90% of the data points are below this value</li>
-                            <li><strong>p99</strong>: 99% of the data points are below this value</li>
-                        </ul>
-                        <p>Percentiles are particularly useful for monitoring latency and response times, as they highlight the user experience better than averages.</p>
-                    </div>
-                </div>
-            </section>
 
-            <section class="section">
-                <h2 class="section-title">Key Topics</h2>
+                <p>When implementing metrics, always consider:</p>
                 <ul>
-                    <li>AWS CloudWatch service and its features</li>
-                    <li>Standard vs. custom metrics</li>
-                    <li>Implementing metrics collection in Java applications</li>
-                    <li>Setting up CloudWatch dashboards</li>
-                    <li>Creating and managing CloudWatch alarms</li>
-                    <li>Correlation between metrics and application performance</li>
+                    <li>Using meaningful namespaces and dimensions for proper organization</li>
+                    <li>Selecting appropriate units for your measurements</li>
+                    <li>Emitting zeros for count metrics to enable accurate statistics calculation</li>
+                    <li>Choosing the appropriate aggregation period based on your monitoring needs</li>
                 </ul>
-            </section>
+                
+                <h3>Working with Percentiles</h3>
+                <p>Percentiles are powerful statistics that help understand the distribution of your metric values:</p>
+                <ul>
+                    <li><strong>p50 (median)</strong>: 50% of the data points are below this value</li>
+                    <li><strong>p90</strong>: 90% of the data points are below this value</li>
+                    <li><strong>p99</strong>: 99% of the data points are below this value</li>
+                </ul>
+                <p>Percentiles are particularly useful for monitoring latency and response times, as they highlight the user experience better than averages.</p>
 
-            <section class="section">
+                <h3>Summary</h3>
+                <p>In this reading, you followed Mary as she took a new requirement and updated an existing codebase to emit a new metric to meet the requirement. You saw how to use the CloudWatch API to implement emitting a metric in Java. You also learned about zero-value metrics and where you might use them. With this knowledge, you should be ready to implement metrics in your own code.</p>
+
+             </section>
+
+             <div class="content-box">
+                <h2>Guided Project</h2>
+
+                <div class="video-container">
+                    <iframe width="560" height="315" src="https://fast.wistia.net/embed/iframe/fvzb5h9lk2" title="Guided Project video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-metrics-hotel-booking-service" class="btn" target="_blank" rel="noopener noreferrer">Hotel Booking Service</a>
+                </div>
+             </div>
+
+            <section class="content-box">
                 <h2 class="section-title">Resources</h2>
-                <div class="card-grid">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Hotel Booking Service Project</h3>
-                        </div>
-                        <div class="card-body">
-                            <p>Practice implementing AWS CloudWatch metrics with this example project.</p>
-                        </div>
-                        <div class="card-footer">
-                            <a href="https://github.com/BloomTechBackend/bd-metrics-hotel-booking-service" class="btn" target="_blank" rel="noopener">Access Repository</a>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>AWS Documentation</h3>
-                        </div>
-                        <div class="card-body">
-                            <p>Official AWS documentation for CloudWatch metrics and monitoring.</p>
-                        </div>
-                        <div class="card-footer">
-                            <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html" class="btn" target="_blank" rel="noopener">View Documentation</a>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Related Content</h3>
-                        </div>
-                        <div class="card-body">
-                            <ul>
-                                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
-                                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
-                            </ul>
-                        </div>
-                    </div>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-metrics-hotel-booking-service" class="btn" target="_blank" rel="noopener">Hotel Booking Service Project</a>
+                    <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html" class="btn" target="_blank" rel="noopener">AWS CloudWatch Documentation</a>
                 </div>
             </section>
         </section>
