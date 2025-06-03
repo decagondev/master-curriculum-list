@@ -34,14 +34,38 @@
             <div class="content-box module3-accent">
                 <h2>Module Overview</h2>
                 <p>Get started with relational databases, including normalization and associations, to build robust data storage solutions.</p>
-            </div>
-            
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Introduction to Relational Databases" src="https://fast.wistia.net/embed/iframe/sm61bpyxcu" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+
+                <h3>Learning Objectives</h3>
+                <ul>
+                    <li>Recall that tables in a relational database have a fixed schema that every record must satisfy</li>
+                    <li>Recall that relational databases use NULL to specify that a record does not have a value for a specific column</li>
+                    <li>Recall that relational databases include numeric, date, varchar, and boolean representations of data</li>
+                    <li>Identify a unique record in a provided table by its primary key's value</li>
+                    <li>Recall that normalization reduces redundant data while enabling data consistency</li>
+                    <li>Recall that relational databases use foreign keys to enforce referential integrity</li>
+                    <li>Outline when an insert will fail in a relational database due to referential integrity constraints</li>
+                    <li>Recall that relational databases, unlike non-relational databases, have a fixed schema, maintain referential integrity, and enable joining across tables</li>
+                    <li>Outline referential integrity in relational databases</li>
+                    <li>Identify foreign and primary key pairs from a given entity relationship diagram</li>
+                    <li>Write an SQL statement that retrieves rows satisfying specified conditions from a single table</li>
+                    <li>Write an SQL statement that counts the number of rows satisfying specified conditions in a table</li>
+                    <li>Write an SQL statement that describes a table's columns</li>
+                    <li>Determine the results of executing a provided SQL select statement on a given table</li>
+                    <li>Write an inner join SQL statement that retrieves rows satisfying specified conditions</li>
+                    <li>Predict the results of executing a provided inner join SQL statement on a set of given tables</li>
+                    <li>Implement an SQL statement to answer a provided business question, given an entity relationship diagram</li>
+                    <li>Write an SQL statement that retrieves only specified columns from a single table</li>
+                    <li>Explain inner join in relational databases</li>
+                </ul>
             </div>
 
             <div class="content-box">
-                <h3>Introduction to Relational Databases</h3>
+                <h2>Introduction to Relational Databases</h2>
+            
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Introduction to Relational Databases" src="https://fast.wistia.net/embed/iframe/sm61bpyxcu" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
                 <p>A relational database stores an item's data across multiple related tables, unlike key-value databases like DynamoDB that store all information for an item in a single table.</p>
                 
                 <h4>Key RDB Concepts</h4>
@@ -108,14 +132,270 @@
                 </div>
                 
                 <p>Unlike DynamoDB, adding a new column to an RDB table requires modifying the table schema and backfilling data, making careful upfront design important.</p>
-            </div>
 
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Database Normalization" src="https://fast.wistia.net/embed/iframe/snlzlpj5rs" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                <h3>Overview</h3>
+                <p>Up to this point, you've had numerous lessons teaching you about one of Amazon's database systems: DynamoDB. In this lesson, we're going to introduce relational databases, which are a different type of database! An understanding of relational databases is a good tool for any developer to have, and it'll help you grow as an engineer to think about data in a new and different way.</p>
+
+                <p>In this reading, you'll get a broad introduction to relational databases and the ways they compare and contrast to DynamoDB databases.</p>
+                <p>In the next reading, you'll look at the similarities and differences between Entity Relationship Diagrams in DynamoDB and relational databases. Once we've worked through an ERD example, we'll introduce some basic SQL commands.</p>
+
+                <h3>Relational databases (RDBs)</h3>
+                <p>As you may remember, we first introduced databases when discussing the need to organize the shoes in our closet. We chose to use a database because of its increased control over data entry and management. Databases allow us to store large amounts of data and easily scale upwards if we need to add more data.</p>
+
+                <p>AWS provides Amazon Relational Database Service (RDS) for managing databases in the cloud. Just as DynamoDB is one possible engine for running a key-value database, RDS supports many engines that can run a relational database. We'll focus on Amazon Aurora, an RDB that wraps and enhances other RDB engines. We'll use the MySQL flavor of Amazon Aurora for all our lessons.</p>
+
+                <h4>RDB Tables</h4>
+                <p>DynamoDB and other key-value databases store all the information for a single item in a single table. A relational database stores an item's data in many related tables.</p>
+
+                <p>First, let's go over the terminology. We call each row in the table a record; it's like a DynamoDB item. We call a record's attributes columns.</p>
+
+                <p>Each record must have a unique ID, called the primary key, like a DynamoDB hash key. Where DynamoDB requires that the hash key and sort key (if any) make a unique value for each item, an RDB table has no sort key, but can combine many columns to build its primary key.</p>
+
+                <p>While DynamoDB tables can include different attributes for each item, relational tables have a fixed structure. The RDB enforces the existence and type of each column for each record.</p>
+
+                <p>While SQL ignores capitalization, at ATA we will always make SQL commands ALL CAPS, use CapitalizedWords for table names, and write data types in lowercase.</p>
+
+                <p>numeric columns hold numbers. A date column has a formatted date. varchar(x) stands for "variable characters"; it's like a String because it can hold a variable number of characters, but it has a maximum length of x. Boolean columns have a value of either 'true' or 'false'.</p>
+
+                <p>SQL defines other data types, and individual RDB engines may add their own additions. If you're interested, <a href="https://www.w3schools.com/sql/sql_quickref.asp" target="_blank" rel="noopener noreferrer">w3schools has a good SQL reference</a>, and there are many others.</p>
+
+                <p>Since an RDB table schema is fixed, you create the columns when you create the table. To add a new column, you have to modify the table schema and backfill every record with valid data. This is significant work; we avoid it as much as we can through careful design before table creation.</p>
+
+                <p>Columns may also be defined as nullable. This means that we can use the value NULL to indicate that we don't know an actual value to specify. If a column is not nullable, then it must contain a value other than NULL.</p>
+
+                <p>The following Employees table uses all the data types to keep track of employees and their offices. The id column is the primary key, and is a varchar(8). The leave column is a boolean telling us whether the employee is currently on leave. The employee's level is a numeric, their joinDate is a date, their officeCode is varchar(6), and their officeName is varchar(30). We also store their office state in a varchar(2). If any employees's office name is longer than 30 characters, it will be truncated. We could use a varchar to represent dates, but date guarantees that every date has the same format.</p>
+
+                <div class="card">
+                    <table class="example-table">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>leave</th>
+                                <th>level</th>
+                                <th>officeCode</th>
+                                <th>officeName</th>
+                                <th>dateJoined</th>
+                                <th>state</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>dac041be</td>
+                                <td>true</td>
+                                <td>5</td>
+                                <td>SEA24</td>
+                                <td>Fiona</td>
+                                <td>2016-07-23</td>
+                                <td>WA</td>
+                            </tr>
+                            <tr>
+                                <td>dac04434</td>
+                                <td>false</td>
+                                <td>6</td>
+                                <td>SEA41</td>
+                                <td>Day 1</td>
+                                <td>2019-12-03</td>
+                                <td>WA</td>
+                            </tr>
+                            <tr>
+                                <td>dac045a6</td>
+                                <td>true</td>
+                                <td>4</td>
+                                <td>SEA32</td>
+                                <td>Nessie</td>
+                                <td>2015-09-15</td>
+                                <td>WA</td>
+                            </tr>
+                            <tr>
+                                <td>dac046f0</td>
+                                <td>false</td>
+                                <td>5</td>
+                                <td>SEA24</td>
+                                <td>Fiona</td>
+                                <td>2018-01-25</td>
+                                <td>WA</td>
+                            </tr>
+                            <tr>
+                                <td>dac04a56</td>
+                                <td>true</td>
+                                <td>4</td>
+                                <td>SJC11</td>
+                                <td>SJC11</td>
+                                <td>2019-03-08</td>
+                                <td>CA</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Normalization</h4>
+                <p>Normalization is the process of organizing data to minimize redundancy. Normalizing a table generally involves dividing it into two or more tables, each containing information about only one type of entity. We then define the relationships between those tables.</p>
+
+                <p>When we store multiple kinds of data in a single table, we often find ourselves repeating redundant data. Redundant data not only takes up unnecessary space, it causes three specific anomalies.</p>
+
+                <ol>
+                    <li>We can't insert new information until we have all the data for the record. Above, where we tracked our employees and their office information in a single table, we can't add a new office until we know at least one of the employees that work in it. We also can't add a new employee until we know which office they'll work in and its state. If we normalize the table to track employees, offices, and the "works at" relationship separately, we can add new employees and offices without waiting for other information.</li>
+                    <li>We have to update the same information in several records. Keeping everything consistent is difficult. In the employee / office example, when we change the name of an office, we have to find all the employees who work there and update the office's name in all their records. With normalized tables, the office data is in a single table, and we can update it in one record.</li>
+                    <li>Deleting a record removes more than one set of facts, so you lose additional information you may need. In the employee / office example, if an employee leaves the company and you delete their record from the table, you'll also lose information about the office they worked in. If they were the only employee in that location, you'd lose the office's name and state, too.</li>
+                </ol>
+
+                <p>To normalize the office / employee example, we isolate all the employee data in a single table, and all the office data in a separate table. This takes less space, since we no longer duplicate the office information for each employee, and avoids all the anomalies we described.</p>
+
+                <p>Employees:</p>
+                <div class="card">
+                    <table class="example-table">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>leave</th>
+                                <th>level</th>
+                                <th>dateJoined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>dac041be</td>
+                                <td>true</td>
+                                <td>5</td>
+                                <td>2016-07-23</td>
+                            </tr>
+                            <tr>
+                                <td>dac04434</td>
+                                <td>false</td>
+                                <td>6</td>
+                                <td>2019-12-03</td>
+                            </tr>
+                            <tr>
+                                <td>dac045a6</td>
+                                <td>true</td>
+                                <td>4</td>
+                                <td>2015-09-15</td>
+                            </tr>
+                            <tr>
+                                <td>dac046f0</td>
+                                <td>false</td>
+                                <td>5</td>
+                                <td>2018-01-25</td>
+                            </tr>
+                            <tr>
+                                <td>dac04a56</td>
+                                <td>true</td>
+                                <td>4</td>
+                                <td>2019-03-08</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>Offices:</p>
+                <div class="card">
+                    <table class="example-table">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>name</th>
+                                <th>state</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>SEA24</td>
+                                <td>Fiona</td>
+                                <td>WA</td>
+                            </tr>
+                            <tr>
+                                <td>SEA41</td>
+                                <td>Day 1</td>
+                                <td>WA</td>
+                            </tr>
+                            <tr>
+                                <td>SEA32</td>
+                                <td>Nessie</td>
+                                <td>WA</td>
+                            </tr>
+                            <tr>
+                                <td>SJC11</td>
+                                <td>SJC11</td>
+                                <td>CA</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Defining Relationships</h4>
+                <p>Since we try to focus each RDB table to a single purpose, we don't want to keep relationship data in a table with other data. Instead, we store each relationship type in its own table!</p>
+
+                <p>For the employee / office example, we'd create an EmployeeOffice table like this:</p>
+
+                <div class="card">
+                    <table class="example-table">
+                        <thead>
+                            <tr>
+                                <th>employee</th>
+                                <th>office</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>dac041be</td>
+                                <td>SEA24</td>
+                            </tr>
+                            <tr>
+                                <td>dac04434</td>
+                                <td>SEA41</td>
+                            </tr>
+                            <tr>
+                                <td>dac045a6</td>
+                                <td>SEA32</td>
+                            </tr>
+                            <tr>
+                                <td>dac046f0</td>
+                                <td>SEA24</td>
+                            </tr>
+                            <tr>
+                                <td>dac04a56</td>
+                                <td>SJC11</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Foreign keys</h4>
+                <p>Normalization isolates data into individual tables, but some data can't be isolated. Relationship tables are especially dependent on data in other tables.</p>
+
+                <p>In our employee / office example, suppose the last employee dac04a56 leaves the company. We delete their record from the Employees table. But the EmployeeOffice table still shows they work in SJC11. Someone who wants to find all the employees at SJ11 will discover an invalid relationship.</p>
+
+                <p>Relational databases use foreign keys to address this issue.</p>
+
+                <p>A foreign key is a set of one or more columns in one table (the "primary table") that refers to the primary key of another table (the "related table"). Unlike primary keys, foreign keys can contain duplicate values.</p>
+
+                <p>The RDB enforces that all records in the primary table have foreign key values that refer to a valid record in the related table. In our example, the EmployeeOffice table would set the employee and the office as foreign keys. Then the RDB would prevent us from deleting the employee unless we also deleted all their EmployeeOffice relationship records. It would also prevent us from adding a record that didn't refer to a valid employee and office, and from updating a record with an invalid value.</p>
+
+                <p>We use the term referential integrity to refer to the condition where all references are valid.</p>
+
+                <h4>RDB Data consistency</h4>
+                <p>As we've discussed, DynamoDB exhibits eventual consistency: data is not necessarily available immediately after writing. There's no way to guarantee that writes to multiple tables will succeed or fail together, so we can't guarantee consistency between tables.</p>
+
+                <p>Since relational databases write records in multiple tables and enforce referential integrity, they keep the tables up to date with consistent data that's immediately available. Any write that updates multiple tables will either succeed if all the writes succeed, or fail if any of the writes fails. On a failure, the RDB won't update any tables.</p>
+
+                <p>RDBs provide strong consistency: any data written is immediately available for reading.</p>
+
+                <h4>Summary</h4>
+                <p>In this reading, we gave you a broad overview of relational databases and their properties. You leared that relational databases store records in multiple related tables, and that normalization helps us to reduce redundant data and enforce referential integrity. Relational databases may not be used by every team, but they're still important. Familiarizing yourself with them is an asset in case you do need to work with them in the future, and they'll expand the way you think about data management.</p>
+
+                <h4>Next Up</h4>
+                <p>In the next reading, you're going to create an Entity Relationship Diagram for a relational database. You'll also start working with Structured Query Language!</p>
+
+                <p>SQL provides a way to write and query data across many tables at once. SQL can be pronounced as either "s-q-l" or "sequel". You'll likely hear it pronounced both ways!</p>
             </div>
 
             <div class="content-box">
-                <h3>Database Normalization</h3>
+                <h3>Introduction to Accessing RDS</h3>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Database Normalization" src="https://fast.wistia.net/embed/iframe/snlzlpj5rs" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
                 <p>Normalization is the process of organizing data to minimize redundancy by dividing it into tables with each containing information about only one type of entity.</p>
                 
                 <h4>Why Normalize Data?</h4>
@@ -220,10 +500,415 @@
                 </div>
                 
                 <p>This approach allows adding new employees or offices independently and updates to office information only need to happen in one place.</p>
-            </div>
+                
+                <h2>Overview</h2>
+                <p>We're continuing to explore Relational Databases to grow as engineers by thinking about data in different ways.</p>
 
-            <div class="video-container">
-                <iframe class="wistia_embed" title="RDBMS Associations" src="https://fast.wistia.net/embed/iframe/56styjbef7" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                <p>In the last reading, we gave you a broad introduction to relational databases and the ways they compare and contrast to key-value databases. We paid special attention to the differences in terminology and the way data is stored.</p>
+
+                <p>In this reading, you'll look at the similarities and differences between Entity Relationship Diagrams in DynamoDB and RDS. Once we've worked through an ERD example, we'll introduce some basic SQL commands to access information about a table's structure and retrieve data.</p>
+
+                <h3>Entity Relationship Diagrams</h3>
+                <p>An Entity Relationship Diagram (ERD) is a diagram used to map and display entities and their relationships. Since it describes data, we can make an ERD for an RDB table, not just for DynamoDB tables! We'll examine the ERD for this business problem:</p>
+
+                <p>You work for a software company that creates and sells software. You're tasked with creating an application that keeps track of all your products and the sales of those products. You have the following use cases:</p>
+
+                <ul>
+                    <li>Retrieve all the products an employee has worked on.</li>
+                    <li>Retrieve all the sales for a product, including the date and cost of the sale.</li>
+                    <li>Get all the employees that have worked on a product.</li>
+                    <li>Get the total number of sales for a product.</li>
+                </ul>
+
+                <p>In DynamoDB, we'd try to keep all the product details in a single table, with productId as the hash key and saleId as the sort key. Since we want to query products for an employee and employees for a product, we'd probably store a StringList of employees and use a scan() for one query. We'd be duplicating the employee list and product data for each sale.</p>
+
+                <p>For an RDB, we normalize the data into three entities and their relationships.</p>
+
+                <p>Let's look at the Entity Relationship Diagram (ERD) for this RDB:</p>
+
+                <img src="https://tk-assets.lambdaschool.com/55d53ec9-cefc-4dbc-bcee-7d55e2c61dfd_product_sales_ERD.png" alt="Figure 1: ERD for our product sales RDB, with entities for Employee, Product, Sale, and a ProductEmployee relationship indicating which employees worked on a product." loading="lazy" style="max-width: 100%; height: auto; display: block;">
+
+                <p>Figure 1: ERD for our product sales RDB, with entities for Employee, Product, Sale, and a ProductEmployee relationship indicating which employees worked on a product.</p>
+
+                <p>Remember that an ERD describes the structure and relationship of entities, not of tables. For an RDB, an entity corresponds roughly with a record, so each entity usually does represent a table, but with a plural name.</p>
+
+                <p>Note that the dot to the left of a column indicates that it is not nullable. We also introduce (pk) to say the column is part of the table's primary key, and (fk) to show that the column is a foreign key in a related table.</p>
+
+                <p>In particular, note how the Sales table isn't entirely normalized: it includes information about a product, not just about a sale. This decision was justified because a sale cannot exist without a product. We maintain referential integrity by making the productId a foreign key.</p>
+
+                <div class="card">
+                    <p><strong>Products:</strong></p>
+                    <table class="example-table">
+                        <thead>
+                            <tr>
+                                <th>productId</th>
+                                <th>employeeId</th>
+                                <th>productManager</th>
+                                <th>totalSales</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7427832</td>
+                                <td>EM_7427832</td>
+                                <td>245</td>
+                            </tr>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7478321</td>
+                                <td>EM_7427832</td>
+                                <td>245</td>
+                            </tr>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7465219</td>
+                                <td>EM_7427832</td>
+                                <td>245</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Introduction to SQL</h3>
+                <p>In the last reading we mentioned SQL, which stands for Structured Query Language. SQL is the standard language to write and query data in a relational database.</p>
+
+                <p>We'll be using the Query Editor in the RDS console to perform our queries. The Query Editor is a convenient way to connect to whatever database you are using and have a clear place to run your queries and retrieve results.</p>
+
+                <p>To run queries in the query editor, first login to the AWS Management Console. Next, navigate to Databases and choose the Aurora Serverless DB cluster where you want to run SQL queries. If you haven't connected to the database before, the 'Connect to database' page opens where you'll choose the database you're connecting to and enter in your user information. At the bottom of the popup is a field "Enter the name of the database or schema (optional)." In that field, enter the name of the database you're using. The query editor will open. In the query editor, enter the SQL query you want to run on the database and then hit 'Run'! Your output will be given below the editor window in the 'Output' tab. (For more detailed information about accessing and using the query editor, see the AWS documentation for <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/query-editor.html" target="_blank" rel="noopener noreferrer">Using the query editor for Aurora Serverless</a>.</p>
+
+                <p>We have a database for you to experiment with in the ATACurriculum_SharedParticipantResources AWS account. You can connect to the unit6rds (yes, really Unit 6) RDS instance and query its TEST_SCHEMA database.</p>
+
+                <h4>Describing the database</h4>
+                <p>Many SQL tools will show you the tables, columns, and types in any database you connect to. If they don't, you can use SHOW TABLES to list the tables in a database, and DESC to describe a table's columns.</p>
+
+                <p>To describe the columns in the Products table, we'd use this SQL:</p>
+
+                <pre>DESC Products;</pre>
+
+                <p>Which produces the following output:</p>
+
+                <div class="card">
+                    <table class="example-table">
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Type</th>
+                                <th>Null</th>
+                                <th>Key</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>productId</td>
+                                <td>varchar(10)</td>
+                                <td>NO</td>
+                                <td>PRI</td>
+                            </tr>
+                            <tr>
+                                <td>employeeId</td>
+                                <td>varchar(10)</td>
+                                <td>NO</td>
+                                <td>PRI</td>
+                            </tr>
+                            <tr>
+                                <td>productManager</td>
+                                <td>varchar(10)</td>
+                                <td>YES</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>totalSales</td>
+                                <td>int</td>
+                                <td>NO</td>
+                                <td>---</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Retrieving with SELECT</h4>
+                <p>The SQL command that retrieves data is the SELECT statement.</p>
+
+                <p>Let's return to the Products table that we set-up previously:</p>
+
+                <div class="card">
+                    <table class="example-table">
+                        <thead>
+                            <tr>
+                                <th>productId</th>
+                                <th>employeeId</th>
+                                <th>productManager</th>
+                                <th>totalSales</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7427832</td>
+                                <td>EM_7427832</td>
+                                <td>245</td>
+                            </tr>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7478321</td>
+                                <td>EM_7427832</td>
+                                <td>245</td>
+                            </tr>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7465219</td>
+                                <td>EM_7427832</td>
+                                <td>245</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>For this sample data, employeeId is the only column that is different. We can retrieve all the values that are stored in the employeeId column of the Products table using this SELECT command:</p>
+
+                <pre>SELECT employeeId FROM Products;</pre>
+
+                <p>This command produces the following output:</p>
+
+                <div class="card">
+                    <table class="example-table">
+                        <thead>
+                            <tr>
+                                <th>employeeId</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>EM_7427832</td>
+                            </tr>
+                            <tr>
+                                <td>EM_7478321</td>
+                            </tr>
+                            <tr>
+                                <td>EM_7465219</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The SELECT command can retrieve data from multiple columns. To retrieve both the productId and the employeeId from the Products table, we can use the following command:</p>
+
+                <pre>SELECT productId, employeeId FROM Products;</pre>
+
+                <p>We use commas to separate as many columns as we want to retrieve! The command produces the following output:</p>
+
+                <div class="card">
+                    <table class="example-table">
+                        <thead>
+                            <tr>
+                                <th>productId</th>
+                                <th>employeeId</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7427832</td>
+                            </tr>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7478321</td>
+                            </tr>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7465219</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>To retrieve all the columns in a table, use the * symbol. In SQL, the * symbol is a wildcard. When used with SELECT, it means 'select all columns'. To retrieve data from all the columns in the Products table, we use the following command:</p>
+
+                <pre>SELECT * FROM Products</pre>
+
+                <p>This command retrieves the following output:</p>
+
+                <div class="card">
+                    <table class="example-table">
+                        <thead>
+                            <tr>
+                                <th>productId</th>
+                                <th>employeeId</th>
+                                <th>productManager</th>
+                                <th>totalSales</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7427832</td>
+                                <td>EM_7427832</td>
+                                <td>245</td>
+                            </tr>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7478321</td>
+                                <td>EM_7427832</td>
+                                <td>245</td>
+                            </tr>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7465219</td>
+                                <td>EM_7427832</td>
+                                <td>245</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Narrowing results with LIMIT</h4>
+                <p>The LIMIT statement sets a maximum limit to the number of items you retrieve from the table, similar to the withLimit() method in DynamoDB. This limits the amount of data you access when you have a really large data set. It's also a good way to get sample data from a table. The LIMIT statement returns the number of rows you specify starting with the first row in the table.</p>
+
+                <p>We can retrieve all the columns of the first 2 records in the Products table with the following command:</p>
+
+                <pre>SELECT * FROM Products LIMIT 2</pre>
+
+                <p>This command retrieves the following output:</p>
+
+                <div class="card">
+                    <table class="example-table">
+                        <thead>
+                            <tr>
+                                <th>productId</th>
+                                <th>employeeId</th>
+                                <th>productManager</th>
+                                <th>totalSales</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7427832</td>
+                                <td>EM_7427832</td>
+                                <td>245</td>
+                            </tr>
+                            <tr>
+                                <td>PR_4781237</td>
+                                <td>EM_7478321</td>
+                                <td>EM_7427832</td>
+                                <td>245</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Filtering results</h4>
+                <p>We use the WHERE clause to select matching rows from a large table, using this syntax:</p>
+
+                <pre>SELECT * FROM table WHERE predicate;</pre>
+
+                <p>The 'predicate' is an expression that evaluates to TRUE, FALSE, or UNKNOWN (if a NULL value makes it impossible to determine whether the predicate is satisfied). Only the rows for which the predicate is TRUE are selected.</p>
+
+                <p>We use the SQL conditional and boolean operators to build predicates.</p>
+
+                <div class="card">
+                    <table class="example-table">
+                        <thead>
+                            <tr>
+                                <th>Operator</th>
+                                <th>Java Equivalent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>=</td>
+                                <td>==</td>
+                            </tr>
+                            <tr>
+                                <td>&lt;&gt;</td>
+                                <td>!=</td>
+                            </tr>
+                            <tr>
+                                <td>&gt;</td>
+                                <td>&gt;</td>
+                            </tr>
+                            <tr>
+                                <td>&lt;</td>
+                                <td>&lt;</td>
+                            </tr>
+                            <tr>
+                                <td>&gt;=</td>
+                                <td>&gt;=</td>
+                            </tr>
+                            <tr>
+                                <td>&lt;=</td>
+                                <td>&lt;=</td>
+                            </tr>
+                            <tr>
+                                <td>AND</td>
+                                <td>&amp;&amp;</td>
+                            </tr>
+                            <tr>
+                                <td>OR</td>
+                                <td>ǀǀ</td>
+                            </tr>
+                            <tr>
+                                <td>NOT</td>
+                                <td>!</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>For instance, we might find all products with total sales over 9000 with this SQL statement:</p>
+
+                <pre>SELECT * FROM Products WHERE totalSales > 9000;</pre>
+
+                <p>SQL conditions have to deal with NULL. If a column's value is NULL, a WHERE clause will never apply the query to that row because the predicate will always evaluate to UNKNOWN. Even NOT evaluates to UNKNOWN if there is a NULL anywhere in its arguments.</p>
+
+                <p>In situations where you need to test whether a value is NULL, the operators IS NULL and IS NOT NULL are used:</p>
+
+                <ul>
+                    <li>IS NULL returns TRUE when the value of a column is NULL</li>
+                    <li>IS NOT NULL returns TRUE when the value of a column is anything other than NULL</li>
+                </ul>
+
+                <h4>Aggregate functions</h4>
+                <p>SQL allows us to do some calculations on sets of values and determine a single aggregate result:</p>
+
+                <ul>
+                    <li>MIN calculates the minimum value of a column</li>
+                    <li>MAX calculates the maximum value of a column</li>
+                    <li>AVG finds the mean value of a column</li>
+                    <li>SUM adds up all the values in a column</li>
+                    <li>COUNT returns the number of rows that meet specific criteria.</li>
+                </ul>
+
+                <p>To find the number of employees at the company whose last name is between 'E' and 'I', we could use this SQL statement:</p>
+
+                <pre>SELECT COUNT(*) FROM Employees WHERE lastName > 'E' AND lastName < `I`;</pre>
+
+                <h4>SQL with Relationships</h4>
+                <p>The queries we've described so far only touch one table. To query data in multiple tables, we must join them together.</p>
+
+                <p>There are four type of SQL joins, but we're only going to discuss the default, inner join. Inner joins retrieve rows only if they are shared by the joined tables.</p>
+
+                <p>The JOIN keyword takes the place of the table in a SELECT statement. To find the ID product manager for each individual sale over 9000, we could use this statement:</p>
+
+                <pre>SELECT Products.productManager, Sales.cost
+FROM Sales JOIN Products ON Sales.productId = Products.productId
+WHERE Sales.cost > 9000;</pre>
+
+                <p>Note how Sales JOIN Products indicates the tables to be joined, and ON Sales.productId = Products.productId specifies how to match rows in the tables.</p>
+
+                <p>When working with multiple tables, each column must be named with its table. We cannot write SELECT * FROM x JOIN y ON a = b, since both tables could each contain unrelated columns named a and b. The same principle holds for selecting specific columns.</p>
+
+                <p>To determine the names of the employees who worked on products managed by 'EM_7427832', we would need to join three tables. Here's what that SQL looks like:</p>
+
+                <pre>SELECT Products.productManager, Employees.employeeId
+FROM ProductEmployee
+JOIN Products ON ProductEmployee.productId = Products.productId
+JOIN Employees ON ProductEmployee.productId = Employees.employeeId
+WHERE Products.productManager = 'EM_7427832';</pre>
+
+                <h4>Conclusion</h4>
+                <p>In this reading, we examined an ERD for a relational database. Through this example, you saw the similarities and differences between DynamoDB and RDS, and the ways they access and store data. We learned some SQL commands allowing you to describe and access data from the example tables. This was just an introduction to the many ways you can access data using SQL!</p>
             </div>
 
             <div class="content-box">
@@ -272,6 +957,24 @@ FROM Employees e
 INNER JOIN EmployeeOffice eo ON e.id = eo.employee
 INNER JOIN Offices o ON eo.office = o.id;
                 </pre>
+            </div>
+
+            <div class="content-box">
+                <h2>Guided Project</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="RDBMS Associations" src="https://fast.wistia.net/embed/iframe/56styjbef7" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+
+                <div class="resource-links">
+                    <a href="https://mystery.knightlab.com/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                        The SQL Murder Mystery
+                    </a>
+                </div>
+
+                <p>In today's activity, you'll be taking on the role of a hard-bitten detective in SQL City.</p>
+
+                <p>There's been a murder, but you've misplaced your notes. Use your SQL skills to reassemble the evidence and find the killer!</p>
             </div>
 
             <section class="resource-section">
