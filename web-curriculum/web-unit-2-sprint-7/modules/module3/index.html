@@ -21,7 +21,7 @@
                         <a href="../module4/index.html">Module 4: Introduction to Testing</a>
                     </div>
                 </li>
-                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="https://github.com/bloominstituteoftechnology/web-s07-practice-problems">Practice Problems</a></li>
                 <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
         </nav>
@@ -31,23 +31,544 @@
         <section class="welcome">
             <h1>Module 3 - Advanced Form Management</h1>
 
-            <div class="content-box">
-                <h2>Advanced Form Validation</h2>
-                <div class="video-container">
-                    <iframe class="wistia_embed" title="Advanced Form Validation" src="https://fast.wistia.net/embed/iframe/0dliq7iwer?seo=false&videoFoam=false" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <div class="content-box module3-accent">
+                <h2>Advanced Forms in React</h2>
+                <p>Congratulations on reaching the advanced stage of form handling in React!</p>
+
+                <p>In this core competency, you will explore advanced techniques and concepts that will take your form-building skills to new heights. You will dive deep into the use of dropdown menus, radio buttons and checkboxes, empowering users to make selections and customize their inputs. Furthermore, we will delve into the critical topic of validating user input, ensuring data integrity, and delivering a seamless user experience.</p>
+
+                <p>But that's not all. You will also learn how forms are submitted to the server, enabling your React applications to interact with backend systems.</p>
+
+                <p>By the end of this core competency, you will be well-equipped with the knowledge and tools needed to construct sophisticated forms, handle user input validation, and seamlessly integrate your forms with server-side functionality. So, let's embark on this advanced journey of form handling in React and unlock the full potential of your applications!</p>
+
+                <h3>Working with checkboxes, radio buttons, and dropdowns</h3>
+                <p>Forms can incorporate a variety of input types beyond just text and number, and each input type presents its own set of unique rules (you can find a comprehensive list of form input types <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#input_types" target="_blank" rel="noopener noreferrer">here</a>). In this Learning Objective, you will read about some of the more common input types: checkboxes, radio buttons, and dropdown menus.</p>
+
+                <h4>Checkboxes</h4>
+                <p>Checkboxes are designed to display, you guessed it, a checkbox that can be either enabled or disabled. This is why checkboxes expose a <code>checked</code> boolean property that informs the application whether the box is checked or not. While the value attribute of a checkbox isn't a primary concern, you can assign one if it aligns with your business logic. Here's a simple checkbox:</p>
+
+                <div class="code-example">
+                    <label>
+                        Agree to Terms of Use?
+                        <input name="agree" type="checkbox" />
+                    </label>
                 </div>
-                <div class="video-container">
-                    <iframe class="wistia_embed" title="Web S7 M3 CC1 LO2 - Validating user Input Part 1 Video" src="https://fast.wistia.net/embed/iframe/bs3ryp1asd?seo=false&videoFoam=false" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+
+                <p>This straightforward checkbox isn't controlled yet and will respond conventionally to the user's input.</p>
+
+                <h4>Radio Buttons</h4>
+                <p>Radio buttons come into play when the user needs to choose only one option from a set of choices. By default, when a user selects one radio button, all the others in the same group automatically become disabled. To create a group, you must assign the same name attribute to every <code>&lt;input&gt;</code> element of type radio. Similar to checkboxes, you can assign a value to the inputs, if you wish, and each input exposes a checked property to the application:</p>
+
+                <div class="code-example">
+                    <label>Age 13-18
+                        <input name="ageRange" type="radio" />
+                    </label>
+                    <label>Age 19-24
+                        <input name="ageRange" type="radio" />
+                    </label>
+                    <label>Age 25+
+                        <input name="ageRange" type="radio" />
+                    </label>
                 </div>
-                <div class="video-container">
-                    <iframe class="wistia_embed" title="Web S7 M3 CC1 LO2 - Validating user Input Part 2 Video" src="https://fast.wistia.net/embed/iframe/3d3pxi4aj4?seo=false&videoFoam=false" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+
+                <p>Note how each input shares the same name attribute, ensuring that only one can be selected at any given time.</p>
+
+                <h4>Dropdown Menus</h4>
+                <p>Much like radio buttons, dropdown menus are excellent for gathering data because they ensure data consistency by presenting users with predefined options. Dropdowns are constructed somewhat differently using the <code>&lt;select&gt;</code> element and <code>&lt;option&gt;</code> elements nested within it. Each option should have a distinct hard-coded value, which will be assigned to the value of the <code>&lt;select&gt;</code> element when that specific option is chosen:</p>
+
+                <div class="code-example">
+                    <label>
+                        Select your Prize:
+                        <select name="prize">
+                            <option value="1">TV</option>
+                            <option value="2">Phone</option>
+                            <option value="3">Gift Card</option>
+                            <option value="4">Cruise</option>
+                        </select>
+                    </label>
                 </div>
+
+                <p>These dropdowns provide users with predefined choices, ensuring consistency in your forms.</p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>In line with the concept of controlled inputs, let's introduce these three new input types to our form and follow these fundamental steps:</p>
+
+                    <ol>
+                        <li>Trigger a handler function when there's a change.</li>
+                        <li>Compute and store the state.</li>
+                        <li>Keep the screen updated (controlled input).</li>
+                    </ol>
+
+                    <p>For checkboxes and radio buttons, the application will interact with the <code>checked</code> property of the input elements. Meanwhile, with dropdowns, the app will access the <code>value</code> of the <code>&lt;select&gt;</code> element.</p>
+
+                    <p>Feel free to review the code snippet below and refer to the accompanying comments for guidance:</p>
+
+                    <pre><code>import { useState } from "react";
+
+export default function App() {
+  // We're using a single object to store all the state.
+  // The first key is a boolean tracking the checked property of the checkbox.
+  // The second is a string tracking the value of the selected radio input.
+  // The third is a string that matches the value of one of the options in the dropdown.
+  const [formData, setFormData] = useState({
+    agree: false,
+    ageRange: "",
+    prize: "1",
+  });
+
+  // A single handler will update the state.
+  // With checkboxes, we're not concerned about the value, so we read the checked property instead of the value property.
+  const handleChange = (event) => {
+    const { name, type, value, checked } = event.target;
+
+    // Update the state based on the previous state.
+    setFormData({
+      ...formData,
+      [name]: type == "checkbox" ? checked : value,
+    });
+  };
+
+  return (
+    &lt;form&gt;
+      &lt;label&gt;
+        Agree to Terms of Use?
+        &lt;input
+          name="agree"
+          type="checkbox"
+          onChange={handleChange}
+          checked={formData.agree}
+        /&gt;
+      &lt;/label&gt;
+      &lt;br /&gt;
+      &lt;label&gt;
+        Age 13-19
+        &lt;input
+          name="ageRange"
+          value="teen"
+          type="radio"
+          onChange={handleChange}
+          checked={formData.ageRange === "teen"}
+        /&gt;
+      &lt;/label&gt;
+      &lt;br /&gt;
+      &lt;label&gt;
+        Age 20-55
+        &lt;input
+          name="ageRange"
+          value="adult"
+          type="radio"
+          onChange={handleChange}
+          checked={formData.ageRange === "adult"}
+        /&gt;
+      &lt;/label&gt;
+      &lt;br /&gt;
+      &lt;label&gt;
+        Age 55+
+        &lt;input
+          name="ageRange"
+          value="senior"
+          type="radio"
+          onChange={handleChange}
+          checked={formData.ageRange === "senior"}
+        /&gt;
+      &lt;/label&gt;
+      &lt;br /&gt;
+      &lt;label&gt;
+        Select Your Prize:
+        &lt;select name="prize" onChange={handleChange} value={formData.prize}&gt;
+          &lt;option value="1"&gt;Cruise&lt;/option&gt;
+          &lt;option value="2"&gt;Gift Card&lt;/option&gt;
+          &lt;option value="3"&gt;LED TV&lt;/option&gt;
+          &lt;option value="4"&gt;iPhone 11&lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/label&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+
+                    <p>Notice how each type of input is handled in a specific manner.</p>
+
+                    <h4>Checkbox</h4>
+                    <p>Controlling the checkbox is quite straightforward. You monitor the checkbox to update a boolean state and simply assign this state back to the input's <code>checked</code> attribute.</p>
+
+                    <h4>Radio Buttons</h4>
+                    <p>Radio buttons employ arbitrary values to update the state, and then the <code>checked</code> attribute of each input is set by a comparison expression.</p>
+
+                    <h4>Dropdown Menu</h4>
+                    <p>Regarding the dropdown, each <code>&lt;option&gt;</code> features an arbitrary value used to update the state. This value is subsequently assigned as the <code>&lt;select&gt;</code> element's value, ensuring the correct option is displayed to the user.</p>
+
+                    <p>It's essential to grasp how each type of input is managed in this controlled fashion!</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/0dliq7iwer?seo=false&videoFoam=false" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Validating user input</h3>
+
+                <p>In our previous module, we explored the concept of validation, which ensures that users input appropriate data according to specific input types. Neglecting validation can lead to unpredictable behavior or even errors within the application.</p>
+
+                <p>Furthermore, combining real-time validation with visual feedback (controlled inputs) allows users to quickly assess whether their entered data is suitable for submission and how to address potential issues.</p>
+
+                <p>Validation methods can vary widely in implementation. Depending on the input type and the application's logic, sometimes a straightforward comparison, string manipulation, or mathematical operation suffices. However, in other cases, you may need to match the input against a particular pattern using something like Regular Expressions (aka RegEx).</p>
+
+                <p>Thankfully, you don't have to write all your validations. Validating data is a common problem that many developers have already solved, and one of the most popular projects to assist with validation is a library known as Yup.</p>
+
+                <p>Yup is a highly acclaimed JavaScript library dedicated to data validation. Its primary application lies in form validation, enabling developers to ensure that user-entered data adheres to specific criteria, encompassing mandatory fields, data types, lengths, and more.</p>
+
+                <p>One notable feature of Yup is its asynchronous validation support, which is invaluable for tasks like validating data against a server or a database. Yup revolves around a schema describing each input's desired structure and validation rules.</p>
+
+                <p>To incorporate Yup into your application, commence by installing the library with the following terminal command within your project's root folder:</p>
+
+                <pre><code>npm install yup</code></pre>
+
+                <p>Subsequently, import the library into your script as demonstrated below:</p>
+
+                <pre><code>import * as Yup from "yup";</code></pre>
+
+                <p>A schema is essentially a blueprint for data objects' structure and validation rules. Creating a schema object in Yup is remarkably straightforward, and even if you're encountering Yup for the first time, you should find the code below comprehensible. Read the comments in the code to follow along:</p>
+
+                <pre><code>// This statement signifies that the data to be validated will be an object with three keys
+const schema = Yup.object().shape({
+  // 'name' is expected to be a string, mandatory, and accompanied by a warning message if absent
+  name: Yup.string().required("Name is required"),
+  // Similarly, 'email' is also expected to be a string conforming to an email pattern, and it's mandatory
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  // 'age' is validated against a minimum value and includes a corresponding warning message
+  age: Yup.number()
+    .min(18, "Must be at least 18 years old")
+    .required("Age is required"),
+});</code></pre>
+
+                <p>The schema described above can validate any object with an identical "shape." Let's generate some test data:</p>
+
+                <pre><code>const data = {
+  name: "John",
+  email: "john@example.com",
+  age: 25,
+};
+
+schema
+  .validate(data)
+  .then((valid) => {
+    // Data is valid
+    console.log(valid);
+  })
+  .catch((errors) => {
+    // Validation failed, errors contains error messages
+    console.error(errors);
+  });</code></pre>
+
+                <p>Voila! If the data passes validation, it is simply returned through the promise, allowing the application to continue safely within the .then callback.</p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <h4>Approaches to Data Validation</h4>
+                    <p>Yup offers several versatile methods for data validation within your component. The most straightforward approach is to validate data inside the onChange handler. This is exactly what you have been doing, and it allows you to implement the fundamental steps of controlled inputs:</p>
+
+                    <ul>
+                        <li>Validate or modify data as the user types or interacts with inputs.</li>
+                        <li>Update the application state.</li>
+                        <li>Connect the state to JSX (controlled inputs) to provide visual feedback.</li>
+                    </ul>
+
+                    <p>While this approach works well, it doesn't address the challenge of knowing when the user has completely filled out the form to perform a final validation. For instance, validating an email address is only possible once the entire string has been entered.</p>
+
+                    <p>Alternatively, you can employ Yup to perform basic validation or transformation during the onChange phase and then execute a final validation when the user is ready to submit the form using the onSubmit handler.</p>
+
+                    <p>Another better approach, which you will use here, is do all the validation during the onChange phase. This approach includes code to disable the submit button, display real-time error messages until all inputs are valid, and only enable the submit button once all conditions are met. Intrigued? Let's explore this approach.</p>
+
+                    <h4>Implementing Validation</h4>
+                    <p>As usual, you'll need to introduce state to keep track of current inputs. However, in this improved form, you'll also require additional state to manage error messages returned by Yup. This error state will be directly linked to JSX, allowing the component to render error messages in real time as users interact with the form. Additionally, you'll need a third piece of state to determine whether the submit button should be enabled or not. This state will be controlled by a useEffect hook, triggered by changes in the input values. The effect will assess all inputs and enable the button only when they are all valid.</p>
+
+                    <div class="note-box">
+                        <p><strong>Pro Tip:</strong> Technically, you could eliminate the effect hook, use the onChange handler to validate all inputs, and set the submit button state. However, we'll keep the code more readable for clarity and separation of concerns.</p>
+                    </div>
+
+                    <p>The following code is quite extensive, featuring several new syntax elements. Be sure to read all the comments for a comprehensive understanding, and run the application in your browser to follow along:</p>
+
+                    <pre><code>import { useState, useEffect } from "react";
+// Remember to install the library with npm before importing Yup
+import * as yup from "yup";
+
+// Object to facilitate access to the text messages
+const validationErrors = {
+  passwordPatternWrong:
+    "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character",
+  termsIncorrect: "Terms must be accepted",
+};
+
+// The schema has a couple of fields and it is most self-explanatory
+const formSchema = yup.object().shape({
+  password: yup
+    .string()
+    .required()
+    // You could use a simple ".min(8, message)" here, but hey, let's use some RegEx.
+    .matches(
+      // This is what RegEx looks like. We will explore this RegEx expression later.
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+      validationErrors.passwordPatternWrong
+    ),
+  // This boolean must be one of the values in the array to be considered valid.
+  // Meaning, it must be true.
+  accept: yup.boolean().oneOf([true], validationErrors.termsIncorrect),
+});
+
+export default function App() {
+  const [values, setValues] = useState({ password: "", accept: false });
+  // The form starts empty, so there are no errors yet
+  const [errors, setErrors] = useState({ password: "", accept: "" });
+  const [enabled, setEnabled] = useState(false);
+
+  // This effect will run whenever the values state is modified.
+  // If all the values match schema, Yup will return true to the success callback
+  // The submit button will be enabled only when the validation succeeds
+  useEffect(() => {
+    formSchema.isValid(values).then((isValid) => {
+      setEnabled(isValid);
+    });
+  }, [values]);
+
+  // Just a console log for now
+  // In a real app, the values would be sent to the endpoint
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    console.log("Sending data to server...", values);
+  };
+
+  const handleChange = (evt) => {
+    let { type, checked, name, value } = evt.target;
+    if (type === "checkbox") value = checked;
+    setValues({ ...values, [name]: value });
+    // The ".reach()/.validate()" combination allows you to check a single value
+    yup
+      .reach(formSchema, name)
+      .validate(value)
+      .then(() => {
+        // If value is valid, the corresponding error message will be deleted
+        setErrors({ ...errors, [name]: "" });
+      })
+      .catch((err) => {
+        // If invalid, we update the error message with the text returned by Yup
+        // This error message was hard-coded in the schema
+        setErrors({ ...errors, [name]: err.errors[0] });
+      });
+  };
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Validating User Input&lt;/h2&gt;
+      &lt;form onSubmit={handleSubmit}&gt;
+        {errors.password && &lt;span&gt;{errors.password}&lt;/span&gt;}
+        &lt;label&gt;
+          Password
+          &lt;input
+            type="text"
+            name="password"
+            placeholder="Type Password"
+            onChange={handleChange}
+            value={values.password}
+          /&gt;
+        &lt;/label&gt;
+
+        {errors.accept && &lt;span&gt;{errors.accept}&lt;/span&gt;}
+        &lt;label&gt;
+          Accept terms
+          &lt;input
+            checked={values.accept}
+            onChange={handleChange}
+            name="accept"
+            type="checkbox"
+          /&gt;
+        &lt;/label&gt;
+        &lt;input disabled={!enabled} type="submit" /&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+                    <p>Here are some additional comments:</p>
+
+                    <ul>
+                        <li>Observe the conditional expression within the JSX. This expression will evaluate to true only if errors.password is not empty, displaying the message on the screen.</li>
+                    </ul>
+
+                    <pre><code>{errors.password && &lt;span&gt;{errors.password}&lt;/span&gt;}</code></pre>
+
+                    <ul>
+                        <li>You could change the password input type to "password" if you want to hide the characters on the screen.</li>
+                    </ul>
+
+                    <pre><code>&lt;label&gt;
+  Password
+  &lt;input
+    type="text"
+    name="password"
+    placeholder="Type Password"
+    onChange={handleChange}
+    value={values.password}
+  /&gt;
+&lt;/label&gt;</code></pre>
+
+                    <ul>
+                        <li>Regarding the RegEx, while you're not learning the syntax here, it's an excellent opportunity to explore the expression:</li>
+                    </ul>
+
+                    <pre><code>/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/</code></pre>
+
+                    <p>This regex will ensure the string:</p>
+
+                    <ul>
+                        <li>Includes at least one alphabetical character. <code>(?=.*[A-Za-z])</code></li>
+                        <li>Includes at least one digit. <code>(?=.*\d)</code></li>
+                        <li>Includes at least one of these special characters <code>(?=.*[@$!%*#?&])</code></li>
+                        <li>Has at least 8 characters. <code>[A-Za-z\d@$!%*#?&]{8,}</code></li>
+                    </ul>
+
+                    <p>And:</p>
+
+                    <ul>
+                        <li>Finally, notice how the submit button will be disabled when the enabled state is not true:</li>
+                    </ul>
+
+                    <pre><code>&lt;input disabled={!enabled} type="submit" /&gt;</code></pre>
+
+                    <p>And that's it! By harnessing the expressive power of Yup and incorporating additional state management, you can easily control and validate all inputs in real-time. Yup offers a multitude of options in schema definition, making it a powerful tool for data validation. You can explore more about using this library <a href="https://github.com/jquense/yup">here</a>.</p>
+                    <h4>Part One:</h4>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/bs3ryp1asd?seo=false&videoFoam=false" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                    <h4>Part Two:</h4>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/3d3pxi4aj4?seo=false&videoFoam=false" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Submitting a form to the server</h3>
+                <p>Up to this point, you've been simulating an actual form submission by logging a message to the console:</p>
+
+                <pre><code>const handleSubmit = (evt) => {
+  evt.preventDefault();
+  console.log("Sending data to server...", values);
+};</code></pre>
+
+                <p>However, real-world applications require interaction with remote servers, involving the exchange of HTTP messages. You've already learned how to send GET requests using tools like fetch or axios, which is precisely what will happen within the handleSubmit handler. To introduce some variety, you'll now utilize a POST request, typically used for sending JSON payloads within the message.</p>
+
+                <p>You've gained proficiency in controlling and validating user inputs to ensure a smooth user experience and proper formatting of all form inputs.</p>
+
+                <p>Nevertheless, it's essential to recognize that the server should not blindly accept every form submission from the application. Consider the following scenarios:</p>
+
+                <ul>
+                    <li>The application may have a bug and send incorrect information, such as incorrect data type, key name, input quantity;</li>
+                    <li>The application could submit a valid form to create data that already exists on the server (resulting in a duplicate).</li>
+                    <li>A malicious client might attempt to overload the server by sending thousands of valid requests.</li>
+                </ul>
+
+                <p>The back-end endpoint isn't concerned with who's sending the information but requires its own set of rules and protections against misbehaving clients.</p>
+
+                <p>In practice, this means your application should validate the response from the server whenever it submits a form. The client application should never assume that an HTTP request was successful solely because the user inputs were validated before submission.</p>
+
+                <p>To handle server responses effectively, your application must understand how the endpoint API functions. This involves understanding the expected types of HTTP messages, payload structures, response types, and status codes returned by the server.</p>
+
+                <p>A "200 OK" status code doesn't guarantee that a submission has achieved the expected outcome. When designing and testing your application, thoroughly explore the details of the server's API using tools like Postman. Additionally, use plenty of console.log statements in your code to visualize all the nuances of the server's responses.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's continue from the previous Learning Objective example. The form is already controlled, and Yup is used to validate all inputs (password and terms).</p>
+
+                    <p>The schema remains unchanged, and there's no need to modify the handleChange function or the effect hook, as they are exclusively used for front-end validation.</p>
+
+                    <p>Your initial step is to introduce additional state variables to handle responses from the server. Inside the App component, add some lines below the existing state:</p>
+
+                    <pre><code>const [values, setValues] = useState({ password: "", accept: false });
+const [errors, setErrors] = useState({ password: "", accept: "" });
+const [enabled, setEnabled] = useState(false);
+// New state below:
+const [success, setSuccess] = useState("");
+const [failure, setFailure] = useState("");</code></pre>
+
+                    <p>These variables will store messages returned by the server and will be linked to the JSX output, allowing users to receive visual feedback immediately after submitting the form:</p>
+
+                    <pre><code>return (
+  &lt;div&gt;
+    {success && &lt;div&gt;{success}&lt;/div&gt;}
+    {failure && &lt;div&gt;{failure}&lt;/div&gt;}
+    &lt;form onSubmit={handleSubmit}&gt;
+       {/* etc. */}</code></pre>
+
+                    <p>Now, the only missing piece is to send data to the endpoint, receive the response, and handle the new state variables. You'll accomplish this in the handleSubmit function.</p>
+
+                    <div class="note-box">
+                        <p><strong>Pro Tip:</strong> You will assume that the server will respond with a "2xx" status code for successful submissions and a "4xx" or "5xx" code for failures. By default, axios will properly resolve or reject the promise by checking these codes, but you can configure axios to react differently based on specific status codes.</p>
+                    </div>
+
+                    <pre><code>const handleSubmit = (evt) => {
+  evt.preventDefault();
+  axios
+    .post(URL, values)
+    .then((res) => {
+      setSuccess(res.data);
+      setFailure("");
+    })
+    .catch((err) => {
+      setFailure(err.response);
+      setSuccess("");
+    });
+};</code></pre>
+
+                    <p>Let's break down the code above. The post method expects the endpoint's URL and the payload as arguments. In our case, the server expects the payload to be an object containing the password string and the accept boolean.</p>
+
+                    <p>The server's response will either contain a success or failure message (a string), which will be stored in the corresponding state variable, while the other state variable is cleared. This triggers a re-render of the component to display the message on the screen.</p>
+
+                    <p>Keep in mind that each server API may format its response message differently. It could be a simple string, a value nested within a key/value pair, a deeply nested code within an object tree, or any other variation. In our example, we assume that res.data holds the actual success string returned by the server, and err.response contains the error message.</p>
+
+                    <p>Before updating your App component, remember to install and import axios. In your terminal, navigate to the project's root folder:</p>
+
+                    <pre><code>npm install axios</code></pre>
+
+                    <p>Do you find yourself with some free time? Why not take the opportunity to enhance the final form by adding some styling?</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/me9epz8z9u?seo=false&videoFoam=false" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                    
+                </div>
+                <h3>Conclusion</h3>
+                <p>Forms play a pivotal role in various applications that necessitate user input. In this Core Competency, you've acquired the skills to incorporate diverse input elements into your forms and to execute both front-end and back-end validation.</p>
+
+                <p>In the development of applications for private endpoints, front-end and back-end developers collaborate closely, aligning on data structures, payloads, and communication protocols. Conversely, many client applications interact with public endpoints to store and retrieve data. By comprehending the intricacies of the API, you can craft a seamless user experience by enabling users to input data in real-time and furnishing dependable feedback when they submit forms.</p>
+            </div>
+            <div class="content-box module3-accent">
+                <h2>Guided Project</h2>
+              <p><a href="https://github.com/bloominstituteoftechnology/web-guided-project-advanced-forms" target="_blank" rel="noopener">Advanced Form Management Starter Code</a></p>
+              <p><a href="https://github.com/bloominstituteoftechnology/web-guided-project-advanced-forms-solution" target="_blank" rel="noopener">Advanced Form Management Solution</a></p>
+              <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/hhcdwq6jff" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+              </div>
             </div>
 
-            <div class="content-box">
-                <h2>Submitting a form to the server</h2>
+            <div class="content-box module3-accent">
+                <h3>Module 3 Project: Advanced Form Management</h3>
+
+                <p>This project will have you build a form. Your task is to implement new user registration for a site, using inputs like checkboxes, dropdowns, and radio buttons. The form will also support frontend validation to help users enter the data correctly and will display success and error messages from the server. By the end, you will have a fully functioning form that communicates with the backend.</p>
+                <p>The module project contains advanced problems that will challenge and stretch your understanding of the module's content. The project has built-in tests for you to check your work, and the solution video is available in case you need help or want to see how we solved each challenge, but remember, there is always more than one way to solve a problem. Before reviewing the solution video, be sure to attempt the project and try solving the challenges yourself.</p>
+                
+
+                <h3>Instructions</h3>
+
+                <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
+                <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/User-Onboarding" target="_blank">Advanced Form Management</a></p>
+
+                <ul>
+                    <li>Fork the repository,</li>
+                    <li>clone it to your machine, and</li>
+                    <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
+                    <li>submit your completed project to the BloomTech Portal</li>
+                </ul>
+
+                <h3>Solution</h3>
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Submitting a form to the server" src="https://fast.wistia.net/embed/iframe/me9epz8z9u?seo=false&videoFoam=false" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe src="https://fast.wistia.net/embed/iframe/8g5ody1pew?seo=false&videoFoam=false" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
             </div>
 
@@ -58,13 +579,6 @@
                     <a href="https://react-hook-form.com/" target="_blank" rel="noopener noreferrer" class="resource-link">React Hook Form Documentation</a>
                     <a href="https://www.npmjs.com/package/yup" target="_blank" rel="noopener noreferrer" class="resource-link">Yup Validation Library</a>
                 </div>
-            </div>
-
-            <div class="content-box">
-                <h2>Module Project</h2>
-                <p>Complete the Advanced Form Management project to demonstrate your understanding of complex form handling in React applications.</p>
-                <a href="project.html" class="btn">Project Instructions</a>
-                <a href="https://github.com/bloominstituteoftechnology/User-Onboarding" target="_blank" rel="noopener noreferrer" class="btn">Project Repository</a>
             </div>
         </section>
     </main>
