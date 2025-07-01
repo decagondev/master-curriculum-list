@@ -21,7 +21,6 @@
                         <a href="../module-4-backend-testing/index.html">Module 4: Backend Testing</a>
                     </div>
                 </li>
-                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
                 <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
         </nav>
@@ -32,164 +31,416 @@
             <h1>Module 1: Introduction to Authentication</h1>
             
             <div class="content-box module1-accent">
-                <h2>Learning Objectives</h2>
-                <p>By the end of this module, you should be able to:</p>
-                <ul>
-                    <li>Explain what authentication is and why it's important</li>
-                    <li>Understand the difference between authentication and authorization</li>
-                    <li>Implement password hashing using bcrypt</li>
-                    <li>Create a basic user registration and login system</li>
-                </ul>
-            </div>
+                <h2>What is Authentication</h2>
+                <p>Authentication is the process by which our Web API verifies a client's identity that is trying to access a resource. This is different from authorization, which comes after authentication and determines what type of access a user should have.</p>
 
-            <div class="content-box">
-                <h2>Video Lesson</h2>
-                <div class="video-container">
-                    <iframe src="https://fast.wistia.net/embed/iframe/ctn0dnz405" title="Authentication Fundamentals" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-            </div>
-
-            <div class="content-box">
-                <h2>What is Authentication?</h2>
-                <p>Authentication is the process of verifying the identity of a user, system, or entity. It's a way to ensure that users are who they claim to be. In web applications, authentication is typically achieved by requiring users to provide credentials, such as a username and password.</p>
-                
-                <h3>Authentication vs. Authorization</h3>
-                <p>While they sound similar, authentication and authorization are two distinct concepts:</p>
+                <p>Adding authentication to a Web API requires that an API can:</p>
                 <ul>
-                    <li><strong>Authentication</strong>: Verifies who the user is (identity verification)</li>
-                    <li><strong>Authorization</strong>: Determines what resources a user can access (permission verification)</li>
+                    <li>Register user accounts.</li>
+                    <li>Login to prove identity.</li>
+                    <li>Logout of the system to invalidate the user's access until they log in again.</li>
+                    <li>Add a way for users to reset their passwords.</li>
                 </ul>
-                
+
+                <p>Proper authentication is difficult. There is a constant race between security experts with innovative ways to protect our information and attackers coming up with ways to circumvent those security measures.</p>
+
+                <p>Some of the things we need to take into account when implementing authentication are:</p>
+                <ul>
+                    <li>Password storage.</li>
+                    <li>Password strength.</li>
+                    <li>Brute-force safeguards.</li>
+                </ul>
+
                 <div class="note-box">
-                    <p>Think of authentication as showing your ID at a venue entrance (proving who you are), while authorization is like having a VIP pass that determines which areas you can access once inside.</p>
+                    <h3>How to Build It</h3>
+                    <p>Let's tackle the first one, password storage. The rule of thumb is: NEVER, EVER, under no circumstances, store user passwords in plain text. Then what are the two main options:</p>
+                <ul>
+                    <li>encryption.</li>
+                    <li>hashing.</li>
+                </ul>
+
+                <h3>Password Hashing vs. Encryption for password storage</h3>
+                <ul>
+                    <li>Encryption goes two ways. First, it utilizes plain text and private keys to generate encrypted passwords and then reverses the process to match an original password.</li>
+                    <li>Cryptographic hashes only go one way: parameters + input = hash. It is pure; given the same parameters and input, it generates the same hash.</li>
+                </ul>
+
+                <p>Suppose the database of users and keys is compromised. In that case, it is possible to decrypt the passwords to their original values, which is bad because users often share passwords across different sites. This is one reason why cryptographic hashing is the preferred method for storing user passwords.</p>
+
+                <h3>Password Strength</h3>
+                <p>Password length alone is not enough to slow password guessing, but long passwords are generally better than short, complicated ones. It is a trade-off between convenience and security.</p>
+
+                <p>Visit <a href="https://www.grc.com/haystack.htm" target="_blank">this site</a> to see how a combination of password length and complexity affects an attacker's ability to pre-generate password hashes.</p>
+
+                <h3>Brute-Force Attack Mitigation</h3>
+                <p>A common way that attackers circumvent hashing algorithms is by pre-calculating hashes for all possible character combinations up to a particular length using common hashing techniques. The results of said calculations are stored in a database table known as a rainbow table. Whenever there is a breach, the attacker checks every breached password against their table.</p>
+
+                <p>Which Cryptographic Hashing Algorithm should we use? MD5, SHA-1, SHA-2, SHA-3? None of these, because they are flawed, these algorithms are optimized for speed, not security.</p>
+
+                <p>We aim to slow down hackers' ability to get at a user's password. To do so, we will add time to our security algorithm to produce what is known as a key derivation function.</p>
+
+                <p>[Hash] + [Time] = [Key Derivation Function].</p>
+
+                <p>In the next section, we'll learn how to use a popular Key Derivation library to store user passwords safely.</p>
                 </div>
-            </div>
 
-            <div class="content-box">
-                <h2>Password Security</h2>
-                <p>One of the most critical aspects of authentication is secure password handling. Never store passwords in plain text! Instead, we use hashing algorithms to securely store passwords.</p>
-                
-                <h3>What is Password Hashing?</h3>
-                <p>Hashing is a one-way function that converts a password into a fixed-length string of characters, which appears random. The same password will always produce the same hash, but it's computationally infeasible to reverse the process.</p>
-                
-                <h3>Using bcrypt for Password Hashing</h3>
-                <p>bcrypt is a password-hashing function designed by Niels Provos and David Mazières. It's based on the Blowfish cipher and incorporates a salt to protect against rainbow table attacks.</p>
-                
-                <pre><code>const bcrypt = require('bcryptjs');
+                <h3>Hashing Passwords</h3>
+                <p>Instead of writing our key derivation function (fancy name for hashing function), we'll use a well-known and popular module called <a href="https://www.npmjs.com/package/bcryptjs" target="_blank" rel="noopener">bcryptjs</a>.</p>
 
-// Hashing a password
-const hashPassword = async (password) => {
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-  return hashedPassword;
-};
+                <p>Bcryptjs features include:</p>
+                <ul>
+                    <li>password hashing function</li>
+                    <li>implements salting both manually and automatically</li>
+                    <li>accumulative hashing rounds</li>
+                </ul>
 
-// Verifying a password
-const verifyPassword = async (password, hashedPassword) => {
-  const isMatch = await bcrypt.compare(password, hashedPassword);
-  return isMatch;
-};</code></pre>
-            </div>
+                <p>Having an algorithm that hashes the information multiple times (rounds) means an attacker needs to have the hash, know the algorithm used, and how many rounds were used to generate the hash in the first place.</p>
 
-            <div class="content-box">
-                <h2>Implementing User Registration</h2>
-                <p>A basic user registration system involves:</p>
-                <ol>
-                    <li>Collecting user information (username, email, password, etc.)</li>
-                    <li>Validating user input</li>
-                    <li>Hashing the password</li>
-                    <li>Storing user data in a database</li>
-                </ol>
-                
-                <h3>Example: Express.js User Registration Route</h3>
-                <pre><code>const express = require('express');
-const bcrypt = require('bcryptjs');
-const router = express.Router();
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Follow these steps to use bcrypt in your project.</p>
 
-// User registration route
-router.post('/register', async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
-    
-    // Input validation (simplified)
-    if (!username || !email || !password) {
-      return res.status(400).json({ message: 'All fields are required' });
-    }
-    
-    // Check if user already exists in database
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-    
-    // Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    
-    // Create new user
-    const user = new User({
-      username,
-      email,
-      password: hashedPassword
+                    <ol>
+                        <li>Install bcryptjs using npm.</li>
+                        <li>Import it into your server.</li>
+                    </ol>
+
+                    <pre><code>const bcrypt = require('bcryptjs');</code></pre>
+
+                    <p>To hash a password:</p>
+
+                    <pre><code>const credentials = req.body;
+
+const hash = bcrypt.hashSync(credentials.password, 14);
+
+credentials.password = hash;
+
+// move on to save the user.</code></pre>
+
+                    <p>To verify a password:</p>
+
+                    <pre><code>const credentials = req.body;
+
+// find the user in the database by it's username then
+if (!user || !bcrypt.compareSync(credentials.password, user.password)) {
+  return res.status(401).json({ error: 'Incorrect credentials' });
+}
+
+// the user is valid, continue on</code></pre>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/lhgx4vxtxm" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h3>Verifying passwords with Bcrypt</h3>
+                <p>Use bcrypt.compareSync(), passing the password guess in plain text and the password hash from the database to validate credentials.</p>
+
+                <p>If the password guess is valid, the method returns true. Otherwise, it returns false. This is because the library hashes the password guess first and then compares the hashes.</p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's see an example.</p>
+
+                    <pre><code>server.post('/api/login', (req, res) => {
+  let { username, password } = req.body;
+
+  Users.findBy({ username })
+    .first()
+    .then(user => {
+      // check that passwords match
+      if (user && bcrypt.compareSync(password, user.password)) {
+        res.status(200).json({ message: `Welcome ${user.username}!` });
+      } else {
+        // we will return 401 if the password or username are invalid
+        // we don't want to let attackers know when they have a good username
+        res.status(401).json({ message: 'Invalid Credentials' });
+      }
+    })
+    .catch(error => {
+      res.status(500).json(error);
     });
-    
-    // Save user to database
-    await user.save();
-    
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
 });</code></pre>
-            </div>
 
-            <div class="content-box">
-                <h2>Implementing User Login</h2>
-                <p>A basic user login system involves:</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/3yg5238eaw" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h3>In-memory sessions</h3>
+
+                <p>Sessions provide a way to persist data across requests. For example, we'll use them to save authentication information, so there is no need to re-enter credentials on every new request the client makes to the server.</p>
+
+                <p>When using sessions, each client will have a unique session stored on the server.</p>
+
+                <p>Now that we have a solution for keeping authentication information, we need to transmit that information between the client and server. For that, we'll use cookies.</p>
+
+                <div class="note-box">
+                    <h3>Authentication Workflow for sessions</h3>
+                    <p>The basic workflow when using a combination of cookies and sessions for authentication is:</p>
+                    <ol>
+                        <li>Client sends credentials</li>
+                        <li>Server verifies credentials</li>
+                        <li>Server creates a session for the client</li>
+                        <li>Server produces and sends back a cookie</li>
+                        <li>Client stores the cookie</li>
+                        <li>Client sends the cookie on every request</li>
+                        <li>Server verifies that the cookie is valid</li>
+                        <li>Server provides access to resource</li>
+                    </ol>
+                </div>
+
+                <p>To understand how cookies are transmitted and stored in the browser, we need to look at the basic structure of an HTTP message. Every HTTP message, be it a request or a response, has two main parts: the headers and the body.</p>
+
+                <p>The headers are a set of key/value stores that include information about the request. There are several standard headers, but we can add our own if needed.</p>
+
+                <p>To send cookies, the server adds the Set-Cookie header to the response like so: "Set-Cookie": "session=12345". Notice how the value of a header is just a string. The browser will read the header and save a cookie called session with the value 12345 in this example. We will use a library that takes care of creating and sending the cookie.</p>
+
+                <p>The body contains the data portion of the message.</p>
+
+                <p>The browser will add the "Cookie": "session=12345" header on every subsequent request and the server.</p>
+
+                <p>Cookies are not accessible from JavaScript or anywhere because they are cryptographically signed and very secure.</p>
+
+                <p>There are sever libraries for handling sessions in Node.js, below are two examples:</p>
+                <ul>
+                    <li><a href="https://www.npmjs.com/package/client-sessions">client-sessions</a></li>
+                    <li><a href="https://www.npmjs.com/package/express-session">express-session</a></li>
+                </ul>
+                <p>We will use the latter.</p>
+
+                <div class="note-box">
+                    <h3>Common Ways to Store Session Data on the Server:</h3>
+                    <ul>
+                        <li>Memory</li>
+                        <li>Memory cache (like Redis and Memcached)</li>
+                        <li>Database</li>
+                    </ul>
+                </div>
+
+                <h3>Cookies</h3>
+                <ul>
+                    <li>Automatically included on every request</li>
+                    <li>Unique to each domain + device pair</li>
+                    <li>Cannot be sent to a different domain</li>
+                    <li>Sent in the cookie header</li>
+                    <li>Has a body that can have extra identifying information</li>
+                    <li>Max size around 4KB</li>
+                </ul>
+
+                <h3>Storing Session Data in Memory</h3>
+                <ul>
+                    <li>Data stored in memory is wiped when the server restarts</li>
+                    <li>Causes memory leaks as more memory is used as the application continues to store data in session for different clients</li>
+                    <li>Good for development due to its simplicity</li>
+                </ul>
+
+                <h3>Using cookies to transfer session data</h3>
+                <p>Advantages when using cookies:</p>
+                <ul>
+                    <li>A cookie is a small key/value pair data structure passed back and forth between client and server and stored in the browser</li>
+                    <li>The server uses it to store information about a particular client/user</li>
+                </ul>
+
+                <p>Workflow for using cookies as session storage:</p>
                 <ol>
-                    <li>Collecting user credentials (username/email and password)</li>
-                    <li>Finding the user in the database</li>
-                    <li>Comparing the provided password with the stored hash</li>
-                    <li>Creating a session or token upon successful authentication</li>
+                    <li>The server issues a cookie with an expiration time and sends it with the response</li>
+                    <li>Browsers automatically store the cookie and send it on every request to the same domain</li>
+                    <li>The server can read the information contained in the cookie (like the username)</li>
+                    <li>The server can make changes to the cookie before sending it back on the response</li>
+                    <li>Rinse and repeat</li>
                 </ol>
-                
-                <h3>Example: Express.js User Login Route</h3>
-                <pre><code>// User login route
-router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    
-    // Input validation
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
-    }
-    
-    // Find user by email
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-    
-    // Verify password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-    
-    // Create session or token (we'll cover JWT in Module 2)
-    // For now, using session-based authentication
-    req.session.user = {
-      id: user._id,
-      username: user.username,
-      email: user.email
-    };
-    
-    res.status(200).json({ message: 'Login successful' });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+
+                <p>Express-session uses cookies for session management.</p>
+
+                <p>Drawbacks when using cookies:</p>
+                <ul>
+                    <li>Small size, around 4KB</li>
+                    <li>Send in every request, increasing the request size if too much information is stored in them</li>
+                    <li>If an attacker gets a hold of the private key used to encrypt the cookie, they could read the cookie data</li>
+                </ul>
+
+                <h3>Storing Session Data in Memory Cache</h3>
+                <p>(Preferred Way of Storing Sessions in Production Applications)</p>
+                <ul>
+                    <li>Stored as key-value pair data in a separate server</li>
+                    <li>The server still uses a cookie, but it only contains the session id</li>
+                    <li>The memory cache server uses that session id to find the session data</li>
+                </ul>
+
+                <p>Advantages:</p>
+                <ul>
+                    <li>Quick lookups</li>
+                    <li>Decoupled from the API server</li>
+                    <li>A single memory cache server can serve many applications</li>
+                    <li>Automatically remove old session data</li>
+                </ul>
+
+                <p>Drawbacks:</p>
+                <ul>
+                    <li>Another server to set up and manage</li>
+                    <li>Extra complexity for small applications</li>
+                    <li>Hard to reset the cache without losing all session data</li>
+                </ul>
+
+                <h3>Storing Session Data In a Database</h3>
+                <ul>
+                    <li>Similar to storing data in a memory store</li>
+                    <li>The session cookie still holds the session id</li>
+                    <li>The server uses the session id to find the session data in the database</li>
+                    <li>Retrieving data from a database is slower than reading from a memory cache</li>
+                    <li>It causes chatter between the server and the database</li>
+                    <li>Need to manage/remove old sessions manually, or the database will be filled with unused session data. Most libraries now manage this for you</li>
+                </ul>
+
+                <p>Here is a list of <a href="https://github.com/expressjs/session#compatible-session-stores">express-session compatible stores</a></p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's add session support to our Web API:</p>
+
+                    <pre><code>const session = require('express-session');
+
+// configure express-session middleware
+server.use(
+  session({
+    name: 'notsession', // default is connect.sid
+    secret: 'nobody tosses a dwarf!',
+    cookie: {
+      maxAge: 1 * 24 * 60 * 60 * 1000,
+      secure: true, // only set cookies over https. Server will not send back a cookie over http.
+    }, // 1 day in milliseconds
+    httpOnly: true, // don't let JS code access cookies. Browser extensions run JS code on your browser!
+    resave: false,
+    saveUninitialized: false,
+  })
+);</code></pre>
+
+                    <p>The resave option forces the session to be saved back to the session store, even if the session wasn't modified during the request.</p>
+
+                    <p>The saveUninitialized flag, forces a session that is "uninitialized" to be saved to the store. A session is uninitialized when it is new but not modified. Choosing false is useful for implementing login sessions, reducing server storage usage, or complying with laws that require permission before setting a cookie.</p>
+
+                    <p>Now we can store session data in one route handler and read it in another.</p>
+
+                    <pre><code>app.get('/', (req, res) => {
+  req.session.name = 'Frodo';
+  res.send('got it');
+});
+
+app.get('/greet', (req, res) => {
+  const name = req.session.name;
+  res.send(`hello ${req.session.name}`);
+});</code></pre>
+
+                    <p>The server sends back a session id with every response, and the client then sends back that session id on every request.</p>
+
+                    <p><a href="https://www.npmjs.com/package/express-session">express-session</a> uses in-memory storage by default.</p>
+
+                    <p>Note how we generalize the session cookie's name, to make it harder for attackers to know which library we're using to manage our sessions. This is akin to using a helmet to hide the X-Powered-By=Express header.</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/5e2hrnzuu8" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h3>Implement Logout</h3>
+                <p>Sessions remain active until they reach the expiration time configured when they were created, but we need to invalidate the session immediately when a user logs out.</p>
+
+                <p>We can do this by removing the session from our session store. Each library does it differently.</p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Here's how to implement a logout endpoint using express-session:</p>
+
+                    <pre><code>server.get('/api/logout', (req, res) => {
+  if (req.session) {
+    req.session.destroy(err => {
+      if (err) {
+        res.send('error logging out');
+      } else {
+        res.send('good bye');
+      }
+    });
   }
 });</code></pre>
-            </div>
+
+                    <p>The destroy() method removes the session from the store and eliminates the req.session property. This effectively logs out the user by invalidating their session.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/6vj4tr1h28" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h3>Protecting Routes</h3>
+                <p>Restricting access to endpoints is a two-step process:</p>
+
+                <ol>
+                    <li>We write middleware to check that there is a session for the client.</li>
+                    <li>We place that middleware in front of the endpoints we want to restrict.</li>
+                </ol>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>We'll start by writing a piece of middleware we can use locally to restrict access to protected routes.</p>
+
+                    <pre><code>function protected(req, res, next) {
+  if (req.session && req.session.userId) {
+    next();
+  } else {
+    res.status(401).json({ message: 'you shall not pass!!' });
+  }
+}</code></pre>
+
+                    <p>This middleware verifies that we have a session and that the userId is set. We could use username or any other value to verify access to a resource.</p>
+
+                    <p>Then, we add that middleware to the endpoints we'd like to protect.</p>
+
+                    <pre><code>server.get('/api/users', protected, (req, res) => {
+  db('users')
+    .then(users => res.json(users))
+    .catch(err => res.json(err));
+});</code></pre>
+
+                    <p>The /api/users endpoint is only accessible when the client is logged in.</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/4zv6i69yos" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>                
+                </div>
+
+                <div class="content-box module1-accent">
+                    <h2>Guided Project</h2>
+                  <p><a href="https://github.com/bloominstituteoftechnology/node-auth1-guided" target="_blank" rel="noopener">Intro to Authentication Starter Code</a></p>
+                  <p><a href="https://github.com/bloominstituteoftechnology/node-auth1-guided-solution" target="_blank" rel="noopener">Intro to Authentication Solution</a></p>
+                  <div class="video-container">
+                      <iframe src="https://fast.wistia.net/embed/iframe/ctn0dnz405" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                  </div>
+                  <div class="note-box">
+                    <h3>NOTE</h3>
+                    <p>The versions of project dependencies used in the recording are slightly different from the ones used in the starter and solution repositories, but this should not have any impact on the relevant code of the Guided Project.</p>
+
+                    <p>The versions used in the repositories are more recent, and thus more similar to the versions you will install if you create a project from scratch.</p>
+                  </div>
+                </div>
+    
+                <div class="content-box module1-accent">
+                    <h3>Module 1 Project: Authentication</h3>
+    
+                    <p>The module project contains advanced problems that will challenge and stretch your understanding of the module's content. The project has built-in tests for you to check your work, and the solution video is available in case you need help or want to see how we solved each challenge, but remember, there is always more than one way to solve a problem. Before reviewing the solution video, be sure to attempt the project and try solving the challenges yourself.</p>
+                    
+    
+                    <h3>Instructions</h3>
+    
+                    <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
+                    <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/node-auth1-project" target="_blank">Node Authentication</a></p>
+    
+                    <ul>
+                        <li>Fork the repository,</li>
+                        <li>clone it to your machine, and</li>
+                        <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
+                        <li>submit your completed project to the BloomTech Portal</li>
+                    </ul>
+    
+                    <h3>Solution</h3>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/hr50j3c06h" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
 
             <section class="resource-section">
                 <h2 class="resource-section-title">Additional Resources</h2>
@@ -208,39 +459,6 @@ router.post('/login', async (req, res) => {
                     </a>
                 </div>
             </section>
-
-            <div class="content-box">
-                <h2>Guided Project</h2>
-                
-                <div class="video-container">
-                    <iframe class="wistia_embed" title="Guided Project Video" src="https://fast.wistia.net/embed/iframe/ctn0dnz405" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen"></iframe>
-                </div>
-
-            <div class="project-links">
-                <h3>Project Resources</h3>
-                <p>Starter repo: <a href="https://github.com/bloominstituteoftechnology/node-auth1-guided" target="_blank" rel="noopener noreferrer">Intro to Authentication</a></p>
-                
-                <p>Solution repo: <a href="https://github.com/bloominstituteoftechnology/node-auth1-guided-solution" target="_blank" rel="noopener noreferrer">Intro to Authentication Solution</a></p>
-            </div>
-            </div>
-
-            <div class="content-box">
-                <h2>Practice Assignment</h2>
-                <p>Now it's time to practice what you've learned! Create a basic Node.js/Express application with user registration and login functionality.</p>
-                <ul>
-                    <li>Set up a new Express project with necessary dependencies</li>
-                    <li>Create a user model with username, email, and password fields</li>
-                    <li>Implement registration and login routes with proper password hashing</li>
-                    <li>Add basic form validation</li>
-                    <li>Create a protected route that requires authentication</li>
-                </ul>
-            </div>
-
-            <div class="content-box">
-                <h2>Next Steps</h2>
-                <p>In the next module, we'll explore JSON Web Tokens (JWT) for token-based authentication, which is a more modern approach compared to session-based authentication.</p>
-                <a href="../module-2-jwt/index.html" class="btn">Go to Module 2: JWT</a>
-            </div>
         </section>
     </main>
 </body>
