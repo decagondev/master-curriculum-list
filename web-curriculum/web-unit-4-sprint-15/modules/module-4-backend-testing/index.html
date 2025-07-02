@@ -21,7 +21,6 @@
                         <a href="../module-4-backend-testing/index.html" class="active">Module 4: Backend Testing</a>
                     </div>
                 </li>
-                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
                 <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
         </nav>
@@ -30,382 +29,263 @@
     <main class="container">
         <section class="welcome">
             <h1>Module 4: Backend Testing</h1>
+            <div class="content-box module4-accent">
+              <h2>Test Web API Endpoints</h2>
+              <p>The tests we write for endpoints are called integration tests because they test how different parts of the system work together. This is different from the unit tests we use to verify the correctness of one part of the system in isolation.</p>
+
+              <p>We'll use a npm module called <a href="https://github.com/visionmedia/supertest" target="_blank" rel="noopener">supertest</a> that makes it easier to write tests for Node.js HTTP servers. We can use supertest to load an instance of our server, send requests to the different endpoints, and make assertions about the responses.</p>
+
+              <p>We could use supertest to verify that making a POST request to a particular endpoint returns a 201 HTTP status code after successfully creating a resource or, that it returns a 500 code if the server ran into an error while processing the request. Writing such a test may look like this:</p>
+
+              <ul>
+                <li>Save a reference to the server.</li>
+                <li>Use supertest to make a POST request passing correct data inside the body.</li>
+                <li>Check that the server responds with status code 201.</li>
+              </ul>
+
+              <p>Writing such a test verifies that all middleware, including the route handler is working as intended.</p>
+              <div class="note-box">
+                <h3>How to Build It</h3>
+                <ol>
+                  <li>Create a folder and cd into it:</li>
+                  <pre><code>mkdir api-testing
+cd api-testing</code></pre>
+
+                  <li>Initialize git repository:</li>
+                  <pre><code>git init</code></pre>
+
+                  <li>Create package.json:</li>
+                  <pre><code>npm init -y</code></pre>
+
+                  <li>Install dependencies:</li>
+                  <pre><code>npm i express
+npm i -D jest supertest</code></pre>
+
+                  <li>Update package.json with test script and jest config:</li>
+                  <pre><code>{
+  "scripts": {
+    "test": "jest --watch --verbose"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}</code></pre>
+
+                  <li>Create server.spec.js:</li>
+                  <pre><code>const request = require('supertest');
+const server = require('./server.js');
+
+describe('server.js', () => {
+  describe('index route', () => {
+    it('should return an OK status code from the index route', async () => {
+      const expectedStatusCode = 200;
+      const response = await request(server).get('/');
+      expect(response.status).toEqual(expectedStatusCode);
+    });
+
+    it('should return a JSON object from the index route', async () => {
+      const expectedBody = { api: 'running' };
+      const response = await request(server).get('/');
+      expect(response.body).toEqual(expectedBody);
+    });
+
+    it('should return a JSON object from the index route', async () => {
+      const response = await request(server).get('/');
+      expect(response.type).toEqual('application/json');
+    });
+  });
+});</code></pre>
+
+                  <li>Create server.js:</li>
+                  <pre><code>const express = require('express');
+const server = express();
+
+server.get('/', (req, res) => {
+  res.status(200).json({ api: 'running' });
+});
+
+module.exports = server;</code></pre>
+                </ol>
+
+                <p>Note: We separate the server implementation from the code that runs the server to avoid port conflicts during testing and to maintain separation of concerns between building and running the server.</p>
+                <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/zyxiup0p28" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
+              </div>
+              <h2>Test Data Access Code</h2>
+                <p>To test the data access, we'll write end to end tests. These types of tests run slower because they perform operations and run queries against an actual database that is similar to the one used in production.</p>
+
+                <p>To avoid polluting the development database, we'll use a separate database for testing. One advantage of using a dedicated testing database is that we can add and remove records without affecting the data in the development or staging databases.</p>
+
+                <p>Next, we'll walk through setting up our API to switch to the testing database based on an environment variable, including setting a different value for that environment value only when running tests.</p>
+                <div class="note-box">
+                  <h3>How to Build It</h3>
+                  <h4>Using cross-env</h4>
+                  <p>Setting and using environment variables is different for Windows and POSIX (Mac, Linux, Unix) Operating Systems. We can use <a href="https://www.npmjs.com/package/cross-env" target="_blank">cross-env</a>. This npm module deals with the OS inconsistencies and provides a uniform setting environment variables across all platforms.</p>
+
+                  <p>Open package.json and look at the test script. It uses cross-env to set an environment variable with the key DB_ENV and the value: testing.</p>
+
+                  <pre><code>"test": "cross-env DB_ENV=testing jest --watch"</code></pre>
+
+                  <p>This environment variable is available to the API as process.env.DB_ENV. The sample code provided uses it inside ./data/dbConfig.js to choose which configuration object to use for the knex connection.</p>
+
+                  <pre><code>// ./data/dbConfig.js
+const knex = require('knex');
+
+const config = require('../knexfile.js');
+
+// if the environment variable is not set, default to 'development'
+// this variable is only set when running the "test" npm script using npm run test
+const dbEnv = process.env.DB_ENV || 'development';
+
+// the value of dbEnv will be either 'development' or 'testing'
+// we pass it within brackets to select the corresponding configuration
+// from knexfile.js
+module.exports = knex(config[dbEnv]);</code></pre>
+
+                  <p>To make this work, knexfile.js has a dedicated configuration key for testing.</p>
+
+                  <pre><code>// ./knexfile.js
+
+module.exports = {
+  development: {
+    client: 'sqlite3',
+    connection: {
+      filename: './data/hobbits.db3',
+    },
+    useNullAsDefault: true,
+    migrations: {
+      directory: './data/migrations',
+    },
+    seeds: {
+      directory: './data/seeds',
+    },
+  },
+  testing: {
+    client: 'sqlite3',
+    connection: {
+      filename: './data/test.db3',
+    },
+    useNullAsDefault: true,
+    migrations: {
+      directory: './data/migrations',
+    },
+    seeds: {
+      directory: './data/seeds',
+    },
+  },
+};</code></pre>
+
+                  <h4>Using Different Environments for Knex Migrations and Seeding</h4>
+                  <p>Different databases have different configuration objects defined within knexfile.js. To specify which environment to target during migrations and seeding use the --env command-line argument.</p>
+
+                  <p>To run migrations against the testing database, use the following command.</p>
+                  <pre><code>npx knex migrate:latest --env=testing</code></pre>
+
+                  <p>To run seeds against the testing database, use the following command.</p>
+                  <pre><code>npx knex seed:run --env=testing</code></pre>
+
+                  <h4>Write End to End Tests that Involve the Database</h4>
+                  <p>To test the data access code, execute the data access and verify that the database was updated correctly.</p>
+
+                  <p>In this example, the data access code has an .insert() method. Let's see how to test it.</p>
+
+                  <pre><code>// our connection to the database
+const db = require('../data/dbConfig.js');
+
+// the data access file we are testing
+const Hobbits = require('./hobbitsModel.js');
+
+describe('hobbits model', () => {
+  describe('insert()', () => {
+    // this example uses async/await to make it easier to read and understand
+    it('should insert the provided hobbits into the db', async () => {
+      // this code expects that the table is empty, we'll handle that below
+      // add data to the test database using the data access file
+      await Hobbits.insert({ name: 'gaffer' });
+      await Hobbits.insert({ name: 'sam' });
+
+      // read data from the table
+      const hobbits = await db('hobbits');
+
+      // verify that there are now two records inserted
+      expect(hobbits).toHaveLength(2);
+    });
+  });
+});</code></pre>
+
+                  <p>To guarantee that the tables are cleared before running each test, add the following code before the test cases.</p>
+
+                  <pre><code>beforeEach(async () => {
+  // this function executes and clears out the table before each test
+  await db('hobbits').truncate();
+});</code></pre>
+
+                  <p>Implement code to make the tests pass.</p>
+
+                  <pre><code>// ./hobbits/hobbitsModel.js
+async function insert(hobbit) {
+  // the second parameter here is of other databases, SQLite returns the id by default
+  const [id] = await db('hobbits').insert(hobbit, 'id');
+
+  return db('hobbits')
+    .where({ id })
+    .first();
+}</code></pre>
+
+                  <p>This test checks that two records are added to the table, even if those records were there at the beginning.</p>
+
+                  <p>Let's add another test to make sure that the record is making it to the database and that the .insert() method returns the newly inserted hobbit.</p>
+
+                  <pre><code>// note we're checking one hobbit at a time
+it('should insert the provided hobbit into the db', async () => {
+  let hobbit = await Hobbits.insert({ name: 'gaffer' });
+  expect(hobbit.name).toBe('gaffer');
+
+  // note how we're reusing the hobbit variable
+  hobbit = await Hobbits.insert({ name: 'sam' });
+  expect(hobbit.name).toBe('sam');
+});</code></pre>
+
+                  <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/djdzjyiwj2" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                  </div>
+                </div>
+                
+            </div>
             
             <div class="content-box module4-accent">
-                <h2>Learning Objectives</h2>
-                <p>By the end of this module, you should be able to:</p>
-                <ul>
-                    <li>Implement comprehensive testing for backend applications</li>
-                    <li>Create tests for API endpoints using supertest</li>
-                    <li>Test database interactions with proper isolation</li>
-                    <li>Implement integration tests for complete workflows</li>
-                    <li>Structure your tests for maintainability and effectiveness</li>
-                </ul>
+              <h2>Guided Project</h2>
+            <p><a href="https://github.com/bloominstituteoftechnology/node-testing2-guided" target="_blank" rel="noopener">Testing the Back End Starter Code</a></p>
+            <p><a href="https://github.com/bloominstituteoftechnology/node-testing2-guided-solution" target="_blank" rel="noopener">Testing the Back End Solution</a></p>
+            <div class="video-container">
+                <iframe src="https://fast.wistia.net/embed/iframe/xr8hp7d4n0" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
+          </div>
 
-            <div class="content-box">
-                <h2>Video Lesson</h2>
-                <div class="video-container">
-                    <iframe src="https://fast.wistia.net/embed/iframe/xr8hp7d4n0" title="Backend Testing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-            </div>
+          <div class="content-box module4-accent">
+              <h2>Module 4 Project: Backend Testing</h2>
 
-            <div class="content-box">
-                <h2>Introduction to Backend Testing</h2>
-                <p>Backend testing is crucial for ensuring your API endpoints, database interactions, and business logic work as expected. It builds upon unit testing concepts, but focuses on testing the server-side components of your application.</p>
-                
-                <h3>Types of Backend Tests</h3>
-                <ul>
-                    <li><strong>API Testing</strong>: Testing API endpoints to ensure they return the correct responses</li>
-                    <li><strong>Database Testing</strong>: Testing interactions with your database</li>
-                    <li><strong>Integration Testing</strong>: Testing how multiple components work together</li>
-                    <li><strong>End-to-End Testing</strong>: Testing complete workflows from start to finish</li>
-                </ul>
-                
-                <div class="note-box">
-                    <p>Backend testing helps ensure your application's core functionality works correctly before deploying to production.</p>
-                </div>
-            </div>
+              <p>The module project contains advanced problems that will challenge and stretch your understanding of the module's content. The project has built-in tests for you to check your work, and the solution video is available in case you need help or want to see how we solved each challenge, but remember, there is always more than one way to solve a problem. Before reviewing the solution video, be sure to attempt the project and try solving the challenges yourself.</p>
+              
 
-            <div class="content-box">
-                <h2>Testing API Endpoints with Supertest</h2>
-                <p>Supertest is a popular library for testing HTTP servers in Node.js. It allows you to make HTTP requests to your application and assert the responses.</p>
-                
-                <h3>Setting Up Supertest</h3>
-                <pre><code>npm install --save-dev supertest</code></pre>
-                
-                <h3>Basic API Test Example</h3>
-                <pre><code>// user.test.js
-const request = require('supertest');
-const app = require('../app'); // Your Express app
+              <h3>Instructions</h3>
 
-describe('User API', () => {
-  test('GET /api/users returns all users', async () => {
-    const response = await request(app).get('/api/users');
-    
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('users');
-    expect(Array.isArray(response.body.users)).toBe(true);
-  });
-  
-  test('GET /api/users/:id returns a specific user', async () => {
-    const response = await request(app).get('/api/users/1');
-    
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('id', 1);
-    expect(response.body).toHaveProperty('username');
-  });
-  
-  test('POST /api/users creates a new user', async () => {
-    const userData = {
-      username: 'testuser',
-      email: 'test@example.com',
-      password: 'password123'
-    };
-    
-    const response = await request(app)
-      .post('/api/users')
-      .send(userData);
-    
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty('id');
-    expect(response.body.username).toBe('testuser');
-    expect(response.body.email).toBe('test@example.com');
-    // Password should not be returned
-    expect(response.body).not.toHaveProperty('password');
-  });
-});</code></pre>
-            </div>
+              <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
+              <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/node-testing2-project" target="_blank">Unit Testing</a></p>
 
-            <div class="content-box">
-                <h2>Testing Authentication Endpoints</h2>
-                <p>Testing authentication endpoints requires special consideration for handling credentials and tokens.</p>
-                
-                <h3>Testing Registration and Login</h3>
-                <pre><code>describe('Authentication API', () => {
-  test('POST /api/auth/register creates a new user', async () => {
-    const userData = {
-      username: 'newuser',
-      email: 'newuser@example.com',
-      password: 'securepassword123'
-    };
-    
-    const response = await request(app)
-      .post('/api/auth/register')
-      .send(userData);
-    
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty('message', 'User registered successfully');
-    expect(response.body).toHaveProperty('user');
-    expect(response.body.user).toHaveProperty('id');
-    expect(response.body.user.username).toBe('newuser');
-  });
-  
-  test('POST /api/auth/login authenticates a user', async () => {
-    const credentials = {
-      email: 'newuser@example.com',
-      password: 'securepassword123'
-    };
-    
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send(credentials);
-    
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('message', 'Login successful');
-    expect(response.body).toHaveProperty('token');
-  });
-});</code></pre>
-                
-                <h3>Testing Protected Routes</h3>
-                <pre><code>describe('Protected Routes', () => {
-  let authToken;
-  
-  beforeAll(async () => {
-    // Login to get a token
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'newuser@example.com',
-        password: 'securepassword123'
-      });
-    
-    authToken = response.body.token;
-  });
-  
-  test('GET /api/profile returns user profile when authenticated', async () => {
-    const response = await request(app)
-      .get('/api/profile')
-      .set('Authorization', `Bearer ${authToken}`);
-    
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('username', 'newuser');
-  });
-  
-  test('GET /api/profile returns 401 when not authenticated', async () => {
-    const response = await request(app)
-      .get('/api/profile');
-    
-    expect(response.status).toBe(401);
-  });
-});</code></pre>
-            </div>
+              <ul>
+                  <li>Fork the repository,</li>
+                  <li>clone it to your machine, and</li>
+                  <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
+                  <li>submit your completed project to the BloomTech Portal</li>
+              </ul>
 
-            <div class="content-box">
-                <h2>Testing Database Interactions</h2>
-                <p>When testing database interactions, it's important to use a test database or mock the database to avoid affecting production data.</p>
-                
-                <h3>Approaches to Database Testing</h3>
-                <ol>
-                    <li><strong>Test Database</strong>: Use a separate database for testing</li>
-                    <li><strong>In-Memory Database</strong>: Use an in-memory database for faster tests</li>
-                    <li><strong>Mocking</strong>: Mock database calls to avoid database interaction</li>
-                </ol>
-                
-                <h3>Setting Up a Test Database</h3>
-                <pre><code>// In your test setup file
-beforeAll(async () => {
-  // Connect to test database
-  await mongoose.connect(process.env.TEST_DB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-});
-
-afterAll(async () => {
-  // Disconnect after tests
-  await mongoose.connection.close();
-});
-
-// Clear database between tests
-beforeEach(async () => {
-  await mongoose.connection.dropDatabase();
-});</code></pre>
-                
-                <h3>Testing Database Models</h3>
-                <pre><code>describe('User Model', () => {
-  test('create & save user successfully', async () => {
-    const userData = {
-      username: 'testuser',
-      email: 'test@test.com',
-      password: 'Password123'
-    };
-    
-    const validUser = new User(userData);
-    const savedUser = await validUser.save();
-    
-    // Object Id should be defined when successfully saved to MongoDB
-    expect(savedUser._id).toBeDefined();
-    expect(savedUser.username).toBe(userData.username);
-    expect(savedUser.email).toBe(userData.email);
-    // Password should be hashed, not plain text
-    expect(savedUser.password).not.toBe(userData.password);
-  });
-  
-  test('create user with missing required field fails', async () => {
-    const userWithoutRequiredField = new User({ username: 'test' });
-    let err;
-    
-    try {
-      await userWithoutRequiredField.save();
-    } catch (error) {
-      err = error;
-    }
-    
-    expect(err).toBeInstanceOf(mongoose.Error.ValidationError);
-  });
-});</code></pre>
-            </div>
-
-            <div class="content-box">
-                <h2>Integration Testing</h2>
-                <p>Integration tests verify that different parts of your application work together correctly. These tests are valuable for catching issues that might not be apparent when testing components in isolation.</p>
-                
-                <h3>Example: User Registration and Authentication Flow</h3>
-                <pre><code>describe('User Registration and Authentication Flow', () => {
-  const userData = {
-    username: 'integrationuser',
-    email: 'integration@example.com',
-    password: 'SecurePass123'
-  };
-  
-  let userId;
-  let authToken;
-  
-  test('register a new user', async () => {
-    const response = await request(app)
-      .post('/api/auth/register')
-      .send(userData);
-    
-    expect(response.status).toBe(201);
-    expect(response.body.user).toHaveProperty('id');
-    userId = response.body.user.id;
-  });
-  
-  test('login with the new user', async () => {
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: userData.email,
-        password: userData.password
-      });
-    
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('token');
-    authToken = response.body.token;
-  });
-  
-  test('access protected route with auth token', async () => {
-    const response = await request(app)
-      .get('/api/profile')
-      .set('Authorization', `Bearer ${authToken}`);
-    
-    expect(response.status).toBe(200);
-    expect(response.body.username).toBe(userData.username);
-  });
-  
-  test('update user profile', async () => {
-    const updateData = {
-      bio: 'This is a test user'
-    };
-    
-    const response = await request(app)
-      .put(`/api/users/${userId}`)
-      .set('Authorization', `Bearer ${authToken}`)
-      .send(updateData);
-    
-    expect(response.status).toBe(200);
-    expect(response.body.bio).toBe(updateData.bio);
-  });
-  
-  test('logout and token should be invalid', async () => {
-    // Logout
-    await request(app)
-      .post('/api/auth/logout')
-      .set('Authorization', `Bearer ${authToken}`);
-    
-    // Try to access protected route
-    const response = await request(app)
-      .get('/api/profile')
-      .set('Authorization', `Bearer ${authToken}`);
-    
-    expect(response.status).toBe(401);
-  });
-});</code></pre>
-            </div>
-
-            <div class="content-box">
-                <h2>Advanced Testing Topics</h2>
-                
-                <h3>Testing Error Handling</h3>
-                <pre><code>describe('Error Handling', () => {
-  test('returns 404 for non-existent routes', async () => {
-    const response = await request(app).get('/non-existent-route');
-    expect(response.status).toBe(404);
-  });
-  
-  test('returns 400 for bad request format', async () => {
-    const response = await request(app)
-      .post('/api/users')
-      .send({ invalidField: 'data' });
-    
-    expect(response.status).toBe(400);
-  });
-  
-  test('handles server errors gracefully', async () => {
-    // Mock a function to throw an error
-    jest.spyOn(User, 'findById').mockImplementationOnce(() => {
-      throw new Error('Database connection failed');
-    });
-    
-    const response = await request(app).get('/api/users/1');
-    
-    expect(response.status).toBe(500);
-    expect(response.body).toHaveProperty('message');
-  });
-});</code></pre>
-                
-                <h3>Testing Middleware</h3>
-                <pre><code>describe('Authentication Middleware', () => {
-  test('authenticateToken middleware blocks requests without token', async () => {
-    const req = { headers: {} };
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
-    };
-    const next = jest.fn();
-    
-    const authMiddleware = require('../middleware/auth');
-    authMiddleware.authenticateToken(req, res, next);
-    
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-      message: expect.any(String)
-    }));
-    expect(next).not.toHaveBeenCalled();
-  });
-  
-  test('authenticateToken middleware allows requests with valid token', async () => {
-    // Create a valid token
-    const jwt = require('jsonwebtoken');
-    const token = jwt.sign({ id: 1 }, process.env.JWT_SECRET);
-    
-    const req = { 
-      headers: { 
-        authorization: `Bearer ${token}` 
-      } 
-    };
-    const res = {};
-    const next = jest.fn();
-    
-    const authMiddleware = require('../middleware/auth');
-    authMiddleware.authenticateToken(req, res, next);
-    
-    expect(next).toHaveBeenCalled();
-    expect(req.user).toEqual(expect.objectContaining({ id: 1 }));
-  });
-});</code></pre>
-            </div>
+              <h3>Solution</h3>
+              <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/2dad8ocsuf" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
+              </div>
+          </div>
 
             <section class="resource-section">
                 <h2 class="resource-section-title">Additional Resources</h2>
@@ -424,30 +304,6 @@ beforeEach(async () => {
                     </a>
                 </div>
             </section>
-
-            <div class="content-box">
-                <h2>Practice Assignment</h2>
-                <p>Now it's time to practice testing backend applications! Create comprehensive tests for your authentication system:</p>
-                <ul>
-                    <li>Write API tests for registration, login, and profile endpoints</li>
-                    <li>Test protected routes with and without authentication</li>
-                    <li>Create database tests for your user model</li>
-                    <li>Implement integration tests for the complete authentication flow</li>
-                    <li>Test error handling for various scenarios</li>
-                </ul>
-            </div>
-
-            <div class="content-box">
-                <h2>Sprint Challenge Preparation</h2>
-                <p>Now that you've completed all four modules in this sprint, it's time to prepare for the sprint challenge. Make sure you understand:</p>
-                <ul>
-                    <li>Authentication concepts and implementation</li>
-                    <li>JWT-based token authentication</li>
-                    <li>Writing effective tests for both unit and API functionality</li>
-                    <li>Testing database interactions and protected routes</li>
-                </ul>
-                <a href="../../sprint-challenge/index.html" class="btn">Sprint Challenge</a>
-            </div>
         </section>
     </main>
 </body>
