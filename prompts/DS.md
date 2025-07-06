@@ -14,7 +14,7 @@ Make sure to:
 
 3. Elaborate on the objective information and position the textual data under each video, giving code examples where appropriate.
 
-4. Ensure all links with target="_blank" also include rel="noopener" for security purposes.
+4. Ensure all links with target="_blank" also include rel="noopener noreferrer" for security purposes.
 
 5. Keep the orange color (#ff5722) for all links in the modules and HTML files to maintain consistency with the current styles.
 
