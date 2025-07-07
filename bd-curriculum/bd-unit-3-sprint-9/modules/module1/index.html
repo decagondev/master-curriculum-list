@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 1: Remote Debugging - BD Unit 3 Sprint 9</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -30,19 +32,32 @@
     <main class="container">
         <section class="welcome">
             <h1>Module 1: Remote Debugging</h1>
-            
+
             <div class="content-box">
                 <h2>Overview of Remote Debugging</h2>
                 <h3>Basic Concepts</h3>
-                <p>Up until now, we have been running our application and debugger under the same IDE (IntelliJ) session:</p>
-                <p><img src="../../assets/images/normal_ide_debuggging.png" alt="Normal IDE Debugging"></p> <!-- Placeholder for actual image path -->
-                <p>While this is great when developing an application, it is not the environment where the application will run after it is deployed (production environment). Occasionally programs operate differently in a production environment than in the development environment. These differences in operation can occur for several reasons: varied hardware configurations, connections to different resources, leveraging resources unavailable in development, different runtime environment/software versions, et al.</p>
-                <p>Debugging or monitoring an application in its production environment allows us to see how/if it operates as intended.</p>
-                <p>With remote debugging, we can connect the debugger in our IDE (IntelliJ) to a process running outside the IDE on a different computer/server or our local machine:</p>
-                <p><img src="../../assets/images/remote_debugging.png" alt="Remote Debugging"></p> <!-- Placeholder for actual image path -->
-                <p>With the remote debugging features of your favorite IDE, you can attach to an application running outside your IDE -- even on another computer -- and set up breakpoints and inspect application state just like you would when running code from within the IDE.</p>
-                <p>To set up remote debugging, you first must configure the application and debugger to allow for remote debugging.</p>
-                
+                <p>Up until now, we have been running our application and debugger under the same IDE (IntelliJ)
+                    session:</p>
+                <p><img src="../../assets/images/normal_ide_debuggging.png" alt="Normal IDE Debugging"></p>
+                <!-- Placeholder for actual image path -->
+                <p>While this is great when developing an application, it is not the environment where the application
+                    will run after it is deployed (production environment). Occasionally programs operate differently in
+                    a production environment than in the development environment. These differences in operation can
+                    occur for several reasons: varied hardware configurations, connections to different resources,
+                    leveraging resources unavailable in development, different runtime environment/software versions, et
+                    al.</p>
+                <p>Debugging or monitoring an application in its production environment allows us to see how/if it
+                    operates as intended.</p>
+                <p>With remote debugging, we can connect the debugger in our IDE (IntelliJ) to a process running outside
+                    the IDE on a different computer/server or our local machine:</p>
+                <p><img src="../../assets/images/remote_debugging.png" alt="Remote Debugging"></p>
+                <!-- Placeholder for actual image path -->
+                <p>With the remote debugging features of your favorite IDE, you can attach to an application running
+                    outside your IDE -- even on another computer -- and set up breakpoints and inspect application state
+                    just like you would when running code from within the IDE.</p>
+                <p>To set up remote debugging, you first must configure the application and debugger to allow for remote
+                    debugging.</p>
+
                 <h4>For the application:</h4>
                 <ul>
                     <li>Compile the application with debug information.</li>
@@ -52,31 +67,40 @@
                 <h4>For the debugger:</h4>
                 <ul>
                     <li>Know the location of the application class file from the build process.</li>
-                    <li>Know the port you want to use for debugging. When connecting to external applications, make sure the port is not already in use. 5005 is a commonly used port for remote debugging and the one we will be using.</li>
+                    <li>Know the port you want to use for debugging. When connecting to external applications, make sure
+                        the port is not already in use. 5005 is a commonly used port for remote debugging and the one we
+                        will be using.</li>
                 </ul>
             </div>
 
             <div class="content-box">
                 <h3>Starting a non-server application for debugging in the Java JVM</h3>
-                <p>To perform remote debugging for a non-server Java application, you must start the application in the Java JVM with the appropriate debugging options.</p>
+                <p>To perform remote debugging for a non-server Java application, you must start the application in the
+                    Java JVM with the appropriate debugging options.</p>
                 <p>The command to start an application in the JVM for debugging is:</p>
                 <pre><code>java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:port application-class-name</code></pre>
                 <p>where:</p>
                 <ul>
                     <li><code>java</code> - name of command to invoke the Java JVM</li>
-                    <li><code>-agentlib:jdwp</code> - indicates you will use the Java Debug Wire Protocol to communicate with the JVM for debugging</li>
-                    <li><code>transport=dt_socket</code> - indicates the JVM for will use a socket stream to transport information to/from the debugger</li>
-                    <li><code>server=y</code> - indicates the JVM will function as a server for the remote debugging purposes</li>
-                    <li><code>suspend=n</code> - indicates process is to start normally and not suspend execution before it starts</li>
+                    <li><code>-agentlib:jdwp</code> - indicates you will use the Java Debug Wire Protocol to communicate
+                        with the JVM for debugging</li>
+                    <li><code>transport=dt_socket</code> - indicates the JVM for will use a socket stream to transport
+                        information to/from the debugger</li>
+                    <li><code>server=y</code> - indicates the JVM will function as a server for the remote debugging
+                        purposes</li>
+                    <li><code>suspend=n</code> - indicates process is to start normally and not suspend execution before
+                        it starts</li>
                     <li><code>address=*:port</code> - specifies the port the JVM will listen to remote debugging</li>
-                    <li><code>application-class-name</code> - the name of the application .class file containing the main() function for the application</li>
+                    <li><code>application-class-name</code> - the name of the application .class file containing the
+                        main() function for the application</li>
                 </ul>
             </div>
 
             <div class="content-box">
                 <h3>Setting up a debugging run configuration in an IDE</h3>
                 <p>Every robust IDE will have a method for connecting to a remote (external) process for debugging.</p>
-                <p>The details and actual process and parameters will vary from IDE to IDE, but in general, will include the following generic setup:</p>
+                <p>The details and actual process and parameters will vary from IDE to IDE, but in general, will include
+                    the following generic setup:</p>
                 <ul>
                     <li>Create a project for the remote debugging session.</li>
                     <li>Create a Run/Debug configuration for remote debugging that includes:
@@ -94,35 +118,48 @@
             <div class="content-box">
                 <h3>Performing remote debugging</h3>
                 <ol>
-                    <li>Start the process to be remotely debugged. If the process is not on an actual server, use the JVM command with the appropriate options from a command line. You should see an indication that the JVM is listening for a remote debugger. The message may look something like this:
+                    <li>Start the process to be remotely debugged. If the process is not on an actual server, use the
+                        JVM command with the appropriate options from a command line. You should see an indication that
+                        the JVM is listening for a remote debugger. The message may look something like this:
                         <pre><code>Listening for transport dt_socket at address: nnnn &lt;=== this should be the port you specified in the JVM command</code></pre>
                     </li>
                     <li>Open the remote debugging project in the IDE.</li>
                     <li>Start the debugger in the IDE.</li>
                 </ol>
-                <p>You should now be in remote debugging mode. Most debuggers will issue a message in the console window indicating they have attached themselves to an external task. The message may look something like this:</p>
+                <p>You should now be in remote debugging mode. Most debuggers will issue a message in the console window
+                    indicating they have attached themselves to an external task. The message may look something like
+                    this:</p>
                 <pre><code>Connected to the target VM, address: 'servername:port', transport: 'socket'</code></pre>
                 <p>Congratulations!</p>
-                <p>You are now connected to an external process from your IDE debugger. You can start swatting bugs, set breakpoints, examine/change variables, just "poke around," or perform whatever other debugging you need to do.</p>
-                <p>The first command you might want to try is to pause the external process so you can interact with it.</p>
-                <p><strong>Note:</strong> You may need to change to the "Debugger" window/tab in the IDE to see the results of your debugging efforts.</p>
+                <p>You are now connected to an external process from your IDE debugger. You can start swatting bugs, set
+                    breakpoints, examine/change variables, just "poke around," or perform whatever other debugging you
+                    need to do.</p>
+                <p>The first command you might want to try is to pause the external process so you can interact with it.
+                </p>
+                <p><strong>Note:</strong> You may need to change to the "Debugger" window/tab in the IDE to see the
+                    results of your debugging efforts.</p>
                 <p>When you have finished debugging:</p>
                 <ul>
                     <li>Terminate the debugging session in the IDE.</li>
-                    <li>Go to the command window and terminate the application. Usually, you can accomplish this by pressing the control-C keys.</li>
-                    <li>If you do not terminate the application, it will continue to run to normal completion or until you close the command window. To avoid potential resource leaks, you will want (and it is considered good practice) to terminate the application before closing the command window.</li>
+                    <li>Go to the command window and terminate the application. Usually, you can accomplish this by
+                        pressing the control-C keys.</li>
+                    <li>If you do not terminate the application, it will continue to run to normal completion or until
+                        you close the command window. To avoid potential resource leaks, you will want (and it is
+                        considered good practice) to terminate the application before closing the command window.</li>
                 </ul>
             </div>
-            
+
             <div class="content-box">
                 <h2>Guided Projects</h2>
 
                 <div class="video-container">
-                    <iframe src="https://fast.wistia.net/embed/iframe/4vdcoszfk9" title="Module 1 Guided Projects Video Content" allowfullscreen></iframe>
+                    <iframe src="https://fast.wistia.net/embed/iframe/4vdcoszfk9"
+                        title="Module 1 Guided Projects Video Content" allowfullscreen></iframe>
                 </div>
 
                 <div class="resource-links">
-                    <a href="https://bloomtech.instructure.com/courses/2387/pages/guided-project-activity-pseudo-mastery-task-2-overview-of-remote-debugging?module_item_id=663178" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://bloomtech.instructure.com/courses/2387/pages/guided-project-activity-pseudo-mastery-task-2-overview-of-remote-debugging?module_item_id=663178"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
                         Remote Debugging
                     </a>
                 </div>
@@ -131,10 +168,12 @@
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
-                    <a href="https://refactoring.guru/design-patterns" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://refactoring.guru/design-patterns" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
                         Design Patterns Guide
                     </a>
-                    <a href="https://www.baeldung.com/design-patterns-series" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://www.baeldung.com/design-patterns-series" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
                         Design Patterns Series - Baeldung
                     </a>
                 </div>
@@ -142,4 +181,5 @@
         </section>
     </main>
 </body>
-</html> 
+
+</html>
