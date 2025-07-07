@@ -1,468 +1,497 @@
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Module 2: Stacks and Queues</title>
-<meta name="identifier" content="ga7c18c981affe75aba71f746991bdd39"/>
-<meta name="editing_roles" content="teachers"/>
-<meta name="workflow_state" content="active"/>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 2: Stacks and Queues</title>
+  <meta name="identifier" content="ga7c18c981affe75aba71f746991bdd39" />
+  <meta name="editing_roles" content="teachers" />
+  <meta name="workflow_state" content="active" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
     tailwind.config = {
-        theme: {
-            extend: {
-                colors: {
-                    primary: '#ff5722',
-                    secondary: '#ff7043',
-                    dark: '#1a1d23',
-                    darker: '#222831', 
-                    darkgray: '#2a303c',
-                    darkborder: '#333a47',
-                    lighttext: '#b3b3b3',
-                }
-            }
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ff5722',
+            secondary: '#ff7043',
+            dark: '#1a1d23',
+            darker: '#222831',
+            darkgray: '#2a303c',
+            darkborder: '#333a47',
+            lighttext: '#b3b3b3',
+          }
         }
+      }
     }
-</script>
-<style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 20px;
-    background-color: #1a1d23; /* Dark background color */
-    color: #ffffff;
-  }
-  
-  h1, h2, h3, h4, h5 {
-    color: #ffffff;
-    margin-top: 20px;
-    margin-bottom: 10px;
-  }
-  
-  h3 {
-    color: #ff5722; /* Orange accent color */
-    border-bottom: 1px solid #333a47;
-    padding-bottom: 8px;
-  }
-  
-  p, ul, ol {
-    color: #b3b3b3;
-  }
-  
-  .code-block {
-    background-color: #1e222a;
-    padding: 15px;
-    border-radius: 5px;
-    margin: 15px 0;
-    font-family: monospace;
-    white-space: pre;
-    overflow-x: auto;
-    color: #b3b3b3;
-    border-left: 2px solid #ff5722;
-  }
-  
-  .leetcode-link {
-    color: #ff5722;
-    text-decoration: none;
-  }
-  
-  .leetcode-link:hover {
-    text-decoration: underline;
-    color: #ff7043;
-  }
-  
-  .objectives-section {
-    margin-bottom: 20px;
-    padding: 15px;
-    border-left: 3px solid #ff5722;
-    background-color: #2a303c;
-    border-radius: 4px;
-  }
-  
-  .content-section {
-    margin-bottom: 30px;
-    background-color: #2a303c;
-    border-radius: 4px;
-    padding: 20px;
-    border: 1px solid #333a47;
-  }
+  </script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      background-color: #1a1d23;
+      /* Dark background color */
+      color: #ffffff;
+    }
 
-  .content-section h4 {
-    color: #ff5722;
-    font-weight: bold;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #333a47;
-    padding-bottom: 8px;
-  }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      color: #ffffff;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
 
-  /* Video container styles */
-  .video-container {
-    position: relative;
-    padding-bottom: 56.25%;
-    height: 0;
-    overflow: hidden;
-    margin: 20px 0;
-    border: 1px solid #333a47;
-    border-radius: 4px;
-  }
-  
-  .video-wrapper {
-    height: 100%;
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
-  }
+    h3 {
+      color: #ff5722;
+      /* Orange accent color */
+      border-bottom: 1px solid #333a47;
+      padding-bottom: 8px;
+    }
 
-  /* Table styles */
-  .data-table {
-    border-collapse: collapse;
-    width: 100%;
-    color: #b3b3b3;
-  }
+    p,
+    ul,
+    ol {
+      color: #b3b3b3;
+    }
 
-  .table-header {
-    padding: 8px;
-    background-color: #2a303c;
-    color: #ffffff;
-  }
+    .code-block {
+      background-color: #1e222a;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 15px 0;
+      font-family: monospace;
+      white-space: pre;
+      overflow-x: auto;
+      color: #b3b3b3;
+      border-left: 2px solid #ff5722;
+    }
 
-  .table-cell {
-    padding: 8px;
-    border: 1px solid #333a47;
-  }
-  
-  hr {
-    border: 0;
-    height: 1px;
-    background-color: #333a47;
-    margin: 30px 0;
-  }
-</style>
+    .leetcode-link {
+      color: #ff5722;
+      text-decoration: none;
+    }
+
+    .leetcode-link:hover {
+      text-decoration: underline;
+      color: #ff7043;
+    }
+
+    .objectives-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-left: 3px solid #ff5722;
+      background-color: #2a303c;
+      border-radius: 4px;
+    }
+
+    .content-section {
+      margin-bottom: 30px;
+      background-color: #2a303c;
+      border-radius: 4px;
+      padding: 20px;
+      border: 1px solid #333a47;
+    }
+
+    .content-section h4 {
+      color: #ff5722;
+      font-weight: bold;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #333a47;
+      padding-bottom: 8px;
+    }
+
+    /* Video container styles */
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      margin: 20px 0;
+      border: 1px solid #333a47;
+      border-radius: 4px;
+    }
+
+    .video-wrapper {
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 100%;
+    }
+
+    /* Table styles */
+    .data-table {
+      border-collapse: collapse;
+      width: 100%;
+      color: #b3b3b3;
+    }
+
+    .table-header {
+      padding: 8px;
+      background-color: #2a303c;
+      color: #ffffff;
+    }
+
+    .table-cell {
+      padding: 8px;
+      border: 1px solid #333a47;
+    }
+
+    hr {
+      border: 0;
+      height: 1px;
+      background-color: #333a47;
+      margin: 30px 0;
+    }
+  </style>
 </head>
+
 <body class="bg-dark min-h-screen">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Navigation -->
-        <div class="flex justify-between items-center mb-8">
-            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-                <span>Back to Welcome Page</span>
-            </a>
-        </div>
-
-        <!-- Header Section -->
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-white mb-4">Module 2: Stacks and Queues</h1>
-            <p class="text-xl text-lighttext max-w-3xl mx-auto">
-                Master the fundamentals of stacks and queues.
-                Learn how to implement and use these fundamental data structures.
-            </p>
-        </div>
-
-        <div class="objectives-section">
-            <h2 class="text-white">Module Objectives</h2>
-            <p>Upon completion of this module you will be able to:</p>
-            <ul>
-                <li>Understand what a stack is and its behavior (LIFO - Last In, First Out)</li>
-                <li>Understand what a queue is and its behavior (FIFO - First In, First Out)</li>
-                <li>Write code to implement a stack and its basic operations: push, pop, peek, isEmpty</li>
-                <li>Write code to implement a queue and its basic operations: enqueue, dequeue, peek, isEmpty</li>
-                <li>Apply stacks and queues to solve common programming problems</li>
-                <li>Analyze the time and space complexity of stack and queue operations</li>
-            </ul>
-        </div>
-
-        <h3><strong>Stack Basics</strong></h3>
-        <p>
-        <div class="video-container">
-            <div class="video-wrapper">
-                <iframe class="wistia_embed" title="s17M2 JavaScript - Stack Basics Video" src="https://fast.wistia.net/embed/iframe/81ip5021u2" width="100%" height="100%" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-        </div>
-        </p>
-
-        <div class="content-section">
-            <h4>Understanding Stacks</h4>
-            <p>A stack is a linear data structure that follows the Last-In-First-Out (LIFO) principle. Think of it like a stack of plates - you can only take the top plate, and you always add new plates to the top.</p>
-            
-            <p><strong>Key Stack Operations:</strong></p>
-            <ul>
-                <li><strong>Push:</strong> Add an element to the top of the stack</li>
-                <li><strong>Pop:</strong> Remove and return the top element</li>
-                <li><strong>Peek/Top:</strong> View the top element without removing it</li>
-                <li><strong>isEmpty:</strong> Check if the stack is empty</li>
-            </ul>
-            
-            <div class="code-block">
-// Stack implementation using array
-class Stack {
-  constructor() {
-    this.items = [];
-  }
-  
-  // Add element to top of stack
-  push(element) {
-    this.items.push(element);
-  }
-  
-  // Remove and return the top element
-  pop() {
-    if (this.isEmpty()) {
-      return "Underflow - Stack is empty";
-    }
-    return this.items.pop();
-  }
-  
-  // Return the top element without removing it
-  peek() {
-    if (this.isEmpty()) {
-      return "Stack is empty";
-    }
-    return this.items[this.items.length - 1];
-  }
-  
-  // Check if stack is empty
-  isEmpty() {
-    return this.items.length === 0;
-  }
-  
-  // Return the size of the stack
-  size() {
-    return this.items.length;
-  }
-  
-  // Clear the stack
-  clear() {
-    this.items = [];
-  }
-}
-
-// Usage example
-const stack = new Stack();
-stack.push(10);
-stack.push(20);
-stack.push(30);
-console.log(stack.peek());  // 30
-console.log(stack.pop());   // 30
-console.log(stack.size());  // 2
-            </div>
-  
-            <p><strong>Common Stack Applications:</strong></p>
-            <ul>
-                <li>Function call management (call stack)</li>
-                <li>Expression evaluation and syntax parsing</li>
-                <li>Undo mechanisms in applications</li>
-                <li>Backtracking algorithms</li>
-                <li>Browser history</li>
-            </ul>
-        </div>
-
-        <h3><strong>Queue Basics</strong></h3>
-        <p>
-        <div class="video-container">
-            <div class="video-wrapper">
-                <iframe class="wistia_embed" title="S17M2 Understand What a Queue is and its Behavior Video" src="https://fast.wistia.net/embed/iframe/9k6pi75srk" width="100%" height="100%" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-        </div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Navigation -->
+    <div class="flex justify-between items-center mb-8">
+      <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        <span>Back to Welcome Page</span>
+      </a>
     </div>
-</p>
 
-        <div class="content-section">
-            <h4>Understanding Queues</h4>
-            <p>A queue is a linear data structure that follows the First-In-First-Out (FIFO) principle. Think of it like a line of people - the first person to join the line is the first person served.</p>
-            
-            <p><strong>Key Queue Operations:</strong></p>
-            <ul>
-                <li><strong>Enqueue:</strong> Add an element to the end of the queue</li>
-                <li><strong>Dequeue:</strong> Remove and return the front element</li>
-                <li><strong>Front/Peek:</strong> View the front element without removing it</li>
-                <li><strong>isEmpty:</strong> Check if the queue is empty</li>
-            </ul>
-  
-            <div class="code-block">
-// Queue implementation using array
-class Queue {
-  constructor() {
-    this.items = [];
-  }
-  
-  // Add element to the end of the queue
-  enqueue(element) {
-    this.items.push(element);
-  }
-  
-  // Remove and return the front element
-  dequeue() {
-    if (this.isEmpty()) {
-      return "Underflow - Queue is empty";
-    }
-    return this.items.shift();
-  }
-  
-  // Return the front element without removing it
-  front() {
-    if (this.isEmpty()) {
-      return "Queue is empty";
-    }
-    return this.items[0];
-  }
-  
-  // Check if queue is empty
-  isEmpty() {
-    return this.items.length === 0;
-  }
-  
-  // Return the size of the queue
-  size() {
-    return this.items.length;
-  }
-  
-  // Clear the queue
-  clear() {
-    this.items = [];
-  }
-}
+    <!-- Header Section -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-white mb-4">Module 2: Stacks and Queues</h1>
+      <p class="text-xl text-lighttext max-w-3xl mx-auto">
+        Master the fundamentals of stacks and queues.
+        Learn how to implement and use these fundamental data structures.
+      </p>
+    </div>
 
-// Usage example
-const queue = new Queue();
-queue.enqueue(10);
-queue.enqueue(20);
-queue.enqueue(30);
-console.log(queue.front());    // 10
-console.log(queue.dequeue());  // 10
-console.log(queue.size());     // 2
+    <div class="objectives-section">
+      <h2 class="text-white">Module Objectives</h2>
+      <p>Upon completion of this module you will be able to:</p>
+      <ul>
+        <li>Understand what a stack is and its behavior (LIFO - Last In, First Out)</li>
+        <li>Understand what a queue is and its behavior (FIFO - First In, First Out)</li>
+        <li>Write code to implement a stack and its basic operations: push, pop, peek, isEmpty</li>
+        <li>Write code to implement a queue and its basic operations: enqueue, dequeue, peek, isEmpty</li>
+        <li>Apply stacks and queues to solve common programming problems</li>
+        <li>Analyze the time and space complexity of stack and queue operations</li>
+      </ul>
+    </div>
+
+    <h3><strong>Stack Basics</strong></h3>
+    <p>
+    <div class="video-container">
+      <div class="video-wrapper">
+        <iframe class="wistia_embed" title="s17M2 JavaScript - Stack Basics Video"
+          src="https://fast.wistia.net/embed/iframe/81ip5021u2" width="100%" height="100%" name="wistia_embed"
+          allow="autoplay; fullscreen" loading="lazy"></iframe>
+      </div>
+    </div>
+    </p>
+
+    <div class="content-section">
+      <h4>Understanding Stacks</h4>
+      <p>A stack is a linear data structure that follows the Last-In-First-Out (LIFO) principle. Think of it like a
+        stack of plates - you can only take the top plate, and you always add new plates to the top.</p>
+
+      <p><strong>Key Stack Operations:</strong></p>
+      <ul>
+        <li><strong>Push:</strong> Add an element to the top of the stack</li>
+        <li><strong>Pop:</strong> Remove and return the top element</li>
+        <li><strong>Peek/Top:</strong> View the top element without removing it</li>
+        <li><strong>isEmpty:</strong> Check if the stack is empty</li>
+      </ul>
+
+      <div class="code-block">
+        // Stack implementation using array
+        class Stack {
+        constructor() {
+        this.items = [];
+        }
+
+        // Add element to top of stack
+        push(element) {
+        this.items.push(element);
+        }
+
+        // Remove and return the top element
+        pop() {
+        if (this.isEmpty()) {
+        return "Underflow - Stack is empty";
+        }
+        return this.items.pop();
+        }
+
+        // Return the top element without removing it
+        peek() {
+        if (this.isEmpty()) {
+        return "Stack is empty";
+        }
+        return this.items[this.items.length - 1];
+        }
+
+        // Check if stack is empty
+        isEmpty() {
+        return this.items.length === 0;
+        }
+
+        // Return the size of the stack
+        size() {
+        return this.items.length;
+        }
+
+        // Clear the stack
+        clear() {
+        this.items = [];
+        }
+        }
+
+        // Usage example
+        const stack = new Stack();
+        stack.push(10);
+        stack.push(20);
+        stack.push(30);
+        console.log(stack.peek()); // 30
+        console.log(stack.pop()); // 30
+        console.log(stack.size()); // 2
+      </div>
+
+      <p><strong>Common Stack Applications:</strong></p>
+      <ul>
+        <li>Function call management (call stack)</li>
+        <li>Expression evaluation and syntax parsing</li>
+        <li>Undo mechanisms in applications</li>
+        <li>Backtracking algorithms</li>
+        <li>Browser history</li>
+      </ul>
+    </div>
+
+    <h3><strong>Queue Basics</strong></h3>
+    <p>
+    <div class="video-container">
+      <div class="video-wrapper">
+        <iframe class="wistia_embed" title="S17M2 Understand What a Queue is and its Behavior Video"
+          src="https://fast.wistia.net/embed/iframe/9k6pi75srk" width="100%" height="100%" name="wistia_embed"
+          allow="autoplay; fullscreen" loading="lazy"></iframe>
+      </div>
+    </div>
   </div>
-  
-  <p><strong>More Efficient Queue Implementation</strong></p>
-  <p>The array implementation above has O(n) time complexity for the dequeue operation due to array shift. A more efficient implementation uses an object with separate tracking for front and rear:</p>
-  
-  <div class="code-block">
-// Queue implementation with O(1) operations
-class OptimizedQueue {
-  constructor() {
-    this.items = {};
-    this.frontIndex = 0;
-    this.backIndex = 0;
-  }
-  
-  enqueue(element) {
-    this.items[this.backIndex] = element;
-    this.backIndex++;
-  }
-  
-  dequeue() {
-    if (this.isEmpty()) {
+  </p>
+
+  <div class="content-section">
+    <h4>Understanding Queues</h4>
+    <p>A queue is a linear data structure that follows the First-In-First-Out (FIFO) principle. Think of it like a line
+      of people - the first person to join the line is the first person served.</p>
+
+    <p><strong>Key Queue Operations:</strong></p>
+    <ul>
+      <li><strong>Enqueue:</strong> Add an element to the end of the queue</li>
+      <li><strong>Dequeue:</strong> Remove and return the front element</li>
+      <li><strong>Front/Peek:</strong> View the front element without removing it</li>
+      <li><strong>isEmpty:</strong> Check if the queue is empty</li>
+    </ul>
+
+    <div class="code-block">
+      // Queue implementation using array
+      class Queue {
+      constructor() {
+      this.items = [];
+      }
+
+      // Add element to the end of the queue
+      enqueue(element) {
+      this.items.push(element);
+      }
+
+      // Remove and return the front element
+      dequeue() {
+      if (this.isEmpty()) {
       return "Underflow - Queue is empty";
-    }
-    
-    const item = this.items[this.frontIndex];
-    delete this.items[this.frontIndex];
-    this.frontIndex++;
-    return item;
-  }
-  
-  front() {
-    if (this.isEmpty()) {
+      }
+      return this.items.shift();
+      }
+
+      // Return the front element without removing it
+      front() {
+      if (this.isEmpty()) {
       return "Queue is empty";
-    }
-    return this.items[this.frontIndex];
-  }
-  
-  isEmpty() {
-    return this.backIndex - this.frontIndex === 0;
-  }
-  
-  size() {
-    return this.backIndex - this.frontIndex;
-  }
-}
+      }
+      return this.items[0];
+      }
+
+      // Check if queue is empty
+      isEmpty() {
+      return this.items.length === 0;
+      }
+
+      // Return the size of the queue
+      size() {
+      return this.items.length;
+      }
+
+      // Clear the queue
+      clear() {
+      this.items = [];
+      }
+      }
+
+      // Usage example
+      const queue = new Queue();
+      queue.enqueue(10);
+      queue.enqueue(20);
+      queue.enqueue(30);
+      console.log(queue.front()); // 10
+      console.log(queue.dequeue()); // 10
+      console.log(queue.size()); // 2
+    </div>
+
+    <p><strong>More Efficient Queue Implementation</strong></p>
+    <p>The array implementation above has O(n) time complexity for the dequeue operation due to array shift. A more
+      efficient implementation uses an object with separate tracking for front and rear:</p>
+
+    <div class="code-block">
+      // Queue implementation with O(1) operations
+      class OptimizedQueue {
+      constructor() {
+      this.items = {};
+      this.frontIndex = 0;
+      this.backIndex = 0;
+      }
+
+      enqueue(element) {
+      this.items[this.backIndex] = element;
+      this.backIndex++;
+      }
+
+      dequeue() {
+      if (this.isEmpty()) {
+      return "Underflow - Queue is empty";
+      }
+
+      const item = this.items[this.frontIndex];
+      delete this.items[this.frontIndex];
+      this.frontIndex++;
+      return item;
+      }
+
+      front() {
+      if (this.isEmpty()) {
+      return "Queue is empty";
+      }
+      return this.items[this.frontIndex];
+      }
+
+      isEmpty() {
+      return this.backIndex - this.frontIndex === 0;
+      }
+
+      size() {
+      return this.backIndex - this.frontIndex;
+      }
+      }
+    </div>
+
+    <p><strong>Common Queue Applications:</strong></p>
+    <ul>
+      <li>Task scheduling</li>
+      <li>Printer spooling</li>
+      <li>Request handling in web servers</li>
+      <li>Breadth-first search algorithms</li>
+      <li>Message queues in distributed systems</li>
+    </ul>
   </div>
-  
-  <p><strong>Common Queue Applications:</strong></p>
-  <ul>
-    <li>Task scheduling</li>
-    <li>Printer spooling</li>
-    <li>Request handling in web servers</li>
-    <li>Breadth-first search algorithms</li>
-    <li>Message queues in distributed systems</li>
-  </ul>
-</div>
 
-<h3>Variations and Special Types</h3>
+  <h3>Variations and Special Types</h3>
 
-<div class="content-section">
-  <h4>Circular Queue</h4>
-  <p>A circular queue is a special implementation where the front and rear are connected in a circular fashion, optimizing space usage.</p>
-  
-  <h4>Priority Queue</h4>
-  <p>A priority queue assigns a priority to each element, and elements with higher priority are served before elements with lower priority, regardless of their position in the queue.</p>
-  
-  <h4>Deque (Double-Ended Queue)</h4>
-  <p>A deque allows insertion and deletion at both ends, combining features of both stacks and queues.</p>
-</div>
+  <div class="content-section">
+    <h4>Circular Queue</h4>
+    <p>A circular queue is a special implementation where the front and rear are connected in a circular fashion,
+      optimizing space usage.</p>
 
-<div class="content-section">
-<h3>Practice with LeetCode Problems</h3>
+    <h4>Priority Queue</h4>
+    <p>A priority queue assigns a priority to each element, and elements with higher priority are served before elements
+      with lower priority, regardless of their position in the queue.</p>
 
-<p class="mb-4">Note: Previously, this course referenced the CodeSignal Arcade for practice, which is no longer available. The LeetCode problems below follow the same principles and are an excellent alternative for practicing stack and queue implementations.</p>
+    <h4>Deque (Double-Ended Queue)</h4>
+    <p>A deque allows insertion and deletion at both ends, combining features of both stacks and queues.</p>
+  </div>
 
-<h4>Stack Problems:</h4>
-<ul>
-  <li><a href="https://leetcode.com/problems/valid-parentheses/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Valid Parentheses</a> - Use a stack to check valid opening/closing of brackets</li>
-  <li><a href="https://leetcode.com/problems/min-stack/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Min Stack</a> - Implement a stack with constant time access to minimum element</li>
-  <li><a href="https://leetcode.com/problems/evaluate-reverse-polish-notation/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Evaluate Reverse Polish Notation</a> - Use a stack to evaluate postfix expressions</li>
-</ul>
+  <div class="content-section">
+    <h3>Practice with LeetCode Problems</h3>
 
-<h4 class="mt-4">Queue Problems:</h4>
-<ul>
-  <li><a href="https://leetcode.com/problems/implement-queue-using-stacks/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Implement Queue using Stacks</a> - Build a queue using two stacks</li>
-  <li><a href="https://leetcode.com/problems/design-circular-queue/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Design Circular Queue</a> - Implement a circular queue</li>
-  <li><a href="https://leetcode.com/problems/number-of-recent-calls/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Number of Recent Calls</a> - Practical application of queues</li>
-</ul>
+    <p class="mb-4">Note: Previously, this course referenced the CodeSignal Arcade for practice, which is no longer
+      available. The LeetCode problems below follow the same principles and are an excellent alternative for practicing
+      stack and queue implementations.</p>
 
-<hr>
-</div>
+    <h4>Stack Problems:</h4>
+    <ul>
+      <li><a href="https://leetcode.com/problems/valid-parentheses/" class="leetcode-link" target="_blank"
+          rel="noopener noreferrer">Valid Parentheses</a> - Use a stack to check valid opening/closing of brackets</li>
+      <li><a href="https://leetcode.com/problems/min-stack/" class="leetcode-link" target="_blank"
+          rel="noopener noreferrer">Min Stack</a> - Implement a stack with constant time access to minimum element</li>
+      <li><a href="https://leetcode.com/problems/evaluate-reverse-polish-notation/" class="leetcode-link"
+          target="_blank" rel="noopener noreferrer">Evaluate Reverse Polish Notation</a> - Use a stack to evaluate
+        postfix expressions</li>
+    </ul>
 
-<div class="content-section">
-  <h4>Recursion vs. Iteration</h4>
-  <p>It's important to understand when to use recursion versus iterative approaches:</p>
-  
-  <table class="data-table">
-    <tr>
-      <th class="table-header">Aspect</th>
-      <th class="table-header">Recursion</th>
-      <th class="table-header">Iteration</th>
-    </tr>
-    <tr>
-      <td class="table-cell">Memory Usage</td>
-      <td class="table-cell">Uses call stack (higher memory overhead)</td>
-      <td class="table-cell">Typically uses less memory</td>
-    </tr>
-    <tr>
-      <td class="table-cell">Code Clarity</td>
-      <td class="table-cell">Often more elegant and readable for certain problems</td>
-      <td class="table-cell">May be more straightforward for simple problems</td>
-    </tr>
-    <tr>
-      <td class="table-cell">Performance</td>
-      <td class="table-cell">Can be slower due to function call overhead</td>
-      <td class="table-cell">Usually faster</td>
-    </tr>
-    <tr>
-      <td class="table-cell">Stack Overflow Risk</td>
-      <td class="table-cell">Possible with deep recursion</td>
-      <td class="table-cell">Not an issue</td>
-    </tr>
-    <tr>
-      <td class="table-cell">Best For</td>
-      <td class="table-cell">Tree traversals, divide-and-conquer algorithms</td>
-      <td class="table-cell">Simple loops, performance-critical code</td>
-    </tr>
-  </table>
-</div>
-</div>
+    <h4 class="mt-4">Queue Problems:</h4>
+    <ul>
+      <li><a href="https://leetcode.com/problems/implement-queue-using-stacks/" class="leetcode-link" target="_blank"
+          rel="noopener noreferrer">Implement Queue using Stacks</a> - Build a queue using two stacks</li>
+      <li><a href="https://leetcode.com/problems/design-circular-queue/" class="leetcode-link" target="_blank"
+          rel="noopener noreferrer">Design Circular Queue</a> - Implement a circular queue</li>
+      <li><a href="https://leetcode.com/problems/number-of-recent-calls/" class="leetcode-link" target="_blank"
+          rel="noopener noreferrer">Number of Recent Calls</a> - Practical application of queues</li>
+    </ul>
+
+    <hr>
+  </div>
+
+  <div class="content-section">
+    <h4>Recursion vs. Iteration</h4>
+    <p>It's important to understand when to use recursion versus iterative approaches:</p>
+
+    <table class="data-table">
+      <tr>
+        <th class="table-header">Aspect</th>
+        <th class="table-header">Recursion</th>
+        <th class="table-header">Iteration</th>
+      </tr>
+      <tr>
+        <td class="table-cell">Memory Usage</td>
+        <td class="table-cell">Uses call stack (higher memory overhead)</td>
+        <td class="table-cell">Typically uses less memory</td>
+      </tr>
+      <tr>
+        <td class="table-cell">Code Clarity</td>
+        <td class="table-cell">Often more elegant and readable for certain problems</td>
+        <td class="table-cell">May be more straightforward for simple problems</td>
+      </tr>
+      <tr>
+        <td class="table-cell">Performance</td>
+        <td class="table-cell">Can be slower due to function call overhead</td>
+        <td class="table-cell">Usually faster</td>
+      </tr>
+      <tr>
+        <td class="table-cell">Stack Overflow Risk</td>
+        <td class="table-cell">Possible with deep recursion</td>
+        <td class="table-cell">Not an issue</td>
+      </tr>
+      <tr>
+        <td class="table-cell">Best For</td>
+        <td class="table-cell">Tree traversals, divide-and-conquer algorithms</td>
+        <td class="table-cell">Simple loops, performance-critical code</td>
+      </tr>
+    </table>
+  </div>
+  </div>
 </body>
+
 </html>
