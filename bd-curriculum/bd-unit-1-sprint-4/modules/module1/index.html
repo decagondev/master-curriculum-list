@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 1: Builder Pattern - BD Unit 1 Sprint 4</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -26,14 +28,16 @@
             </ul>
         </nav>
     </header>
-    
+
     <main class="container">
         <section class="welcome">
             <h1>Module 1: Builder Pattern</h1>
-            
+
             <div class="content-box">
                 <h2>Module Overview</h2>
-                <p>The Builder pattern is a creational design pattern that lets you construct complex objects step by step. It's particularly useful when you need to create an object with many possible configurations.</p>
+                <p>The Builder pattern is a creational design pattern that lets you construct complex objects step by
+                    step. It's particularly useful when you need to create an object with many possible configurations.
+                </p>
             </div>
 
             <div class="content-box">
@@ -43,7 +47,8 @@
                     <li>Know how to instantiate objects using an object builder</li>
                     <li>Know how to create Required fields using validation logic</li>
                     <li>Understand the advantages of the Builder Pattern</li>
-                    <li>Understand being liberal in what your program accepts and conservative in what your program sends out</li>
+                    <li>Understand being liberal in what your program accepts and conservative in what your program
+                        sends out</li>
                 </ul>
             </div>
 
@@ -61,56 +66,93 @@
             </div>
 
             <div class="video-container">
-                <iframe src="https://fast.wistia.net/embed/iframe/jmm84ah6l2" title="UML Diagrams Video" allowfullscreen></iframe>
+                <iframe src="https://fast.wistia.net/embed/iframe/jmm84ah6l2" title="UML Diagrams Video"
+                    allowfullscreen></iframe>
             </div>
 
             <div class="content-box">
                 <h2>Builder Pattern</h2>
-                <p>Today we're going to introduce our first example of a design pattern called the Builder pattern. Before diving into the Builder pattern, it would be helpful to understand what design patterns are. Once we cover design patterns at a high level, we will address the Builder pattern conceptually and in code.</p>
+                <p>Today we're going to introduce our first example of a design pattern called the Builder pattern.
+                    Before diving into the Builder pattern, it would be helpful to understand what design patterns are.
+                    Once we cover design patterns at a high level, we will address the Builder pattern conceptually and
+                    in code.</p>
 
                 <div class="content-section">
                     <h3>What are Design Patterns?</h3>
-                    <p>Design patterns are strategies for solving everyday problems found when coding. These patterns are considered best practices and create a set of terms that developers can use to convey how things may be solved. These design patterns can solve a host of problems, such as notifying numerous classes of an event (Observer), ensuring only one instance of a class exists (Singleton), or allowing two incompatible objects to work together (Adapter).</p>
-                    
-                    <p>By utilizing design patterns, we follow a set of conventions with which other developers are familiar, quickly communicating how the code works. When developers first look at new code with a pattern implemented, they can more easily see how to interact with the code and be more productive. (You will experience this in future projects when given unfamiliar code that uses the Builder pattern.)</p>
-                    
-                    <p>One last thing on design patterns: use good judgment when deciding to use a design pattern. Just because the problem is present doesn't necessarily mean a design pattern will fix it. With time and experience, one will start to see when to implement a design pattern and when not to.</p>
+                    <p>Design patterns are strategies for solving everyday problems found when coding. These patterns
+                        are considered best practices and create a set of terms that developers can use to convey how
+                        things may be solved. These design patterns can solve a host of problems, such as notifying
+                        numerous classes of an event (Observer), ensuring only one instance of a class exists
+                        (Singleton), or allowing two incompatible objects to work together (Adapter).</p>
+
+                    <p>By utilizing design patterns, we follow a set of conventions with which other developers are
+                        familiar, quickly communicating how the code works. When developers first look at new code with
+                        a pattern implemented, they can more easily see how to interact with the code and be more
+                        productive. (You will experience this in future projects when given unfamiliar code that uses
+                        the Builder pattern.)</p>
+
+                    <p>One last thing on design patterns: use good judgment when deciding to use a design pattern. Just
+                        because the problem is present doesn't necessarily mean a design pattern will fix it. With time
+                        and experience, one will start to see when to implement a design pattern and when not to.</p>
                 </div>
 
                 <div class="content-section">
                     <h3>What is the Builder Pattern?</h3>
-                    <p>Now that we've covered the concept of design patterns, let's learn about what the Builder pattern is and what problems it solves.</p>
-                    
-                    <p>At its core, the Builder pattern lets us build objects with lots of variables. Classes with lots of variables can have constructors with lots of parameters, but those constructors can be difficult to use and decipher (was the 14th parameter a boolean for isActive or isDeleted?). Often times there are many non-required parameters as well that just make the constructor more verbose and confusing.</p>
-                    
+                    <p>Now that we've covered the concept of design patterns, let's learn about what the Builder pattern
+                        is and what problems it solves.</p>
+
+                    <p>At its core, the Builder pattern lets us build objects with lots of variables. Classes with lots
+                        of variables can have constructors with lots of parameters, but those constructors can be
+                        difficult to use and decipher (was the 14th parameter a boolean for isActive or isDeleted?).
+                        Often times there are many non-required parameters as well that just make the constructor more
+                        verbose and confusing.</p>
+
                     <p>Let's take the TacoSalad constructor as an example of a long constructor that we want to fix:</p>
-                    
+
                     <pre><code>public TacoSalad(Tortilla tortilla, Lettuce lettuce, Meat meat, Rice rice, Beans beans, Dressing dressing, Pico pico, TortillaChips tortillaChips, Guacamole guacamole, boolean isGuacOnTheSide, SourCream sourCream, boolean isSourCreamOnTheSide, Lime lime)</code></pre>
-                    
-                    <p>This constructor has a long list of parameters that we must carefully input. Ideally, we would like to work less, not more, when constructing objects. Before we jump into how we will fix this, take a moment to think about how you might make a TacoSalad object without using this long constructor.</p>
+
+                    <p>This constructor has a long list of parameters that we must carefully input. Ideally, we would
+                        like to work less, not more, when constructing objects. Before we jump into how we will fix
+                        this, take a moment to think about how you might make a TacoSalad object without using this long
+                        constructor.</p>
                 </div>
 
                 <div class="content-section">
                     <h3>Potential Solutions</h3>
-                    <p>One of the great things about coding is that many solutions exist for a given problem, and it is up to us to decide how we will solve it. So with this issue of the long constructor, we could consider using a constructor with no parameters and utilizing the setters for only the items we would like to include (e.g., setTortilla(flourTortilla)). This works, but what if a taco salad has a set of required ingredients, or what if we want the object to be immutable (i.e. have no setters)?</p>
-                    
-                    <p>Another solution might be to make a few constructors that require certain fields. For example, you might have:</p>
-                    
+                    <p>One of the great things about coding is that many solutions exist for a given problem, and it is
+                        up to us to decide how we will solve it. So with this issue of the long constructor, we could
+                        consider using a constructor with no parameters and utilizing the setters for only the items we
+                        would like to include (e.g., setTortilla(flourTortilla)). This works, but what if a taco salad
+                        has a set of required ingredients, or what if we want the object to be immutable (i.e. have no
+                        setters)?</p>
+
+                    <p>Another solution might be to make a few constructors that require certain fields. For example,
+                        you might have:</p>
+
                     <pre><code>public TacoSalad(Tortilla tortilla, Lettuce lettuce)
 public TacoSalad(Tortilla tortilla, Lettuce lettuce, Meat meat)
 public TacoSalad(Tortilla tortilla, Lettuce lettuce, Meat meat, Rice rice)
 public TacoSalad(Tortilla tortilla, Lettuce lettuce, Meat meat, Rice rice, Beans beans)
 //...and so on...</code></pre>
-                    
-                    <p>This solution works too, but then we fill our class up with a bunch of extra constructors. If it is one or two constructors, that would be manageable, but if we get many more, we will be managing a host of constructors over time. Having so many constructors can be painful if we decide later to add onions as an ingredient and we now have to update a bunch of constructors to include onions. The pain of managing this class can be frustrating to say the least</p>
+
+                    <p>This solution works too, but then we fill our class up with a bunch of extra constructors. If it
+                        is one or two constructors, that would be manageable, but if we get many more, we will be
+                        managing a host of constructors over time. Having so many constructors can be painful if we
+                        decide later to add onions as an ingredient and we now have to update a bunch of constructors to
+                        include onions. The pain of managing this class can be frustrating to say the least</p>
                 </div>
 
                 <div class="content-section">
                     <h3>Show Me the Pattern!</h3>
-                    <p>The Builder pattern can help us here in a few simple steps. First, we create a builder class that will build our class for us and validates the required fields. In most cases, the builder class is placed inside the class we want to build (we show you how this is done below). The builder then has a list of methods that allow setting any parameters individually. Finally, when the class instance is ready to be built, the builder class has a build method that combines all of the given parameters into one object and returns it.</p>
-                    
+                    <p>The Builder pattern can help us here in a few simple steps. First, we create a builder class that
+                        will build our class for us and validates the required fields. In most cases, the builder class
+                        is placed inside the class we want to build (we show you how this is done below). The builder
+                        then has a list of methods that allow setting any parameters individually. Finally, when the
+                        class instance is ready to be built, the builder class has a build method that combines all of
+                        the given parameters into one object and returns it.</p>
+
                     <p>Let's look at an example of what this might look like in code:</p>
-                    
+
                     <pre><code>public class TacoSalad {
     
     private Tortilla tortilla;
@@ -152,18 +194,29 @@ public TacoSalad(Tortilla tortilla, Lettuce lettuce, Meat meat, Rice rice, Beans
     }
 
 }</code></pre>
-                    
+
                     <p>Let's go over a few parts highlighted by numbers in this code:</p>
                     <ol>
-                        <li>The builder class is inside of the TacoSalad class. Having it inside the class allows our code to be verbose and helps developers more easily find the class (you will see an example of this when we use the builder class below). This is the most common place for a builder class to be.</li>
-                        <li>The builder has methods to store each constructor's parameters in its fields. Notice that we have not made a TacoSalad object yet; instead, we have merely stored the values. Pause here for a moment and look closely at each method, particularly the return type. What are we returning? It is the builder itself! And for good reason. Returning the builder allows us to chain the commands together—more on that in a bit.</li>
-                        <li>The build method is where we create the object using our collected parameters. With the object created, we return the object, and our builder is done.</li>
+                        <li>The builder class is inside of the TacoSalad class. Having it inside the class allows our
+                            code to be verbose and helps developers more easily find the class (you will see an example
+                            of this when we use the builder class below). This is the most common place for a builder
+                            class to be.</li>
+                        <li>The builder has methods to store each constructor's parameters in its fields. Notice that we
+                            have not made a TacoSalad object yet; instead, we have merely stored the values. Pause here
+                            for a moment and look closely at each method, particularly the return type. What are we
+                            returning? It is the builder itself! And for good reason. Returning the builder allows us to
+                            chain the commands together—more on that in a bit.</li>
+                        <li>The build method is where we create the object using our collected parameters. With the
+                            object created, we return the object, and our builder is done.</li>
                     </ol>
-                    
-                    <p>Now, this may look like a lot of code, and in some ways, it is. However, when it comes to using the builder, we will see that we save ourselves time in creating new objects with the builder and maintaining the construction of our class by limiting the number of changes required to update it.</p>
-                    
+
+                    <p>Now, this may look like a lot of code, and in some ways, it is. However, when it comes to using
+                        the builder, we will see that we save ourselves time in creating new objects with the builder
+                        and maintaining the construction of our class by limiting the number of changes required to
+                        update it.</p>
+
                     <p>Let's see what it looks like to build a TacoSalad using it's Builder class:</p>
-                    
+
                     <pre><code>TacoSalad.Builder builder = new TacoSalad.Builder();
 builder.withLettuce(romainLettuce);
 builder.withTortilla(flourTortilla);
@@ -173,9 +226,12 @@ builder.withGuac(guac);
 builder.withGuacOnTheSide(true);
 
 TacoSalad salad = builder.build();</code></pre>
-                    
-                    <p>We have eliminated the need for the TacoSalad constructor and replaced it with the builder. We do not have a long constructor to deal with, and we can easily see each passed-in item. But we can make it more succinct by leveraging the fact that each with... method returns the builder. Let us now chain those commands and see what it looks like:</p>
-                    
+
+                    <p>We have eliminated the need for the TacoSalad constructor and replaced it with the builder. We do
+                        not have a long constructor to deal with, and we can easily see each passed-in item. But we can
+                        make it more succinct by leveraging the fact that each with... method returns the builder. Let
+                        us now chain those commands and see what it looks like:</p>
+
                     <pre><code>TacoSalad tacoSalad = new TacoSalad.Builder()
             .withLettuce(romainLettuce)
             .withTortilla(flourTortilla)
@@ -184,14 +240,21 @@ TacoSalad salad = builder.build();</code></pre>
             .withGuac(guac)
             .withGuacOnTheSide(true)
             .build();</code></pre>
-                    
-                    <p>Now that looks like a good builder pattern (and a decent taco salad, if I do say so myself). We have successfully altered the construction of an object with a long list of parameters into a very readable and straightforward process.</p>
+
+                    <p>Now that looks like a good builder pattern (and a decent taco salad, if I do say so myself). We
+                        have successfully altered the construction of an object with a long list of parameters into a
+                        very readable and straightforward process.</p>
                 </div>
 
                 <div class="content-section">
                     <h3>Maintaining the Builder Pattern</h3>
-                    <p>The process is also straightforward when it comes to maintaining the Builder pattern. Let us say the manager tells us we need to add jalapeños to the TacoSalad constructor. If we still had the multiple long constructors, we would have to update nearly all of them to include jalapeños. With the Builder pattern, this change is as simple as adding the jalapeño object to the one constructor and adding one more method to our builder pattern. It would look something like this:</p>
-                    
+                    <p>The process is also straightforward when it comes to maintaining the Builder pattern. Let us say
+                        the manager tells us we need to add jalapeños to the TacoSalad constructor. If we still had the
+                        multiple long constructors, we would have to update nearly all of them to include jalapeños.
+                        With the Builder pattern, this change is as simple as adding the jalapeño object to the one
+                        constructor and adding one more method to our builder pattern. It would look something like
+                        this:</p>
+
                     <pre><code>public class TacoSalad {
     
     //...the rest of the fields
@@ -218,25 +281,36 @@ TacoSalad salad = builder.build();</code></pre>
     }
 
 }</code></pre>
-                    
-                    <p>Not very much work to include a new ingredient and it seamlessly integrates with the rest of our code. The Builder pattern is doing its job nicely.</p>
-                    
-                    <p>The Builder pattern is just one of many design patterns we will learn about in this course, but it is perhaps one of the more common patterns used within Java development. One final note is that there are variations in implementing the Builder pattern (as well as any other pattern). These variations are ok. Design patterns are more like guidelines, not rules. As we continue to discuss the Builder pattern in this module, we have slightly altered the implementation to show what these variations look like.</p>
-                    
-                    <p>If you still have questions about the Builder pattern, feel free to search the Hub, attend the Code-along, or set up a one-on-one with a learner's assistant. A quick google search on the Builder pattern will also reveal a host of examples.</p>
+
+                    <p>Not very much work to include a new ingredient and it seamlessly integrates with the rest of our
+                        code. The Builder pattern is doing its job nicely.</p>
+
+                    <p>The Builder pattern is just one of many design patterns we will learn about in this course, but
+                        it is perhaps one of the more common patterns used within Java development. One final note is
+                        that there are variations in implementing the Builder pattern (as well as any other pattern).
+                        These variations are ok. Design patterns are more like guidelines, not rules. As we continue to
+                        discuss the Builder pattern in this module, we have slightly altered the implementation to show
+                        what these variations look like.</p>
+
+                    <p>If you still have questions about the Builder pattern, feel free to search the Hub, attend the
+                        Code-along, or set up a one-on-one with a learner's assistant. A quick google search on the
+                        Builder pattern will also reveal a host of examples.</p>
                 </div>
             </div>
 
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
-                    <a href="https://github.com/BloomTechBackend/builder-pattern" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://github.com/BloomTechBackend/builder-pattern" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
                         Project Repository
                     </a>
-                    <a href="https://refactoring.guru/design-patterns/builder" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://refactoring.guru/design-patterns/builder" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
                         Builder Pattern Guide
                     </a>
-                    <a href="https://www.tutorialspoint.com/design_pattern/builder_pattern.htm" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://www.tutorialspoint.com/design_pattern/builder_pattern.htm" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
                         Builder Pattern Tutorial
                     </a>
                 </div>
@@ -266,17 +340,20 @@ TacoSalad salad = builder.build();</code></pre>
 
             <div class="content-box">
                 <h2>Builder Pattern Explained</h2>
-                <p>The Builder pattern is a creational design pattern that lets you construct complex objects step by step. It's particularly useful when constructing objects with many parameters, some of which may be optional.</p>
-                
+                <p>The Builder pattern is a creational design pattern that lets you construct complex objects step by
+                    step. It's particularly useful when constructing objects with many parameters, some of which may be
+                    optional.</p>
+
                 <div class="content-section">
                     <h3>Problem It Solves</h3>
-                    <p>Classes with many fields can have constructors with numerous parameters, making them difficult to use and read. Consider this example:</p>
+                    <p>Classes with many fields can have constructors with numerous parameters, making them difficult to
+                        use and read. Consider this example:</p>
                     <pre><code>public TacoSalad(Tortilla tortilla, Lettuce lettuce, Meat meat, Rice rice, 
     Beans beans, Dressing dressing, Pico pico, TortillaChips tortillaChips, 
     Guacamole guacamole, boolean isGuacOnTheSide, SourCream sourCream, 
     boolean isSourCreamOnTheSide, Lime lime)</code></pre>
                 </div>
-                
+
                 <div class="content-section">
                     <h3>Builder Solution</h3>
                     <p>The Builder pattern creates a separate builder class that:</p>
@@ -286,7 +363,7 @@ TacoSalad salad = builder.build();</code></pre>
                         <li>Provides a build() method that validates and creates the object</li>
                     </ul>
                 </div>
-                
+
                 <div class="content-section">
                     <h3>Code Example</h3>
                     <pre><code>TacoSalad tacoSalad = new TacoSalad.Builder()
@@ -298,7 +375,7 @@ TacoSalad salad = builder.build();</code></pre>
     .withGuacOnTheSide(true)
     .build();</code></pre>
                 </div>
-                
+
                 <div class="content-section">
                     <h3>Key Benefits</h3>
                     <ul>
@@ -310,20 +387,26 @@ TacoSalad salad = builder.build();</code></pre>
                     </ul>
                 </div>
             </div>
-            
+
             <div class="content-box">
                 <h2>Setup Sprint 4 Challenge Repo</h2>
-                <p>This Sprint culminates in a Sprint Challenge project. You should begin by forking and cloning the Sprint Challenge starter repo:</p>
-                
+                <p>This Sprint culminates in a Sprint Challenge project. You should begin by forking and cloning the
+                    Sprint Challenge starter repo:</p>
+
                 <div class="content-section">
-                    <a href="https://github.com/BloomTechBackend/Sprint-4-Challenge-WelcomeLetter" target="_blank" rel="noopener noreferrer" class="btn">Sprint 4 Challenge Starter Repo</a>
+                    <a href="https://github.com/BloomTechBackend/Sprint-4-Challenge-WelcomeLetter" target="_blank"
+                        rel="noopener noreferrer" class="btn">Sprint 4 Challenge Starter Repo</a>
                 </div>
-                
+
                 <p>This will be your project repo for Sprint 4.</p>
-                
-                <p>This resource is also visible under the Sprint Challenge section of the course page. After each module, you will be assigned a mastery task with instructions on adding to or modifying the starter code for the challenge.</p>
-                
-                <p>Upon completion of all mastery tasks, the Sprint Challenge project will be complete and ready for you to submit to CodeGrade. The CodeGrade submission page is available under the Sprint Challenge section on the modules page.</p>
+
+                <p>This resource is also visible under the Sprint Challenge section of the course page. After each
+                    module, you will be assigned a mastery task with instructions on adding to or modifying the starter
+                    code for the challenge.</p>
+
+                <p>Upon completion of all mastery tasks, the Sprint Challenge project will be complete and ready for you
+                    to submit to CodeGrade. The CodeGrade submission page is available under the Sprint Challenge
+                    section on the modules page.</p>
             </div>
         </section>
 
@@ -332,11 +415,13 @@ TacoSalad salad = builder.build();</code></pre>
             <p>Complete these exercises to reinforce your understanding of classes, objects, and access modifiers.</p>
 
             <div class="video-container">
-                <iframe src="https://fast.wistia.net/embed/iframe/jmm84ah6l2" title="Module 1 Video Content" allowfullscreen></iframe>
+                <iframe src="https://fast.wistia.net/embed/iframe/jmm84ah6l2" title="Module 1 Video Content"
+                    allowfullscreen></iframe>
             </div>
 
             <div class="resource-links">
-                <a href="https://github.com/BloomTechBackend/builder-pattern" target="_blank" rel="noopener noreferrer" class="resource-link">
+                <a href="https://github.com/BloomTechBackend/builder-pattern" target="_blank" rel="noopener noreferrer"
+                    class="resource-link">
                     Builder Pattern
                 </a>
             </div>
@@ -344,22 +429,32 @@ TacoSalad salad = builder.build();</code></pre>
 
         <div class="content-box">
             <h2>Mastery Task 1: Implement the Builder Pattern</h2>
-            
+
             <div class="content-section">
                 <h3>Mastery Task Guidelines</h3>
-                <p>Mastery Tasks are opportunities to test your knowledge and understanding through code. When a mastery task is shown in a module, it means that we've covered all the concepts that you need to complete that task.</p>
-                <p>Each mastery task must pass 100% of the automated tests and code styling checks to pass each sprint. Your code must be your own. If you have any questions, feel free to reach out for support.</p>
+                <p>Mastery Tasks are opportunities to test your knowledge and understanding through code. When a mastery
+                    task is shown in a module, it means that we've covered all the concepts that you need to complete
+                    that task.</p>
+                <p>Each mastery task must pass 100% of the automated tests and code styling checks to pass each sprint.
+                    Your code must be your own. If you have any questions, feel free to reach out for support.</p>
             </div>
-            
+
             <div class="content-section">
-                <p>We've been using a single full-sized constructor to initiate our Models. This worked fine at first, but as the Employee class grew and the number of optional fields increased, we needed a better solution. We've decided for this and for future projects that we will be implementing the Builder Pattern for object instantiation.</p>
-                
+                <p>We've been using a single full-sized constructor to initiate our Models. This worked fine at first,
+                    but as the Employee class grew and the number of optional fields increased, we needed a better
+                    solution. We've decided for this and for future projects that we will be implementing the Builder
+                    Pattern for object instantiation.</p>
+
                 <h3>Implement the Builder Pattern</h3>
-                <p>Refactor the Company and Employee class so that they each have no public constructors, and so that each can be instantiated using an internally defined Builder class.</p>
-                
+                <p>Refactor the Company and Employee class so that they each have no public constructors, and so that
+                    each can be instantiated using an internally defined Builder class.</p>
+
                 <h3>Validate the Employee Objects</h3>
-                <p>When an Employee object is built, it should first check that the firstname and the company are not null. If they are we need to alert the user somehow and stop execution of the build method. To do so we will throw a generic RuntimeException with a message informing the user that these fields are required.</p>
-                
+                <p>When an Employee object is built, it should first check that the firstname and the company are not
+                    null. If they are we need to alert the user somehow and stop execution of the build method. To do so
+                    we will throw a generic RuntimeException with a message informing the user that these fields are
+                    required.</p>
+
                 <h3>Completion</h3>
                 <p>Run the gradle command:</p>
                 <pre><code>./gradlew -q clean :test --tests 'com.bloomtech.welcomeletter.MasteryTask_1*'</code></pre>
@@ -368,4 +463,5 @@ TacoSalad salad = builder.build();</code></pre>
         </div>
     </main>
 </body>
-</html> 
+
+</html>
