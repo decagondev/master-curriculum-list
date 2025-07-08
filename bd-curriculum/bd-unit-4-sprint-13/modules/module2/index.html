@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 2: DynamoDB Annotations and Load - BD Unit 4 Sprint 13</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -26,23 +28,28 @@
             </ul>
         </nav>
     </header>
-    
+
     <main class="container">
         <section class="welcome">
             <h1>Module 2: DynamoDB Annotations and Load</h1>
-            
+
             <div class="content-box">
                 <h2>Module Overview</h2>
-                <p>Explore DynamoDB annotations and learn how to load data from DynamoDB tables using the AWS SDK for Java Enhanced Client.</p>
+                <p>Explore DynamoDB annotations and learn how to load data from DynamoDB tables using the AWS SDK for
+                    Java Enhanced Client.</p>
             </div>
-            
+
             <div class="content-box">
                 <h2>Learning Objectives</h2>
                 <ul>
                     <li>Implement and annotate a Java POJO that represents any item from a provided DynamoDB table</li>
-                    <li>Implement and annotate a Java POJO that represents any item from a provided DynamoDB table, where the names of some of its fields differ from the corresponding names of attributes of the DynamoDB table</li>
-                    <li>Implement functionality that retrieves a unique item by partition key from a provided DynamoDB table</li>
-                    <li>Implement functionality that retrieves a unique item by partition and sort key from a provided DynamoDB table</li>
+                    <li>Implement and annotate a Java POJO that represents any item from a provided DynamoDB table,
+                        where the names of some of its fields differ from the corresponding names of attributes of the
+                        DynamoDB table</li>
+                    <li>Implement functionality that retrieves a unique item by partition key from a provided DynamoDB
+                        table</li>
+                    <li>Implement functionality that retrieves a unique item by partition and sort key from a provided
+                        DynamoDB table</li>
                     <li>Implement functionality that creates an item in a provided DynamoDB table</li>
                     <li>Implement functionality that modifies an existing item in a provided DynamoDB table</li>
                     <li>Understand DynamoDB annotations and their purpose in Java applications</li>
@@ -56,18 +63,28 @@
             <div class="content-box">
                 <h2>DynamoDB Annotations</h2>
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="DynamoDB Annotations" src="https://fast.wistia.net/embed/iframe/jbmpf0h9y0" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="DynamoDB Annotations"
+                        src="https://fast.wistia.net/embed/iframe/jbmpf0h9y0" width="100%" height="360"
+                        name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"
+                        loading="lazy"></iframe>
                 </div>
-                
+
                 <h3>Working with DynamoDB Annotations</h3>
-                <p>The AWS SDK for Java provides annotations that make it easier to map Java classes to DynamoDB tables. These annotations are part of the DynamoDB Enhanced Client, which provides a high-level, object-oriented interface for DynamoDB operations.</p>
+                <p>The AWS SDK for Java provides annotations that make it easier to map Java classes to DynamoDB tables.
+                    These annotations are part of the DynamoDB Enhanced Client, which provides a high-level,
+                    object-oriented interface for DynamoDB operations.</p>
                 <h4>Key Annotations</h4>
                 <ul>
-                    <li><strong>@DynamoDbBean</strong> - Marks a class as a DynamoDB item. Applied at the class level.</li>
-                    <li><strong>@DynamoDbPartitionKey</strong> - Marks a field as the partition key for the table. Applied to a getter method.</li>
-                    <li><strong>@DynamoDbSortKey</strong> - Marks a field as the sort key for the table. Applied to a getter method.</li>
-                    <li><strong>@DynamoDbAttribute</strong> - Maps a Java field to a differently named DynamoDB attribute. Applied to a getter method.</li>
-                    <li><strong>@DynamoDbIgnore</strong> - Excludes a field from being persisted to DynamoDB. Applied to a getter method.</li>
+                    <li><strong>@DynamoDbBean</strong> - Marks a class as a DynamoDB item. Applied at the class level.
+                    </li>
+                    <li><strong>@DynamoDbPartitionKey</strong> - Marks a field as the partition key for the table.
+                        Applied to a getter method.</li>
+                    <li><strong>@DynamoDbSortKey</strong> - Marks a field as the sort key for the table. Applied to a
+                        getter method.</li>
+                    <li><strong>@DynamoDbAttribute</strong> - Maps a Java field to a differently named DynamoDB
+                        attribute. Applied to a getter method.</li>
+                    <li><strong>@DynamoDbIgnore</strong> - Excludes a field from being persisted to DynamoDB. Applied to
+                        a getter method.</li>
                 </ul>
                 <p>Here's an example of a Java POJO mapped to a DynamoDB table:</p>
                 <pre><code>
@@ -116,18 +133,30 @@ public class MusicItem {
                     <li>The class must have getters and setters for all properties</li>
                     <li>The partition key is marked with <code>@DynamoDbPartitionKey</code></li>
                     <li>If the table has a sort key, it's marked with <code>@DynamoDbSortKey</code></li>
-                    <li>For attribute names that differ between Java and DynamoDB, use <code>@DynamoDbAttribute</code> with the DynamoDB name</li>
+                    <li>For attribute names that differ between Java and DynamoDB, use <code>@DynamoDbAttribute</code>
+                        with the DynamoDB name</li>
                 </ul>
-                <p>These annotations simplify working with DynamoDB by automatically handling the conversion between Java objects and DynamoDB items.</p>
+                <p>These annotations simplify working with DynamoDB by automatically handling the conversion between
+                    Java objects and DynamoDB items.</p>
 
                 <div>
                     <h2>Mapping DynamoDB Items to Java Objects</h2>
-                    <p>In a previous lesson, you learned about databases, their uses, and one of Amazon's database systems, DynamoDB. In this lesson, you will learn about programmatically retrieving items from a DynamoDB table and mapping them to Java objects.</p>
+                    <p>In a previous lesson, you learned about databases, their uses, and one of Amazon's database
+                        systems, DynamoDB. In this lesson, you will learn about programmatically retrieving items from a
+                        DynamoDB table and mapping them to Java objects.</p>
 
                     <h3>Mapping DynamoDB items to Java</h3>
-                    <p>In the next reading, we will learn how to load a DynamoDB item into Java, but first you need to know how to set up the class that will map the item to a Java object. We will create a POJO (Plain Old Java Object -- a class of just member variables with getters and setter, no complex logic) for each DynamoDB table we want to interact with programmatically. Creating a POJO helps us map items from our table to the Java class, which allows us to use Java to create, delete, and update items in our table. An instance of that POJO will represent a single item in the table and the attributes of the item are the fields of the POJO.</p>
+                    <p>In the next reading, we will learn how to load a DynamoDB item into Java, but first you need to
+                        know how to set up the class that will map the item to a Java object. We will create a POJO
+                        (Plain Old Java Object -- a class of just member variables with getters and setter, no complex
+                        logic) for each DynamoDB table we want to interact with programmatically. Creating a POJO helps
+                        us map items from our table to the Java class, which allows us to use Java to create, delete,
+                        and update items in our table. An instance of that POJO will represent a single item in the
+                        table and the attributes of the item are the fields of the POJO.</p>
 
-                    <p>To illustrate this, we're going to use the Songs table from the previous lesson with one additional attribute, isFavorited, a Boolean value that is true if a song has been favorited on your playlist and false if it hasn't been favorited.</p>
+                    <p>To illustrate this, we're going to use the Songs table from the previous lesson with one
+                        additional attribute, isFavorited, a Boolean value that is true if a song has been favorited on
+                        your playlist and false if it hasn't been favorited.</p>
 
                     <table>
                         <tr>
@@ -225,13 +254,30 @@ public class MusicItem {
     }
 }</code></pre>
 
-                    <p>The structure of this class should look familiar to you. There's a field for each attribute in the Song table and each field has an appropriate Java data type. Getters and setters exist for each field. You may have noticed something slightly unusual about our Song POJO. Usually, we would use the primitives int and boolean. When we are writing POJOs to be used with DynamoDB, we want to always use the wrapper classes. Since DynamoDB allows us to have items without every attribute specified, wrapper classes can represent that as null for that field. If we use primitive types and an attribute isn't specified for that item, the field will have the primitive's default value. For our Song example above, if isFavorited is a primitive boolean and is false, is it because the song wasn't favorited or because the attribute wasn't specified? By using the wrapper class Boolean, we know the only time the attribute was unspecified is if the value is null.</p>
+                    <p>The structure of this class should look familiar to you. There's a field for each attribute in
+                        the Song table and each field has an appropriate Java data type. Getters and setters exist for
+                        each field. You may have noticed something slightly unusual about our Song POJO. Usually, we
+                        would use the primitives int and boolean. When we are writing POJOs to be used with DynamoDB, we
+                        want to always use the wrapper classes. Since DynamoDB allows us to have items without every
+                        attribute specified, wrapper classes can represent that as null for that field. If we use
+                        primitive types and an attribute isn't specified for that item, the field will have the
+                        primitive's default value. For our Song example above, if isFavorited is a primitive boolean and
+                        is false, is it because the song wasn't favorited or because the attribute wasn't specified? By
+                        using the wrapper class Boolean, we know the only time the attribute was unspecified is if the
+                        value is null.</p>
 
-                    <p>This is what our Song class looks like when we initially create it in Java. Now we can add in the necessary annotations to map a DynamoDB item to the class.</p>
+                    <p>This is what our Song class looks like when we initially create it in Java. Now we can add in the
+                        necessary annotations to map a DynamoDB item to the class.</p>
 
-                    <p>You can think of the DynamoDB annotations like translators---they translate our DynamoDB items to the Java class and enable us to interact with DynamoDB in Java code. Without annotations, our DynamoDB items wouldn't know how to properly map to the Java class. The annotations specify which Java fields you are expecting to map to each attribute, as well as information about the table being referenced, like the table name and which attributes are the partition and sort keys.</p>
+                    <p>You can think of the DynamoDB annotations like translators---they translate our DynamoDB items to
+                        the Java class and enable us to interact with DynamoDB in Java code. Without annotations, our
+                        DynamoDB items wouldn't know how to properly map to the Java class. The annotations specify
+                        which Java fields you are expecting to map to each attribute, as well as information about the
+                        table being referenced, like the table name and which attributes are the partition and sort
+                        keys.</p>
 
-                    <p>This code will map our Songs table to Java class Song using DynamoDB annotations. The annotations begin with the @ symbol and indicate which attribute maps to which field:</p>
+                    <p>This code will map our Songs table to Java class Song using DynamoDB annotations. The annotations
+                        begin with the @ symbol and indicate which attribute maps to which field:</p>
 
                     <pre><code>@DynamoDBTable(tableName = "Songs")
 public class Song {
@@ -292,43 +338,89 @@ public class Song {
                     <h4>DynamoDBTable</h4>
                     <pre><code>@DynamoDBTable(tableName = "Songs")
 public class Song {</code></pre>
-                    <p>The @DynamoDBTable annotation annotates the class declaration that appears directly below (or to the right of) the annotation. When using an annotation, it's important to make sure that the next line of code is the value that you want to annotate. The DynamoDB annotation has a parameter, tableName. The parameter name is specified by DynamoDB (you can read more in the DynamoDBTable Javadoc). The value for tableName should be whatever the name of your table is in DynamoDB. This is how Java knows which table to access. The @DynamoDBTable annotation is required on any class used to represent DynamoDB items.</p>
+                    <p>The @DynamoDBTable annotation annotates the class declaration that appears directly below (or to
+                        the right of) the annotation. When using an annotation, it's important to make sure that the
+                        next line of code is the value that you want to annotate. The DynamoDB annotation has a
+                        parameter, tableName. The parameter name is specified by DynamoDB (you can read more in the
+                        DynamoDBTable Javadoc). The value for tableName should be whatever the name of your table is in
+                        DynamoDB. This is how Java knows which table to access. The @DynamoDBTable annotation is
+                        required on any class used to represent DynamoDB items.</p>
 
-                    <p>Our tableName is Songs and our class name is Song. It's a typical naming convention to have the name of your database table be plural (like Songs) and the class be singular (like Song) since the table holds multiple songs, while the class represents an individual instance of the song.</p>
+                    <p>Our tableName is Songs and our class name is Song. It's a typical naming convention to have the
+                        name of your database table be plural (like Songs) and the class be singular (like Song) since
+                        the table holds multiple songs, while the class represents an individual instance of the song.
+                    </p>
 
                     <h4>DynamoDBHashKey</h4>
                     <pre><code>@DynamoDBHashKey(attributeName = "artist")
 public String getArtist() {
     return artist;
 }</code></pre>
-                    <p>The @DynamoDBHashKey annotation annotates the variable used as the partition key, so should appear just above the getter for the partition key. Although in DynamoDB we refer to it as a partition key, the Java annotation uses a hash key instead. Both terms are used by DynamoDB interchangeably to refer to the same attribute. We'll typically use the term partition key, as most of the documentation uses this term (the code still uses 'hash' and 'range' in a few places, likely because of the difficulty in changing classes already in use by developers around the world!). Instead of above the getter, this annotation could appear above the declared variable. You may see either on teams, but our practice will be to annotate the getters. This applies not just to the @DynamoDBHashKey annotation, but to all DynamoDB attribute annotations.</p>
+                    <p>The @DynamoDBHashKey annotation annotates the variable used as the partition key, so should
+                        appear just above the getter for the partition key. Although in DynamoDB we refer to it as a
+                        partition key, the Java annotation uses a hash key instead. Both terms are used by DynamoDB
+                        interchangeably to refer to the same attribute. We'll typically use the term partition key, as
+                        most of the documentation uses this term (the code still uses 'hash' and 'range' in a few
+                        places, likely because of the difficulty in changing classes already in use by developers around
+                        the world!). Instead of above the getter, this annotation could appear above the declared
+                        variable. You may see either on teams, but our practice will be to annotate the getters. This
+                        applies not just to the @DynamoDBHashKey annotation, but to all DynamoDB attribute annotations.
+                    </p>
 
-                    <p>Similar to the @DynamoDBTable annotation, this annotation has a parameter, attributeName, which is a name specified by DynamoDB (you can read more in the DynamoDBHashKey Javadoc). The value for attributeName should be whatever the name of the attribute is in DynamoDB. This parameter is optional if the attribute name exactly matches the name of your Java field (including capitalization and any punctuation/special characters). Since all DynamoDB tables have a partition key, the @DyanmoDBHashKey annotation is required.</p>
+                    <p>Similar to the @DynamoDBTable annotation, this annotation has a parameter, attributeName, which
+                        is a name specified by DynamoDB (you can read more in the DynamoDBHashKey Javadoc). The value
+                        for attributeName should be whatever the name of the attribute is in DynamoDB. This parameter is
+                        optional if the attribute name exactly matches the name of your Java field (including
+                        capitalization and any punctuation/special characters). Since all DynamoDB tables have a
+                        partition key, the @DyanmoDBHashKey annotation is required.</p>
 
-                    <p>The annotation above maps the table's attributeName artist to the Java field artist and declares this field as the partition key. Since both the name of the attribute in the DynamoDB table and the Java field are artist we could choose to remove the attributeName parameter and write the annotation like this:</p>
+                    <p>The annotation above maps the table's attributeName artist to the Java field artist and declares
+                        this field as the partition key. Since both the name of the attribute in the DynamoDB table and
+                        the Java field are artist we could choose to remove the attributeName parameter and write the
+                        annotation like this:</p>
 
                     <pre><code>@DynamoDBHashKey
 public String getArtist() {
     return artist;
 }</code></pre>
 
-                    <p>Even though the attributeName is optional and you will see teams omit it, our practice will be to always include attributeName so that our code is more explicit. This applies not just to the @DynamoDBHashKey annotation, but to all DynamoDB attribute annotations.</p>
+                    <p>Even though the attributeName is optional and you will see teams omit it, our practice will be to
+                        always include attributeName so that our code is more explicit. This applies not just to the
+                        @DynamoDBHashKey annotation, but to all DynamoDB attribute annotations.</p>
 
                     <h4>DynamoDBRangeKey</h4>
                     <pre><code>@DynamoDBRangeKey(attributeName = "song_title")
 public String getSongTitle() {
     return songTitle;
 }</code></pre>
-                    <p>The @DynamoDBRangeKey annotation annotates the variable used as the sort key, so should appear just above the getter for the sort key. Although in DynamoDB we refer to it as a sort key, the Java annotation uses a range key instead. Both terms are used by DynamoDB interchangeably to refer to the same attribute. We'll typically use the term sort key.</p>
+                    <p>The @DynamoDBRangeKey annotation annotates the variable used as the sort key, so should appear
+                        just above the getter for the sort key. Although in DynamoDB we refer to it as a sort key, the
+                        Java annotation uses a range key instead. Both terms are used by DynamoDB interchangeably to
+                        refer to the same attribute. We'll typically use the term sort key.</p>
 
-                    <p>This annotation is very similar to the @DynamoDBHashKey annotation, except it maps the sort key instead of the partition key (you can read more in the DynamoDBRangeKey Javadoc). Like the @DynamoDBHashKey annotation, the parameter attributeName is optional if the attribute name exactly matches the name of your Java field. Since the attribute name from the DynamoDB table in this example is song_title while the name of the Java variable is songTitle, in this case, the parameter is necessary. Without the attributeName parameter, our code would not know to map the song_title attribute to the songTitle field. The @DynamoDBRangeKey annotation is required for tables that have a sort key, but otherwise should not be used.</p>
+                    <p>This annotation is very similar to the @DynamoDBHashKey annotation, except it maps the sort key
+                        instead of the partition key (you can read more in the DynamoDBRangeKey Javadoc). Like the
+                        @DynamoDBHashKey annotation, the parameter attributeName is optional if the attribute name
+                        exactly matches the name of your Java field. Since the attribute name from the DynamoDB table in
+                        this example is song_title while the name of the Java variable is songTitle, in this case, the
+                        parameter is necessary. Without the attributeName parameter, our code would not know to map the
+                        song_title attribute to the songTitle field. The @DynamoDBRangeKey annotation is required for
+                        tables that have a sort key, but otherwise should not be used.</p>
 
                     <h4>DynamoDBAttribute</h4>
                     <pre><code>@DynamoDBAttribute(attributeName = "genre")
 public String getGenre() {
     return genre;
 }</code></pre>
-                    <p>To explicitly map other attributes in the table that aren't a key, we use @DynamoDBAttribute with the parameter attributeName. This attribute appears right before the getter for the appropriate Java field, just like we saw with the @DynamoDBHashKey and @DynamoDBRangeKey annotations. The @DynamoDBAttribute annotation is optional and is only required when the attribute names don't exactly match the Java names. In the above example Song class, we explicitly named all of the Java variables so you could see how to use @DynamoDBAttribute. While @DynamoDBAttribute can be optional, it will be our practice to always use it so that our code is more explicit. When you go to other teams, you may not see the optional annotations and parameters. It depends on team standards whether to make the naming explicit.</p>
+                    <p>To explicitly map other attributes in the table that aren't a key, we use @DynamoDBAttribute with
+                        the parameter attributeName. This attribute appears right before the getter for the appropriate
+                        Java field, just like we saw with the @DynamoDBHashKey and @DynamoDBRangeKey annotations. The
+                        @DynamoDBAttribute annotation is optional and is only required when the attribute names don't
+                        exactly match the Java names. In the above example Song class, we explicitly named all of the
+                        Java variables so you could see how to use @DynamoDBAttribute. While @DynamoDBAttribute can be
+                        optional, it will be our practice to always use it so that our code is more explicit. When you
+                        go to other teams, you may not see the optional annotations and parameters. It depends on team
+                        standards whether to make the naming explicit.</p>
 
                     <p>The following code snippet is our Song class without the optional annotations/parameters:</p>
 
@@ -383,7 +475,8 @@ public class Song {
     }
 }</code></pre>
 
-                    <p>Moving forward, we will always include the annotations and attributeName fields even when they are not required.</p>
+                    <p>Moving forward, we will always include the annotations and attributeName fields even when they
+                        are not required.</p>
                 </div>
             </div>
 
@@ -391,18 +484,35 @@ public class Song {
                 <h2>DynamoDB Loading</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="DynamoDB Loading" src="https://fast.wistia.net/embed/iframe/vkby7id1hk" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="DynamoDB Loading"
+                        src="https://fast.wistia.net/embed/iframe/vkby7id1hk" width="100%" height="360"
+                        name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"
+                        loading="lazy"></iframe>
                 </div>
 
-                <p>In the previous reading, we went over how to map a DynamoDB item to a Java class using annotations so that we can create, delete, and update items in a DynamoDB table. Now that we know how to set our class up, we'll talk about how to actually get an item from DynamoDB into Java.</p>
+                <p>In the previous reading, we went over how to map a DynamoDB item to a Java class using annotations so
+                    that we can create, delete, and update items in a DynamoDB table. Now that we know how to set our
+                    class up, we'll talk about how to actually get an item from DynamoDB into Java.</p>
 
                 <h3>DynamoDbClientProvider Class</h3>
-                <p>To start using our DynamoDB items in Java, we first need to create a connection between our Java code and our AWS account. We will make that connection using an AmazonDynamoDBClient class, which implements the interface AmazonDynamoDB. You will often see this client referred to polymorphically using the AmazonDyanmoDB interface. If you think back to the lesson on HTTP and Networking, a client is a software that accesses a service made available by a server. In this case, the DynamoDBClient class sets itself up as the client for accessing DynamoDB, which is the service. Once this connection is set up, our class can retrieve data, such as an item, from our DynamoDB tables. Without this connection, our Java program won't have any way to access DynamoDB or any of the data we have stored there. There is some configuration required to connect to our AWS account and create the client. We have written a class, com.amazon.ata.aws.dynamodb.DynamoDbClientProvider (available from the ATAResources package) that is available to you in your Snippets package and the project to easily provide a configured AmazonDynamoDBClient class.</p>
+                <p>To start using our DynamoDB items in Java, we first need to create a connection between our Java code
+                    and our AWS account. We will make that connection using an AmazonDynamoDBClient class, which
+                    implements the interface AmazonDynamoDB. You will often see this client referred to polymorphically
+                    using the AmazonDyanmoDB interface. If you think back to the lesson on HTTP and Networking, a client
+                    is a software that accesses a service made available by a server. In this case, the DynamoDBClient
+                    class sets itself up as the client for accessing DynamoDB, which is the service. Once this
+                    connection is set up, our class can retrieve data, such as an item, from our DynamoDB tables.
+                    Without this connection, our Java program won't have any way to access DynamoDB or any of the data
+                    we have stored there. There is some configuration required to connect to our AWS account and create
+                    the client. We have written a class, com.amazon.ata.aws.dynamodb.DynamoDbClientProvider (available
+                    from the ATAResources package) that is available to you in your Snippets package and the project to
+                    easily provide a configured AmazonDynamoDBClient class.</p>
 
                 <p>You can get an AmazonDynamoDB class by adding this line to your code:</p>
                 <pre><code>AmazonDynamoDB dynamoDBClient = DynamoDbClientProvider.getDynamoDBClient();</code></pre>
 
-                <p>While you are not responsible for the DynamoDbClientProvider class, let's take a quick look at it to better understand what is happening for you:</p>
+                <p>While you are not responsible for the DynamoDbClientProvider class, let's take a quick look at it to
+                    better understand what is happening for you:</p>
 
                 <pre><code>public class DynamoDbClientProvider {
     /**
@@ -433,26 +543,47 @@ public class Song {
     }
 }</code></pre>
 
-                <p>In the DynamoDbClientProvider we are configuring the client with two items: credentials and a region.</p>
+                <p>In the DynamoDbClientProvider we are configuring the client with two items: credentials and a region.
+                </p>
 
-                <p>The credentials are how we tell our AWS account who we are. Our AWS account then decides if the person with these credentials is allowed to access our account and our DynamoDB tables. How it does that starts to get into the world of Authentication and Authorization, which we will cover at a later point. The DefaultAWSCredentialsProviderChain has a chain of places (a list of places in order of preference) to look to try to get our credentials from.</p>
+                <p>The credentials are how we tell our AWS account who we are. Our AWS account then decides if the
+                    person with these credentials is allowed to access our account and our DynamoDB tables. How it does
+                    that starts to get into the world of Authentication and Authorization, which we will cover at a
+                    later point. The DefaultAWSCredentialsProviderChain has a chain of places (a list of places in order
+                    of preference) to look to try to get our credentials from.</p>
 
-                <p>The region tells the client which data center our tables have been created in. Here US_WEST_2 is a data center located in Oregon. We want our tables to be as physically close to us as possible so we can access them faster. It takes our data much longer to travel all the way across the country from a data center in Virginia to Seattle than from Oregon.</p>
+                <p>The region tells the client which data center our tables have been created in. Here US_WEST_2 is a
+                    data center located in Oregon. We want our tables to be as physically close to us as possible so we
+                    can access them faster. It takes our data much longer to travel all the way across the country from
+                    a data center in Virginia to Seattle than from Oregon.</p>
 
-                <p>Other than those two items we are using the default configurations, which are provided by calling .standard().</p>
+                <p>Other than those two items we are using the default configurations, which are provided by calling
+                    .standard().</p>
 
-                <p>For now, you just need to know that the DynamoDbClientProvider exists, that its purpose is to provide a connection to DynamoDB, and how to use it to get information from DynamoDB (which we'll get to in the next section!)</p>
+                <p>For now, you just need to know that the DynamoDbClientProvider exists, that its purpose is to provide
+                    a connection to DynamoDB, and how to use it to get information from DynamoDB (which we'll get to in
+                    the next section!)</p>
 
                 <h3>DynamoDBMapper Class</h3>
-                <p>Another necessary class is the DynamoDBMapper class, which is part of the Amazon AWS library. The DynamoDBMapper class has several methods which are used to map data from a database into our class. We can use DynamoDBMapper methods to load data from a table into Java, save data from Java back into a table, delete an item in our table, query a table for matching items, and more! To instantiate the DynamoDBMapper, we must provide it with an AmazonDynamoDB. This allows our mapper to use our connection to DynamoDB to perform all of these actions. Here's an example of instantiating the DynamoDBMapper:</p>
+                <p>Another necessary class is the DynamoDBMapper class, which is part of the Amazon AWS library. The
+                    DynamoDBMapper class has several methods which are used to map data from a database into our class.
+                    We can use DynamoDBMapper methods to load data from a table into Java, save data from Java back into
+                    a table, delete an item in our table, query a table for matching items, and more! To instantiate the
+                    DynamoDBMapper, we must provide it with an AmazonDynamoDB. This allows our mapper to use our
+                    connection to DynamoDB to perform all of these actions. Here's an example of instantiating the
+                    DynamoDBMapper:</p>
 
                 <pre><code>AmazonDynamoDB dynamoDBClient = DynamoDbClientProvider.getDynamoDBClient();
 DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);</code></pre>
 
-                <p>If you're interested, more information about the DynamoDBMapper class can be found in the <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/datamodeling/DynamoDBMapper.html">DynamoDBMapper Javadoc</a>.</p>
+                <p>If you're interested, more information about the DynamoDBMapper class can be found in the <a
+                        href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/datamodeling/DynamoDBMapper.html">DynamoDBMapper
+                        Javadoc</a>.</p>
 
                 <h3>Loading items with a partition key</h3>
-                <p>Now that we understand a little bit more about the DynamoDbClientProvider and DynamoDBMapper class, we can discuss how to get an item from DynamoDB into Java. We're going to set up an example first, but we'll get back to those two classes soon.</p>
+                <p>Now that we understand a little bit more about the DynamoDbClientProvider and DynamoDBMapper class,
+                    we can discuss how to get an item from DynamoDB into Java. We're going to set up an example first,
+                    but we'll get back to those two classes soon.</p>
 
                 <p>Let's return to our Shoes table from the previous lesson:</p>
 
@@ -487,7 +618,8 @@ DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);</code></pre>
                     </tr>
                 </table>
 
-                <p>Given these shoes in our database, we can load an individual item into Java. By loading an item we're taking an item that already exists in our table and mapping it to an instance of our POJO.</p>
+                <p>Given these shoes in our database, we can load an individual item into Java. By loading an item we're
+                    taking an item that already exists in our table and mapping it to an instance of our POJO.</p>
 
                 <p>Below is our annotated Shoe POJO:</p>
 
@@ -545,15 +677,37 @@ public class Shoe {
     }
 }</code></pre>
 
-                <p>To load an item from our Shoes table to our Shoe class, we use the load() method of the DynamoDBMapper. When we call the load() method, we provide the unique key for an item and then the method searches the table for the item that matches the key we provided.</p>
+                <p>To load an item from our Shoes table to our Shoe class, we use the load() method of the
+                    DynamoDBMapper. When we call the load() method, we provide the unique key for an item and then the
+                    method searches the table for the item that matches the key we provided.</p>
 
                 <p>Let's take a look at the parameters for the load() method:</p>
 
                 <pre><code>public T load(Class<T> clazz, Object hashKey)</code></pre>
 
-                <p>The first parameter is of type Class, which in our example will be Shoe.class. We give the load() method a class so that it knows which POJO, and therefore which annotations to use. The annotations, specifically the @DynamoDBTable annotation, tells the load() method which table to search. Since we declared in our Shoe class that tableName = "Shoes", the load() method knows to search the Shoes table for the key we specified, the second parameter to the load method. DynamoDBMapper knows to search the shoeId attribute because we specified it was the partition key using the @DynamoDBHashKey annotation. Because there is no @DynamoDBRangeKey annotation, DynamoDBMapper knows the table uses only a partition key. If load() finds an item, it loads that item's data into a new instance of the class we specify in the first argument. In our example, the attributes of the item found by the load() method will be populated into a new instance of the Shoe class. 'DynamoDBMapper' will use the partition key specified by the @DynamoDBHashKey annotation, and map the attributes according to the @DynamoDBAttribute annotations that we specified. This 'mapping' between a DynamoDB item and a Java object is the reason that the class is called DynamoDBMapper. If the method does not find an item, it returns a null value, which we will discuss in more detail in a later lesson.</p>
+                <p>The first parameter is of type Class, which in our example will be Shoe.class. We give the load()
+                    method a class so that it knows which POJO, and therefore which annotations to use. The annotations,
+                    specifically the @DynamoDBTable annotation, tells the load() method which table to search. Since we
+                    declared in our Shoe class that tableName = "Shoes", the load() method knows to search the Shoes
+                    table for the key we specified, the second parameter to the load method. DynamoDBMapper knows to
+                    search the shoeId attribute because we specified it was the partition key using the @DynamoDBHashKey
+                    annotation. Because there is no @DynamoDBRangeKey annotation, DynamoDBMapper knows the table uses
+                    only a partition key. If load() finds an item, it loads that item's data into a new instance of the
+                    class we specify in the first argument. In our example, the attributes of the item found by the
+                    load() method will be populated into a new instance of the Shoe class. 'DynamoDBMapper' will use the
+                    partition key specified by the @DynamoDBHashKey annotation, and map the attributes according to the
+                    @DynamoDBAttribute annotations that we specified. This 'mapping' between a DynamoDB item and a Java
+                    object is the reason that the class is called DynamoDBMapper. If the method does not find an item,
+                    it returns a null value, which we will discuss in more detail in a later lesson.</p>
 
-                <p>The second parameter is the primary key for the class, which in this case is a partition key. The key value that we give in this parameter is the item that we are searching our Shoes table for. Our Shoes table only uses a partition key, because shoe_id is always a unique identifier, so we only need to give the partition key in order to load an item. If the table uses a partition + sort key as the primary key, you must specify both keys, but we'll get to that in the next section. Note: In the last reading about annotations we pointed out that the DynamoDBMapper annotations use Hash instead of Partition and Range instead of Sort. Similarly, the arguments to load() are named hashKey and rangeKey.</p>
+                <p>The second parameter is the primary key for the class, which in this case is a partition key. The key
+                    value that we give in this parameter is the item that we are searching our Shoes table for. Our
+                    Shoes table only uses a partition key, because shoe_id is always a unique identifier, so we only
+                    need to give the partition key in order to load an item. If the table uses a partition + sort key as
+                    the primary key, you must specify both keys, but we'll get to that in the next section. Note: In the
+                    last reading about annotations we pointed out that the DynamoDBMapper annotations use Hash instead
+                    of Partition and Range instead of Sort. Similarly, the arguments to load() are named hashKey and
+                    rangeKey.</p>
 
                 <h4>Loading a Shoe</h4>
                 <table>
@@ -592,12 +746,28 @@ public class Shoe {
                 <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
 Shoe shoe01 = mapper.load(Shoe.class, "SN01");</code></pre>
 
-                <p>The first line of code creates a new instance of the DynamoDBMapper class by providing an instance of an AmazonDynamoDB, which is defined in the DynamoDbClientProvider class. As we discussed in the last section, the DynamoDbClientProvider class creates the connection between our program and DynamoDB where our table lives. When we pass in the client, we're setting up a connection for mapper, an instance of DynamoDBMapper, to access the correct DynamoDB.</p>
+                <p>The first line of code creates a new instance of the DynamoDBMapper class by providing an instance of
+                    an AmazonDynamoDB, which is defined in the DynamoDbClientProvider class. As we discussed in the last
+                    section, the DynamoDbClientProvider class creates the connection between our program and DynamoDB
+                    where our table lives. When we pass in the client, we're setting up a connection for mapper, an
+                    instance of DynamoDBMapper, to access the correct DynamoDB.</p>
 
-                <p>The second line of code creates a new instance of the Shoe class, shoe01, by calling the load() method using the Shoe class and the partition key SN01. As you can see in the Shoes table, SN01 is the partition key for an item in the table. Our load() method searches through the Shoes table to find the item with a matching partition key, which is the first shoe in the table, and then maps that item to shoe01, a new instance of our Shoe class. We have successfully loaded the first shoe!</p>
+                <p>The second line of code creates a new instance of the Shoe class, shoe01, by calling the load()
+                    method using the Shoe class and the partition key SN01. As you can see in the Shoes table, SN01 is
+                    the partition key for an item in the table. Our load() method searches through the Shoes table to
+                    find the item with a matching partition key, which is the first shoe in the table, and then maps
+                    that item to shoe01, a new instance of our Shoe class. We have successfully loaded the first shoe!
+                </p>
 
                 <h3>Loading items with a partition and sort key</h3>
-                <p>As we discussed in the previous lesson, there are situations where it is better to use a composite primary key with both a partition and sort key as the unique identifier. Think back to our Songs table, which used artist as the partition key and song_title as the sort key. For tables with a composite primary key, we need to specify both the partition and sort key in the load() method. This is because loading is about getting a single entry that is uniquely identifiable by key, and for tables with a composite primary key, the partition and sort key pairing is the unique key. Fortunately, there is a load method that can load an item based on both the partition and sort key.</p>
+                <p>As we discussed in the previous lesson, there are situations where it is better to use a composite
+                    primary key with both a partition and sort key as the unique identifier. Think back to our Songs
+                    table, which used artist as the partition key and song_title as the sort key. For tables with a
+                    composite primary key, we need to specify both the partition and sort key in the load() method. This
+                    is because loading is about getting a single entry that is uniquely identifiable by key, and for
+                    tables with a composite primary key, the partition and sort key pairing is the unique key.
+                    Fortunately, there is a load method that can load an item based on both the partition and sort key.
+                </p>
 
                 <p>Let's load the first song from our Songs table:</p>
 
@@ -643,19 +813,32 @@ Shoe shoe01 = mapper.load(Shoe.class, "SN01");</code></pre>
                 <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
 Song song01 = mapper.load(Song.class, "Black Eyed Peas", "I Gotta Feeling");</code></pre>
 
-                <p>Looking at this code snippet, we can see that it looks similar to the way we loaded a Shoe in the previous section. First, we create a new instance of DynamoDBMapper, just like we did in the previous example. Then, we call load with the Song class, the artist, and the song_title to get a new instance of the Song class populated with the attribute values for the corresponding item from our Songs table. The only difference from the previous example is that this time we are specifying both the partition and the sort key. As seen in our table above, the partition key for our first song is "Black Eyed Peas" and the sort key is "I Gotta Feeling." Once that item is found by matching the partition and sort keys to an item in the table, it will be loaded into a new Song instance, song01.</p>
+                <p>Looking at this code snippet, we can see that it looks similar to the way we loaded a Shoe in the
+                    previous section. First, we create a new instance of DynamoDBMapper, just like we did in the
+                    previous example. Then, we call load with the Song class, the artist, and the song_title to get a
+                    new instance of the Song class populated with the attribute values for the corresponding item from
+                    our Songs table. The only difference from the previous example is that this time we are specifying
+                    both the partition and the sort key. As seen in our table above, the partition key for our first
+                    song is "Black Eyed Peas" and the sort key is "I Gotta Feeling." Once that item is found by matching
+                    the partition and sort keys to an item in the table, it will be loaded into a new Song instance,
+                    song01.</p>
 
-                <p>It's important to remember that the load() method is used to get a singular item from a table using a unique key, so if a table has a composite primary key, you must use the unique key pairing of partition and sort key. There are ways to retrieve multiple values from a table, but we will discuss that in a later unit!</p>
+                <p>It's important to remember that the load() method is used to get a singular item from a table using a
+                    unique key, so if a table has a composite primary key, you must use the unique key pairing of
+                    partition and sort key. There are ways to retrieve multiple values from a table, but we will discuss
+                    that in a later unit!</p>
             </div>
 
             <div class="content-box">
                 <h2>Practice</h2>
 
                 <div class="resource-links">
-                    <a href="https://github.com/BloomTechBackend/bd-dynamodb-annotations-load-save-book-annotations" target="_blank" rel="noopener" class="resource-link">
+                    <a href="https://github.com/BloomTechBackend/bd-dynamodb-annotations-load-save-book-annotations"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
                         DynamoDB Annotations
                     </a>
-                    <a href="https://github.com/BloomTechBackend/bd-dynamodb-annotations-load-save-loading" target="_blank" rel="noopener" class="resource-link">
+                    <a href="https://github.com/BloomTechBackend/bd-dynamodb-annotations-load-save-loading"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
                         DynamoDB Loading
                     </a>
                 </div>
@@ -665,7 +848,10 @@ Song song01 = mapper.load(Song.class, "Black Eyed Peas", "I Gotta Feeling");</co
                 <h2>Guided Project</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Guided Project" src="https://fast.wistia.net/embed/iframe/9ys522mbig" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Guided Project"
+                        src="https://fast.wistia.net/embed/iframe/9ys522mbig" width="100%" height="360"
+                        name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"
+                        loading="lazy"></iframe>
                 </div>
             </div>
 
@@ -673,7 +859,8 @@ Song song01 = mapper.load(Song.class, "Black Eyed Peas", "I Gotta Feeling");</co
                 <h2>Mastery Task 1: Finish What We Started</h2>
 
                 <h3>Milestone 1: Create UML Class Diagrams</h3>
-                <p>For this task, you will be creating class diagrams referenced in the Design Document in your project for the known classes in the service.</p>
+                <p>For this task, you will be creating class diagrams referenced in the Design Document in your project
+                    for the known classes in the service.</p>
 
                 <p>Create class diagrams of the following classes and how they relate to each other:</p>
                 <ul>
@@ -685,7 +872,9 @@ Song song01 = mapper.load(Song.class, "Black Eyed Peas", "I Gotta Feeling");</co
 
                 <h4>Requirements</h4>
                 <ul>
-                    <li>Indicate inheritance relationships among classes, including inheriting/implementing superclasses/supertypes that are from outside of your project package (but for those superclasses/types, you don't need to include any of their methods or variables)</li>
+                    <li>Indicate inheritance relationships among classes, including inheriting/implementing
+                        superclasses/supertypes that are from outside of your project package (but for those
+                        superclasses/types, you don't need to include any of their methods or variables)</li>
                     <li>The diagrams do not need to include the App class or any classes in the following packages:
                         <ul>
                             <li>com.amazon.ata.music.playlist.service.lambda</li>
@@ -693,36 +882,52 @@ Song song01 = mapper.load(Song.class, "Black Eyed Peas", "I Gotta Feeling");</co
                             <li>com.amazon.ata.music.playlist.service.converters</li>
                         </ul>
                     </li>
-                    <li>Your DynamoDB model classes must represent the end-state of your models (they start off incomplete). See the "Data Model" section of the Design Document to find the relevant fields.</li>
-                    <li>The DynamoDB model classes in the diagram must indicate which fields will represent the partition and (if any) sort key.</li>
+                    <li>Your DynamoDB model classes must represent the end-state of your models (they start off
+                        incomplete). See the "Data Model" section of the Design Document to find the relevant fields.
+                    </li>
+                    <li>The DynamoDB model classes in the diagram must indicate which fields will represent the
+                        partition and (if any) sort key.</li>
                     <li>Use the @DynamoDBHashKey and @DynamoDBRangeKey annotations to mark the relevant fields</li>
-                    <li>You do not need to provide any other annotations, but be sure to indicate the Java type for each member variable. Use this same syntax for all of your DynamoDB model classes in your class diagrams.</li>
-                    <li>With the DynamoDB model classes, show the relationship between the Plain Old Java Objects (POJOs) both as a member variable and as a line between the classes.</li>
+                    <li>You do not need to provide any other annotations, but be sure to indicate the Java type for each
+                        member variable. Use this same syntax for all of your DynamoDB model classes in your class
+                        diagrams.</li>
+                    <li>With the DynamoDB model classes, show the relationship between the Plain Old Java Objects
+                        (POJOs) both as a member variable and as a line between the classes.</li>
                 </ul>
 
                 <h4>Recommendations/tips</h4>
                 <ul>
-                    <li>Here is the <a href="http://wiki.plantuml.net/site/class-diagram" target="_blank" rel="noopener">PlantUML reference for class diagrams</a></li>
+                    <li>Here is the <a href="http://wiki.plantuml.net/site/class-diagram" target="_blank"
+                            rel="noopener noreferrer">PlantUML reference for class diagrams</a></li>
                     <li>If your diagram is too large, you may split it into sub-diagrams using the newpage keyword</li>
-                    <li>IntelliJ can display PlantUML diagrams as you type if you install the PlantUML integration plugin</li>
-                    <li>For Mac users: If you get an error in the plug-in complaining about GraphViz, then run these on the command line, then close and reopen IntelliJ:
+                    <li>IntelliJ can display PlantUML diagrams as you type if you install the PlantUML integration
+                        plugin</li>
+                    <li>For Mac users: If you get an error in the plug-in complaining about GraphViz, then run these on
+                        the command line, then close and reopen IntelliJ:
                         <pre><code>brew install libtool
 brew install graphviz</code></pre>
                     </li>
                 </ul>
 
                 <h3>Milestone 2: Complete GetPlaylistActivity's implementation, implement CreatePlaylistActivity</h3>
-                
-                <h4>Complete GetPlaylist</h4>
-                <p>Update the dynamodb.models.Playlist class with the missing fields indicated in your design from milestone 1. Be sure to also add the correct DynamoDB annotations for the key indicated in your design of the data models.</p>
 
-                <p>Update the ModelConverter's toPlaylistModel method to map the new fields from the Playlist object to the PlaylistModel object. Then add or update unit tests as appropriate.</p>
+                <h4>Complete GetPlaylist</h4>
+                <p>Update the dynamodb.models.Playlist class with the missing fields indicated in your design from
+                    milestone 1. Be sure to also add the correct DynamoDB annotations for the key indicated in your
+                    design of the data models.</p>
+
+                <p>Update the ModelConverter's toPlaylistModel method to map the new fields from the Playlist object to
+                    the PlaylistModel object. Then add or update unit tests as appropriate.</p>
 
                 <h4>Implement CreatePlaylist</h4>
-                <p>With the updated Playlist class, implement CreatePlaylistActivity's handleRequest method based on the design document's implementation notes and add unit tests to cover your new code. You will have to add a new savePlaylist method in the PlaylistDao class.</p>
+                <p>With the updated Playlist class, implement CreatePlaylistActivity's handleRequest method based on the
+                    design document's implementation notes and add unit tests to cover your new code. You will have to
+                    add a new savePlaylist method in the PlaylistDao class.</p>
 
                 <h4>Create Lambda Functions</h4>
-                <p>Upon completion, upload your code to your CreatePlaylistActivty Lambda. Try out some requests with different names, with and without prohibited characters and with and without tags. Ensure the creation of your playlists in your dynamoDB table.</p>
+                <p>Upon completion, upload your code to your CreatePlaylistActivty Lambda. Try out some requests with
+                    different names, with and without prohibited characters and with and without tags. Ensure the
+                    creation of your playlists in your dynamoDB table.</p>
 
                 <div class="hint-box">
                     <h4>Hint</h4>
@@ -733,7 +938,8 @@ brew install graphviz</code></pre>
                         <li>In the IAM Console, go to Add permission (dropdown) -> Attach Policies</li>
                         <li>Search for AmazonDynamoDBFullAccess and click on Attach Policies</li>
                     </ol>
-                    <p>You may still see a message "The deployment package of your Lambda function xxx is too large to enable inline code editing. However, you can still invoke your function." and that's okay.</p>
+                    <p>You may still see a message "The deployment package of your Lambda function xxx is too large to
+                        enable inline code editing. However, you can still invoke your function." and that's okay.</p>
                 </div>
 
                 <h4>Completion Checklist</h4>
@@ -748,13 +954,16 @@ brew install graphviz</code></pre>
             <section class="resource-section">
                 <h2 class="resource-section-title">Additional Resources</h2>
                 <div class="resource-links">
-                    <a href="https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/examples-dynamodb-enhanced.html" target="_blank" rel="noopener" class="resource-link">
+                    <a href="https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/examples-dynamodb-enhanced.html"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
                         AWS SDK for Java - DynamoDB Enhanced Client
                     </a>
-                    <a href="https://github.com/BloomTechBackend/bd-dynamodb-annotations-load-and-save-discussion-cli" target="_blank" rel="noopener" class="resource-link">
+                    <a href="https://github.com/BloomTechBackend/bd-dynamodb-annotations-load-and-save-discussion-cli"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
                         Discussion CLI Repository
                     </a>
-                    <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html" target="_blank" rel="noopener" class="resource-link">
+                    <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
                         Amazon DynamoDB Documentation
                     </a>
                 </div>
@@ -762,4 +971,5 @@ brew install graphviz</code></pre>
         </section>
     </main>
 </body>
-</html> 
+
+</html>

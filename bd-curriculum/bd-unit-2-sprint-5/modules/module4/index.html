@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 4: Memory - BD Unit 2 Sprint 5</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -19,7 +21,8 @@
                         <a href="../../modules/module2/index.html">Module 2: Debugging</a>
                         <a href="../../modules/module3/index.html">Module 3: Testing</a>
                         <a href="../../modules/module4/index.html" class="active">Module 4: Memory</a>
-                        <a href="../../modules/module5/application-optimization.html">Module 5: Application Optimization</a>
+                        <a href="../../modules/module5/application-optimization.html">Module 5: Application
+                            Optimization</a>
                     </div>
                 </li>
                 <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
@@ -32,10 +35,12 @@
     <main class="container">
         <section class="welcome">
             <h1>Module 4: Memory</h1>
-            
+
             <div class="content-box module4-accent">
                 <h2>Module Overview</h2>
-                <p>In this module, you'll gain deep insights into how Java manages memory. You'll understand the JVM memory architecture, learn to trace object lifecycles, predict garbage collection behavior, and optimize memory usage for better application performance.</p>
+                <p>In this module, you'll gain deep insights into how Java manages memory. You'll understand the JVM
+                    memory architecture, learn to trace object lifecycles, predict garbage collection behavior, and
+                    optimize memory usage for better application performance.</p>
             </div>
 
             <div class="content-box">
@@ -52,40 +57,93 @@
 
             <div class="content-box">
                 <h2>Key Topics</h2>
-                
+
                 <div class="content-section">
                     <h3>Introduction to Java Memory Management</h3>
-                    <p>Learn the fundamentals of how memory works in Java and how the JVM manages memory allocation and deallocation.</p>
-                    
+                    <p>Learn the fundamentals of how memory works in Java and how the JVM manages memory allocation and
+                        deallocation.</p>
+
                     <div class="video-container">
-                        <iframe class="wistia_embed" title="Memory Management Video" src="https://fast.wistia.net/embed/iframe/007e2a82pv" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                        <iframe class="wistia_embed" title="Memory Management Video"
+                            src="https://fast.wistia.net/embed/iframe/007e2a82pv" width="100%" height="360"
+                            name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"
+                            loading="lazy"></iframe>
                     </div>
 
                     <div>
                         <h3>How does a computer keep track of my program's variables, objects, data? (Memory)</h3>
-                        <p>The short answer is memory! Memory is where the computer stores data that its applications are working with. The main coordinator running your program is the Central Processing Unit (CPU), which runs the code you've written. It performs all of the actions you've coded, for example, arithmetic operations, if-conditions, for-loops. The CPU itself has space for just a handful of variables at a time, mere bytes. When it needs to read a variable's value to perform an operation on it (for example, comparing an int to the value 1 for an if-condition), the CPU needs to pull the variable into its storage (called registers) from memory, which can store far more than the CPU: gigabytes of data. When the result of the operation is available, the CPU typically needs to write it back out to memory to be used again later. A computer's memory is also called Random Access Memory (RAM), which means that the CPU can read or write anywhere in RAM at any time (vs. only reading it from beginning to end, for example). When a program completes, the data stored in memory is freed up to be used by other applications.</p>
+                        <p>The short answer is memory! Memory is where the computer stores data that its applications
+                            are working with. The main coordinator running your program is the Central Processing Unit
+                            (CPU), which runs the code you've written. It performs all of the actions you've coded, for
+                            example, arithmetic operations, if-conditions, for-loops. The CPU itself has space for just
+                            a handful of variables at a time, mere bytes. When it needs to read a variable's value to
+                            perform an operation on it (for example, comparing an int to the value 1 for an
+                            if-condition), the CPU needs to pull the variable into its storage (called registers) from
+                            memory, which can store far more than the CPU: gigabytes of data. When the result of the
+                            operation is available, the CPU typically needs to write it back out to memory to be used
+                            again later. A computer's memory is also called Random Access Memory (RAM), which means that
+                            the CPU can read or write anywhere in RAM at any time (vs. only reading it from beginning to
+                            end, for example). When a program completes, the data stored in memory is freed up to be
+                            used by other applications.</p>
 
-                        <p>The program specifies a location in memory to read/write from using an address (a specific byte number starting with 0 going up to the number of bytes in memory). Each variable or object is assigned its own address in memory. When your code accesses the variable, the CPU reads or writes its value in RAM via the variable's address.</p>
+                        <p>The program specifies a location in memory to read/write from using an address (a specific
+                            byte number starting with 0 going up to the number of bytes in memory). Each variable or
+                            object is assigned its own address in memory. When your code accesses the variable, the CPU
+                            reads or writes its value in RAM via the variable's address.</p>
 
                         <h3>How do Java programs work? (JVM)</h3>
-                        <p>The Java Virtual Machine (JVM) Is a program running your Java program. The JVM keeps track of which line of code is currently executing and manages the memory available to your program. The "virtual" refers to the fact that the JVM simulates a complete computer on its own (including executing lines of code, updating/reading memory, etc.). The JVM is a software-only simulation of a CPU and RAM instead of actual hardware, such as the physical CPU and RAM in your computer.</p>
+                        <p>The Java Virtual Machine (JVM) Is a program running your Java program. The JVM keeps track of
+                            which line of code is currently executing and manages the memory available to your program.
+                            The "virtual" refers to the fact that the JVM simulates a complete computer on its own
+                            (including executing lines of code, updating/reading memory, etc.). The JVM is a
+                            software-only simulation of a CPU and RAM instead of actual hardware, such as the physical
+                            CPU and RAM in your computer.</p>
 
                         <h3>Java variables</h3>
-                        <p>In Java, a reference is a variable that is an object type instead of a primitive type. It is how the JVM locates the object in memory. The reference is essentially a memory address indicating where the value is stored in the JVM's memory. In fact, you may have seen the reference value if you ever called toString() on an object that didn't have a custom toString() method implemented: for example, MemoryExample@14899482 might be the toString() value for MemoryExample, the class we'll be looking at below. The number after the @ symbol is the reference. This value is of no value to you as a developer, so don't try to read too much into it.</p>
+                        <p>In Java, a reference is a variable that is an object type instead of a primitive type. It is
+                            how the JVM locates the object in memory. The reference is essentially a memory address
+                            indicating where the value is stored in the JVM's memory. In fact, you may have seen the
+                            reference value if you ever called toString() on an object that didn't have a custom
+                            toString() method implemented: for example, MemoryExample@14899482 might be the toString()
+                            value for MemoryExample, the class we'll be looking at below. The number after the @ symbol
+                            is the reference. This value is of no value to you as a developer, so don't try to read too
+                            much into it.</p>
 
-                        <p>The reference can also be null, which means that the reference isn't "pointing to" any object at all, as it is not pointing to a valid memory location. You may sometimes hear someone refer to a variable "pointing to" an object, or that a variable "is a pointer to" an object. These all refer to a variable storing a reference to an object in memory.</p>
+                        <p>The reference can also be null, which means that the reference isn't "pointing to" any object
+                            at all, as it is not pointing to a valid memory location. You may sometimes hear someone
+                            refer to a variable "pointing to" an object, or that a variable "is a pointer to" an object.
+                            These all refer to a variable storing a reference to an object in memory.</p>
 
-                        <p>Below is a diagram showing memory in one large block (with "..." representing wide spans of memory currently unused). We show two different variables, one primitive (count) and one object reference (str). In memory, the count variable contains the number 100. str, however, is a reference, so the str variable in memory contains the location (44210028) of the String object, "Hello", somewhere else in memory. The dot in the str box with an arrow pointing to the String object's location in memory reflects this relationship. Note that String objects contain their own variable, value, that points to the char array object that stores the actual string contents. So here, str.value stores 94341180, the location of the beginning of the char array storing "Hello". We will stop showing the memory locations in the diagrams from here and just show the dots and arrows for a variable "pointing to" an object.</p>
+                        <p>Below is a diagram showing memory in one large block (with "..." representing wide spans of
+                            memory currently unused). We show two different variables, one primitive (count) and one
+                            object reference (str). In memory, the count variable contains the number 100. str, however,
+                            is a reference, so the str variable in memory contains the location (44210028) of the String
+                            object, "Hello", somewhere else in memory. The dot in the str box with an arrow pointing to
+                            the String object's location in memory reflects this relationship. Note that String objects
+                            contain their own variable, value, that points to the char array object that stores the
+                            actual string contents. So here, str.value stores 94341180, the location of the beginning of
+                            the char array storing "Hello". We will stop showing the memory locations in the diagrams
+                            from here and just show the dots and arrows for a variable "pointing to" an object.</p>
 
-                        <img src="https://tk-assets.bloomtech.com/6ffe5378-b9e2-4baf-a69b-8e14d985779a_Memory-variables-memory-block.png" alt="Primitive variables are represented as their value in memory. object references are represented as an address/reference of the place in memory where the object lives" loading="lazy">
+                        <img src="https://tk-assets.bloomtech.com/6ffe5378-b9e2-4baf-a69b-8e14d985779a_Memory-variables-memory-block.png"
+                            alt="Primitive variables are represented as their value in memory. object references are represented as an address/reference of the place in memory where the object lives"
+                            loading="lazy">
 
-                        <p>Primitive variables are represented as their value in memory. object references are represented as an address/reference of the place in memory where the object lives</p>
+                        <p>Primitive variables are represented as their value in memory. object references are
+                            represented as an address/reference of the place in memory where the object lives</p>
 
-                        <p>This is pretty close to how memory is organized, in a long block starting at 0 and going up to the number of bytes available in RAM. From now on, we'll show a slightly more stylized representation that will help us when we talk about how memory is organized in the JVM. Here are the same variables, memory addresses, and objects--but freeing our diagram from the strict linearity of RAM.</p>
+                        <p>This is pretty close to how memory is organized, in a long block starting at 0 and going up
+                            to the number of bytes available in RAM. From now on, we'll show a slightly more stylized
+                            representation that will help us when we talk about how memory is organized in the JVM. Here
+                            are the same variables, memory addresses, and objects--but freeing our diagram from the
+                            strict linearity of RAM.</p>
 
-                        <p>Alternate representation of the same two variables and objects, but freeing our diagram from the strict linearity of RAM.</p>
+                        <p>Alternate representation of the same two variables and objects, but freeing our diagram from
+                            the strict linearity of RAM.</p>
 
-                        <img src="https://tk-assets.bloomtech.com/22117091-ff17-4c5b-9594-59c8f41b78d7_Memory-variables-floating.png" alt="Alternate representation of the same two variables and objects, but freeing our diagram from the strict linearity of RAM" loading="lazy">
+                        <img src="https://tk-assets.bloomtech.com/22117091-ff17-4c5b-9594-59c8f41b78d7_Memory-variables-floating.png"
+                            alt="Alternate representation of the same two variables and objects, but freeing our diagram from the strict linearity of RAM"
+                            loading="lazy">
                     </div>
                 </div>
             </div>
@@ -94,25 +152,52 @@
                 <h2>Memory Storage</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Memory Storage Video" src="https://fast.wistia.net/embed/iframe/tf5jfy6573" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Memory Storage Video"
+                        src="https://fast.wistia.net/embed/iframe/tf5jfy6573" name="wistia_embed"
+                        allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
 
                 <div class="content-section">
-                    <p>In this reading, we'll focus on the two sections of Java's memory storage: the stack and the heap. We'll go step by step over how the stack pushes local variables and frames on top of each other and pops them off as methods are completed. Then we'll look at how the heap stores objects, and how it works with the stack to keep things accessible to our programs.</p>
+                    <p>In this reading, we'll focus on the two sections of Java's memory storage: the stack and the
+                        heap. We'll go step by step over how the stack pushes local variables and frames on top of each
+                        other and pops them off as methods are completed. Then we'll look at how the heap stores
+                        objects, and how it works with the stack to keep things accessible to our programs.</p>
 
                     <h3>The stack</h3>
-                    <p>As we've already covered, memory is where the computer stores data for the programs that are running. In Java, the memory for a program is organized into two sections, the stack, and the heap. The stack stores the local variables for methods that are currently executing in code. The heap stores objects and their member variables for the whole application. We will focus on the stack first and will cover the heap later in this reading.</p>
+                    <p>As we've already covered, memory is where the computer stores data for the programs that are
+                        running. In Java, the memory for a program is organized into two sections, the stack, and the
+                        heap. The stack stores the local variables for methods that are currently executing in code. The
+                        heap stores objects and their member variables for the whole application. We will focus on the
+                        stack first and will cover the heap later in this reading.</p>
 
-                    <p>The stack is a "Last In, First Out" data structure, also called LIFO. When a method starts executing, a data representation of it is added, or "pushed", to the top of the stack. This is called a frame. When a new method is invoked, another frame is added to the top of the stack, and any previous frames are pushed down. Only the frame at the top of the stack is active at any given time. When a method has completed execution, it's removed or "popped" from the top of the stack, and the previous frame is now the active frame. The stack works similarly to a stack of dishes to be cleaned. You can add and remove at the top (never from the middle/bottom).</p>
+                    <p>The stack is a "Last In, First Out" data structure, also called LIFO. When a method starts
+                        executing, a data representation of it is added, or "pushed", to the top of the stack. This is
+                        called a frame. When a new method is invoked, another frame is added to the top of the stack,
+                        and any previous frames are pushed down. Only the frame at the top of the stack is active at any
+                        given time. When a method has completed execution, it's removed or "popped" from the top of the
+                        stack, and the previous frame is now the active frame. The stack works similarly to a stack of
+                        dishes to be cleaned. You can add and remove at the top (never from the middle/bottom).</p>
 
                     <p>Below is an illustration of a stack:</p>
-                    <img src="https://tk-assets.bloomtech.com/092d43c2-4415-4744-ad87-68b54744305c_Stack.png" alt="the Stack data structure allows data elements to be added and removed at the top of the stack, never the middle/bottom" loading="lazy">
+                    <img src="https://tk-assets.bloomtech.com/092d43c2-4415-4744-ad87-68b54744305c_Stack.png"
+                        alt="the Stack data structure allows data elements to be added and removed at the top of the stack, never the middle/bottom"
+                        loading="lazy">
 
-                    <p>the Stack data structure allows data elements to be added and removed at the top of the stack, never the middle/bottom</p>
+                    <p>the Stack data structure allows data elements to be added and removed at the top of the stack,
+                        never the middle/bottom</p>
 
-                    <p>This is what we mean by "Last In, First Out". Only the last frame added to the stack is active. Any previous frames must wait until we pop enough frames off to reach them. The last frame added is the first frame removed. Each frame stores any local primitive variables for the method, which are added in a similar manner, by being pushed into the top frame. Each variable can be accessed at any point inside the method after it's added to the frame. Any objects or non-primitive variables, created inside the method are added to the heap and will have a reference to them inside the frame. We'll be covering this more in-depth later.</p>
+                    <p>This is what we mean by "Last In, First Out". Only the last frame added to the stack is active.
+                        Any previous frames must wait until we pop enough frames off to reach them. The last frame added
+                        is the first frame removed. Each frame stores any local primitive variables for the method,
+                        which are added in a similar manner, by being pushed into the top frame. Each variable can be
+                        accessed at any point inside the method after it's added to the frame. Any objects or
+                        non-primitive variables, created inside the method are added to the heap and will have a
+                        reference to them inside the frame. We'll be covering this more in-depth later.</p>
 
-                    <p>Understanding how this works can be hard to follow, so let's look at a visual example. In this code snippet, we are processing a value in the main method by passing it to a method multiplyInt(). All the variables are local values, so we'll only be looking at the frames and their contents that are created in the stack.</p>
+                    <p>Understanding how this works can be hard to follow, so let's look at a visual example. In this
+                        code snippet, we are processing a value in the main method by passing it to a method
+                        multiplyInt(). All the variables are local values, so we'll only be looking at the frames and
+                        their contents that are created in the stack.</p>
 
                     <pre><code>public class Main {
     public static int multiplyInt(int data) {
@@ -127,46 +212,105 @@
     }
 }</code></pre>
 
-                    <img src="https://tk-assets.bloomtech.com/9d70a798-f49a-40d4-a951-82ef40c468d1_image1.png" alt="Figure 1" loading="lazy">
+                    <img src="https://tk-assets.bloomtech.com/9d70a798-f49a-40d4-a951-82ef40c468d1_image1.png"
+                        alt="Figure 1" loading="lazy">
 
                     <p>Figure 1</p>
 
-                    <p>Figure 1: The code snippet above, with the line value = multiplyInt(value); highlighted. Next to it is a box labeled "Memory" with a sub box labeled "Stack" inside. Inside the stack is a frame labeled main() that contains two variables: "args" which is an empty array and "value" which has the value 13.</p>
+                    <p>Figure 1: The code snippet above, with the line value = multiplyInt(value); highlighted. Next to
+                        it is a box labeled "Memory" with a sub box labeled "Stack" inside. Inside the stack is a frame
+                        labeled main() that contains two variables: "args" which is an empty array and "value" which has
+                        the value 13.</p>
 
-                    <p>In Figure 1, the main() method is the first method executed so it's the first frame pushed onto the stack. On creation the frame is empty, and as we execute the method line by line any new variables created are pushed on top of the frame. The first variable added is the parameter String[] args. The args variable is just an empty String array, so there's no data inside it, but space is still allocated on the stack. In the first line of the method, int value is pushed onto the frame next. The value variable is initialized with the int value of 13, which is added to the stack inside the main frame. Both args and value are what is known as "in scope" to the main() method. They can't be accessed by any method outside of main(), but inside they can be accessed at any time while main() is currently executing. This means their scope is limited to the main method.</p>
+                    <p>In Figure 1, the main() method is the first method executed so it's the first frame pushed onto
+                        the stack. On creation the frame is empty, and as we execute the method line by line any new
+                        variables created are pushed on top of the frame. The first variable added is the parameter
+                        String[] args. The args variable is just an empty String array, so there's no data inside it,
+                        but space is still allocated on the stack. In the first line of the method, int value is pushed
+                        onto the frame next. The value variable is initialized with the int value of 13, which is added
+                        to the stack inside the main frame. Both args and value are what is known as "in scope" to the
+                        main() method. They can't be accessed by any method outside of main(), but inside they can be
+                        accessed at any time while main() is currently executing. This means their scope is limited to
+                        the main method.</p>
 
-                    <p>As we hit the next line in the method, value then is assigned to the result of the multiplyInt() method and passes in itself as an argument. This is where we leave the scope of main(), and a new frame for multiplyInt() is added to the stack.</p>
+                    <p>As we hit the next line in the method, value then is assigned to the result of the multiplyInt()
+                        method and passes in itself as an argument. This is where we leave the scope of main(), and a
+                        new frame for multiplyInt() is added to the stack.</p>
 
-                    <p>When multiplyInt() is called, a new frame is now created and added to the top of the stack. The frame for main() is no longer at the top of the stack and is considered out of scope. The data is still being stored, but it can no longer be accessed or modified until it is back at the top of the stack.</p>
+                    <p>When multiplyInt() is called, a new frame is now created and added to the top of the stack. The
+                        frame for main() is no longer at the top of the stack and is considered out of scope. The data
+                        is still being stored, but it can no longer be accessed or modified until it is back at the top
+                        of the stack.</p>
 
                     <p>Figure 2</p>
-                    <img src="https://tk-assets.bloomtech.com/3c236960-f1be-426d-883c-abf60291846f_image2.png" alt="Figure 2" loading="lazy">
+                    <img src="https://tk-assets.bloomtech.com/3c236960-f1be-426d-883c-abf60291846f_image2.png"
+                        alt="Figure 2" loading="lazy">
 
-                    <p>Figure 2: Modified from the last figure, the line return newValue; in the code snippet is now highlighted. In the stack, there's a new frame labeled multiplyInt() that contains two variables: newValue with a value of 26 and data with a value of 13. It's on top of the main() frame which is now greyed out.</p>
+                    <p>Figure 2: Modified from the last figure, the line return newValue; in the code snippet is now
+                        highlighted. In the stack, there's a new frame labeled multiplyInt() that contains two
+                        variables: newValue with a value of 26 and data with a value of 13. It's on top of the main()
+                        frame which is now greyed out.</p>
 
-                    <p>In Figure 2, we've paused execution on main() before the method is returned. We can see that the main() frame is at the bottom of the Stack but still stores the two variables inside it. The new multiplyInt() frame contains the two new local variables in the order that they were created.</p>
+                    <p>In Figure 2, we've paused execution on main() before the method is returned. We can see that the
+                        main() frame is at the bottom of the Stack but still stores the two variables inside it. The new
+                        multiplyInt() frame contains the two new local variables in the order that they were created.
+                    </p>
 
-                    <p>The first step of this new frame was to create a new variable data. Unlike args in main(), data has an initial value of 13. This is from value being passed into multiplyInt(). The value variable is local to the main() frame and that frame is no longer at the top of the stack, so it can't be accessed directly. That is why we must pass localized data between methods since they cannot read any data outside of their scope.</p>
+                    <p>The first step of this new frame was to create a new variable data. Unlike args in main(), data
+                        has an initial value of 13. This is from value being passed into multiplyInt(). The value
+                        variable is local to the main() frame and that frame is no longer at the top of the stack, so it
+                        can't be accessed directly. That is why we must pass localized data between methods since they
+                        cannot read any data outside of their scope.</p>
 
-                    <p>The next line of code then creates a new local variable, newValue, which is initialized with the value of data multiplied by two. newValue is added to the frame with a value of 26. We now have two local variables in the multiplyInt() frame, and the next line of code will return the method.</p>
+                    <p>The next line of code then creates a new local variable, newValue, which is initialized with the
+                        value of data multiplied by two. newValue is added to the frame with a value of 26. We now have
+                        two local variables in the multiplyInt() frame, and the next line of code will return the
+                        method.</p>
 
-                    <p>When we hit the line return newValue; in the code's execution, the frame doesn't actually get popped off there, but at the end of the curly bracket. The return keyword tells the method to assign the value of newValue to whatever variable was assigned when we invoked multiplyInt(). In this case, it would be value from the main() method. Once the closing curly bracket is hit, the frame for multiplyInt() is popped off, and the frame for main() becomes the active frame again. All data and variables inside the frame for multiplyInt() will be popped off as well once the frame is removed from the stack.</p>
+                    <p>When we hit the line return newValue; in the code's execution, the frame doesn't actually get
+                        popped off there, but at the end of the curly bracket. The return keyword tells the method to
+                        assign the value of newValue to whatever variable was assigned when we invoked multiplyInt(). In
+                        this case, it would be value from the main() method. Once the closing curly bracket is hit, the
+                        frame for multiplyInt() is popped off, and the frame for main() becomes the active frame again.
+                        All data and variables inside the frame for multiplyInt() will be popped off as well once the
+                        frame is removed from the stack.</p>
 
                     <p>Figure 3</p>
-                    <img src="https://tk-assets.bloomtech.com/5c256835-a7f0-43c1-8916-df686fb8dc03_image3.png" alt="Figure 3" loading="lazy">
+                    <img src="https://tk-assets.bloomtech.com/5c256835-a7f0-43c1-8916-df686fb8dc03_image3.png"
+                        alt="Figure 3" loading="lazy">
 
-                    <p>Figure 3: Modified from the last figure, the line return; inside main() is now highlighted in the code snippet. The frame for multiplyInt() has been popped off, and the current frame is now main(). The int inside the variable value now reads 26.</p>
+                    <p>Figure 3: Modified from the last figure, the line return; inside main() is now highlighted in the
+                        code snippet. The frame for multiplyInt() has been popped off, and the current frame is now
+                        main(). The int inside the variable value now reads 26.</p>
 
-                    <p>In Figure 3, the variable value is then updated with the new value that was returned from multiplyInt(). The value variable was overwritten and now reads 26, which was the value calculated inside multiplyInt(). Note that this value only updates once the frame for multiplyInt() frame has been popped off the stack, and the frame for main() is at the top of the stack again. The variables inside a frame will not be modified while it's out of scope and another frame is active. Only when a frame is active again will its variables be updated with the result of a method call.</p>
+                    <p>In Figure 3, the variable value is then updated with the new value that was returned from
+                        multiplyInt(). The value variable was overwritten and now reads 26, which was the value
+                        calculated inside multiplyInt(). Note that this value only updates once the frame for
+                        multiplyInt() frame has been popped off the stack, and the frame for main() is at the top of the
+                        stack again. The variables inside a frame will not be modified while it's out of scope and
+                        another frame is active. Only when a frame is active again will its variables be updated with
+                        the result of a method call.</p>
 
-                    <p>After return; is executed, Java will reach the ending curly brace for main(). Then that frame is popped off the stack too. Since there's no more code executed, the curly brace for the class is then hit, and the program terminates.</p>
+                    <p>After return; is executed, Java will reach the ending curly brace for main(). Then that frame is
+                        popped off the stack too. Since there's no more code executed, the curly brace for the class is
+                        then hit, and the program terminates.</p>
 
                     <h3>The heap</h3>
-                    <p>While stacks are good for managing local variables and methods, how do we keep track of more complex values and share them between methods and classes? In the last example, all the variables and data that we created and calculated were thrown away once the methods were done using them. This was working as intended for the stack, but what if we want to hang onto the data that we create and modify? This is where the heap comes in.</p>
+                    <p>While stacks are good for managing local variables and methods, how do we keep track of more
+                        complex values and share them between methods and classes? In the last example, all the
+                        variables and data that we created and calculated were thrown away once the methods were done
+                        using them. This was working as intended for the stack, but what if we want to hang onto the
+                        data that we create and modify? This is where the heap comes in.</p>
 
-                    <p>The heap is the larger portion of Java's memory. This is where most of the memory for our application is stored. The heap doesn't have any concept of scope but rather stores things by reference. As long as something is being referenced, it can be accessed on the heap. While the stack stores local primitives, the heap stores objects, which contain primitive member variables or references to other objects on the heap.)</p>
+                    <p>The heap is the larger portion of Java's memory. This is where most of the memory for our
+                        application is stored. The heap doesn't have any concept of scope but rather stores things by
+                        reference. As long as something is being referenced, it can be accessed on the heap. While the
+                        stack stores local primitives, the heap stores objects, which contain primitive member variables
+                        or references to other objects on the heap.)</p>
 
-                    <p>Let's look at an example of how the heap works. In the main method below, we have a List of type String called amazonServices that holds the names of Amazon services. After populating the List, it then calls the method printList() which prints the contents of the passed-in list.</p>
+                    <p>Let's look at an example of how the heap works. In the main method below, we have a List of type
+                        String called amazonServices that holds the names of Amazon services. After populating the List,
+                        it then calls the method printList() which prints the contents of the passed-in list.</p>
 
                     <pre><code>public class Main {
     public static void printList(List<String> data) {
@@ -184,39 +328,83 @@
     }
 }</code></pre>
 
-                    <p>There are fewer steps to go through this time, but there's just as much to cover. In Figure 4, we create a List object that will hold the three String objects.</p>
+                    <p>There are fewer steps to go through this time, but there's just as much to cover. In Figure 4, we
+                        create a List object that will hold the three String objects.</p>
 
                     <p>Figure 4</p>
-                    <img src="https://tk-assets.bloomtech.com/fc6dab64-4d3e-4790-9ede-5d371e6aed0c_image4.png" alt="Figure 4" loading="lazy">
+                    <img src="https://tk-assets.bloomtech.com/fc6dab64-4d3e-4790-9ede-5d371e6aed0c_image4.png"
+                        alt="Figure 4" loading="lazy">
 
-                    <p>Figure 4: The code snippet above, with the line List<String>amazonServices = new List<String>(); highlighted. To the side, a box labeled "Memory" has two boxes inside labeled as the stack and the heap. The stack has a frame labeled main() that holds two variables: amazonServices, and args. Both these variables are pointing to objects on the heap, amazonServices pointing at an empty List object, and args pointing at an empty string array object.</p>
+                    <p>Figure 4: The code snippet above, with the line List<String>amazonServices = new List<String>();
+                                highlighted. To the side, a box labeled "Memory" has two boxes inside labeled as the
+                                stack and the heap. The stack has a frame labeled main() that holds two variables:
+                                amazonServices, and args. Both these variables are pointing to objects on the heap,
+                                amazonServices pointing at an empty List object, and args pointing at an empty string
+                                array object.</p>
 
-                    <p>The first thing to understand in this figure is what data the stack is holding. Because amazonServices is a List object, it isn't stored in the stack frame, but on the heap instead. The stack still holds the variable amazonServices, but this data is really a pointer to a memory address on the heap where the List object is stored. This gives us a way to access the object sitting on the heap, which we can't access directly in the stack. We commonly refer to the variable as holding a reference to the object. Note that args is shown in the stack, but this time has an empty String array inside the heap. This was also the case last time, but the actual array wasn't represented since we wanted to focus on the stack.</p>
+                    <p>The first thing to understand in this figure is what data the stack is holding. Because
+                        amazonServices is a List object, it isn't stored in the stack frame, but on the heap instead.
+                        The stack still holds the variable amazonServices, but this data is really a pointer to a memory
+                        address on the heap where the List object is stored. This gives us a way to access the object
+                        sitting on the heap, which we can't access directly in the stack. We commonly refer to the
+                        variable as holding a reference to the object. Note that args is shown in the stack, but this
+                        time has an empty String array inside the heap. This was also the case last time, but the actual
+                        array wasn't represented since we wanted to focus on the stack.</p>
 
-                    <p>Not every object that is added to the heap will get a reference inside a stack. In Figure 5 we show an example of this as we execute a few more lines and stop before we start executing printList().</p>
+                    <p>Not every object that is added to the heap will get a reference inside a stack. In Figure 5 we
+                        show an example of this as we execute a few more lines and stop before we start executing
+                        printList().</p>
 
                     <p>Figure 5</p>
-                    <img src="https://tk-assets.bloomtech.com/143d7ef6-d85c-4c4c-a38e-952d882d52c6_image5.png" alt="Figure 5" loading="lazy">
+                    <img src="https://tk-assets.bloomtech.com/143d7ef6-d85c-4c4c-a38e-952d882d52c6_image5.png"
+                        alt="Figure 5" loading="lazy">
 
-                    <p>Figure 5: Modified from the last figure, the line "printList(amazonSevices);" is now highlighted in the code. The List object on the heap has three new elements now, each one pointing at three new String objects: "Prime", "AWS, and "Audible".</p>
+                    <p>Figure 5: Modified from the last figure, the line "printList(amazonSevices);" is now highlighted
+                        in the code. The List object on the heap has three new elements now, each one pointing at three
+                        new String objects: "Prime", "AWS, and "Audible".</p>
 
-                    <p>In our code, we've added three strings to the List object. Inside the heap, the List object now has three new elements, and there are three new String objects. This is from the add() method calls that we just executed. Each time we added a String to the amazonServices list, we also created a new String object. However, we didn't assign them a local variable reference in the method, so the only place that those three String objects are referenced is inside the List in the heap. What this means is that currently, the only way we can access the three Strings we just created is by getting their references from inside the amazonServices variable reference on the stack.</p>
+                    <p>In our code, we've added three strings to the List object. Inside the heap, the List object now
+                        has three new elements, and there are three new String objects. This is from the add() method
+                        calls that we just executed. Each time we added a String to the amazonServices list, we also
+                        created a new String object. However, we didn't assign them a local variable reference in the
+                        method, so the only place that those three String objects are referenced is inside the List in
+                        the heap. What this means is that currently, the only way we can access the three Strings we
+                        just created is by getting their references from inside the amazonServices variable reference on
+                        the stack.</p>
 
-                    <p>Note that the three objects are not in any certain arrangement inside the heap! Unlike the stack, objects can be added anywhere inside the heap. This is part of the reason we need a reference to them.</p>
+                    <p>Note that the three objects are not in any certain arrangement inside the heap! Unlike the stack,
+                        objects can be added anywhere inside the heap. This is part of the reason we need a reference to
+                        them.</p>
 
                     <p>In Figure 6, we move on to the printList() method, and see what changes have happened.</p>
 
                     <p>Figure 6</p>
-                    <img src="https://tk-assets.bloomtech.com/015de978-4f66-4559-a2c9-18780a6664b9_image6.png" alt="Figure 6" loading="lazy">
+                    <img src="https://tk-assets.bloomtech.com/015de978-4f66-4559-a2c9-18780a6664b9_image6.png"
+                        alt="Figure 6" loading="lazy">
 
-                    <p>Figure 6: Modified from the last figure, the line System.out.println(data); is now highlighted in the code. The Stack has a new frame "printList()" that has pushed down the main() frame and greyed out. printList() contains a variable data that is pointing at the existing List object on the heap.</p>
+                    <p>Figure 6: Modified from the last figure, the line System.out.println(data); is now highlighted in
+                        the code. The Stack has a new frame "printList()" that has pushed down the main() frame and
+                        greyed out. printList() contains a variable data that is pointing at the existing List object on
+                        the heap.</p>
 
-                    <p>The frame for main() has been moved down the stack and greyed out now that we are in the printList() frame. A local variable data has been created from the parameter just like in the last example, but you'll note that the variable data now also points towards the List inside the heap. As with last time, the method call copies the data in the parameter into a new variable, but this time the data is just the pointer address, not the object itself. This means that both main() and printList() currently both have references to the same object! But as printList() is the top frame on the stack, it's the only one that can actively use the reference.</p>
+                    <p>The frame for main() has been moved down the stack and greyed out now that we are in the
+                        printList() frame. A local variable data has been created from the parameter just like in the
+                        last example, but you'll note that the variable data now also points towards the List inside the
+                        heap. As with last time, the method call copies the data in the parameter into a new variable,
+                        but this time the data is just the pointer address, not the object itself. This means that both
+                        main() and printList() currently both have references to the same object! But as printList() is
+                        the top frame on the stack, it's the only one that can actively use the reference.</p>
 
-                    <p>After the list has been printed, Java reaches the end of printList() and returns it, popping it off the stack. The data variable is popped off as well, but the List object remains. Only the reference to the list that was stored inside printList() has been destroyed. The original reference stored in amazonServices is untouched. Once we exit printList() back into main(), that method is then returned and ended. main() is popped off the stack, destroying everything and terminating the program.</p>
+                    <p>After the list has been printed, Java reaches the end of printList() and returns it, popping it
+                        off the stack. The data variable is popped off as well, but the List object remains. Only the
+                        reference to the list that was stored inside printList() has been destroyed. The original
+                        reference stored in amazonServices is untouched. Once we exit printList() back into main(), that
+                        method is then returned and ended. main() is popped off the stack, destroying everything and
+                        terminating the program.</p>
 
                     <h3>Passing variables</h3>
-                    <p>We now know how the stack and heap add and remove variables and data, but let's look at an example where things can get confusing!</p>
+                    <p>We now know how the stack and heap add and remove variables and data, but let's look at an
+                        example where things can get confusing!</p>
 
                     <pre><code>public static void printList(List<String> data) {
     String newService = "Kindle";
@@ -226,32 +414,70 @@
     return;
 }</code></pre>
 
-                    <p>In this example, we're modifying printList() from the last section to the code above. It now modifies the List<String> object that we passed into the method. We create a local String variable newService, and not only add it to the end of the List but also replace the first element with it. Then it prints the List as normal. Let's look at Figure 7 to see what's happening behind the scenes.</p>
+                    <p>In this example, we're modifying printList() from the last section to the code above. It now
+                        modifies the List<String> object that we passed into the method. We create a local String
+                            variable newService, and not only add it to the end of the List but also replace the first
+                            element with it. Then it prints the List as normal. Let's look at Figure 7 to see what's
+                            happening behind the scenes.</p>
 
                     <p>Figure 7</p>
-                    <img src="https://tk-assets.bloomtech.com/2bb15407-fea2-405b-b666-1fe6f2af2780_image7.png" alt="Figure 7" loading="lazy">
+                    <img src="https://tk-assets.bloomtech.com/2bb15407-fea2-405b-b666-1fe6f2af2780_image7.png"
+                        alt="Figure 7" loading="lazy">
 
-                    <p>Figure 7: Based on the previous diagram, with some modifications. The code box contains the modified printList() code snippet, with the line String newService = "Kindle"; highlighted. In the printList() frame, there's a new variable newService that is pointing to a new String object on the heap "Kindle".</p>
+                    <p>Figure 7: Based on the previous diagram, with some modifications. The code box contains the
+                        modified printList() code snippet, with the line String newService = "Kindle"; highlighted. In
+                        the printList() frame, there's a new variable newService that is pointing to a new String object
+                        on the heap "Kindle".</p>
 
-                    <p>In this first line of code, we create a local string variable newService. When we do this, we create a new String object on the heap, and a reference to it on the printList() frame on the stack. As we explained before, objects are only stored on the heap, and primitives and references are stored on the stack.</p>
+                    <p>In this first line of code, we create a local string variable newService. When we do this, we
+                        create a new String object on the heap, and a reference to it on the printList() frame on the
+                        stack. As we explained before, objects are only stored on the heap, and primitives and
+                        references are stored on the stack.</p>
 
                     <p>In the Figure 8, we change up some of the elements inside the list:</p>
 
                     <p>Figure 8</p>
-                    <img src="https://tk-assets.bloomtech.com/c92dd409-ca47-45dd-8150-8b9c96ff16cc_image8.png" alt="Figure 8" loading="lazy">
+                    <img src="https://tk-assets.bloomtech.com/c92dd409-ca47-45dd-8150-8b9c96ff16cc_image8.png"
+                        alt="Figure 8" loading="lazy">
 
-                    <p>Figure 8: Modified from the previous diagram. The code line data.set(0, newService); is highlighted. The List object on the heap has a new element pointing at the String "Kindle" object. The first element of the list is also pointing at this object, leaving the original String object "Prime" disconnected.</p>
+                    <p>Figure 8: Modified from the previous diagram. The code line data.set(0, newService); is
+                        highlighted. The List object on the heap has a new element pointing at the String "Kindle"
+                        object. The first element of the list is also pointing at this object, leaving the original
+                        String object "Prime" disconnected.</p>
 
-                    <p>What we've done here is two things. First, we added a new reference to the List object using newService. In the same way that we passed the List reference from the main() method to printList(), we do the same with the String object that newService is pointing at. newService and the List object now both hold the same address to the String containing "Kindle". In the next line, we replace the reference in the first element of the List with newService as well, making two references to that object inside the List.</p>
+                    <p>What we've done here is two things. First, we added a new reference to the List object using
+                        newService. In the same way that we passed the List reference from the main() method to
+                        printList(), we do the same with the String object that newService is pointing at. newService
+                        and the List object now both hold the same address to the String containing "Kindle". In the
+                        next line, we replace the reference in the first element of the List with newService as well,
+                        making two references to that object inside the List.</p>
 
-                    <p>This example is to demonstrate that all we've done is add and remove references. These references all point to the same object inside the heap, the String "Kindle". We only created one String object and passed the references around between local variables and other objects. If these were primitive variables on the stack, we would have been copying the value to multiple variables.</p>
+                    <p>This example is to demonstrate that all we've done is add and remove references. These references
+                        all point to the same object inside the heap, the String "Kindle". We only created one String
+                        object and passed the references around between local variables and other objects. If these were
+                        primitive variables on the stack, we would have been copying the value to multiple variables.
+                    </p>
 
-                    <p>Note that the String object "Prime" now isn't referenced by any other object in the heap or any variables on the stack. This means we no longer have any access to it, and it's eligible for removal or "garbage collection". We'll discuss this more in a later reading. If we wanted to reuse the String value "Prime" again after this point, we would have to create a whole new String object.</p>
+                    <p>Note that the String object "Prime" now isn't referenced by any other object in the heap or any
+                        variables on the stack. This means we no longer have any access to it, and it's eligible for
+                        removal or "garbage collection". We'll discuss this more in a later reading. If we wanted to
+                        reuse the String value "Prime" again after this point, we would have to create a whole new
+                        String object.</p>
 
-                    <p>Another important thing to remember is that once this method returns, the changes it made to the list will persist! The objects remain as they are on the heap. This means that the main() method will see the changes we made to the List if it accessed the List object from the local variable amazonServices. You should be aware of how you're accessing and modifying any objects on the heap! The printList() method doesn't specifically return the object but it still makes changes that could affect the rest of the application.</p>
+                    <p>Another important thing to remember is that once this method returns, the changes it made to the
+                        list will persist! The objects remain as they are on the heap. This means that the main() method
+                        will see the changes we made to the List if it accessed the List object from the local variable
+                        amazonServices. You should be aware of how you're accessing and modifying any objects on the
+                        heap! The printList() method doesn't specifically return the object but it still makes changes
+                        that could affect the rest of the application.</p>
 
                     <h3>Conclusion</h3>
-                    <p>In this reading, we learned how the stack and heap store data in memory, and how they work with each other so our programs can access it. We learned how the stack manages its data, by keeping everything currently executing at the top of the stack. Then we learned how the heap stores data, and the ways in which we must use the variables accessible to us in the stack to keep references to the heap's data. With this under our belts, we should now have a deeper understand of how Java manages its memory and can apply that knowledge to future lessons.</p>
+                    <p>In this reading, we learned how the stack and heap store data in memory, and how they work with
+                        each other so our programs can access it. We learned how the stack manages its data, by keeping
+                        everything currently executing at the top of the stack. Then we learned how the heap stores
+                        data, and the ways in which we must use the variables accessible to us in the stack to keep
+                        references to the heap's data. With this under our belts, we should now have a deeper understand
+                        of how Java manages its memory and can apply that knowledge to future lessons.</p>
                 </div>
             </div>
 
@@ -259,14 +485,21 @@
                 <h2>The Stack, Heap, and Garbage Collection</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="The Stack, Heap, and Garbage Collection Video" src="https://fast.wistia.net/embed/iframe/ec56ej1m14" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="The Stack, Heap, and Garbage Collection Video"
+                        src="https://fast.wistia.net/embed/iframe/ec56ej1m14" name="wistia_embed"
+                        allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
-                
+
                 <div class="content-section">
-                    <p>As you learned in the previous reading, memory is divided into the stack and the heap. The stack stores all of the variables tied to a specific method. The heap is a much larger portion of memory that stores the objects that the application is using. In this reading, we'll look at another coding example to see how data is stored in the stack and heap, and learn about how the JVM reclaims unused memory.</p>
+                    <p>As you learned in the previous reading, memory is divided into the stack and the heap. The stack
+                        stores all of the variables tied to a specific method. The heap is a much larger portion of
+                        memory that stores the objects that the application is using. In this reading, we'll look at
+                        another coding example to see how data is stored in the stack and heap, and learn about how the
+                        JVM reclaims unused memory.</p>
 
                     <h3>The Stack and Heap</h3>
-                    <p>Recall that the stack is the portion of memory reserved for local variables in methods currently executing. It contains groups of data called frames.</p>
+                    <p>Recall that the stack is the portion of memory reserved for local variables in methods currently
+                        executing. It contains groups of data called frames.</p>
 
                     <p>Frames contain data such as:</p>
                     <ul>
@@ -275,66 +508,154 @@
                         <li>local variables declared in the method</li>
                     </ul>
 
-                    <p>These frames "stack" on top of one another, so that a new frame is added to the "top" when each new method is called, and a frame is removed from the "top" when that method returns. Only the frame that's currently on "top" is accessible/active at any point in time.</p>
+                    <p>These frames "stack" on top of one another, so that a new frame is added to the "top" when each
+                        new method is called, and a frame is removed from the "top" when that method returns. Only the
+                        frame that's currently on "top" is accessible/active at any point in time.</p>
 
-                    <p>The heap is the portion of memory reserved for storing objects' state: their member variables. Remember that object references/variables are memory addresses that point to the locations in memory where the objects are stored.</p>
+                    <p>The heap is the portion of memory reserved for storing objects' state: their member variables.
+                        Remember that object references/variables are memory addresses that point to the locations in
+                        memory where the objects are stored.</p>
 
-                    <p>The data inside an object in memory are the member variables of that object (the variables declared at the top of the class):</p>
+                    <p>The data inside an object in memory are the member variables of that object (the variables
+                        declared at the top of the class):</p>
                     <ul>
-                        <li>The primitive member variables' values are stored right inside the object's location in the heap.</li>
-                        <li>The object member variables' references/addresses are stored inside the object's location in memory. These in turn point to other objects somewhere else on the heap.</li>
+                        <li>The primitive member variables' values are stored right inside the object's location in the
+                            heap.</li>
+                        <li>The object member variables' references/addresses are stored inside the object's location in
+                            memory. These in turn point to other objects somewhere else on the heap.</li>
                     </ul>
 
-                    <p>The size of the memory allocated to an object depends on the member variables declared in its class. No other objects can occupy the same chunk of memory "allocated" to that object (until that object's memory is freed--more on this later). The JVM keeps track of which chunks of memory are occupied/allocated by every object running in the JVM.</p>
+                    <p>The size of the memory allocated to an object depends on the member variables declared in its
+                        class. No other objects can occupy the same chunk of memory "allocated" to that object (until
+                        that object's memory is freed--more on this later). The JVM keeps track of which chunks of
+                        memory are occupied/allocated by every object running in the JVM.</p>
 
-                    <p>Here's some example code with the corresponding memory diagram as the program is running. The code execution began in main() at the bottom, which called useStrings(), which has called concat(). The lines of code that have executed/are being executed are in <strong>bold</strong>. The line of code to be executed next is highlighted in light green (return res;). On the bottom of the stack is the frame for main(). On top of this, we have the method that main() is calling, useStrings(). The top of the stack has the method that useStrings() is currently calling, concat(). The grey arrows show where in the code each stack variable comes from: s and i are method arguments, and res is a local variable, most recently updated inside the else block.</p>
+                    <p>Here's some example code with the corresponding memory diagram as the program is running. The
+                        code execution began in main() at the bottom, which called useStrings(), which has called
+                        concat(). The lines of code that have executed/are being executed are in <strong>bold</strong>.
+                        The line of code to be executed next is highlighted in light green (return res;). On the bottom
+                        of the stack is the frame for main(). On top of this, we have the method that main() is calling,
+                        useStrings(). The top of the stack has the method that useStrings() is currently calling,
+                        concat(). The grey arrows show where in the code each stack variable comes from: s and i are
+                        method arguments, and res is a local variable, most recently updated inside the else block.</p>
 
-                    <img src="https://tk-assets.bloomtech.com/7cf04a7a-e543-4db3-ad3b-bb0b7a9f9e67_Memory-Stack-Plus-Heap.png" alt="Stack/heap diagram of memory example code" loading="lazy">
+                    <img src="https://tk-assets.bloomtech.com/7cf04a7a-e543-4db3-ad3b-bb0b7a9f9e67_Memory-Stack-Plus-Heap.png"
+                        alt="Stack/heap diagram of memory example code" loading="lazy">
 
                     <p>Stack/heap diagram of memory example code</p>
 
-                    <p>The highlighted line of code shows where the program is (and bold code has already been called). main() has called useStrings() on the MemoryExample object, me, which in turn called concat(), also on the same MemoryExample object, passing in "One: " and 1 as the arguments.</p>
+                    <p>The highlighted line of code shows where the program is (and bold code has already been called).
+                        main() has called useStrings() on the MemoryExample object, me, which in turn called concat(),
+                        also on the same MemoryExample object, passing in "One: " and 1 as the arguments.</p>
 
-                    <p>There are currently three frames on the stack—one for each method, starting with main()—showing the variables within each frame. Only the top-most frame for concat() is currently active. The useStrings() and main() frames are inactive right now (shaded background). This means that me and res1 can't be referenced in the current method, for example.</p>
+                    <p>There are currently three frames on the stack—one for each method, starting with main()—showing
+                        the variables within each frame. Only the top-most frame for concat() is currently active. The
+                        useStrings() and main() frames are inactive right now (shaded background). This means that me
+                        and res1 can't be referenced in the current method, for example.</p>
 
-                    <p>We're representing variables as two boxes: one with the name of the variable, and another with the value, which is either a primitive value or a reference. A primitive has the value (e.g. 1). A reference has a blue dot with an arrow pointing to the object in the heap that its reference points to.</p>
+                    <p>We're representing variables as two boxes: one with the name of the variable, and another with
+                        the value, which is either a primitive value or a reference. A primitive has the value (e.g. 1).
+                        A reference has a blue dot with an arrow pointing to the object in the heap that its reference
+                        points to.</p>
 
                     <p>Inside the concat() frame, we have space reserved for five variables:</p>
                     <ul>
-                        <li>this: the reference to the object that concat() was called on in useStrings(). As a result, the this variables in both useStrings() and concat() point to the same object in the heap that me points to in the main() method.</li>
-                        <li>s is the first argument, and since it is a String type, it contains a reference to the String object ("One: ") passed in by useStrings().</li>
-                        <li>i is the second argument, and since it is an int (a primitive), it contains the value itself, 1.</li>
-                        <li>add is not currently in scope (the code is not executed inside the if block right now), so is not usable in the code.</li>
+                        <li>this: the reference to the object that concat() was called on in useStrings(). As a result,
+                            the this variables in both useStrings() and concat() point to the same object in the heap
+                            that me points to in the main() method.</li>
+                        <li>s is the first argument, and since it is a String type, it contains a reference to the
+                            String object ("One: ") passed in by useStrings().</li>
+                        <li>i is the second argument, and since it is an int (a primitive), it contains the value
+                            itself, 1.</li>
+                        <li>add is not currently in scope (the code is not executed inside the if block right now), so
+                            is not usable in the code.</li>
                     </ul>
 
                     <h3>What is Scope? ("in scope" / "out of scope" / "scoping")</h3>
-                    <p>A variable is "in scope" when it can be referenced in the current section of code. We have learned about this when trying to get our code to compile. You need to declare your method's local variables before the code that uses them, or else you get a compile error. Local variables declared within a method can be used anywhere after the declaring line within that method. Local variables declared within an if-block or a for-loop can only be used within those specific blocks. The Java compiler won't let us refer to a variable that is "out of scope". The variables that are currently in scope are the set of variables that live in the currently active frame, which includes:</p>
+                    <p>A variable is "in scope" when it can be referenced in the current section of code. We have
+                        learned about this when trying to get our code to compile. You need to declare your method's
+                        local variables before the code that uses them, or else you get a compile error. Local variables
+                        declared within a method can be used anywhere after the declaring line within that method. Local
+                        variables declared within an if-block or a for-loop can only be used within those specific
+                        blocks. The Java compiler won't let us refer to a variable that is "out of scope". The variables
+                        that are currently in scope are the set of variables that live in the currently active frame,
+                        which includes:</p>
                     <ul>
                         <li>this</li>
                         <li>The method's parameters</li>
-                        <li>Any local variables inside that method. Note that you can declare variables within an if/ for/ while block, which are only in scope within that specific block. You can think of these as being added/removed to the current frame as you enter/leave the code block</li>
+                        <li>Any local variables inside that method. Note that you can declare variables within an if/
+                            for/ while block, which are only in scope within that specific block. You can think of these
+                            as being added/removed to the current frame as you enter/leave the code block</li>
                     </ul>
 
-                    <p>In the diagram above, the concat() stack frame is active and thus its variables are in scope. The add variable has space allocated to it on the stack, but it's only in scope when inside the if-block, so in this diagram add is currently out of scope and not accessible. Everything in the useStrings() frame is out of scope, as that method has the concat() frame on top of it and is not currently active.</p>
+                    <p>In the diagram above, the concat() stack frame is active and thus its variables are in scope. The
+                        add variable has space allocated to it on the stack, but it's only in scope when inside the
+                        if-block, so in this diagram add is currently out of scope and not accessible. Everything in the
+                        useStrings() frame is out of scope, as that method has the concat() frame on top of it and is
+                        not currently active.</p>
 
                     <h3>Why doesn't the JVM run out of (heap) memory all the time? (Garbage collection)</h3>
-                    <p>We know the stack frees up space whenever a method completes and the old frame is popped off the top of the stack. Consider a program that creates a new object in the heap and keeps track of its reference in a variable. Imagine this program creates another object in the heap and reassigns the variable to the new object's reference. The original object is no longer referenced anywhere in the program, but it still occupies space in the heap; it's "abandoned". A program that did this often enough could eventually run out of heap space for new objects! Admittedly, the heap is typically huge, and the program would have to make a lot of objects to do this, but it could eventually happen. So the JVM has got to "reclaim" this memory used by "abandoned" objects.</p>
+                    <p>We know the stack frees up space whenever a method completes and the old frame is popped off the
+                        top of the stack. Consider a program that creates a new object in the heap and keeps track of
+                        its reference in a variable. Imagine this program creates another object in the heap and
+                        reassigns the variable to the new object's reference. The original object is no longer
+                        referenced anywhere in the program, but it still occupies space in the heap; it's "abandoned". A
+                        program that did this often enough could eventually run out of heap space for new objects!
+                        Admittedly, the heap is typically huge, and the program would have to make a lot of objects to
+                        do this, but it could eventually happen. So the JVM has got to "reclaim" this memory used by
+                        "abandoned" objects.</p>
 
-                    <p>The JVM could update its internal state, "deallocating" memory for each object that is no longer used, but it's kind of hard to tell by looking at the heap what is or isn't "used" right now. The key is that since the stack is where all of the variables are that are available to the executing methods, only objects that can be reached somehow by following variables on the stack need to be kept around. However, figuring this out means following all of the stack's variables' references, their objects' references etc., so the JVM isn't doing this every time a method completes. It waits to do this expensive computation every once in a while instead of interrupting your program all the time—you'd never get any work done otherwise!</p>
+                    <p>The JVM could update its internal state, "deallocating" memory for each object that is no longer
+                        used, but it's kind of hard to tell by looking at the heap what is or isn't "used" right now.
+                        The key is that since the stack is where all of the variables are that are available to the
+                        executing methods, only objects that can be reached somehow by following variables on the stack
+                        need to be kept around. However, figuring this out means following all of the stack's variables'
+                        references, their objects' references etc., so the JVM isn't doing this every time a method
+                        completes. It waits to do this expensive computation every once in a while instead of
+                        interrupting your program all the time—you'd never get any work done otherwise!</p>
 
-                    <p>An alternative could be for the person writing the code (you!) to explicitly request and free memory when you need it, then store your objects' data in the space that you have requested. The C programming language works this way, for example, and it's a near-endless source of pain and suffering. The designers of Java have decided to avoid this.</p>
+                    <p>An alternative could be for the person writing the code (you!) to explicitly request and free
+                        memory when you need it, then store your objects' data in the space that you have requested. The
+                        C programming language works this way, for example, and it's a near-endless source of pain and
+                        suffering. The designers of Java have decided to avoid this.</p>
 
-                    <p>Enter garbage collection (GC), which is the way that Java figures out which objects are still in use, then reclaims memory from the heap when objects are no longer used by the Java program. Garbage collection runs periodically, interrupting your program's execution to identify objects that can have their locations in memory reclaimed. The garbage collector figures out which objects on the heap no longer have a reference pointing to them directly or indirectly via any variables on the stack. If any stack variable is a direct reference to the object on the heap, or a stack variable is a reference to an object that has a reference to the object on the heap (or has a reference... etc.), then that object is not currently eligible for garbage collection, and the garbage collector leaves it alone. GC will identify any such eligible objects, then free their memory before returning execution to your Java program. When GC is done, the JVM goes back to exactly where your program was executing (with exactly the same stack) and starts chugging along again.</p>
+                    <p>Enter garbage collection (GC), which is the way that Java figures out which objects are still in
+                        use, then reclaims memory from the heap when objects are no longer used by the Java program.
+                        Garbage collection runs periodically, interrupting your program's execution to identify objects
+                        that can have their locations in memory reclaimed. The garbage collector figures out which
+                        objects on the heap no longer have a reference pointing to them directly or indirectly via any
+                        variables on the stack. If any stack variable is a direct reference to the object on the heap,
+                        or a stack variable is a reference to an object that has a reference to the object on the heap
+                        (or has a reference... etc.), then that object is not currently eligible for garbage collection,
+                        and the garbage collector leaves it alone. GC will identify any such eligible objects, then free
+                        their memory before returning execution to your Java program. When GC is done, the JVM goes back
+                        to exactly where your program was executing (with exactly the same stack) and starts chugging
+                        along again.</p>
 
-                    <p>This diagram shows a program in progress, with some of the objects in the heap shaded in grey, indicating that they have no references from the stack, and are thus eligible for garbage collection. You can ignore the code if you like, just look at the objects that are pointed to by the variables on the stack. The objects on the heap that are eligible for GC are shaded in grey. Several objects are not eligible for garbage collection (no shading). The unshaded Strings are pointed to directly by variables on the stack; the char[] are pointed to by the String objects.</p>
+                    <p>This diagram shows a program in progress, with some of the objects in the heap shaded in grey,
+                        indicating that they have no references from the stack, and are thus eligible for garbage
+                        collection. You can ignore the code if you like, just look at the objects that are pointed to by
+                        the variables on the stack. The objects on the heap that are eligible for GC are shaded in grey.
+                        Several objects are not eligible for garbage collection (no shading). The unshaded Strings are
+                        pointed to directly by variables on the stack; the char[] are pointed to by the String objects.
+                    </p>
 
-                    <p>Several objects on the heap are no longer pointed to by variables on the stack, so they are eligible for garbage collection</p>
+                    <p>Several objects on the heap are no longer pointed to by variables on the stack, so they are
+                        eligible for garbage collection</p>
 
-                    <img src="https://tk-assets.bloomtech.com/3e5c92d4-0187-41d6-b40d-4902a943491c_Memory-Garbage-Collectable.png" alt="Several objects on the heap are no longer pointed to by variables on the stack, so they are eligible for garbage collection" loading="lazy">
+                    <img src="https://tk-assets.bloomtech.com/3e5c92d4-0187-41d6-b40d-4902a943491c_Memory-Garbage-Collectable.png"
+                        alt="Several objects on the heap are no longer pointed to by variables on the stack, so they are eligible for garbage collection"
+                        loading="lazy">
 
-                    <p>For example, the String and its char[] that contained "zero" do not have any paths pointing to them from anywhere on the stack. Those two shaded objects are eligible for garbage collection. After the GC runs, these two objects might be deallocated and removed from the heap, their bytes made available to be occupied by future objects. The empty String and the "One: " String and their char[] objects are all eligible for garbage collection as well, for the same reason.</p>
+                    <p>For example, the String and its char[] that contained "zero" do not have any paths pointing to
+                        them from anywhere on the stack. Those two shaded objects are eligible for garbage collection.
+                        After the GC runs, these two objects might be deallocated and removed from the heap, their bytes
+                        made available to be occupied by future objects. The empty String and the "One: " String and
+                        their char[] objects are all eligible for garbage collection as well, for the same reason.</p>
 
-                    <p>On the other hand, the String pointed to by res1 is not garbage collectible (because res1 points to it), even though res1 is not currently in scope (it lives in the second frame on the stack from the method calling the current method).</p>
+                    <p>On the other hand, the String pointed to by res1 is not garbage collectible (because res1 points
+                        to it), even though res1 is not currently in scope (it lives in the second frame on the stack
+                        from the method calling the current method).</p>
                 </div>
             </div>
 
@@ -342,80 +663,148 @@
                 <h2>Stack and Heap Example</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Stack and Heap Example Video" src="https://fast.wistia.net/embed/iframe/8pn8kiflfm" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Stack and Heap Example Video"
+                        src="https://fast.wistia.net/embed/iframe/8pn8kiflfm" name="wistia_embed"
+                        allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
 
                 <div class="content-section">
-                    <p>Now that we've covered the concepts, let's walk through each line of the MemoryExample code we saw before, and watch as the stack and heap get updated over time.</p>
+                    <p>Now that we've covered the concepts, let's walk through each line of the MemoryExample code we
+                        saw before, and watch as the stack and heap get updated over time.</p>
 
                     <ol>
                         <li>
-                            <p>Execution has started inside the main() method. The MemoryExample variable, me has been assigned a value of null. me is a reference to no object, as null is a special "address" meaning no object. So we'll represent that as null instead of having a pointer to somewhere on the heap.</p>
-                            <img src="https://tk-assets.bloomtech.com/5ff62d24-ea96-418c-a532-b5ba022bec80_Memory-Line-by-line-01.png" alt="Execution has started inside the  method. The  variable,  has been assigned a value of .  is a reference to no object, as  is a special &quot;address&quot; meaning no object. So we'll represent that as  instead of having a pointer to somewhere on the heap." loading="lazy">
+                            <p>Execution has started inside the main() method. The MemoryExample variable, me has been
+                                assigned a value of null. me is a reference to no object, as null is a special "address"
+                                meaning no object. So we'll represent that as null instead of having a pointer to
+                                somewhere on the heap.</p>
+                            <img src="https://tk-assets.bloomtech.com/5ff62d24-ea96-418c-a532-b5ba022bec80_Memory-Line-by-line-01.png"
+                                alt="Execution has started inside the  method. The  variable,  has been assigned a value of .  is a reference to no object, as  is a special &quot;address&quot; meaning no object. So we'll represent that as  instead of having a pointer to somewhere on the heap."
+                                loading="lazy">
                         </li>
 
                         <li>
-                            <p>A new MemoryExample object has been allocated on the heap and instantiated. The local variable, me is assigned to point to the new object. Only the main() frame is on the stack right now.</p>
-                            <img src="https://tk-assets.bloomtech.com/590280a9-56a0-4990-b88d-2a6579f8e8ae_Memory-Line-by-line-02.png" alt="A new  object has been allocated on the heap and instantiated. The local variable,  is assigned to point to the new object. Only the  frame is on the stack right now." loading="lazy">
+                            <p>A new MemoryExample object has been allocated on the heap and instantiated. The local
+                                variable, me is assigned to point to the new object. Only the main() frame is on the
+                                stack right now.</p>
+                            <img src="https://tk-assets.bloomtech.com/590280a9-56a0-4990-b88d-2a6579f8e8ae_Memory-Line-by-line-02.png"
+                                alt="A new  object has been allocated on the heap and instantiated. The local variable,  is assigned to point to the new object. Only the  frame is on the stack right now."
+                                loading="lazy">
                         </li>
 
                         <li>
-                            <p>main() has now called the useStrings() method and its frame has been created on the stack. It has no parameters, so the only variable currently available on the stack is this, the reference to the MemoryExample that main() called useStrings() on. res1 and res2 are marked inaccessible because the lines of code declaring them haven't executed yet</p>
-                            <img src="https://tk-assets.bloomtech.com/94951458-540e-4e16-bf64-d131bea13674_Memory-Line-by-line-03.png" alt=" has now called the  method and its frame has been created on the stack. It has no parameters, so the only variable currently available on the stack is , the reference to the  that  called  on.  and  are marked inaccessible because the lines of code declaring them haven't executed yet" loading="lazy">
+                            <p>main() has now called the useStrings() method and its frame has been created on the
+                                stack. It has no parameters, so the only variable currently available on the stack is
+                                this, the reference to the MemoryExample that main() called useStrings() on. res1 and
+                                res2 are marked inaccessible because the lines of code declaring them haven't executed
+                                yet</p>
+                            <img src="https://tk-assets.bloomtech.com/94951458-540e-4e16-bf64-d131bea13674_Memory-Line-by-line-03.png"
+                                alt=" has now called the  method and its frame has been created on the stack. It has no parameters, so the only variable currently available on the stack is , the reference to the  that  called  on.  and  are marked inaccessible because the lines of code declaring them haven't executed yet"
+                                loading="lazy">
                         </li>
 
                         <li>
-                            <p>useStrings() has called the concat() method, passing in "One: " and 1. A new frame has been added for concat(), which has this as well as the two method parameters, s and i. this is the object concat() was called on (because useStrings() is an instance method on the MemoryExample object, Java knows that concat() is called on the same object without needing to call this.concat("One: ", 1); , though we could have written it that way instead). s is an object reference, pointing to the String on the heap. i contains its value, 1, directly. The lower frames in the stack are inactive.</p>
-                            <img src="https://tk-assets.bloomtech.com/b9edb6d2-8585-49a7-a856-6411ce02b066_Memory-Line-by-line-04.png" alt=" has called the  method, passing in  and . A new frame has been added for , which has  as well as the two method parameters,  and .  is the object  was called on (because  is an instance method on the  object, Java knows that  is called on the same object without needing to call  , though we could have written it that way instead).  is an object reference, pointing to the  on the heap.  contains its value, 1, directly. the lower frames in the stack are inactive." loading="lazy">
+                            <p>useStrings() has called the concat() method, passing in "One: " and 1. A new frame has
+                                been added for concat(), which has this as well as the two method parameters, s and i.
+                                this is the object concat() was called on (because useStrings() is an instance method on
+                                the MemoryExample object, Java knows that concat() is called on the same object without
+                                needing to call this.concat("One: ", 1); , though we could have written it that way
+                                instead). s is an object reference, pointing to the String on the heap. i contains its
+                                value, 1, directly. The lower frames in the stack are inactive.</p>
+                            <img src="https://tk-assets.bloomtech.com/b9edb6d2-8585-49a7-a856-6411ce02b066_Memory-Line-by-line-04.png"
+                                alt=" has called the  method, passing in  and . A new frame has been added for , which has  as well as the two method parameters,  and .  is the object  was called on (because  is an instance method on the  object, Java knows that  is called on the same object without needing to call  , though we could have written it that way instead).  is an object reference, pointing to the  on the heap.  contains its value, 1, directly. the lower frames in the stack are inactive."
+                                loading="lazy">
                         </li>
 
                         <li>
-                            <p>concat() has created a new variable, res and assigned it to the empty string on the heap.</p>
-                            <img src="https://tk-assets.bloomtech.com/fd2ca593-a87a-4d89-b35c-e62771ec2867_Memory-Line-by-line-05.png" alt=" has created a new variable,  and assigned it to the empty string on the heap." loading="lazy">
+                            <p>concat() has created a new variable, res and assigned it to the empty string on the heap.
+                            </p>
+                            <img src="https://tk-assets.bloomtech.com/fd2ca593-a87a-4d89-b35c-e62771ec2867_Memory-Line-by-line-05.png"
+                                alt=" has created a new variable,  and assigned it to the empty string on the heap."
+                                loading="lazy">
                         </li>
 
                         <li>
-                            <p>Inside the else block, res has been re-assigned to a new String, formed by concatenating the values of s and i. The old String that res used to point to no longer has any references to it and is now eligible for garbage collection.</p>
-                            <img src="https://tk-assets.bloomtech.com/063c9109-a0ef-4b43-ba21-634d0c7b15f5_Memory-Line-by-line-06.png" alt="Inside the  block,  has been re-assigned to a new , formed by concatenating the values of  and . The old  that  used to point to no longer has any references to it and is now eligible for garbage collection." loading="lazy">
+                            <p>Inside the else block, res has been re-assigned to a new String, formed by concatenating
+                                the values of s and i. The old String that res used to point to no longer has any
+                                references to it and is now eligible for garbage collection.</p>
+                            <img src="https://tk-assets.bloomtech.com/063c9109-a0ef-4b43-ba21-634d0c7b15f5_Memory-Line-by-line-06.png"
+                                alt="Inside the  block,  has been re-assigned to a new , formed by concatenating the values of  and . The old  that  used to point to no longer has any references to it and is now eligible for garbage collection."
+                                loading="lazy">
                         </li>
 
                         <li>
-                            <p>concat() has returned and its frame has been popped off the stack. concat()'s return value (used to be pointed to by res) is now pointed to by res1, the variable in the useStrings() frame. Nothing on the stack now points to the "One: " String that was created in the first call to concat() so it is now garbage collectable as well.</p>
-                            <img src="https://tk-assets.bloomtech.com/267d6b09-40f4-4860-a0b0-22809c27cfc6_Memory-Line-by-line-07.png" alt=" has returned and its frame has been popped off the stack. ‘s return value (used to be pointed to by ) is now pointed to by , the variable in the  frame. Nothing on the stack now points to the &quot;One: &quot;  that was created in the first call to  so it is now garbage collectable as well." loading="lazy">
+                            <p>concat() has returned and its frame has been popped off the stack. concat()'s return
+                                value (used to be pointed to by res) is now pointed to by res1, the variable in the
+                                useStrings() frame. Nothing on the stack now points to the "One: " String that was
+                                created in the first call to concat() so it is now garbage collectable as well.</p>
+                            <img src="https://tk-assets.bloomtech.com/267d6b09-40f4-4860-a0b0-22809c27cfc6_Memory-Line-by-line-07.png"
+                                alt=" has returned and its frame has been popped off the stack. ‘s return value (used to be pointed to by ) is now pointed to by , the variable in the  frame. Nothing on the stack now points to the &quot;One: &quot;  that was created in the first call to  so it is now garbage collectable as well."
+                                loading="lazy">
                         </li>
 
                         <li>
-                            <p>useStrings() has now called concat() , so a new concat() frame is added. this and method arguments have been assigned.</p>
-                            <img src="https://tk-assets.bloomtech.com/540810a1-d0fe-4671-a3a9-dd4c25ded815_Memory-Line-by-line-08.png" alt=" has now called  , so a new  frame is added.  and method arguments have been assigned." loading="lazy">
+                            <p>useStrings() has now called concat() , so a new concat() frame is added. this and method
+                                arguments have been assigned.</p>
+                            <img src="https://tk-assets.bloomtech.com/540810a1-d0fe-4671-a3a9-dd4c25ded815_Memory-Line-by-line-08.png"
+                                alt=" has now called  , so a new  frame is added.  and method arguments have been assigned."
+                                loading="lazy">
                         </li>
 
                         <li>
-                            <p>res is assigned empty string, and we're representing something like what Java actually does, and pointing it back to the same empty string instance that was used before. This has nothing to do with the fact that it's the same local variable as before and only represents that Java reuses literal Strings across methods and classes. If you assign two different String variables equal to the same literal string (e.g. "abc") the two references will be the same, and point to the exact same String object.</p>
-                            <img src="https://tk-assets.bloomtech.com/cb4b1990-cd7a-4820-b5dc-50ee19b4d915_Memory-Line-by-line-09.png" alt=" is assigned empty string, and we're representing something like what Java actually does, and pointing it back to the same empty string instance that was used before. This has nothing to do with the fact that it's the same local variable as before, and just represents that Java reuses literal strings across methods and classes." loading="lazy">
+                            <p>res is assigned empty string, and we're representing something like what Java actually
+                                does, and pointing it back to the same empty string instance that was used before. This
+                                has nothing to do with the fact that it's the same local variable as before and only
+                                represents that Java reuses literal Strings across methods and classes. If you assign
+                                two different String variables equal to the same literal string (e.g. "abc") the two
+                                references will be the same, and point to the exact same String object.</p>
+                            <img src="https://tk-assets.bloomtech.com/cb4b1990-cd7a-4820-b5dc-50ee19b4d915_Memory-Line-by-line-09.png"
+                                alt=" is assigned empty string, and we're representing something like what Java actually does, and pointing it back to the same empty string instance that was used before. This has nothing to do with the fact that it's the same local variable as before, and just represents that Java reuses literal strings across methods and classes."
+                                loading="lazy">
                         </li>
 
                         <li>
-                            <p>We've stepped into the if clause, because i is equal to 0. A new variable, add, has been declared inside the if block and points to a new String containing "zero". The add variable will only be accessible inside the if block.</p>
-                            <img src="https://tk-assets.bloomtech.com/cb5eda77-3354-41e9-a4e2-804ff9707ed6_Memory-Line-by-line-10.png" alt="We've stepped into the  clause, because  is equal to 0. A new variable, , has been declared inside the  block and points to a new  containing &quot;zero&quot;. The  variable will only be accessible inside the  block." loading="lazy">
+                            <p>We've stepped into the if clause, because i is equal to 0. A new variable, add, has been
+                                declared inside the if block and points to a new String containing "zero". The add
+                                variable will only be accessible inside the if block.</p>
+                            <img src="https://tk-assets.bloomtech.com/cb5eda77-3354-41e9-a4e2-804ff9707ed6_Memory-Line-by-line-10.png"
+                                alt="We've stepped into the  clause, because  is equal to 0. A new variable, , has been declared inside the  block and points to a new  containing &quot;zero&quot;. The  variable will only be accessible inside the  block."
+                                loading="lazy">
                         </li>
 
                         <li>
-                            <p>res has been reassigned to a new String formed by concatenating the two strings. Its old value (the empty string) and the String pointed to by add are both now garbage collectable because no stack variables point to them anymore.</p>
-                            <img src="https://tk-assets.bloomtech.com/fa03911f-494e-4e16-ac7c-b22c5e57def1_Memory-Line-by-line-11.png" alt=" has been reassigned to a new  formed by concatenating the two strings. Its old value (the empty string) and the  pointed to by  are both now garbage collectable because no stack variables point to them anymore." loading="lazy">
+                            <p>res has been reassigned to a new String formed by concatenating the two strings. Its old
+                                value (the empty string) and the String pointed to by add are both now garbage
+                                collectable because no stack variables point to them anymore.</p>
+                            <img src="https://tk-assets.bloomtech.com/fa03911f-494e-4e16-ac7c-b22c5e57def1_Memory-Line-by-line-11.png"
+                                alt=" has been reassigned to a new  formed by concatenating the two strings. Its old value (the empty string) and the  pointed to by  are both now garbage collectable because no stack variables point to them anymore."
+                                loading="lazy">
                         </li>
 
                         <li>
-                            <p>The return value of concat() has been assigned to res2, and the stack frame for concat() has been popped off, so now the useStrings() frame is active again.</p>
-                            <img src="https://tk-assets.bloomtech.com/a2b1dd09-fbd4-425f-82de-1acdfcfd80a1_Memory-Line-by-line-12.png" alt="The return value of  has been assigned to , and the stack frame for  has been popped off, so now the  frame is active again." loading="lazy">
+                            <p>The return value of concat() has been assigned to res2, and the stack frame for concat()
+                                has been popped off, so now the useStrings() frame is active again.</p>
+                            <img src="https://tk-assets.bloomtech.com/a2b1dd09-fbd4-425f-82de-1acdfcfd80a1_Memory-Line-by-line-12.png"
+                                alt="The return value of  has been assigned to , and the stack frame for  has been popped off, so now the  frame is active again."
+                                loading="lazy">
                         </li>
 
                         <li>
-                            <p>useStrings() has returned, so its frame has been removed, and all of the objects that its variables pointed to are now garbage collectable. The only objects pointed to from variables on the stack now are arg, the argument to main() and the local variable, me within main(). After this, the program ends and all memory is eligible for garbage collection (then likely freed completely as the JVM exits as well).</p>
-                            <img src="https://tk-assets.bloomtech.com/f0c0ffd5-d30b-4a54-acff-ddc74ec6985d_Memory-Line-by-line-13.png" alt=" has returned, so its frame has been removed, and all of the objects that its variables pointed to are now garbage collectable. The only objects pointed to from variables on the stack now are , the argument to  and the local variable,  within . After this, the program ends and all memory is eligible for garbage collection (then likely freed completely as the JVM exits as well)." loading="lazy">
+                            <p>useStrings() has returned, so its frame has been removed, and all of the objects that its
+                                variables pointed to are now garbage collectable. The only objects pointed to from
+                                variables on the stack now are arg, the argument to main() and the local variable, me
+                                within main(). After this, the program ends and all memory is eligible for garbage
+                                collection (then likely freed completely as the JVM exits as well).</p>
+                            <img src="https://tk-assets.bloomtech.com/f0c0ffd5-d30b-4a54-acff-ddc74ec6985d_Memory-Line-by-line-13.png"
+                                alt=" has returned, so its frame has been removed, and all of the objects that its variables pointed to are now garbage collectable. The only objects pointed to from variables on the stack now are , the argument to  and the local variable,  within . After this, the program ends and all memory is eligible for garbage collection (then likely freed completely as the JVM exits as well)."
+                                loading="lazy">
                         </li>
                     </ol>
 
-                    <p>(Optional) If you're really loving this and want an even more complicated example of multiple method calls, try this sequence of stack/heap diagrams for a <a href="http://pages.cs.wisc.edu/~weinrich/cs302/handouts/BankAccountWalkthrough.pdf">bank account</a> example.</p>
+                    <p>(Optional) If you're really loving this and want an even more complicated example of multiple
+                        method calls, try this sequence of stack/heap diagrams for a <a
+                            href="http://pages.cs.wisc.edu/~weinrich/cs302/handouts/BankAccountWalkthrough.pdf">bank
+                            account</a> example.</p>
                 </div>
             </div>
 
@@ -423,50 +812,66 @@
                 <h2>Guided Project</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Guided Project Video" src="https://fast.wistia.net/embed/iframe/qwf8ogb8k5" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Guided Project Video"
+                        src="https://fast.wistia.net/embed/iframe/qwf8ogb8k5" name="wistia_embed"
+                        allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
 
                 <div class="content-section">
                     <h3>Introduction</h3>
-                    <p>We're going to simulate the Java Virtual Machine and how it manages memory across the stack and the heap while executing some delicious code.</p>
+                    <p>We're going to simulate the Java Virtual Machine and how it manages memory across the stack and
+                        the heap while executing some delicious code.</p>
 
                     <p>We'll step through lines of code, updating our JVM's stack and heap in a Word document.</p>
 
                     <h3>Materials</h3>
                     <ul>
-                        <li><a href="https://github.com/BloomTechBackend/bd-memory-cookie-monster">Cookie Monster Code</a>: The code we'll be running. Nom!</li>
-                        <li><a href="https://drive.google.com/file/d/1YBAFuzs48b-wVHnTQCfDB4ykh7l061tL/view?usp=sharing">Stack and Heap Template</a>: The template we'll use to keep track of what's in memory as the code executes.</li>
+                        <li><a href="https://github.com/BloomTechBackend/bd-memory-cookie-monster">Cookie Monster
+                                Code</a>: The code we'll be running. Nom!</li>
+                        <li><a
+                                href="https://drive.google.com/file/d/1YBAFuzs48b-wVHnTQCfDB4ykh7l061tL/view?usp=sharing">Stack
+                                and Heap Template</a>: The template we'll use to keep track of what's in memory as the
+                            code executes.</li>
                     </ul>
 
                     <h3>Walk through of the stack and heap template</h3>
-                    <p>Open the stack and heap template. There are two pages. Can you guess what they are? The first page is the stack, the second is the heap.</p>
+                    <p>Open the stack and heap template. There are two pages. Can you guess what they are? The first
+                        page is the stack, the second is the heap.</p>
 
                     <h4>Stack</h4>
-                    <p>We've left room for 5 stack frames in your stack, which should be plenty...even though the first entry in the stack is already occupied with the main() method (as it should be).</p>
+                    <p>We've left room for 5 stack frames in your stack, which should be plenty...even though the first
+                        entry in the stack is already occupied with the main() method (as it should be).</p>
 
                     <p>Moving from left to right, the columns in each stack frame are:</p>
                     <ul>
                         <li><strong>"method name"</strong>: You'll enter the name of the method called</li>
                         <li><strong>"this / argument / local"</strong>: Capture the type of variable in this column.
                             <ul>
-                                <li><em>this</em> - the object that a method is called on (the Java keyword, this). Every stack frame other than main() must start with one of these in this code, because they're all instance method calls! (Why doesn't main() have a this?...)</li>
+                                <li><em>this</em> - the object that a method is called on (the Java keyword, this).
+                                    Every stack frame other than main() must start with one of these in this code,
+                                    because they're all instance method calls! (Why doesn't main() have a this?...)</li>
                                 <li><em>argument</em> - if the variable was passed into this method as an argument.</li>
                                 <li><em>local</em> - if the variable is declared locally within the method</li>
                             </ul>
                         </li>
-                        <li><strong>"Variable name"</strong>: enter the variable's name as declared. Use this for this. Note that you shouldn't be adding any instance variables here. (Where do instance variables live?)</li>
+                        <li><strong>"Variable name"</strong>: enter the variable's name as declared. Use this for this.
+                            Note that you shouldn't be adding any instance variables here. (Where do instance variables
+                            live?)</li>
                         <li><strong>"Type"</strong>: the type the variable is declared as (e.g. String, Cookie...)</li>
                         <li><strong>"Contents"</strong>:
                             <ul>
                                 <li>primitive type (int, double etc.): Enter the primitive value</li>
-                                <li>object type (String, Cookie etc.): Enter the address in memory where the object lives. (Will this address be in the stack or the heap?...)</li>
+                                <li>object type (String, Cookie etc.): Enter the address in memory where the object
+                                    lives. (Will this address be in the stack or the heap?...)</li>
                             </ul>
                         </li>
                     </ul>
 
-                    <p>Whenever a method is called, add a frame to the stack. Whenever a method returns, pop the method off the stack. Sorry, it's a small pain to delete Word table entries one at a time...</p>
+                    <p>Whenever a method is called, add a frame to the stack. Whenever a method returns, pop the method
+                        off the stack. Sorry, it's a small pain to delete Word table entries one at a time...</p>
 
-                    <p>To preserve our sanity, we won't "step into" methods on standard Java objects, including but not limited to:</p>
+                    <p>To preserve our sanity, we won't "step into" methods on standard Java objects, including but not
+                        limited to:</p>
                     <ul>
                         <li>ArrayList.add()</li>
                         <li>ArrayList.get()</li>
@@ -474,15 +879,23 @@
                         <li>System.out.print()</li>
                     </ul>
 
-                    <p>So if you don't see the code in the PrintableCookieMonsterCode.docx, don't add the stack frame to your stack. But do update memory corresponding to what happens in that code. Let's just pretend we're running the debugger, and we "step over" any methods that aren't in our Cookie Monster code.</p>
+                    <p>So if you don't see the code in the PrintableCookieMonsterCode.docx, don't add the stack frame to
+                        your stack. But do update memory corresponding to what happens in that code. Let's just pretend
+                        we're running the debugger, and we "step over" any methods that aren't in our Cookie Monster
+                        code.</p>
 
                     <h4>Heap</h4>
-                    <p>The second page of the Stack and Heap Template.docx file is the heap. We've organized the heap into 3 "sections". This is not how the JVM's heap is actually structured but it'll help us stay organized.</p>
+                    <p>The second page of the Stack and Heap Template.docx file is the heap. We've organized the heap
+                        into 3 "sections". This is not how the JVM's heap is actually structured but it'll help us stay
+                        organized.</p>
 
                     <h5>Object instances</h5>
-                    <p>On the left side of the heap, we have a few locations in memory listed, with space for objects to occupy.</p>
+                    <p>On the left side of the heap, we have a few locations in memory listed, with space for objects to
+                        occupy.</p>
 
-                    <p>You see alphanumeric strings (e.g. 0ab0) at the top of each memory slot. These strings are the address in memory where that object resides. We selected random locations in memory to simulate the way the JVM arbitrarily selects heap locations to put your objects.</p>
+                    <p>You see alphanumeric strings (e.g. 0ab0) at the top of each memory slot. These strings are the
+                        address in memory where that object resides. We selected random locations in memory to simulate
+                        the way the JVM arbitrarily selects heap locations to put your objects.</p>
 
                     <p>When you are instantiating a new object on the heap, enter the following information:</p>
                     <ul>
@@ -490,11 +903,13 @@
                         <li>For each member variable:
                             <ul>
                                 <li><em>var name</em>: enter the member variable name</li>
-                                <li><em>Type</em>: enter the member variable's declared type (this could be a primitive or an object type!)</li>
+                                <li><em>Type</em>: enter the member variable's declared type (this could be a primitive
+                                    or an object type!)</li>
                                 <li><em>Contents</em>:
                                     <ul>
                                         <li>primitive: enter the primitive value here, e.g. 10</li>
-                                        <li>object: enter the address of the object pointed to, or null if none has been assigned yet</li>
+                                        <li>object: enter the address of the object pointed to, or null if none has been
+                                            assigned yet</li>
                                     </ul>
                                 </li>
                             </ul>
@@ -502,51 +917,78 @@
                     </ul>
 
                     <h5>Array instances</h5>
-                    <p>In the upper right of the heap are a couple of slots for arrays. An array is a contiguous block of memory that has a specific number of consecutive values. If primitives, each entry in the array contains a primitive value. If objects, each entry in the array contains a reference/address to an object on the heap (or null).</p>
+                    <p>In the upper right of the heap are a couple of slots for arrays. An array is a contiguous block
+                        of memory that has a specific number of consecutive values. If primitives, each entry in the
+                        array contains a primitive value. If objects, each entry in the array contains a
+                        reference/address to an object on the heap (or null).</p>
 
-                    <p>We have claimed one of the array slots already for main()'s argument, args, which is a String []. In our case, the array is of size zero, so it has no entries. But if it did, each entry would be an address pointing to a String on the heap.</p>
+                    <p>We have claimed one of the array slots already for main()'s argument, args, which is a String [].
+                        In our case, the array is of size zero, so it has no entries. But if it did, each entry would be
+                        an address pointing to a String on the heap.</p>
 
-                    <p>There is one more slot for arrays for you to use in the code. Hint: there is an ArrayList<Cookie> in the code, which will need to point to an array of objects matching the ArrayList datatype... Don't worry too much about the size of the array inside the ArrayList, just add a value in the "index" column when the ArrayList adds a value to the array.</p>
+                    <p>There is one more slot for arrays for you to use in the code. Hint: there is an ArrayList<Cookie>
+                            in the code, which will need to point to an array of objects matching the ArrayList
+                            datatype... Don't worry too much about the size of the array inside the ArrayList, just add
+                            a value in the "index" column when the ArrayList adds a value to the array.</p>
 
                     <p>"Contents" contains the primitive value or the object address for that entry in the array.</p>
 
                     <h5>String literals</h5>
-                    <p>This actually is something that the JVM does: separate literal String values used in the code (e.g. "", "nom") so that when literal Strings are referenced in the code, the JVM can allocate them upfront and reuse the instances, rather than creating new instances every time they're used.</p>
+                    <p>This actually is something that the JVM does: separate literal String values used in the code
+                        (e.g. "", "nom") so that when literal Strings are referenced in the code, the JVM can allocate
+                        them upfront and reuse the instances, rather than creating new instances every time they're
+                        used.</p>
 
-                    <p>For this code, you shouldn't need to create any String objects in the Object instances area of the heap, you should always be able to use the String literals provided.</p>
+                    <p>For this code, you shouldn't need to create any String objects in the Object instances area of
+                        the heap, you should always be able to use the String literals provided.</p>
 
                     <h3>Executing Code</h3>
                     <p>Let's talk about how you can manipulate the props to simulate the JVM executing code.</p>
 
                     <h4>Variable Declaration</h4>
-                    <p>When a new local variable becomes active, add an entry in the corresponding stack frame for the new variable. If it is assigned a value, enter it in the "contents". Remember to think about whether the type is a primitive or an object, and thus whether you enter a primitive value or an object address.</p>
+                    <p>When a new local variable becomes active, add an entry in the corresponding stack frame for the
+                        new variable. If it is assigned a value, enter it in the "contents". Remember to think about
+                        whether the type is a primitive or an object, and thus whether you enter a primitive value or an
+                        object address.</p>
 
-                    <p>Careful! Some methods assign values to member variables without using the this keyword. Pay attention to whether the variable being assigned to is a local or a member variable!</p>
+                    <p>Careful! Some methods assign values to member variables without using the this keyword. Pay
+                        attention to whether the variable being assigned to is a local or a member variable!</p>
 
                     <h4>Method calls</h4>
                     <p>To call a method like speaker.repeat(superlative, times), add a new stack frame to the stack:</p>
                     <ul>
                         <li>Enter the method name on the left</li>
-                        <li>Add a row for this. Add the correct address for the object pointed to by this. The type for this is the type of object the method is called on.</li>
-                        <li>Add a row for each method argument (if there are any), with the appropriate type and contents</li>
-                        <li>Proceed to execute the first line in the method. Add local variables to the stack frame as they are activated.</li>
+                        <li>Add a row for this. Add the correct address for the object pointed to by this. The type for
+                            this is the type of object the method is called on.</li>
+                        <li>Add a row for each method argument (if there are any), with the appropriate type and
+                            contents</li>
+                        <li>Proceed to execute the first line in the method. Add local variables to the stack frame as
+                            they are activated.</li>
                     </ul>
 
-                    <p>Reminder: don't bother "stepping into" any method calls to methods that aren't implemented in our code document.</p>
+                    <p>Reminder: don't bother "stepping into" any method calls to methods that aren't implemented in our
+                        code document.</p>
 
                     <h4>Method returns</h4>
-                    <p>When a method returns, remove its stack frame from the stack (Sorry, you probably have to delete each cell's contents from the table individually. Try not to actually delete any cells from the table or it'll get messy)</p>
+                    <p>When a method returns, remove its stack frame from the stack (Sorry, you probably have to delete
+                        each cell's contents from the table individually. Try not to actually delete any cells from the
+                        table or it'll get messy)</p>
 
-                    <p>If the method has a return value, enter its value in any variable that assigns the return value. If the line of code that calls the method doesn't assign the return value to anything, then just drop the value like the JVM does.</p>
+                    <p>If the method has a return value, enter its value in any variable that assigns the return value.
+                        If the line of code that calls the method doesn't assign the return value to anything, then just
+                        drop the value like the JVM does.</p>
 
                     <h4>Instantiating Objects</h4>
                     <p>To instantiate a new object and assign to a variable:</p>
                     <ul>
-                        <li>If the line of code containing the method call assigns the result to a new variable, activate the variable</li>
-                        <li>(if assigning to a member variable, the object containing it already has activated member variable)</li>
+                        <li>If the line of code containing the method call assigns the result to a new variable,
+                            activate the variable</li>
+                        <li>(if assigning to a member variable, the object containing it already has activated member
+                            variable)</li>
                         <li>Select a memory location to place your object</li>
                         <li>Enter the object type</li>
-                        <li>Enter the member variable names and assign default values if no values are assigned on the line declaring the variable
+                        <li>Enter the member variable names and assign default values if no values are assigned on the
+                            line declaring the variable
                             <ul>
                                 <li>What are default primitive values?</li>
                                 <li>What is default object reference value?</li>
@@ -555,11 +997,13 @@
                         <li>Add a stack frame for the constructor</li>
                         <li>Include a "this" entry as a variable in the constructor</li>
                         <li>If the constructor has arguments, add them as "argument" entries</li>
-                        <li>Execute each line of the constructor code, updating stack / heap as appropriate, adding local variables etc.</li>
+                        <li>Execute each line of the constructor code, updating stack / heap as appropriate, adding
+                            local variables etc.</li>
                         <li>When the constructor completes:
                             <ul>
                                 <li>Pop the constructor stack frame off stack</li>
-                                <li>Assign the address of the new instance to the variable it is being assigned to (in our case, it always is assigned to something).</li>
+                                <li>Assign the address of the new instance to the variable it is being assigned to (in
+                                    our case, it always is assigned to something).</li>
                             </ul>
                         </li>
                     </ul>
@@ -567,52 +1011,73 @@
                     <h4>ArrayList</h4>
                     <p>When you need to instantiate an ArrayList:</p>
                     <ul>
-                        <li>enter the Object type as ArrayList< E >, replacing "E" with the type of object stored in the ArrayList.</li>
+                        <li>enter the Object type as ArrayList< E>, replacing "E" with the type of object stored in the
+                                ArrayList.</li>
                         <li>member variables:
                             <ul>
-                                <li>size: int, the current size of the ArrayList (not the capacity), how many elements are currently stored</li>
-                                <li>elements: E []: an array matching the type of the ArrayList. Replace "E" with the type of object stored in the ArrayList. the "contents" of this member variable should be the address of the array in the heap. (see "Array instances" below)</li>
+                                <li>size: int, the current size of the ArrayList (not the capacity), how many elements
+                                    are currently stored</li>
+                                <li>elements: E []: an array matching the type of the ArrayList. Replace "E" with the
+                                    type of object stored in the ArrayList. the "contents" of this member variable
+                                    should be the address of the array in the heap. (see "Array instances" below)</li>
                             </ul>
                         </li>
                     </ul>
 
                     <h4>The code</h4>
-                    <p>For this activity, we will be walking through the code in the document starting at the main() method. This code can also be found in this <a href="#">GitHub repository</a>. We will execute the statements one at a time like the debugger, stepping into our own code and stepping over any Java library code.</p>
+                    <p>For this activity, we will be walking through the code in the document starting at the main()
+                        method. This code can also be found in this <a href="#">GitHub repository</a>. We will execute
+                        the statements one at a time like the debugger, stepping into our own code and stepping over any
+                        Java library code.</p>
 
                     <h4>Breakpoints</h4>
-                    <p>When we get to lines with breakpoint number markers, we will compare the state of our stacks/heaps with the rest of our group members.</p>
+                    <p>When we get to lines with breakpoint number markers, we will compare the state of our
+                        stacks/heaps with the rest of our group members.</p>
                 </div>
             </div>
 
             <div class="content-box">
                 <h2>Mastery Task 2: Beyond Bobby McFerrin</h2>
-                
+
                 <div class="content-section">
                     <h3>Mastery Task Guidelines</h3>
-                    <p>Mastery Tasks are opportunities to test your knowledge and understanding through code. When a mastery task is shown in a module, it means that we've covered all the concepts that you need to complete that task. You will want to make sure you finish them by the end of the week to stay on track and complete the unit.</p>
-                    
-                    <p>Each mastery task must pass 100% of the automated tests and code styling checks to pass each unit. Your code must be your own. If you have any questions, feel free to reach out for support.</p>
+                    <p>Mastery Tasks are opportunities to test your knowledge and understanding through code. When a
+                        mastery task is shown in a module, it means that we've covered all the concepts that you need to
+                        complete that task. You will want to make sure you finish them by the end of the week to stay on
+                        track and complete the unit.</p>
+
+                    <p>Each mastery task must pass 100% of the automated tests and code styling checks to pass each
+                        unit. Your code must be your own. If you have any questions, feel free to reach out for support.
+                    </p>
                 </div>
-                
+
                 <div class="content-section">
-                    <p>Bobby McFerrin is famous for Don't Worry, Be Happy, a song in which he made all the sounds with his voice and body. Apparently, the QA team never heard of it, or else they just don't share his carefree outlook: they aren't content that the code collectively passes the unit test coverage threshold in the pipeline, they want every class to pass.</p>
-                    
+                    <p>Bobby McFerrin is famous for Don't Worry, Be Happy, a song in which he made all the sounds with
+                        his voice and body. Apparently, the QA team never heard of it, or else they just don't share his
+                        carefree outlook: they aren't content that the code collectively passes the unit test coverage
+                        threshold in the pipeline, they want every class to pass.</p>
+
                     <p>You will improve coverage on the OrderDao, ensuring quality both now and in the future.</p>
-                    
+
                     <h3>Milestone 1: Make a Plan</h3>
-                    <p>Plan what you will test in the OrderDao. Inside of your codes src/resources/ you will find a file OrderDaoTestPlan.md. This is a template on how to write test plans. The text file uses "Markdown" syntax, which is a way to format text for display as HTML without a lot of intrusive HTML tags. Markdown is handled in IntelliJ and many online websites.</p>
-                    
+                    <p>Plan what you will test in the OrderDao. Inside of your codes src/resources/ you will find a file
+                        OrderDaoTestPlan.md. This is a template on how to write test plans. The text file uses
+                        "Markdown" syntax, which is a way to format text for display as HTML without a lot of intrusive
+                        HTML tags. Markdown is handled in IntelliJ and many online websites.</p>
+
                     <h3>Milestone 2: Execute the Plan</h3>
-                    <p>Implement the planned unit tests you made in OrderDaoTestPlan.md. Make sure they all pass. Commit your changes.</p>
-                    
+                    <p>Implement the planned unit tests you made in OrderDaoTestPlan.md. Make sure they all pass. Commit
+                        your changes.</p>
+
                     <p>All of the following test commands should pass:</p>
-                    
+
                     <pre><code>./gradlew -q clean :test --tests "com.amazon.ata.deliveringonourpromise.dao.*"
 ./gradlew -q clean IRT
 ./gradlew -q clean MasteryTaskTwoTests</code></pre>
-                    
-                    <p>In addition, you should check your code coverage report (build/jacocoHtml/index.html) and make sure the OrderDao has at least 80% test coverage.</p>
-                    
+
+                    <p>In addition, you should check your code coverage report (build/jacocoHtml/index.html) and make
+                        sure the OrderDao has at least 80% test coverage.</p>
+
                     <h3>Exit Checklist</h3>
                     <ul>
                         <li>You created an OrderDao test plan</li>
@@ -627,4 +1092,5 @@
         </section>
     </main>
 </body>
-</html> 
+
+</html>

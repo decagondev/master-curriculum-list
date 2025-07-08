@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 1: Mocking 1 - BD Unit 3 Sprint 11</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -26,24 +28,30 @@
             </ul>
         </nav>
     </header>
-    
+
     <main class="container">
         <section class="welcome">
             <h1>Module 1: Mocking 1</h1>
-            
+
             <div class="content-box">
                 <h2>Module Overview</h2>
-                <p>Learn about mocking fundamentals and how to use them in your tests to create isolated and effective unit tests.</p>
+                <p>Learn about mocking fundamentals and how to use them in your tests to create isolated and effective
+                    unit tests.</p>
             </div>
 
             <div class="video-container">
-                <iframe class="wistia_embed" title="Intro to Mocking Video" src="https://fast.wistia.net/embed/iframe/780ih1a80o" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                <iframe class="wistia_embed" title="Intro to Mocking Video"
+                    src="https://fast.wistia.net/embed/iframe/780ih1a80o" width="100%" height="360" name="wistia_embed"
+                    allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
             </div>
 
             <div class="content-box">
                 <h3>Introduction to Mocking</h3>
-                <p>Mocking is essential for writing effective unit tests. It allows you to test classes in isolation by creating dummy implementations of their dependencies. This ensures your tests are deterministic, fast, and focused on the specific code you're testing.</p>
-                <p>Mock objects let you define the output of method calls from dependencies, giving you precise control over test conditions without relying on external systems or real implementation details.</p>
+                <p>Mocking is essential for writing effective unit tests. It allows you to test classes in isolation by
+                    creating dummy implementations of their dependencies. This ensures your tests are deterministic,
+                    fast, and focused on the specific code you're testing.</p>
+                <p>Mock objects let you define the output of method calls from dependencies, giving you precise control
+                    over test conditions without relying on external systems or real implementation details.</p>
                 <pre><code>// Example of creating a mock
 @Mock
 private RenterDao renterDao;
@@ -85,11 +93,15 @@ when(renterDao.getRegisteredRenter(driverLicenseId)).thenReturn(driver);
                 <h3>When to Use Mocking</h3>
                 <p>Mocking provides several key benefits in unit testing:</p>
                 <ul>
-                    <li><strong>Deterministic tests:</strong> Tests produce predictable results regardless of external factors</li>
-                    <li><strong>Testing edge cases:</strong> Easily test rare conditions that are difficult to reproduce naturally</li>
-                    <li><strong>Speed:</strong> Tests run faster without waiting for real dependencies like databases or networks</li>
+                    <li><strong>Deterministic tests:</strong> Tests produce predictable results regardless of external
+                        factors</li>
+                    <li><strong>Testing edge cases:</strong> Easily test rare conditions that are difficult to reproduce
+                        naturally</li>
+                    <li><strong>Speed:</strong> Tests run faster without waiting for real dependencies like databases or
+                        networks</li>
                     <li><strong>Cost efficiency:</strong> Avoid expenses associated with real services or resources</li>
-                    <li><strong>Isolation:</strong> Test only your specific code unit without interference from dependencies</li>
+                    <li><strong>Isolation:</strong> Test only your specific code unit without interference from
+                        dependencies</li>
                 </ul>
                 <pre><code>// Example of mocking exceptional behavior
 @Test
@@ -106,26 +118,108 @@ public void getRegisteredRenter_unregisteredDriver_throwsNotRegisteredException(
 
             <div class="content-box">
                 <h3>Overview</h3>
-                <p>In a previous lesson, we introduced unit testing to assess the methods in our classes. Sometimes the classes we want to test are tightly intertwined with the functionality of other classes. This can make our unit testing complicated. We might not be able to test all the precise test conditions we desire. In this lesson, we're going to introduce mocking. Mock objects are dummy implementations of our dependencies that allow us to define the output of their method calls.</p>
-                <p>In the first reading, we'll introduce mocking concepts and why we want to use them. We'll then set up an example that we'll be using throughout this lesson to show mocking in code. By the end of this reading, we'll have our mock and test objects set up.<br>In the second reading, we'll continue using our mocking example to show how to write deterministic tests. We'll explore how to determine what to mock and how to turn that logic into code. We'll also discuss additional methods that give greater flexibility over our deterministic tests and outputs.</p>
-                
+                <p>In a previous lesson, we introduced unit testing to assess the methods in our classes. Sometimes the
+                    classes we want to test are tightly intertwined with the functionality of other classes. This can
+                    make our unit testing complicated. We might not be able to test all the precise test conditions we
+                    desire. In this lesson, we're going to introduce mocking. Mock objects are dummy implementations of
+                    our dependencies that allow us to define the output of their method calls.</p>
+                <p>In the first reading, we'll introduce mocking concepts and why we want to use them. We'll then set up
+                    an example that we'll be using throughout this lesson to show mocking in code. By the end of this
+                    reading, we'll have our mock and test objects set up.<br>In the second reading, we'll continue using
+                    our mocking example to show how to write deterministic tests. We'll explore how to determine what to
+                    mock and how to turn that logic into code. We'll also discuss additional methods that give greater
+                    flexibility over our deterministic tests and outputs.</p>
+
                 <h3>What are mocks?</h3>
-                <p>Mock objects are dummy objects that simulate the behavior of real objects in a controlled way. They're used to test the behavior of some other object. For example, when testing the safety functions of a car, we insert a crash test dummy to simulate the behavior of a real person in a crash. This gives us a good idea of how the safety features will protect a real person without having to endanger anyone.</p>
-                <p>Similarly, we can mock objects in Java. Mock objects allow us to mock, or imitate, the functionality of an object's method when writing tests. For example, say we have an <code>OrderDao</code> class. It has a method <code>getOrder</code> that retrieves an order from the database. We can create a mocked object of this class and force the <code>getOrder</code> method to return an Order without ever hitting the database.</p>
+                <p>Mock objects are dummy objects that simulate the behavior of real objects in a controlled way.
+                    They're used to test the behavior of some other object. For example, when testing the safety
+                    functions of a car, we insert a crash test dummy to simulate the behavior of a real person in a
+                    crash. This gives us a good idea of how the safety features will protect a real person without
+                    having to endanger anyone.</p>
+                <p>Similarly, we can mock objects in Java. Mock objects allow us to mock, or imitate, the functionality
+                    of an object's method when writing tests. For example, say we have an <code>OrderDao</code> class.
+                    It has a method <code>getOrder</code> that retrieves an order from the database. We can create a
+                    mocked object of this class and force the <code>getOrder</code> method to return an Order without
+                    ever hitting the database.</p>
 
                 <h3>Why do we mock?</h3>
-                <p>Mocking is essential for writing unit tests. A unit test is intended to test a single method of a single class at a time. But why would we want to mock objects? How does this help us test the functionality of a class? Most of the classes we write have dependencies. A dependency is when a class in Java depends on an instance of another class. For example, if we create a card game with the classes <code>Card</code> and <code>Deck</code>, the <code>Deck</code> class will have many instances of the <code>Card</code> class, making the <code>Deck</code> class dependent on the <code>Card</code> class. When we unit test methods from the <code>Deck</code> class, we're unfortunately relying on the functionality of its dependencies; the <code>Card</code> class. This isn't ideal. When unit testing, we want our unit tests to test just a single unit, not the unit and the code it depends on.</p>
-                <p>Keeping unit tests independent from dependencies also helps ensure a few different things. It makes sure our tests are deterministic and capable of testing hard to reproduce use cases. We also want tests to be fast, free, and clear of false alarms. We'll describe each of these benefits below.</p>
-                <p>Deterministic tests always produce the same result from a given starting condition or initial state. Consider an Alexa skill class that contains a method, <code>getTemperature</code>, to return the temperature for a provided location. The Alexa skill class is dependent on the weather service because it relies on it to get the current temperature. The <code>getTemperature</code> method checks the user's preferences for the temperature scale (Fahrenheit or Celsius) and requests the temperature from the weather service using the preferred scale. It then returns the temperature at the requested location. A unit test might verify that when the <code>getTemperature</code> method is asked for the temperature in Seattle by a user that prefers the Fahrenheit scale, it returns the correct temperature. If we called the real weather service for each run of this unit test, the results would always change like the weather in Seattle changes. This means we can't write a deterministic unit test. We can't assert that the temperature returned is equal to anything! If we did, it's likely our unit tests would constantly be failing.</p>
-                <p>In the case of the Alexa skill class method, <code>getTemperature</code>, behaving correctly really means requesting the temperature with the correct temperature scale from the weather service and returning it. The temperature being correct is the job of the weather service. (It better have its own unit tests!). So, we can mock the response from the weather service to ensure we write a deterministic test. We can force the weather service to always return 75°F when it's asked for the weather in Seattle by a user that prefers Fahrenheit. Then your unit tests can depend on this behavior.</p>
-                <p>With mocking, we can also test states that are hard to reproduce. For example, let's say we're testing a home alarm system class. When the alarm system is triggered, the class makes three calls to the alarm class to check if the homeowner has disabled the alarm. We want to test the case where the first two times the alarm class was checked, the alarm was not disabled, but on the third call, it was disabled by the customer. It will be tricky to set this situation up in our test class since we need some external intervention at just the right time (the customer disabling). However, we need to make sure this case works as it's important to prevent unnecessary calls to law enforcement. If we use a mock alarm, we can mock the functionality that on the first two calls it returns not disabled, but on the third call, it returns disabled.</p>
-                <p>Mocking also ensures our tests are fast. Imagine we're trying to test an ATM class, which relies on a bank connection. It can take up to 30 seconds to make a connection with the bank and let us know if a customer has enough money in their account to make a withdrawal. This may be fine if we only have one or two tests to run, but what if we have twenty tests to run using the bank connection! It will take ten minutes every time we have to run our tests, which would be a debugging nightmare! Instead, we can use a mock connection that returns a predetermined response and our tests will run in seconds.</p>
-                <p>Finally, mocking allows our tests to be free. Let's say we work on a service that uses a machine learning model. Each time our service starts the machine learning algorithm, its dependency spins up an expensive host, costing us about &#36;14/hour to run. If our model takes six hours to build, we&apos;re spending &#36;84 each time our tests run! Mocking the dependency means that we never spin up the expensive host costs and our tests are free to run! We also mentioned tests should be free of false alarms. In the above home alarm system class, imagine what happens when the alarm is triggered. Ideally, it should call the police. However, we don't want to call the police each time we run our unit tests.</p>
-                <p>You may be wondering when we test how these classes work together? Before we release it to our customers, it seems like we'd want to know the whole system actually works and not just each individual piece. You're right! That's called integration testing, and we'll cover it in a later unit at ATA.</p>
+                <p>Mocking is essential for writing unit tests. A unit test is intended to test a single method of a
+                    single class at a time. But why would we want to mock objects? How does this help us test the
+                    functionality of a class? Most of the classes we write have dependencies. A dependency is when a
+                    class in Java depends on an instance of another class. For example, if we create a card game with
+                    the classes <code>Card</code> and <code>Deck</code>, the <code>Deck</code> class will have many
+                    instances of the <code>Card</code> class, making the <code>Deck</code> class dependent on the
+                    <code>Card</code> class. When we unit test methods from the <code>Deck</code> class, we're
+                    unfortunately relying on the functionality of its dependencies; the <code>Card</code> class. This
+                    isn't ideal. When unit testing, we want our unit tests to test just a single unit, not the unit and
+                    the code it depends on.
+                </p>
+                <p>Keeping unit tests independent from dependencies also helps ensure a few different things. It makes
+                    sure our tests are deterministic and capable of testing hard to reproduce use cases. We also want
+                    tests to be fast, free, and clear of false alarms. We'll describe each of these benefits below.</p>
+                <p>Deterministic tests always produce the same result from a given starting condition or initial state.
+                    Consider an Alexa skill class that contains a method, <code>getTemperature</code>, to return the
+                    temperature for a provided location. The Alexa skill class is dependent on the weather service
+                    because it relies on it to get the current temperature. The <code>getTemperature</code> method
+                    checks the user's preferences for the temperature scale (Fahrenheit or Celsius) and requests the
+                    temperature from the weather service using the preferred scale. It then returns the temperature at
+                    the requested location. A unit test might verify that when the <code>getTemperature</code> method is
+                    asked for the temperature in Seattle by a user that prefers the Fahrenheit scale, it returns the
+                    correct temperature. If we called the real weather service for each run of this unit test, the
+                    results would always change like the weather in Seattle changes. This means we can't write a
+                    deterministic unit test. We can't assert that the temperature returned is equal to anything! If we
+                    did, it's likely our unit tests would constantly be failing.</p>
+                <p>In the case of the Alexa skill class method, <code>getTemperature</code>, behaving correctly really
+                    means requesting the temperature with the correct temperature scale from the weather service and
+                    returning it. The temperature being correct is the job of the weather service. (It better have its
+                    own unit tests!). So, we can mock the response from the weather service to ensure we write a
+                    deterministic test. We can force the weather service to always return 75°F when it's asked for the
+                    weather in Seattle by a user that prefers Fahrenheit. Then your unit tests can depend on this
+                    behavior.</p>
+                <p>With mocking, we can also test states that are hard to reproduce. For example, let's say we're
+                    testing a home alarm system class. When the alarm system is triggered, the class makes three calls
+                    to the alarm class to check if the homeowner has disabled the alarm. We want to test the case where
+                    the first two times the alarm class was checked, the alarm was not disabled, but on the third call,
+                    it was disabled by the customer. It will be tricky to set this situation up in our test class since
+                    we need some external intervention at just the right time (the customer disabling). However, we need
+                    to make sure this case works as it's important to prevent unnecessary calls to law enforcement. If
+                    we use a mock alarm, we can mock the functionality that on the first two calls it returns not
+                    disabled, but on the third call, it returns disabled.</p>
+                <p>Mocking also ensures our tests are fast. Imagine we're trying to test an ATM class, which relies on a
+                    bank connection. It can take up to 30 seconds to make a connection with the bank and let us know if
+                    a customer has enough money in their account to make a withdrawal. This may be fine if we only have
+                    one or two tests to run, but what if we have twenty tests to run using the bank connection! It will
+                    take ten minutes every time we have to run our tests, which would be a debugging nightmare! Instead,
+                    we can use a mock connection that returns a predetermined response and our tests will run in
+                    seconds.</p>
+                <p>Finally, mocking allows our tests to be free. Let's say we work on a service that uses a machine
+                    learning model. Each time our service starts the machine learning algorithm, its dependency spins up
+                    an expensive host, costing us about &#36;14/hour to run. If our model takes six hours to build,
+                    we&apos;re spending &#36;84 each time our tests run! Mocking the dependency means that we never spin
+                    up the expensive host costs and our tests are free to run! We also mentioned tests should be free of
+                    false alarms. In the above home alarm system class, imagine what happens when the alarm is
+                    triggered. Ideally, it should call the police. However, we don't want to call the police each time
+                    we run our unit tests.</p>
+                <p>You may be wondering when we test how these classes work together? Before we release it to our
+                    customers, it seems like we'd want to know the whole system actually works and not just each
+                    individual piece. You're right! That's called integration testing, and we'll cover it in a later
+                    unit at ATA.</p>
 
                 <h3>Example scenario</h3>
-                <p>Now that we understand what mocking is and why we use it, let's talk about how we actually create a mock! We're going to set up an example to show what mocking looks like in code.</p>
-                <p>Imagine we work for a rental car company. In order to rent a car from the company, you need to be a registered renter. For the purpose of this activity, a customer needs to have a valid driver's license and be 18 or older to register. We created a class, <code>RenterRegistrar</code>, that has two methods: <code>getRegisteredRenter()</code> and <code>registerRenter()</code>. The <code>getRegisteredRenter()</code> method accepts a driver's license and returns the driver's information if the license exists in the list of registered renters. If not, the method throws a <code>NotRegisteredException</code>. The <code>registerRenter()</code> method accepts a driver, checks their age, and checks to see if they have a valid driver's license. If they meet conditions, they're added to the list of registered renters. If they don't, the method throws a <code>NotEligibleToRegisterException</code>. The <code>RenterRegistrar</code> class looks like the following:</p>
+                <p>Now that we understand what mocking is and why we use it, let's talk about how we actually create a
+                    mock! We're going to set up an example to show what mocking looks like in code.</p>
+                <p>Imagine we work for a rental car company. In order to rent a car from the company, you need to be a
+                    registered renter. For the purpose of this activity, a customer needs to have a valid driver's
+                    license and be 18 or older to register. We created a class, <code>RenterRegistrar</code>, that has
+                    two methods: <code>getRegisteredRenter()</code> and <code>registerRenter()</code>. The
+                    <code>getRegisteredRenter()</code> method accepts a driver's license and returns the driver's
+                    information if the license exists in the list of registered renters. If not, the method throws a
+                    <code>NotRegisteredException</code>. The <code>registerRenter()</code> method accepts a driver,
+                    checks their age, and checks to see if they have a valid driver's license. If they meet conditions,
+                    they're added to the list of registered renters. If they don't, the method throws a
+                    <code>NotEligibleToRegisterException</code>. The <code>RenterRegistrar</code> class looks like the
+                    following:
+                </p>
                 <pre><code class="language-java">
 public class RenterRegistrar {
 
@@ -152,7 +246,13 @@ public class RenterRegistrar {
     }
 }
                 </code></pre>
-                <p>The <code>RenterRegistrar</code> class has two dependencies: <code>DriverLicenseService</code> and <code>RenterDao</code>. The <code>DriverLicenseService</code> class has one method: <code>isValid()</code>. This method checks to see whether a given driver's license ID is valid or not. In an actual application, this method would likely connect to a driver's license database. For the purpose of this activity, the method just checks to see if the given license ID is exactly 10 characters long. The <code>DriverLicenseService</code> class looks like the following:</p>
+                <p>The <code>RenterRegistrar</code> class has two dependencies: <code>DriverLicenseService</code> and
+                    <code>RenterDao</code>. The <code>DriverLicenseService</code> class has one method:
+                    <code>isValid()</code>. This method checks to see whether a given driver's license ID is valid or
+                    not. In an actual application, this method would likely connect to a driver's license database. For
+                    the purpose of this activity, the method just checks to see if the given license ID is exactly 10
+                    characters long. The <code>DriverLicenseService</code> class looks like the following:
+                </p>
                 <pre><code class="language-java">
 public class DriverLicenseService {
 
@@ -161,7 +261,17 @@ public class DriverLicenseService {
     }
 }
                 </code></pre>
-                <p>The <code>RenterDao</code> class has two public methods: <code>getRegisteredRenter()</code> and <code>addRenter()</code>. The <code>RenterDao</code> class also has an instance variable: <code>renterList</code>, which is an <code>ArrayList</code> of type <code>Driver</code> that keeps track of the people registered to rent a car. When given a driver's license id, the <code>getRegisteredRenter()</code> method iterates through <code>renterList</code> to find a specific <code>Driver</code>. If the driver's license id can't be found in <code>renterList</code>, the method throws a <code>NotRegisteredException</code> instead. The <code>addRenter()</code> method adds a given driver to the <code>renterList</code>. The <code>renterList</code> is persisted in a file so that we can track renters across each run of the program. The <code>RenterDao</code> class looks like the following:</p>
+                <p>The <code>RenterDao</code> class has two public methods: <code>getRegisteredRenter()</code> and
+                    <code>addRenter()</code>. The <code>RenterDao</code> class also has an instance variable:
+                    <code>renterList</code>, which is an <code>ArrayList</code> of type <code>Driver</code> that keeps
+                    track of the people registered to rent a car. When given a driver's license id, the
+                    <code>getRegisteredRenter()</code> method iterates through <code>renterList</code> to find a
+                    specific <code>Driver</code>. If the driver's license id can't be found in <code>renterList</code>,
+                    the method throws a <code>NotRegisteredException</code> instead. The <code>addRenter()</code> method
+                    adds a given driver to the <code>renterList</code>. The <code>renterList</code> is persisted in a
+                    file so that we can track renters across each run of the program. The <code>RenterDao</code> class
+                    looks like the following:
+                </p>
                 <pre><code class="language-java">
 public class RenterDao {
 
@@ -196,7 +306,8 @@ public class RenterDao {
     }
 }
                 </code></pre>
-                <p>The <code>RenterDao</code> class is dependent on the <code>Driver</code> class, which is a POJO for a driver. The <code>Driver</code> class is defined below:</p>
+                <p>The <code>RenterDao</code> class is dependent on the <code>Driver</code> class, which is a POJO for a
+                    driver. The <code>Driver</code> class is defined below:</p>
                 <pre><code class="language-java">
 public class Driver {
 
@@ -225,11 +336,22 @@ public class Driver {
     // equals and hashcode implementations omitted
 }
                 </code></pre>
-                <p>We want to unit test the two methods in the <code>RenterRegistrar</code> class to make sure they're functioning as we expect. To test the methods, we write a test class <code>RenterRegistrarTest</code>. For the purpose of this activity we're going to focus on three tests:</p>
+                <p>We want to unit test the two methods in the <code>RenterRegistrar</code> class to make sure they're
+                    functioning as we expect. To test the methods, we write a test class
+                    <code>RenterRegistrarTest</code>. For the purpose of this activity we're going to focus on three
+                    tests:
+                </p>
                 <ul>
-                    <li><code>getRegisteredRenter_registeredDriver_returnsDriver</code> validates the <code>getRegisteredRenter</code> method returns the associated <code>Driver</code> when the driver has already been registered</li>
-                    <li><code>getRegisteredRenter_unregisteredDriver_throwsNotRegisteredException</code> validates the <code>isRegisteredRenter</code> method throws <code>NotRegisteredException</code> when the driver has not been registered</li>
-                    <li><code>registerRenter_eligibleDriver_successfullyRegisters</code> validates that an eligible-for-registration driver can successfully register</li>
+                    <li><code>getRegisteredRenter_registeredDriver_returnsDriver</code> validates the
+                        <code>getRegisteredRenter</code> method returns the associated <code>Driver</code> when the
+                        driver has already been registered
+                    </li>
+                    <li><code>getRegisteredRenter_unregisteredDriver_throwsNotRegisteredException</code> validates the
+                        <code>isRegisteredRenter</code> method throws <code>NotRegisteredException</code> when the
+                        driver has not been registered
+                    </li>
+                    <li><code>registerRenter_eligibleDriver_successfullyRegisters</code> validates that an
+                        eligible-for-registration driver can successfully register</li>
                 </ul>
                 <p>Our test class is defined below without mocking:</p>
                 <pre><code class="language-java">
@@ -288,17 +410,37 @@ public class RenterRegistrarTest {
                 </code></pre>
 
                 <h3>Creating Mocks</h3>
-                <p>Our unit tests are set up and are currently using the actual implementations of <code>DriverLicenseService</code> and <code>RenterDao</code>. There's a couple of pitfalls to doing this! When we register a renter, the <code>RenterDao</code> actually stores it in the file, persisting test data. Putting our test data into the real database means that our real data is polluted and unreliable until we go in and clean it up. Additionally, the test could break if the test data we use conflicts with a real driver being registered.</p>
-                <p>When we test getting a registered driver, we also have to register the driver in the <code>RenterDao</code> before we can run the test. Otherwise, we can't depend on the driver being registered! This means we're no longer testing a "unit" of code; instead, we are testing both methods, as a failure in either method would fail the test.</p>
-                <p>However, we can switch to using mocks! As we said previously, we want to mock the objects that our class under test is dependent on. Our class under test is <code>RenterRegistrar</code> and its dependencies are <code>DriverLicenseService</code> and <code>RenterDao</code> so we want to mock instances of those two classes.</p>
-                <p>Java has a few different mocking frameworks, but we'll use Mockito. It's a popular mocking framework, which can conveniently be used in conjunction with JUnit. The Mockito framework allows us to create and configure mock objects. It greatly simplifies the development of tests for classes with external dependencies.</p>
+                <p>Our unit tests are set up and are currently using the actual implementations of
+                    <code>DriverLicenseService</code> and <code>RenterDao</code>. There's a couple of pitfalls to doing
+                    this! When we register a renter, the <code>RenterDao</code> actually stores it in the file,
+                    persisting test data. Putting our test data into the real database means that our real data is
+                    polluted and unreliable until we go in and clean it up. Additionally, the test could break if the
+                    test data we use conflicts with a real driver being registered.
+                </p>
+                <p>When we test getting a registered driver, we also have to register the driver in the
+                    <code>RenterDao</code> before we can run the test. Otherwise, we can't depend on the driver being
+                    registered! This means we're no longer testing a "unit" of code; instead, we are testing both
+                    methods, as a failure in either method would fail the test.
+                </p>
+                <p>However, we can switch to using mocks! As we said previously, we want to mock the objects that our
+                    class under test is dependent on. Our class under test is <code>RenterRegistrar</code> and its
+                    dependencies are <code>DriverLicenseService</code> and <code>RenterDao</code> so we want to mock
+                    instances of those two classes.</p>
+                <p>Java has a few different mocking frameworks, but we'll use Mockito. It's a popular mocking framework,
+                    which can conveniently be used in conjunction with JUnit. The Mockito framework allows us to create
+                    and configure mock objects. It greatly simplifies the development of tests for classes with external
+                    dependencies.</p>
                 <p>There are three things that we need to do to use Mockito in our unit tests:</p>
                 <ol>
                     <li>Mock the dependencies and insert the mocks into the test code</li>
                     <li>Execute the test code</li>
                     <li>Validate that the code executes as expected</li>
                 </ol>
-                <p>That's it! Let's start by discussing the first step: mock the dependencies and insert the mocks into the test code. We start by adding the variable(s) we want to mock to our test class. To create mocked instances of our dependencies <code>RenterDao</code> and <code>DriverLicenseService</code>, we add them to our test class and annotate them with <code>@Mock</code>. This annotation is used to create mocked instances. We've now added the following lines to the top of our test class:</p>
+                <p>That's it! Let's start by discussing the first step: mock the dependencies and insert the mocks into
+                    the test code. We start by adding the variable(s) we want to mock to our test class. To create
+                    mocked instances of our dependencies <code>RenterDao</code> and <code>DriverLicenseService</code>,
+                    we add them to our test class and annotate them with <code>@Mock</code>. This annotation is used to
+                    create mocked instances. We've now added the following lines to the top of our test class:</p>
                 <pre><code class="language-java">
 @Mock
 private RenterDao renterDao;
@@ -306,12 +448,27 @@ private RenterDao renterDao;
 @Mock
 private DriverLicenseService driverLicenseService;
                 </code></pre>
-                <p>Now we have our mocked dependencies set up, there are still a few more things we need to do. Next, we're going to add the <code>@InjectMocks</code> annotation above the class variable we're testing, which is <code>RenterRegistrar</code>. We'll learn a bit more about injection in a later lesson, so for now, consider <code>@InjectMocks</code> as a little bit of magic. Basically, it tells Mockito this is the class that we want to swap out its real dependencies with mock dependencies. The mock objects are passed to this class' constructor to create a new object. When we add in this annotation, our <code>RenterRegistrar</code> instance declaration looks like the following:</p>
+                <p>Now we have our mocked dependencies set up, there are still a few more things we need to do. Next,
+                    we're going to add the <code>@InjectMocks</code> annotation above the class variable we're testing,
+                    which is <code>RenterRegistrar</code>. We'll learn a bit more about injection in a later lesson, so
+                    for now, consider <code>@InjectMocks</code> as a little bit of magic. Basically, it tells Mockito
+                    this is the class that we want to swap out its real dependencies with mock dependencies. The mock
+                    objects are passed to this class' constructor to create a new object. When we add in this
+                    annotation, our <code>RenterRegistrar</code> instance declaration looks like the following:</p>
                 <pre><code class="language-java">
 @InjectMocks
 private RenterRegistrar renterRegistrar;
                 </code></pre>
-                <p>The final step is to update our <code>setup()</code> method, which creates the class under test object. We will remove creating a new <code>RenterRegistrar</code> using its constructor, and instead call a Mockito method, <code>initMocks()</code>. It's a static method that initializes the mocks for this test class object (anything annotated with <code>@Mock</code>) by passing in the keyword <code>this</code>. It then creates an object of the class under test (annotated with <code>@InjectMocks</code>), injecting it with the mock objects. The <code>@BeforeEach</code> annotation that we use states that the <code>renterRegistrar</code> object and its mocks will be recreated at the start of every test method. This is a best practice to prevent tests from interfering with each other. Our <code>setup()</code> method now looks like the following:</p>
+                <p>The final step is to update our <code>setup()</code> method, which creates the class under test
+                    object. We will remove creating a new <code>RenterRegistrar</code> using its constructor, and
+                    instead call a Mockito method, <code>initMocks()</code>. It's a static method that initializes the
+                    mocks for this test class object (anything annotated with <code>@Mock</code>) by passing in the
+                    keyword <code>this</code>. It then creates an object of the class under test (annotated with
+                    <code>@InjectMocks</code>), injecting it with the mock objects. The <code>@BeforeEach</code>
+                    annotation that we use states that the <code>renterRegistrar</code> object and its mocks will be
+                    recreated at the start of every test method. This is a best practice to prevent tests from
+                    interfering with each other. Our <code>setup()</code> method now looks like the following:
+                </p>
                 <pre><code class="language-java">
 @BeforeEach
 public void setup() {
@@ -339,41 +496,80 @@ public class RenterRegistrarTest {
     //...test methods
 }
                 </code></pre>
-                <p>Before we wrap up this reading, there's one more issue with our code to resolve. The constructor of the class we're testing, <code>RenterRegistrar</code>, currently looks like the following:</p>
+                <p>Before we wrap up this reading, there's one more issue with our code to resolve. The constructor of
+                    the class we're testing, <code>RenterRegistrar</code>, currently looks like the following:</p>
                 <pre><code class="language-java">
 public RenterRegistrar() {
     this.renterDao = new RenterDao();
     this.driverLicenseService = new DriverLicenseService();
 }
                 </code></pre>
-                <p>When we initialize the instance of <code>renterRegistrar</code> in our test class, the above constructor creates new instances of <code>RenterDao</code> and <code>DriverLicenseService</code> even though we'll use the mocked versions we created in our test class. Mockito is actually smart enough to still use the mocked versions. If the constructor doesn't have any parameters, Mockito can still figure it out. However, this might confuse readers of our code because we're creating objects we'll never use. It's a good design to accept our dependencies via our constructor instead of creating them in the constructor, as we learned from Dependency Injection.</p>
-                <p>To fix this issue, we'll update our constructor to instead accept an instance of <code>RenterDao</code> and <code>DriverLicenseService</code>.</p>
+                <p>When we initialize the instance of <code>renterRegistrar</code> in our test class, the above
+                    constructor creates new instances of <code>RenterDao</code> and <code>DriverLicenseService</code>
+                    even though we'll use the mocked versions we created in our test class. Mockito is actually smart
+                    enough to still use the mocked versions. If the constructor doesn't have any parameters, Mockito can
+                    still figure it out. However, this might confuse readers of our code because we're creating objects
+                    we'll never use. It's a good design to accept our dependencies via our constructor instead of
+                    creating them in the constructor, as we learned from Dependency Injection.</p>
+                <p>To fix this issue, we'll update our constructor to instead accept an instance of
+                    <code>RenterDao</code> and <code>DriverLicenseService</code>.
+                </p>
                 <pre><code class="language-java">
 public RenterRegistrar(RenterDao renterDao, DriverLicenseService driversLicenseService) {
     this. renterDao = renterDao;
     this.driverLicenseService = driversLicenseService;
 }
                 </code></pre>
-                <p>In our test class, we don't need to make any adjustments. However, Mockito will now use our constructor to pass the mocked objects to our object under test, rather than going about it in a more hacky way.</p>
+                <p>In our test class, we don't need to make any adjustments. However, Mockito will now use our
+                    constructor to pass the mocked objects to our object under test, rather than going about it in a
+                    more hacky way.</p>
 
                 <h3>Summary</h3>
-                <p>In this reading, we introduced the concept of mocking in unit tests to avoid relying on dependencies when testing a class. We also learned about Mockito, which is a popular mocking framework that can conveniently be used in conjunction with JUnit. With our car rental registration application, we set up a code example to demonstrate how to mock dependencies using <code>@Mock</code>. We provided them to our object under test by using <code>@InjectMocks</code>, and we triggered Mockito to set everything up using <code>initMocks</code>. We also discussed refactoring our code so that a constructor accepts its dependencies through its constructor.</p>
+                <p>In this reading, we introduced the concept of mocking in unit tests to avoid relying on dependencies
+                    when testing a class. We also learned about Mockito, which is a popular mocking framework that can
+                    conveniently be used in conjunction with JUnit. With our car rental registration application, we set
+                    up a code example to demonstrate how to mock dependencies using <code>@Mock</code>. We provided them
+                    to our object under test by using <code>@InjectMocks</code>, and we triggered Mockito to set
+                    everything up using <code>initMocks</code>. We also discussed refactoring our code so that a
+                    constructor accepts its dependencies through its constructor.</p>
             </div>
 
             <div class="content-box">
                 <h2>Mocking Behavior</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Sprint 11 Mocking 1a Video" src="https://fast.wistia.net/embed/iframe/opagrybiy9" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Sprint 11 Mocking 1a Video"
+                        src="https://fast.wistia.net/embed/iframe/opagrybiy9" width="100%" height="360"
+                        name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
 
                 <h3>Overview</h3>
-                <p>In a previous lesson, we introduced unit testing to assess the methods in our classes. Sometimes the classes we want to test are tightly intertwined with the functionality of other classes. This can make our unit testing complicated. We might not be able to test all the precise test conditions we desire. In this lesson, we're going to introduce mocking. Mock objects are dummy implementations of our dependencies that allow us to define the output of their method calls.</p>
-                <p>In the first reading, we introduced mocking concepts and why we want to use them. We set up an example we'll use throughout this lesson to show mocking in code. At the end of the reading, we had our mock and test objects set up.<br>In the second reading, we'll continue using our mocking example to show how to write deterministic tests. We'll explore how to determine what to mock and how to turn that logic into code. We'll also discuss additional methods that give greater flexibility over our deterministic tests and outputs.</p>
-                
+                <p>In a previous lesson, we introduced unit testing to assess the methods in our classes. Sometimes the
+                    classes we want to test are tightly intertwined with the functionality of other classes. This can
+                    make our unit testing complicated. We might not be able to test all the precise test conditions we
+                    desire. In this lesson, we're going to introduce mocking. Mock objects are dummy implementations of
+                    our dependencies that allow us to define the output of their method calls.</p>
+                <p>In the first reading, we introduced mocking concepts and why we want to use them. We set up an
+                    example we'll use throughout this lesson to show mocking in code. At the end of the reading, we had
+                    our mock and test objects set up.<br>In the second reading, we'll continue using our mocking example
+                    to show how to write deterministic tests. We'll explore how to determine what to mock and how to
+                    turn that logic into code. We'll also discuss additional methods that give greater flexibility over
+                    our deterministic tests and outputs.</p>
+
                 <h3>Defining behavior</h3>
-                <p>In the last reading, we covered mocking dependencies, but we didn't update our actual unit tests to use the mocks! If we tried to run our unit tests now, some would fail and some will run into exceptions. Unless otherwise specified, mock objects will return default values when their methods are called. For Java objects, the default value is null. For the primitive type boolean, it's false. You can use Oracle's documentation to review the default return values for each primitive type<a href="#" target="_blank" rel="noopener">Links to an external site.</a>. So, when isValid is called on our mock DriverLicenseService object, regardless of the input, it returns false.</p>
-                <p>So how do we specify the values we want instead of just using the default values? To guarantee deterministic results for our tests, we need to tell our mocks how to behave. We can tell our mocks that when they see a certain method called with a certain input, then they should return a certain output. This helps us test the functionality of our methods without worrying about the behavior of the dependencies.</p>
+                <p>In the last reading, we covered mocking dependencies, but we didn't update our actual unit tests to
+                    use the mocks! If we tried to run our unit tests now, some would fail and some will run into
+                    exceptions. Unless otherwise specified, mock objects will return default values when their methods
+                    are called. For Java objects, the default value is null. For the primitive type boolean, it's false.
+                    You can use Oracle's documentation to review the default return values for each primitive type<a
+                        href="#" target="_blank" rel="noopener noreferrer">Links to an external site.</a>. So, when
+                    isValid is called on our mock DriverLicenseService object, regardless of the input, it returns
+                    false.</p>
+                <p>So how do we specify the values we want instead of just using the default values? To guarantee
+                    deterministic results for our tests, we need to tell our mocks how to behave. We can tell our mocks
+                    that when they see a certain method called with a certain input, then they should return a certain
+                    output. This helps us test the functionality of our methods without worrying about the behavior of
+                    the dependencies.</p>
                 <p>The first thing we need to determine is what to mock. Let's look at our first test method again:</p>
                 <pre><code class="language-java">
     @Test
@@ -392,31 +588,50 @@ public RenterRegistrar(RenterDao renterDao, DriverLicenseService driversLicenseS
         assertEquals(driver.getDriverLicenseId(), registeredRenter.getDriverLicenseId());
     }
                 </code></pre>
-                <p>By looking at the title of the method, we know that our test case validates that when a registered driver's license id is passed to getRegisteredRenter() it should return the Driver. So, we want the driver's license id we pass in to getRegisteredRenter() to correspond with someone who's already registered to rent a car.</p>
+                <p>By looking at the title of the method, we know that our test case validates that when a registered
+                    driver's license id is passed to getRegisteredRenter() it should return the Driver. So, we want the
+                    driver's license id we pass in to getRegisteredRenter() to correspond with someone who's already
+                    registered to rent a car.</p>
                 <p>Let's look at the method under test:</p>
                 <pre><code class="language-java">
     public Driver getRegisteredRenter(String driverLicenseId) throws NotRegisteredException {
         return renterDao.getRegisteredRenter(driverLicenseId);
     }
                 </code></pre>
-                <p>Looking at the method, in order to have the driver's license we pass in correspond to someone who is already registered to rent a car, we need renterDAO.getRegisteredRenter() to return without throwing an exception.</p>
-                <p>Finally, let's look at the renterDAO.getRegisteredRenter() method header to see what it should return:</p>
+                <p>Looking at the method, in order to have the driver's license we pass in correspond to someone who is
+                    already registered to rent a car, we need renterDAO.getRegisteredRenter() to return without throwing
+                    an exception.</p>
+                <p>Finally, let's look at the renterDAO.getRegisteredRenter() method header to see what it should
+                    return:</p>
                 <pre><code class="language-java">
 Driver getRegisteredRenter(String driverLicenseId) throws NotRegisteredException
                 </code></pre>
                 <p>We see that we need to return the driver that corresponds to the provided driver's license id.</p>
-                <p>Following the pattern we previously mentioned, we want to tell our mock that when it sees renterDAO.getRegisteredRenter() called with a certain input, then it should return a Driver instance. We can use the Mockito methods when() and thenReturn() to mock the behavior of our RenterDao.</p>
+                <p>Following the pattern we previously mentioned, we want to tell our mock that when it sees
+                    renterDAO.getRegisteredRenter() called with a certain input, then it should return a Driver
+                    instance. We can use the Mockito methods when() and thenReturn() to mock the behavior of our
+                    RenterDao.</p>
                 <p>The line of code looks like the following:</p>
                 <pre><code class="language-java">
 when(renterDao.getRegisteredRenter(driverLicenseId)).thenReturn(driver);
                 </code></pre>
-                <p>We pass getRegisteredRenter(driverLicenseId), because that's the value we expect to be passed to the method. The method under test will be called with driverLicenseId, and then will call getRegisteredRenter with that same value. (Warning: If you provide the wrong input when setting up the mock's when method, Mockito will not return the value provided to the thenReturn method. Mockito will instead return the default since the mocked behavior we set up never actually occurred.)</p>
-                <p>Without mocking, we were setting up a registered driver in our GIVEN section by making a call to register the renter:</p>
+                <p>We pass getRegisteredRenter(driverLicenseId), because that's the value we expect to be passed to the
+                    method. The method under test will be called with driverLicenseId, and then will call
+                    getRegisteredRenter with that same value. (Warning: If you provide the wrong input when setting up
+                    the mock's when method, Mockito will not return the value provided to the thenReturn method. Mockito
+                    will instead return the default since the mocked behavior we set up never actually occurred.)</p>
+                <p>Without mocking, we were setting up a registered driver in our GIVEN section by making a call to
+                    register the renter:</p>
                 <pre><code class="language-java">
 renterRegistrar.registerRenter(driver);
                 </code></pre>
-                <p>Instead, we can replace that line with our new mocked behavior. Now we don't actually have to register a driver for our tests to work.</p>
-                <p>We have one last change to make. When calling renterRegistrar.registerRenter() we had to handle the checked exception it threw, NotEligibleToRegisterException. We removed this call, so we can remove this exception from the throws clause. The call we are mocking, renterDao.getRegisteredRenter() also throws a checked exception, NotRegisteredException. We'll need to add that to the throws clause too. Our first test method passes now and looks like this:</p>
+                <p>Instead, we can replace that line with our new mocked behavior. Now we don't actually have to
+                    register a driver for our tests to work.</p>
+                <p>We have one last change to make. When calling renterRegistrar.registerRenter() we had to handle the
+                    checked exception it threw, NotEligibleToRegisterException. We removed this call, so we can remove
+                    this exception from the throws clause. The call we are mocking, renterDao.getRegisteredRenter() also
+                    throws a checked exception, NotRegisteredException. We'll need to add that to the throws clause too.
+                    Our first test method passes now and looks like this:</p>
                 <pre><code class="language-java">
 @Test
 public void getRegisteredRenter_registeredDriver_returnsDriver() throws NotRegisteredException {
@@ -436,7 +651,8 @@ public void getRegisteredRenter_registeredDriver_returnsDriver() throws NotRegis
                 </code></pre>
 
                 <h3>Defining exceptional behavior</h3>
-                <p>Sometimes instead of returning a value, our mocked behavior will need to throw an exception. For example, let's take a look at our second unit test:</p>
+                <p>Sometimes instead of returning a value, our mocked behavior will need to throw an exception. For
+                    example, let's take a look at our second unit test:</p>
                 <pre><code class="language-java">
 @Test
 public void getRegisteredRenter_unregisteredDriver_throwsNotRegisteredException() {
@@ -449,22 +665,35 @@ public void getRegisteredRenter_unregisteredDriver_throwsNotRegisteredException(
             () -> renterRegistrar.getRegisteredRenter(driverLicenseId));
 }
                 </code></pre>
-                <p>Looking at the title of this method, we know our test case validates that when an unregistered driver's license id is passed to getRegisteredRenter() it should throw a NotRegisteredException. So, we want the driver's license we pass in to not belong to a registered renter.</p>
+                <p>Looking at the title of this method, we know our test case validates that when an unregistered
+                    driver's license id is passed to getRegisteredRenter() it should throw a NotRegisteredException. So,
+                    we want the driver's license we pass in to not belong to a registered renter.</p>
                 <p>Let's once again look at the method we're testing:</p>
                 <pre><code class="language-java">
 public Driver getRegisteredRenter(String driverLicenseId) {
     return renterDao.getRegisteredRenter(driverLicenseId);
 }
                 </code></pre>
-                <p>For the getRegisteredRenter() method to throw the NotRegisteredException, the renterDao.getRegisteredRenter() method must throw a NotRegisteredException.</p>
-                <p>Using a very similar process to above, we tell our mock that when it sees renterDAO.getRegisteredRenter() called with a certain input, then it should throw a NotRegisteredException. Notice that in this test we want to throw an exception instead of return a value. We can use the Mockito methods when() and thenThrow() to mock the behavior of our RenterDao.</p>
-                <p>This highlights a great advantage of mocking. We didn't have to worry about the specific conditions that would cause a NotRegisteredException, and set up data to make the exception occur. We simply have to say, please throw this exception when you see a certain driver's license id.</p>
+                <p>For the getRegisteredRenter() method to throw the NotRegisteredException, the
+                    renterDao.getRegisteredRenter() method must throw a NotRegisteredException.</p>
+                <p>Using a very similar process to above, we tell our mock that when it sees
+                    renterDAO.getRegisteredRenter() called with a certain input, then it should throw a
+                    NotRegisteredException. Notice that in this test we want to throw an exception instead of return a
+                    value. We can use the Mockito methods when() and thenThrow() to mock the behavior of our RenterDao.
+                </p>
+                <p>This highlights a great advantage of mocking. We didn't have to worry about the specific conditions
+                    that would cause a NotRegisteredException, and set up data to make the exception occur. We simply
+                    have to say, please throw this exception when you see a certain driver's license id.</p>
                 <p>The line of code looks like the following:</p>
                 <pre><code class="language-java">
 when(renterDao.getRegisteredRenter(driverLicenseId)).thenThrow(NotRegisteredException.class);
                 </code></pre>
-                <p>Again, we pass getRegisteredRenter(driverLicenseId), because that's the value we expect to be passed to the method. The method under test will be called with driverLicenseId, and then will call getRegisteredRenter with that same value.</p>
-                <p>Once again, we need to add throws NotRegisteredException to the method signature since renterDao.getRegisteredRenter() throws this checked exception. This line of code should be added to the GIVEN portion of our test.</p>
+                <p>Again, we pass getRegisteredRenter(driverLicenseId), because that's the value we expect to be passed
+                    to the method. The method under test will be called with driverLicenseId, and then will call
+                    getRegisteredRenter with that same value.</p>
+                <p>Once again, we need to add throws NotRegisteredException to the method signature since
+                    renterDao.getRegisteredRenter() throws this checked exception. This line of code should be added to
+                    the GIVEN portion of our test.</p>
                 <p>The full unit test looks like the following:</p>
                 <pre><code class="language-java">
 @Test
@@ -479,7 +708,12 @@ public void getRegisteredRenter_unregisteredDriver_throwsNotRegisteredException(
             () -> renterRegistrar.getRegisteredRenter(driverLicenseId));
 }
                 </code></pre>
-                <p>The syntax changes slightly when we want to mock an exception being thrown from a void method. For example, imagine the RenterDao instead had a method void validateDriver(String driverLicenseId) that instead of returning a value, threw an exception if the id could not be found and otherwise returned successfully. Instead of using thenThrow(), we would use the Mockito method doThrow() and chain on the when() method. The other difference is that we specify the method to be called on the mock (in this case validateDriver()) outside of the when() method instead of as part of the parameters.</p>
+                <p>The syntax changes slightly when we want to mock an exception being thrown from a void method. For
+                    example, imagine the RenterDao instead had a method void validateDriver(String driverLicenseId) that
+                    instead of returning a value, threw an exception if the id could not be found and otherwise returned
+                    successfully. Instead of using thenThrow(), we would use the Mockito method doThrow() and chain on
+                    the when() method. The other difference is that we specify the method to be called on the mock (in
+                    this case validateDriver()) outside of the when() method instead of as part of the parameters.</p>
                 <p>This line of code would look like the following:</p>
                 <pre><code class="language-java">
 doThrow(NotRegisteredException.class).when(renterDAO).validateDriver(driverLicenseId);
@@ -504,7 +738,9 @@ public void registerRenter_eligibleDriver_successfullyRegisters() throws NotElig
     assertEquals(driver.getDriverLicenseId(), registeredRenter.getDriverLicenseId());
 }
                 </code></pre>
-                <p>Looking at the name of this method, we know that our test case validates that when an eligible driver is passed to registerRenter() it should successfully register the given driver. So, we want the driver we pass in to registerRenter() to correspond with someone who is allowed to register.</p>
+                <p>Looking at the name of this method, we know that our test case validates that when an eligible driver
+                    is passed to registerRenter() it should successfully register the given driver. So, we want the
+                    driver we pass in to registerRenter() to correspond with someone who is allowed to register.</p>
                 <p>Let's look at the method we're testing:</p>
                 <pre><code class="language-java">
 public void registerRenter(Driver driver) throws NotEligibleToRegisterException {
@@ -517,12 +753,22 @@ public void registerRenter(Driver driver) throws NotEligibleToRegisterException 
     renterDao.addRenter(driver);
 }
                 </code></pre>
-                <p>This method is a bit more complex than the previous one we tested. As you can see, this method is dependent on a method from both driverLicenseService and renterDao. The registerRenter() method successfully registers a person when they are 18 or older and their driver's license is valid. For a driver's license to be valid, it must return true when passed into the driverLicenseService.isValid() method. Once a person passes both those tests, they can then successfully register using the renterDAO.addRenter() method.</p>
-                <p>Let's first look at the driverLicenseService.isValid() method header to see what it should return:</p>
+                <p>This method is a bit more complex than the previous one we tested. As you can see, this method is
+                    dependent on a method from both driverLicenseService and renterDao. The registerRenter() method
+                    successfully registers a person when they are 18 or older and their driver's license is valid. For a
+                    driver's license to be valid, it must return true when passed into the
+                    driverLicenseService.isValid() method. Once a person passes both those tests, they can then
+                    successfully register using the renterDAO.addRenter() method.</p>
+                <p>Let's first look at the driverLicenseService.isValid() method header to see what it should return:
+                </p>
                 <pre><code class="language-java">
 boolean isValid(String driverLicenseId)
                 </code></pre>
-                <p>Looking at this method, we can see that it returns true when a driver's license is valid, false otherwise. We want to tell our mock that when it sees driverLicenseService.isValid() called with a certain input, then it should return true. The certain input should be the driver's license id of the driver passed to our method under test. We can add the line below to our GIVEN section to mock this behavior.</p>
+                <p>Looking at this method, we can see that it returns true when a driver's license is valid, false
+                    otherwise. We want to tell our mock that when it sees driverLicenseService.isValid() called with a
+                    certain input, then it should return true. The certain input should be the driver's license id of
+                    the driver passed to our method under test. We can add the line below to our GIVEN section to mock
+                    this behavior.</p>
                 <pre><code class="language-java">
 when(driverLicenseService.isValid(driverLicenseId)).thenReturn(true);
                 </code></pre>
@@ -530,14 +776,26 @@ when(driverLicenseService.isValid(driverLicenseId)).thenReturn(true);
                 <pre><code class="language-java">
 void addRenter(Driver driver)
                 </code></pre>
-                <p>Looking at this method, we can see that it's void and doesn't return anything. Since nothing is being returned, we can't use the thenReturn() method. Instead, we'll verify that the method gets called when our method under test is called.</p>
-                <p>What we care about here is that the addRenter() method is called and that it's called with the right input. In this case, the correct input is the driver we initially passed to the registerRenter() method.</p>
-                <p>To verify the addRenter() method is called with the right input, we use the Mockito verify() method. We chain the method we're checking (in this case addRenter()) on to the verify() method and pass in the expected input.</p>
+                <p>Looking at this method, we can see that it's void and doesn't return anything. Since nothing is being
+                    returned, we can't use the thenReturn() method. Instead, we'll verify that the method gets called
+                    when our method under test is called.</p>
+                <p>What we care about here is that the addRenter() method is called and that it's called with the right
+                    input. In this case, the correct input is the driver we initially passed to the registerRenter()
+                    method.</p>
+                <p>To verify the addRenter() method is called with the right input, we use the Mockito verify() method.
+                    We chain the method we're checking (in this case addRenter()) on to the verify() method and pass in
+                    the expected input.</p>
                 <p>This line of code looks like the following:</p>
                 <pre><code class="language-java">
 verify(renterDao).addRenter(driver);
                 </code></pre>
-                <p>Verifications go in the THEN section of our test. We can only verify that an interaction with a mock occurred after we call the method that causes the interactions. In this case, renterRegistrar.registerRenter() needs to be called for the call to renterDao.addRenter() to occur. We can replace our assertTrue statement with this verification statement. To validate that renterRegistrar.registerRenter() is correct, we only need to verify that it calls the RenterDao to add our driver. Since we are using mocks though, the driver won't actually be persisted in the RenterDao, so our previous assert statement won't be very valuable.</p>
+                <p>Verifications go in the THEN section of our test. We can only verify that an interaction with a mock
+                    occurred after we call the method that causes the interactions. In this case,
+                    renterRegistrar.registerRenter() needs to be called for the call to renterDao.addRenter() to occur.
+                    We can replace our assertTrue statement with this verification statement. To validate that
+                    renterRegistrar.registerRenter() is correct, we only need to verify that it calls the RenterDao to
+                    add our driver. Since we are using mocks though, the driver won't actually be persisted in the
+                    RenterDao, so our previous assert statement won't be very valuable.</p>
                 <p>The full unit test looks like the following:</p>
                 <pre><code class="language-java">
 @Test
@@ -556,12 +814,17 @@ public void registerRenter_eligibleDriver_successfullyRegisters() throws NotElig
                 </code></pre>
 
                 <h4>Overloaded verify method</h4>
-                <p>The verify() method also has an overloaded method that allows us to set a VerificationMode. There are numerous VerificationMode static methods. A common method is times(), which tracks the number of times we call a method. We could verify that the addRenter() method is only called one time with the following line of code:</p>
+                <p>The verify() method also has an overloaded method that allows us to set a VerificationMode. There are
+                    numerous VerificationMode static methods. A common method is times(), which tracks the number of
+                    times we call a method. We could verify that the addRenter() method is only called one time with the
+                    following line of code:</p>
                 <pre><code class="language-java">
 verify(renterDao, times(1)).addRenter(driver);
                 </code></pre>
                 <p>If times(X) is not provided, verify will default to verifying the method was called once.</p>
-                <p>We can also use the verifyZeroInteractions() method, which verifies that none of a mock's methods were called. For example, in our first and second unit tests, we could ensure that no methods from the driverLicenseService mock were called with:</p>
+                <p>We can also use the verifyZeroInteractions() method, which verifies that none of a mock's methods
+                    were called. For example, in our first and second unit tests, we could ensure that no methods from
+                    the driverLicenseService mock were called with:</p>
                 <pre><code class="language-java">
 verifyZeroInteractions(driverLicenseService);
                 </code></pre>
@@ -581,13 +844,32 @@ never()
                 </code></pre>
 
                 <h3>What not to mock</h3>
-                <p>Now we've taught you how to mock and why, but it's also important to understand what not to mock. Mocking is very effective, but only when used correctly. We want to make sure that we're mocking roles not objects. The role is the interface whereas the object is the implementation of the interface. If our class has a dependency on an interface type, we want to mock the interface, not the implementation that our class uses.</p>
-                <p>We always need to make sure we don't mock code that we don't understand. Mocks allow us to describe the behavior of other code. If we describe that behavior incorrectly or incompletely, we can't verify that code works in real conditions. If we don't understand all the parts and pieces of the code, we may not be able to verify the code works in all conditions. In general, only mock code we understand well, such as code we own. We only mock code's well-documented behavior, and we don't mock code without a reason.</p>
-                <p>Avoid mocking collection classes such as List and Map. Collection classes often include hidden behaviors we can't mock or aren't fully documented. These classes are normally well tested anyways, so there shouldn't be a reason for us to mock them.</p>
-                <p>Lastly, probably don't mock POJOs. This is debated in the I.T. community, but most companies, generally, don't mock POJOs. The purpose of mocking is to hide another class' business logic and focus on functionality. POJOs shouldn't have business logic and therefore shouldn't require mocking.</p>
+                <p>Now we've taught you how to mock and why, but it's also important to understand what not to mock.
+                    Mocking is very effective, but only when used correctly. We want to make sure that we're mocking
+                    roles not objects. The role is the interface whereas the object is the implementation of the
+                    interface. If our class has a dependency on an interface type, we want to mock the interface, not
+                    the implementation that our class uses.</p>
+                <p>We always need to make sure we don't mock code that we don't understand. Mocks allow us to describe
+                    the behavior of other code. If we describe that behavior incorrectly or incompletely, we can't
+                    verify that code works in real conditions. If we don't understand all the parts and pieces of the
+                    code, we may not be able to verify the code works in all conditions. In general, only mock code we
+                    understand well, such as code we own. We only mock code's well-documented behavior, and we don't
+                    mock code without a reason.</p>
+                <p>Avoid mocking collection classes such as List and Map. Collection classes often include hidden
+                    behaviors we can't mock or aren't fully documented. These classes are normally well tested anyways,
+                    so there shouldn't be a reason for us to mock them.</p>
+                <p>Lastly, probably don't mock POJOs. This is debated in the I.T. community, but most companies,
+                    generally, don't mock POJOs. The purpose of mocking is to hide another class' business logic and
+                    focus on functionality. POJOs shouldn't have business logic and therefore shouldn't require mocking.
+                </p>
 
                 <h3>Conclusion</h3>
-                <p>In this reading, we covered writing deterministic tests by using mocks to force dependable behavior from our dependencies. We mapped out the logic for determining what to mock for each unit test, and how to turn that into code. We also learned about matchers, which allow us to mock even when we don't know the exact value being passed into a method. Finally, we discussed what not to mock. Mocking is a powerful tool that can help save time and money when testing, while also providing control over our test conditions.</p>
+                <p>In this reading, we covered writing deterministic tests by using mocks to force dependable behavior
+                    from our dependencies. We mapped out the logic for determining what to mock for each unit test, and
+                    how to turn that into code. We also learned about matchers, which allow us to mock even when we
+                    don't know the exact value being passed into a method. Finally, we discussed what not to mock.
+                    Mocking is a powerful tool that can help save time and money when testing, while also providing
+                    control over our test conditions.</p>
             </div>
 
             <div class="content-box">
@@ -595,10 +877,13 @@ never()
                 <p>Complete this project to practice your mocking skills.</p>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Sprint 11 Mocking 1a Video" src="https://fast.wistia.net/embed/iframe/2flhwb1o2p" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Sprint 11 Mocking 1a Video"
+                        src="https://fast.wistia.net/embed/iframe/2flhwb1o2p" width="100%" height="360"
+                        name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
 
-                <a href="https://github.com/BloomTechBackend/bd-mocking-rack-monitor" target="_blank" rel="noopener" class="resource-link">
+                <a href="https://github.com/BloomTechBackend/bd-mocking-rack-monitor" target="_blank"
+                    rel="noopener noreferrer" class="resource-link">
                     Rack Monitor
                 </a>
             </div>
@@ -606,16 +891,19 @@ never()
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
-                    <a href="https://github.com/BloomTechBackend/bd-mocking-rack-monitor" target="_blank" rel="noopener" class="resource-link">
+                    <a href="https://github.com/BloomTechBackend/bd-mocking-rack-monitor" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
                         Rack Monitor Repository
                     </a>
-                    <a href="https://site.mockito.org/" target="_blank" rel="noopener" class="resource-link">
+                    <a href="https://site.mockito.org/" target="_blank" rel="noopener noreferrer" class="resource-link">
                         Mockito Documentation
                     </a>
-                    <a href="https://www.baeldung.com/mockito-behavior" target="_blank" rel="noopener" class="resource-link">
+                    <a href="https://www.baeldung.com/mockito-behavior" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
                         Stubbing and Mocking with Mockito - Baeldung
                     </a>
-                    <a href="https://www.baeldung.com/mockito-verify" target="_blank" rel="noopener" class="resource-link">
+                    <a href="https://www.baeldung.com/mockito-verify" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
                         Mockito Verify Interactions - Baeldung
                     </a>
                 </div>
@@ -623,4 +911,5 @@ never()
         </section>
     </main>
 </body>
-</html> 
+
+</html>
