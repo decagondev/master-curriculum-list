@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3: Dependency Injection 2 - BD Unit 4 Sprint 14</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -26,34 +28,41 @@
             </ul>
         </nav>
     </header>
-    
+
     <main class="container">
         <section class="welcome">
             <h1>Module 3: Dependency Injection 2</h1>
-            
+
             <div class="content-box">
                 <h2>Module Overview</h2>
-                <p>Advanced dependency injection concepts and Dagger implementation. Build on your DI knowledge with more complex patterns and frameworks.</p>
+                <p>Advanced dependency injection concepts and Dagger implementation. Build on your DI knowledge with
+                    more complex patterns and frameworks.</p>
             </div>
-            
+
             <div class="content-box">
                 <h2>Learning Objectives</h2>
                 <ul>
                     <li>Use a dependency injection framework to provide an object with its dependencies</li>
-                    <li>Analyze if an injected object should be scoped as a singleton or not for a provided scenario</li>
+                    <li>Analyze if an injected object should be scoped as a singleton or not for a provided scenario
+                    </li>
                     <li>Identify what types a given Java class depends on</li>
                     <li>Illustrate object dependency relationships as a dependency graph</li>
                     <li>Explain what dependency injection is</li>
-                    <li>Explain why dependency injection is preferable to having objects instantiate their own dependencies</li>
+                    <li>Explain why dependency injection is preferable to having objects instantiate their own
+                        dependencies</li>
                 </ul>
             </div>
 
             <div class="content-box">
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Dagger @Binds Annotation" src="https://fast.wistia.net/embed/iframe/vimf80aiqq" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Dagger @Binds Annotation"
+                        src="https://fast.wistia.net/embed/iframe/vimf80aiqq" width="100%" height="360"
+                        name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen"
+                        loading="lazy"></iframe>
                 </div>
                 <h3>Video Content: Dagger @Binds Annotation</h3>
-                <p>This video explains the @Binds annotation in Dagger, which is a more efficient way to bind an interface to its implementation compared to @Provides methods.</p>
+                <p>This video explains the @Binds annotation in Dagger, which is a more efficient way to bind an
+                    interface to its implementation compared to @Provides methods.</p>
                 <pre><code>// Interface definition
 public interface UserRepository {
     User findById(String id);
@@ -90,20 +99,31 @@ public abstract class RepositoryModule {
     @Binds
     abstract UserRepository bindUserRepository(SQLUserRepository impl);
 }</code></pre>
-                <p>This example demonstrates the use of @Binds in a Dagger module to efficiently bind an interface (UserRepository) to its implementation (SQLUserRepository). The @Binds method is abstract, as Dagger only needs to know about the binding relationship, not how to construct the implementation.</p>
+                <p>This example demonstrates the use of @Binds in a Dagger module to efficiently bind an interface
+                    (UserRepository) to its implementation (SQLUserRepository). The @Binds method is abstract, as Dagger
+                    only needs to know about the binding relationship, not how to construct the implementation.</p>
 
                 <h3>When @Inject Isn't Enough</h3>
-                <p>Toward the end of the last reading, we hinted at a case where annotating constructors with @Inject won't be an option. Here, we see Dagger's solution to that problem, which we also use to inject specific implementations for dependencies on interfaces.</p>
-                
-                <p>We also learn how to tell Dagger when to reuse the same object instance across constructors that share a dependency object.</p>
+                <p>Toward the end of the last reading, we hinted at a case where annotating constructors with @Inject
+                    won't be an option. Here, we see Dagger's solution to that problem, which we also use to inject
+                    specific implementations for dependencies on interfaces.</p>
+
+                <p>We also learn how to tell Dagger when to reuse the same object instance across constructors that
+                    share a dependency object.</p>
 
                 <div class="caution-box">
                     <p><strong>CAUTION</strong></p>
-                    <p>If you're following along in code, you may have trouble with the DaggerZooAppComponent not being found. This is because Dagger hasn't generated it yet. You must successfully build one time before you can import the DaggerZooAppComponent in IntelliJ, because Dagger creates this class at build time.</p>
+                    <p>If you're following along in code, you may have trouble with the DaggerZooAppComponent not being
+                        found. This is because Dagger hasn't generated it yet. You must successfully build one time
+                        before you can import the DaggerZooAppComponent in IntelliJ, because Dagger creates this class
+                        at build time.</p>
                 </div>
 
                 <h4>When @Inject is not enough</h4>
-                <p>What about classes where we cannot annotate a constructor with @Inject, like classes we don't own such as DynamoDBMapper? We can still let Dagger manage it for us, but we will need some additional steps. Let's create a method whose functionality will be to provide a DynamoDBMapper. We'll move the code that used to be in the ZooAppHelper to create the DynamoDBMapper here:</p>
+                <p>What about classes where we cannot annotate a constructor with @Inject, like classes we don't own
+                    such as DynamoDBMapper? We can still let Dagger manage it for us, but we will need some additional
+                    steps. Let's create a method whose functionality will be to provide a DynamoDBMapper. We'll move the
+                    code that used to be in the ZooAppHelper to create the DynamoDBMapper here:</p>
 
                 <pre><code>public class MapperModule {
     public DynamoDBMapper provideDynamoDBMapper() {
@@ -116,20 +136,28 @@ public abstract class RepositoryModule {
     }
 }</code></pre>
 
-                <p>This is almost identical to the relevant portion of ZooAppHelper. The primary difference is that we need to make the provideDynamoDBMapper method public (so that Dagger can call it for us).</p>
+                <p>This is almost identical to the relevant portion of ZooAppHelper. The primary difference is that we
+                    need to make the provideDynamoDBMapper method public (so that Dagger can call it for us).</p>
 
-                <p>Now we need to add annotations to let Dagger know that this method is how we want to provide a DynamoDBMapper, when a constructor with @Inject asks for one. To do this, we:</p>
+                <p>Now we need to add annotations to let Dagger know that this method is how we want to provide a
+                    DynamoDBMapper, when a constructor with @Inject asks for one. To do this, we:</p>
 
                 <ul>
                     <li>annotate the class with @Module</li>
                     <li>annotate the provider method with @Provides</li>
                 </ul>
 
-                <p>At build time, Dagger compiles @Inject and @Provides annotations into a map describing how to instantiate objects. Dagger's documentation doesn't say what it will do if a class could be instantiated with both an @Inject constructor and an @Provides method. Avoid providing multiple ways to inject a dependency object.</p>
+                <p>At build time, Dagger compiles @Inject and @Provides annotations into a map describing how to
+                    instantiate objects. Dagger's documentation doesn't say what it will do if a class could be
+                    instantiated with both an @Inject constructor and an @Provides method. Avoid providing multiple ways
+                    to inject a dependency object.</p>
 
-                <p>In our example, Dagger compiles the @Provides annotation on the provideDynamoDBMapper method into its map, indicating that it can use that method to create a DynamoDBMapper.</p>
+                <p>In our example, Dagger compiles the @Provides annotation on the provideDynamoDBMapper method into its
+                    map, indicating that it can use that method to create a DynamoDBMapper.</p>
 
-                <p>At run time, when Dagger prepares to call a constructor that needs a DynamoDBMapper, it will check its map for a way to create a DynamoDBMapper, call the provideDynamoDBMapper method, then provide the resulting object to the constructor that required it.</p>
+                <p>At run time, when Dagger prepares to call a constructor that needs a DynamoDBMapper, it will check
+                    its map for a way to create a DynamoDBMapper, call the provideDynamoDBMapper method, then provide
+                    the resulting object to the constructor that required it.</p>
 
                 <p>With the expected annotations, our example becomes:</p>
 
@@ -146,14 +174,18 @@ public class MapperModule {
     }
 }</code></pre>
 
-                <p>When we create a @Module class we need to do one piece of bookkeeping for Dagger: we need to tell the @Component interface to use this module class by adding an argument to the @Component annotation on the interface:</p>
+                <p>When we create a @Module class we need to do one piece of bookkeeping for Dagger: we need to tell the
+                    @Component interface to use this module class by adding an argument to the @Component annotation on
+                    the interface:</p>
 
                 <pre><code>@Component(modules = { MapperModule.class })
 public interface ZooAppComponent {
     ZooService provideZooService();
 }</code></pre>
 
-                <p>Now Dagger can find all the dependencies in the dependency graph for ZooService and eventually provide one to our ZooApplication. Dagger will continue "walking" the dependency graph, finding new objects to instantiate until it either:</p>
+                <p>Now Dagger can find all the dependencies in the dependency graph for ZooService and eventually
+                    provide one to our ZooApplication. Dagger will continue "walking" the dependency graph, finding new
+                    objects to instantiate until it either:</p>
 
                 <ul>
                     <li>reaches a class with a no-args constructor annotated with @Inject</li>
@@ -161,16 +193,32 @@ public interface ZooAppComponent {
                 </ul>
 
                 <h4>Dagger Scope</h4>
-                <p>Before we move on let's quickly talk about scope. Dagger keeps track of the "scope" for each of the dependency objects that it creates. By default, each object has no scope or "unscoped". This means that every time Dagger requires an instance of the object, it instantiates a new one (again, providing its dependencies).</p>
+                <p>Before we move on let's quickly talk about scope. Dagger keeps track of the "scope" for each of the
+                    dependency objects that it creates. By default, each object has no scope or "unscoped". This means
+                    that every time Dagger requires an instance of the object, it instantiates a new one (again,
+                    providing its dependencies).</p>
 
-                <p>This isn't always a good thing though. Going back to our ZooApplication example, if we added a new DynamoDbEmployeeDao that needs a DynamoDBMapper, it would be inefficient to create an entirely new instance of DynamoDBMapper, one for DynamoDbAnimalDao and one for DynamoDbEmployeeDao. Remember that DynamoDBMapper is able to identify which table we want to load data from based on the @DynamoDBTable annotation, and the table name we pass to it. There's no need to create a new instance of DynamoDBMapper for every DAO instance.</p>
+                <p>This isn't always a good thing though. Going back to our ZooApplication example, if we added a new
+                    DynamoDbEmployeeDao that needs a DynamoDBMapper, it would be inefficient to create an entirely new
+                    instance of DynamoDBMapper, one for DynamoDbAnimalDao and one for DynamoDbEmployeeDao. Remember that
+                    DynamoDBMapper is able to identify which table we want to load data from based on the @DynamoDBTable
+                    annotation, and the table name we pass to it. There's no need to create a new instance of
+                    DynamoDBMapper for every DAO instance.</p>
 
                 <h4>@Singleton objects</h4>
-                <p>Dagger lets us override the default "unscoped" by telling it to only create a single instance of an object, called a singleton. We can declare an object in the dependency graph using the @Singleton annotation. The @Singleton annotation tells Dagger that whenever this object is requested, it should use the same instance every time.</p>
+                <p>Dagger lets us override the default "unscoped" by telling it to only create a single instance of an
+                    object, called a singleton. We can declare an object in the dependency graph using the @Singleton
+                    annotation. The @Singleton annotation tells Dagger that whenever this object is requested, it should
+                    use the same instance every time.</p>
 
-                <p>This also isn't always a good thing, if you change a property after creation of a singleton object you must be aware that any update to it will be reflected everywhere the object is used! Singleton can be a tricky pattern to know when to implement, but very useful when needed. Controlling the scope of the Dagger object can not only help your functionality but will make it easier to read and distinguish what is happening with the code during debugging.</p>
+                <p>This also isn't always a good thing, if you change a property after creation of a singleton object
+                    you must be aware that any update to it will be reflected everywhere the object is used! Singleton
+                    can be a tricky pattern to know when to implement, but very useful when needed. Controlling the
+                    scope of the Dagger object can not only help your functionality but will make it easier to read and
+                    distinguish what is happening with the code during debugging.</p>
 
-                <p>Let's choose to make our DynamoDBMapper a singleton. We just add @Singleton to the provide method in our module:</p>
+                <p>Let's choose to make our DynamoDBMapper a singleton. We just add @Singleton to the provide method in
+                    our module:</p>
 
                 <pre><code>@Module
 public class MapperModule {
@@ -186,7 +234,8 @@ public class MapperModule {
     }
 }</code></pre>
 
-                <p>We are also required to annotate our @Component as @Singleton. This makes sure that Dagger only creates one instance of the component class, with only one DynamoDBMapper object shared by all:</p>
+                <p>We are also required to annotate our @Component as @Singleton. This makes sure that Dagger only
+                    creates one instance of the component class, with only one DynamoDBMapper object shared by all:</p>
 
                 <pre><code>@Singleton
 @Component(modules = { MapperModule.class })
@@ -194,7 +243,10 @@ public interface ZooAppComponent {
     ZooService provideZooService();
 }</code></pre>
 
-                <p>Remember that @Singleton refers to an object in the dependency graph. In our MapperModule @Module, we need to put the @Singleton annotation on the provide* method in our @Module. However, if we want a singleton instance of an object with an @Inject constructor, the @Singleton annotation belongs on the class, for example:</p>
+                <p>Remember that @Singleton refers to an object in the dependency graph. In our MapperModule @Module, we
+                    need to put the @Singleton annotation on the provide* method in our @Module. However, if we want a
+                    singleton instance of an object with an @Inject constructor, the @Singleton annotation belongs on
+                    the class, for example:</p>
 
                 <pre><code>@Singleton
 public class CoffeeMaker {
@@ -204,7 +256,12 @@ public class CoffeeMaker {
 }</code></pre>
 
                 <h4>Polymorphism and injection</h4>
-                <p>We mentioned before that we will find a way to inject concrete implementations of interfaces via dependency injection. Conveniently, these provide methods in @Module classes can serve this purpose as well. Let's take the idea we had earlier, and create a new AnimalDao interface that DynamoDbAnimalDao implements. We'll also want ZooService to have an AnimalDao interface member variable (rather than DynamoDbAnimalDao). We'll be moving to a @Provides method to provide the AnimalDao, so we can drop the @Inject from the DynamoDbAnimalDao constructor.</p>
+                <p>We mentioned before that we will find a way to inject concrete implementations of interfaces via
+                    dependency injection. Conveniently, these provide methods in @Module classes can serve this purpose
+                    as well. Let's take the idea we had earlier, and create a new AnimalDao interface that
+                    DynamoDbAnimalDao implements. We'll also want ZooService to have an AnimalDao interface member
+                    variable (rather than DynamoDbAnimalDao). We'll be moving to a @Provides method to provide the
+                    AnimalDao, so we can drop the @Inject from the DynamoDbAnimalDao constructor.</p>
 
                 <pre><code>// DynamoDbAnimalDao.java
 public class DynamoDbAnimalDao implements AnimalDao {
@@ -236,7 +293,12 @@ public class ZooService {
     }
 }</code></pre>
 
-                <p>We can specify DynamoDbAnimalDao as our default AnimalDao for dependency injection purposes by implementing a method with the @Provides annotation. Because we need to pass in a DynamoDBMapper object, we need our provides method to accept a DynamoDBMapper object. Because Dagger already knows how to provide a DynamoDBMapper instance, it can pass that in to our provide method. We'll create a new @Module class in this example, but we could choose instead to create one module that provides both classes.</p>
+                <p>We can specify DynamoDbAnimalDao as our default AnimalDao for dependency injection purposes by
+                    implementing a method with the @Provides annotation. Because we need to pass in a DynamoDBMapper
+                    object, we need our provides method to accept a DynamoDBMapper object. Because Dagger already knows
+                    how to provide a DynamoDBMapper instance, it can pass that in to our provide method. We'll create a
+                    new @Module class in this example, but we could choose instead to create one module that provides
+                    both classes.</p>
 
                 <pre><code>@Module
 public class DaoModule {
@@ -255,25 +317,36 @@ public interface ZooAppComponent {
 }</code></pre>
 
                 <h4>When to use @Provides instead of @Inject</h4>
-                <p>We should use @Inject whenever we can to tell Dagger how to construct objects. There are some situations when we can't use @Inject, and in these cases we must use @Provides:</p>
+                <p>We should use @Inject whenever we can to tell Dagger how to construct objects. There are some
+                    situations when we can't use @Inject, and in these cases we must use @Provides:</p>
 
                 <ul>
                     <li>We don't own the class, so we can't add @Inject to its constructor.</li>
-                    <li>The dependency object's type is an interface. We use interfaces in for polymorphism; the @Provides method decides which concrete implementation to use.</li>
+                    <li>The dependency object's type is an interface. We use interfaces in for polymorphism; the
+                        @Provides method decides which concrete implementation to use.</li>
                 </ul>
 
                 <p>Some less common cases occur when:</p>
                 <ul>
-                    <li>The class has no public constructor. (Note that the default constructor is public. You should define it and annotate it with @Inject.) The @Provides method can instantiate classes using the Builder or Factory pattern, which Dagger does not support.</li>
-                    <li>Instantiating the object requires some configuration specific to the environment. The @Provides method can call methods that determine regional endpoints, user preferences, and other configuration so the logic class doesn't have to.</li>
+                    <li>The class has no public constructor. (Note that the default constructor is public. You should
+                        define it and annotate it with @Inject.) The @Provides method can instantiate classes using the
+                        Builder or Factory pattern, which Dagger does not support.</li>
+                    <li>Instantiating the object requires some configuration specific to the environment. The @Provides
+                        method can call methods that determine regional endpoints, user preferences, and other
+                        configuration so the logic class doesn't have to.</li>
                 </ul>
 
                 <h4>Our Zoo app, Dagger-ified</h4>
                 <p>Phew!</p>
 
-                <p>It looks like a lot of changes, but it really wasn't. We've reused several of the methods from our ZooAppHelper, thrown some away in favor of @Inject annotations, and made our app more flexible by accommodating polymorphism of the AnimalDao class.</p>
+                <p>It looks like a lot of changes, but it really wasn't. We've reused several of the methods from our
+                    ZooAppHelper, thrown some away in favor of @Inject annotations, and made our app more flexible by
+                    accommodating polymorphism of the AnimalDao class.</p>
 
-                <p>We've kept our app's functionality while simplifying ZooService and DynamoDbAnimalDao quite a bit. They no longer have to worry about how to create their dependencies. Further, their test code can very easily mock dependencies to isolate the class under test, and create specific test conditions directly.</p>
+                <p>We've kept our app's functionality while simplifying ZooService and DynamoDbAnimalDao quite a bit.
+                    They no longer have to worry about how to create their dependencies. Further, their test code can
+                    very easily mock dependencies to isolate the class under test, and create specific test conditions
+                    directly.</p>
 
                 <p>Let's take a look at the final production code:</p>
 
@@ -355,26 +428,37 @@ public class DaoModule {
     }
 }</code></pre>
 
-                <p>We've omitted the code that Dagger auto-generated. Dagger generates significantly more code than the App class it replaces. This is something you'll see whenever you deal with generated code. For the most part, it is longer than code we would write ourselves.</p>
+                <p>We've omitted the code that Dagger auto-generated. Dagger generates significantly more code than the
+                    App class it replaces. This is something you'll see whenever you deal with generated code. For the
+                    most part, it is longer than code we would write ourselves.</p>
 
-                <p>Think about trying to write code that handles every possible edge case for the input you could provide. When you know that some of those edge cases don't apply, you can choose not to write that code. Generated code doesn't have that luxury. It has to treat every version as potentially the most complicated version.</p>
+                <p>Think about trying to write code that handles every possible edge case for the input you could
+                    provide. When you know that some of those edge cases don't apply, you can choose not to write that
+                    code. Generated code doesn't have that luxury. It has to treat every version as potentially the most
+                    complicated version.</p>
 
-                <p>On the other hand, Dagger's auto-generated code is reliable and prevents us from writing a lot of code by hand. Whenever we write code by hand, we potentially introduce bugs. Dagger's auto-generated code doesn't need to be tested and prevents us from writing bugs.</p>
+                <p>On the other hand, Dagger's auto-generated code is reliable and prevents us from writing a lot of
+                    code by hand. Whenever we write code by hand, we potentially introduce bugs. Dagger's auto-generated
+                    code doesn't need to be tested and prevents us from writing bugs.</p>
 
                 <h4>Adopting Dagger, Step By Step</h4>
                 <p>The steps to adopt Dagger in a project:</p>
 
                 <ol>
                     <li>Identify the dependency graph (look at your classes and their member variables)</li>
-                    <li>Determine which objects are the root object(s). What are the roots of your dependency graph? (here we will use RootObject as a placeholder)</li>
+                    <li>Determine which objects are the root object(s). What are the roots of your dependency graph?
+                        (here we will use RootObject as a placeholder)</li>
                     <li>Create a Dagger @Component interface (here we will use MyComponent as a placeholder)</li>
                     <li>Add a provide&lt;ObjectType&gt; method to the interface for each root object you have.</li>
-                    <li>For each root object, and all of their dependencies, mark the constructor that Dagger should use with @Inject.
+                    <li>For each root object, and all of their dependencies, mark the constructor that Dagger should use
+                        with @Inject.
                         <ul>
                             <li>If the object should be a singleton, mark the class as @Singleton</li>
                         </ul>
                     </li>
-                    <li>If any objects can't be provided via @Inject, create a @Module class, and implement a provide&lt;ObjectType&gt; method to provide that type. This can allow you to instantiate objects from a library you don't own, or to provide a concrete class for an interface type.
+                    <li>If any objects can't be provided via @Inject, create a @Module class, and implement a
+                        provide&lt;ObjectType&gt; method to provide that type. This can allow you to instantiate objects
+                        from a library you don't own, or to provide a concrete class for an interface type.
                         <ul>
                             <li>Mark each of these methods as @Provides</li>
                             <li>If any should be singleton objects, mark the method as @Singleton</li>
@@ -382,26 +466,33 @@ public class DaoModule {
                     </li>
                     <li>Add the module class names to your @Component annotation.</li>
                     <li>If any of your objects are singletons, mark your component class as @Singleton.</li>
-                    <li>To allow your code to build, reference a null component where you want to fetch your Dagger root object:
+                    <li>To allow your code to build, reference a null component where you want to fetch your Dagger root
+                        object:
                         <pre><code>MyComponent dagger = null;
 RootObject obj = dagger.provideRootObject();</code></pre>
                     </li>
                     <li>Build [1]</li>
-                    <li>(You may need to sync your workspace in IntelliJ to pick up the new classes generated by Dagger)</li>
-                    <li>To fetch your Dagger root object, change the null reference to the Dagger-generated concrete implementation:
+                    <li>(You may need to sync your workspace in IntelliJ to pick up the new classes generated by Dagger)
+                    </li>
+                    <li>To fetch your Dagger root object, change the null reference to the Dagger-generated concrete
+                        implementation:
                         <pre><code>MyComponent dagger = DaggerMyComponent.create();
 RootObject obj = dagger.provideRootObject();</code></pre>
                     </li>
                 </ol>
 
-                <p>[1] You must build your project after implementing the Dagger @Component interface and before referencing its DaggerMyComponent concrete class. Only when that build succeeds will you have the Dagger-generated class that you need in order to call the provide-root-object method on the Dagger-generated component class.</p>
+                <p>[1] You must build your project after implementing the Dagger @Component interface and before
+                    referencing its DaggerMyComponent concrete class. Only when that build succeeds will you have the
+                    Dagger-generated class that you need in order to call the provide-root-object method on the
+                    Dagger-generated component class.</p>
             </div>
 
             <div class="content-box">
                 <h2>Practice</h2>
 
                 <div class="resource-links">
-                    <a href="https://github.com/BloomTechBackend/bd-dependency-injection-employee-manager" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://github.com/BloomTechBackend/bd-dependency-injection-employee-manager"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
                         Employee Manager
                     </a>
                 </div>
@@ -410,9 +501,12 @@ RootObject obj = dagger.provideRootObject();</code></pre>
             <div class="content-box">
                 <h2>Guided Project: Advanced Dependency Injection</h2>
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Sprint 14 Dependency Injection 2 Video" src="https://fast.wistia.net/embed/iframe/albvx1j6ba" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Sprint 14 Dependency Injection 2 Video"
+                        src="https://fast.wistia.net/embed/iframe/albvx1j6ba" width="100%" height="360"
+                        name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
-                <p>This video brings together the advanced dependency injection concepts covered in this module, presenting a comprehensive view of advanced Dagger usage.</p>
+                <p>This video brings together the advanced dependency injection concepts covered in this module,
+                    presenting a comprehensive view of advanced Dagger usage.</p>
                 <pre><code>// Complete advanced DI example
 // Multibinding with a map - useful for plugins or feature modules
 @Module
@@ -451,10 +545,14 @@ public class DataProcessingService {
         processor.process(data);
     }
 }</code></pre>
-                <p>This advanced example shows Dagger's multibinding feature for injecting a map of processors indexed by a key. This pattern is powerful for plugin architectures where different implementations can be selected at runtime. The @IntoMap annotation with key annotations helps Dagger build the map automatically from all the bound implementations.</p>
+                <p>This advanced example shows Dagger's multibinding feature for injecting a map of processors indexed
+                    by a key. This pattern is powerful for plugin architectures where different implementations can be
+                    selected at runtime. The @IntoMap annotation with key annotations helps Dagger build the map
+                    automatically from all the bound implementations.</p>
 
                 <div class="resource-links">
-                    <a href="https://github.com/BloomTechBackend/bd-dependency-injection-diy-di-why" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://github.com/BloomTechBackend/bd-dependency-injection-diy-di-why" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
                         DIY? DI? Why?
                     </a>
                 </div>
@@ -462,43 +560,64 @@ public class DataProcessingService {
 
             <div class="content-box">
                 <h2>Mastery Task 3: Implement the Dagger framework</h2>
-                
+
                 <h3>Milestone 1: Plan our Dagger</h3>
-                <p>One of the action items in the design was to replace our initial dependency injection implementation using the App class with the Dagger framework.</p>
-                
+                <p>One of the action items in the design was to replace our initial dependency injection implementation
+                    using the App class with the Dagger framework.</p>
+
                 <div class="caution-box">
-                    <p>Hint: You can find a class in IntelliJ by hitting Command + O and typing the class name (e.g. App).</p>
+                    <p>Hint: You can find a class in IntelliJ by hitting Command + O and typing the class name (e.g.
+                        App).</p>
                 </div>
-                
+
                 <p>Update the template file so you can commit it along with the implementation in milestone 2.</p>
-                
+
                 <h3>Milestone 2: Implementing our Plan</h3>
                 <h4>Implement DaoModule & ServiceComponent</h4>
-                <p>Implement your design from milestone 1 by creating a Module class named DaoModule and a Dagger Component class named ServiceComponent. Remember that ServiceComponent must be annotated with @Singleton and @Component, and we must pass in our module to the component annotation for Dagger to discover it.</p>
-                
+                <p>Implement your design from milestone 1 by creating a Module class named DaoModule and a Dagger
+                    Component class named ServiceComponent. Remember that ServiceComponent must be annotated with
+                    @Singleton and @Component, and we must pass in our module to the component annotation for Dagger to
+                    discover it.</p>
+
                 <p>All Dagger classes should live in the com.amazon.ata.music.playlist.service.dependency package.</p>
-                
+
                 <h4>Build</h4>
-                <p>Note that the Dagger framework will generate code to implement dependency injection for us when we compile our project, so we must annotate our classes, create our ServiceComponent interface, and create the DaoModule class first, then click 'build' to compile our code and let Dagger generate new classes based on our existing @Component, @Module, and @Inject annotated classes.</p>
-                
-                <p>(Note we are using an IntelliJ plugin to make this work. The Dagger annotation processor is included in build.gradle as the plugin net.ltgt.apt-idea' version "0.15" and the dependency annotationProcessor"com.google.dagger:dagger-compiler:2.15".</p>
-                
-                <p>After building, you can navigate to the build directory and find the generated Dagger classes under the classes.java.main.com.amazon.ata.music.playlist.service.dependency package.</p>
-                
-                <p>When we build our code, and because we annotated the interface with @Component, the Dagger framework has enough information to generate a class that implements our ServiceComponent interface. It can also fulfill all of the dependencies based on what classes we declare as return types in our component interface. The class that Dagger creates has Dagger in front of the name to indicate it is created by the framework. Our code can request an instance of this generated class from Dagger to instantiate our dependency objects. This replaces our hand-written App class!</p>
-                
+                <p>Note that the Dagger framework will generate code to implement dependency injection for us when we
+                    compile our project, so we must annotate our classes, create our ServiceComponent interface, and
+                    create the DaoModule class first, then click 'build' to compile our code and let Dagger generate new
+                    classes based on our existing @Component, @Module, and @Inject annotated classes.</p>
+
+                <p>(Note we are using an IntelliJ plugin to make this work. The Dagger annotation processor is included
+                    in build.gradle as the plugin net.ltgt.apt-idea' version "0.15" and the dependency
+                    annotationProcessor"com.google.dagger:dagger-compiler:2.15".</p>
+
+                <p>After building, you can navigate to the build directory and find the generated Dagger classes under
+                    the classes.java.main.com.amazon.ata.music.playlist.service.dependency package.</p>
+
+                <p>When we build our code, and because we annotated the interface with @Component, the Dagger framework
+                    has enough information to generate a class that implements our ServiceComponent interface. It can
+                    also fulfill all of the dependencies based on what classes we declare as return types in our
+                    component interface. The class that Dagger creates has Dagger in front of the name to indicate it is
+                    created by the framework. Our code can request an instance of this generated class from Dagger to
+                    instantiate our dependency objects. This replaces our hand-written App class!</p>
+
                 <h4>Replace use of App (in each of the Activity provider classes)</h4>
-                <p>After verifying that our Dagger classes are generated, let's take a look at the GetPlaylistActivtyProvider class. GetPlaylistActivtyProvider is the entry point to our Lambda and is what handles the request from API Gateway.</p>
-                
-                <p>For example, when we want to use the GetPlaylistActivty handler, we first go through the GetPlaylistActivityProvider class which instantiates a GetPlaylistAcivity along with a playlistDAO and DynamoDBMapper</p>
-                
+                <p>After verifying that our Dagger classes are generated, let's take a look at the
+                    GetPlaylistActivtyProvider class. GetPlaylistActivtyProvider is the entry point to our Lambda and is
+                    what handles the request from API Gateway.</p>
+
+                <p>For example, when we want to use the GetPlaylistActivty handler, we first go through the
+                    GetPlaylistActivityProvider class which instantiates a GetPlaylistAcivity along with a playlistDAO
+                    and DynamoDBMapper</p>
+
                 <pre><code>    @Override
     public GetPlaylistResult handleRequest(final GetPlaylistRequest getPlaylistRequest, Context context) {
         return getApp().provideGetPlaylistActivity().handleRequest(getPlaylistRequest, context);
     }</code></pre>
-                
-                <p>Notice that getApp() implements the singleton pattern to return an App instance once where we can get our Activity objects.</p>
-                
+
+                <p>Notice that getApp() implements the singleton pattern to return an App instance once where we can get
+                    our Activity objects.</p>
+
                 <pre><code>    private App getApp() {
         if (app == null) {
             app = new App();
@@ -506,18 +625,24 @@ public class DataProcessingService {
 
         return app;
     }</code></pre>
-                
-                <p>Rename and update the getApp method to instead return the generated DaggerServiceComponent, following this same singleton pattern. You'll use the DaggerServiceComponent.create() method instead of a constructor.</p>
-                
-                <p>Next, update the GetPlaylistResult methods to use your updated method so that we remove the interaction with the App class and replace it with the DaggerServiceComponent.</p>
-                
+
+                <p>Rename and update the getApp method to instead return the generated DaggerServiceComponent, following
+                    this same singleton pattern. You'll use the DaggerServiceComponent.create() method instead of a
+                    constructor.</p>
+
+                <p>Next, update the GetPlaylistResult methods to use your updated method so that we remove the
+                    interaction with the App class and replace it with the DaggerServiceComponent.</p>
+
                 <p>You will need to do this for each Provider class in the lambda package!</p>
-                
+
                 <h4>Delete App!</h4>
-                <p>After verifying that your service works and previous TCTs pass, you can go ahead and delete the App class! We've completely replaced our old hand-managed dependency class with a much simpler and extendable implementation with Dagger!</p>
-                
-                <p>You can verify your work by running the MT3IntrospectionTests and by uploading your code to your Lambda functions and making sure they work properly.</p>
-                
+                <p>After verifying that your service works and previous TCTs pass, you can go ahead and delete the App
+                    class! We've completely replaced our old hand-managed dependency class with a much simpler and
+                    extendable implementation with Dagger!</p>
+
+                <p>You can verify your work by running the MT3IntrospectionTests and by uploading your code to your
+                    Lambda functions and making sure they work properly.</p>
+
                 <h4>Doneness Checklist</h4>
                 <ul>
                     <li>You've implemented dependency injection with Dagger and removed the App class.</li>
@@ -529,7 +654,8 @@ public class DataProcessingService {
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
-                    <a href="https://dagger.dev/dev-guide/subcomponents" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://dagger.dev/dev-guide/subcomponents" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
                         Dagger Subcomponents Guide
                     </a>
                 </div>
@@ -537,4 +663,5 @@ public class DataProcessingService {
         </section>
     </main>
 </body>
-</html> 
+
+</html>
