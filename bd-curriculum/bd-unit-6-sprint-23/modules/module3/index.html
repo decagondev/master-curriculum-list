@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3: Java Lambda Expressions - BD Unit 6 Sprint 23</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -26,11 +28,11 @@
             </ul>
         </nav>
     </header>
-    
+
     <main class="container">
         <section class="welcome">
             <h1>Module 3: Java Lambda Expressions</h1>
-            
+
             <div class="content-box">
                 <h2>Learning Objectives</h2>
                 <ul>
@@ -39,8 +41,10 @@
                     <li>Design and implement a lambda expression that implements the Consumer interface</li>
                     <li>Design and implement a lambda expression that implements the Predicate interface</li>
                     <li>Design and implement a lambda expression that implements the Function interface</li>
-                    <li>Use a method reference to specify a specific object's instance method when a method accepts a functional interface argument</li>
-                    <li>Use a method reference to specify a class's static method when a method accepts a functional interface argument</li>
+                    <li>Use a method reference to specify a specific object's instance method when a method accepts a
+                        functional interface argument</li>
+                    <li>Use a method reference to specify a class's static method when a method accepts a functional
+                        interface argument</li>
                     <li>Explain that a lambda expression can be used to implement a functional interface</li>
                     <li>Explain what an anonymous method is</li>
                     <li>Define the method signature for a Function's abstract method</li>
@@ -48,7 +52,8 @@
                     <li>Define the method signature for a Consumer's abstract method</li>
                     <li>Define the method signature for a Predicate's abstract method</li>
                     <li>Outline how to handle checked exceptions thrown inside functional interface implementations</li>
-                    <li>Use a method reference to specify an instance method callable on any instance of a specific class, to provide as an argument to a method that accepts a functional interface argument</li>
+                    <li>Use a method reference to specify an instance method callable on any instance of a specific
+                        class, to provide as an argument to a method that accepts a functional interface argument</li>
                     <li>Outline what qualifies a Java interface as a functional interface</li>
                 </ul>
             </div>
@@ -64,36 +69,69 @@
                     <li>Implementing custom functional interfaces</li>
                 </ul>
             </section>
-            
+
             <section class="content-box">
                 <h2>Functional Interfaces with Lambda Expressions</h2>
 
                 <h3>Lambda expressions and interfaces</h3>
-                <p>In a prior lesson, you learned about interfaces in Java such as List&lt;E&gt; for example. Interfaces are "contracts" that define how a class should behave. An interface's method signatures define the behaviors. The methods do not have implementations in the interface, so we call them "abstract". For example, in the List interface, get() and add() are abstract methods. Classes implement interfaces. The implementing classes must implement the interface's abstract methods, matching the method signatures. ArrayList&lt;E&gt; implements List&lt;E&gt;, and overrides the get() and add() methods (as well as the other List methods). This reading covers a group of built-in Java interfaces, called functional interfaces. We also cover a concise way to implement those interfaces with lambda expressions.</p>
+                <p>In a prior lesson, you learned about interfaces in Java such as List&lt;E&gt; for example. Interfaces
+                    are "contracts" that define how a class should behave. An interface's method signatures define the
+                    behaviors. The methods do not have implementations in the interface, so we call them "abstract". For
+                    example, in the List interface, get() and add() are abstract methods. Classes implement interfaces.
+                    The implementing classes must implement the interface's abstract methods, matching the method
+                    signatures. ArrayList&lt;E&gt; implements List&lt;E&gt;, and overrides the get() and add() methods
+                    (as well as the other List methods). This reading covers a group of built-in Java interfaces, called
+                    functional interfaces. We also cover a concise way to implement those interfaces with lambda
+                    expressions.</p>
 
                 <h3>What are functional interfaces and lambda expressions?</h3>
-                <p>We call any interface with exactly one abstract method a "functional interface". The List interface defines multiple methods, so it is not a functional interface. Developers can create new functional interfaces, but the Java library provides some useful functional interfaces as well. We call these the standard Java functional interfaces. We will cover four standard Java functional interfaces, focusing on the Function interface and Supplier interface. We will then learn how to use lambda expressions to implement these functional interfaces without defining a class.</p>
+                <p>We call any interface with exactly one abstract method a "functional interface". The List interface
+                    defines multiple methods, so it is not a functional interface. Developers can create new functional
+                    interfaces, but the Java library provides some useful functional interfaces as well. We call these
+                    the standard Java functional interfaces. We will cover four standard Java functional interfaces,
+                    focusing on the Function interface and Supplier interface. We will then learn how to use lambda
+                    expressions to implement these functional interfaces without defining a class.</p>
 
-                <p>Before we talk about the specifics of each functional interface, let's go over lambda expressions at a high level. Typically, implementing an interface requires writing a full class definition. The class header declares which interface it's implementing, and the class implementation overrides each abstract method. Creating and documenting an entire class could feel like a great deal of effort just to implement the single method in a functional interface. That's where lambda expressions come in handy.</p>
+                <p>Before we talk about the specifics of each functional interface, let's go over lambda expressions at
+                    a high level. Typically, implementing an interface requires writing a full class definition. The
+                    class header declares which interface it's implementing, and the class implementation overrides each
+                    abstract method. Creating and documenting an entire class could feel like a great deal of effort
+                    just to implement the single method in a functional interface. That's where lambda expressions come
+                    in handy.</p>
 
-                <p>As we mentioned, lambda expressions provide a quick way to implement a functional interface without explicitly defining a class or even a formal method declaration. Because each functional interface contains exactly one abstract method, lambda expressions allow us to implement only that one method to satisfy the interface. We don't need to create a class, and since the interface has only one method, we don't even need to name it!</p>
+                <p>As we mentioned, lambda expressions provide a quick way to implement a functional interface without
+                    explicitly defining a class or even a formal method declaration. Because each functional interface
+                    contains exactly one abstract method, lambda expressions allow us to implement only that one method
+                    to satisfy the interface. We don't need to create a class, and since the interface has only one
+                    method, we don't even need to name it!</p>
 
-                <p>Here's a short example of a lambda expression: value -> value == null;. The compiler converts that one line into a class that implements a functional interface. Its single method accepts one parameter (value) and returns a boolean. Imagine writing a whole class definition just for one line of code!</p>
+                <p>Here's a short example of a lambda expression: value -> value == null;. The compiler converts that
+                    one line into a class that implements a functional interface. Its single method accepts one
+                    parameter (value) and returns a boolean. Imagine writing a whole class definition just for one line
+                    of code!</p>
 
-                <p>Since lambda expressions represent a class that implements an interface, you can assign them to a variable that references that interface. (Polymorphism!) They can also be written inline when needed. This means a lambda expression can be written anywhere you can declare or use a variable and can even be written inside another method call.</p>
+                <p>Since lambda expressions represent a class that implements an interface, you can assign them to a
+                    variable that references that interface. (Polymorphism!) They can also be written inline when
+                    needed. This means a lambda expression can be written anywhere you can declare or use a variable and
+                    can even be written inside another method call.</p>
 
-                <p>The Predicate functional interface takes one parameter and returns a boolean. The List method removeIf(Predicate filter) uses Predicate. It invokes the provided Predicate for every value stored in the List and removes it if the Predicate returns true.</p>
+                <p>The Predicate functional interface takes one parameter and returns a boolean. The List method
+                    removeIf(Predicate filter) uses Predicate. It invokes the provided Predicate for every value stored
+                    in the List and removes it if the Predicate returns true.</p>
 
-                <p>If we assume a List called numberList exists and is populated with Integers, we could use our example lambda expression to remove each null value:</p>
+                <p>If we assume a List called numberList exists and is populated with Integers, we could use our example
+                    lambda expression to remove each null value:</p>
 
                 <pre><code>numberList.removeIf(value -> value == null);</code></pre>
 
-                <p>It is less common, but we could also store the Predicate in a local variable, then pass it in to removeIf():</p>
+                <p>It is less common, but we could also store the Predicate in a local variable, then pass it in to
+                    removeIf():</p>
 
                 <pre><code>Predicate&lt;Integer&gt; isNull = value -> value == null;
 numberList.removeIf(isNull);</code></pre>
 
-                <p>If we were to write an explicit class to implement this interface, we'd need a separate class. To call it in removeIf(), we'd need to instantiate it. The examples above are equivalent to:</p>
+                <p>If we were to write an explicit class to implement this interface, we'd need a separate class. To
+                    call it in removeIf(), we'd need to instantiate it. The examples above are equivalent to:</p>
 
                 <pre><code>// CheckIfNull.java
 
@@ -112,31 +150,59 @@ public class CheckIfNull implements Predicate&lt;Integer&gt; {
 Predicate&lt;Integer&gt; checkIfNull = new CheckIfNull();
 numberList.removeIf(checkIfNull);</code></pre>
 
-                <p>That's a lot more complicated than the single-line lambda expression! Lambda expressions are often much quicker and easier to read than an entire class implementation.</p>
+                <p>That's a lot more complicated than the single-line lambda expression! Lambda expressions are often
+                    much quicker and easier to read than an entire class implementation.</p>
 
-                <p>The lambda expression declares a class and a method implementation; it does not invoke the method. In our example above, value is not a defined variable when we write value -> value == null, so Java can't invoke our lambda anyway. Even if a value variable existed, Java would not invoke our lambda; instead, the compiler builds the class the lambda expression defines.</p>
+                <p>The lambda expression declares a class and a method implementation; it does not invoke the method. In
+                    our example above, value is not a defined variable when we write value -> value == null, so Java
+                    can't invoke our lambda anyway. Even if a value variable existed, Java would not invoke our lambda;
+                    instead, the compiler builds the class the lambda expression defines.</p>
 
-                <p>An anonymous method is a method without a formal method declaration. You can define it in-line with a method body only. Lambda expressions are one example of an anonymous method. You have also created an anonymous method in your test code when calling <a href="https://junit.org/junit5/docs/5.0.1/api/org/junit/jupiter/api/Assertions.html#assertThrows-java.lang.Class-org.junit.jupiter.api.function.Executable-" target="_blank" rel="noopener noreferrer">JUnit's assertThrows() method</a>, for example.</p>
+                <p>An anonymous method is a method without a formal method declaration. You can define it in-line with a
+                    method body only. Lambda expressions are one example of an anonymous method. You have also created
+                    an anonymous method in your test code when calling <a
+                        href="https://junit.org/junit5/docs/5.0.1/api/org/junit/jupiter/api/Assertions.html#assertThrows-java.lang.Class-org.junit.jupiter.api.function.Executable-"
+                        target="_blank" rel="noopener noreferrer">JUnit's assertThrows() method</a>, for example.</p>
 
-                <p>Anonymous methods have scope similar to Java variables. Like variables, if a lambda expression is defined at the top of a class and assigned to a variable it has class scope: any method in that class can access the lambda expression.</p>
+                <p>Anonymous methods have scope similar to Java variables. Like variables, if a lambda expression is
+                    defined at the top of a class and assigned to a variable it has class scope: any method in that
+                    class can access the lambda expression.</p>
 
-                <p>A lambda expression defined inside a block of code such as an if statement or for loop has block scope. A lambda expression with block scope cannot be accessed outside of the block of code in which it was declared. Curly braces define a block of code. A lambda expression written in-line such as the example above, numberList.removeIf(value -> value == null); is only available to the method it's passed to (in this case, removeIf()). Note that this is by far the most common usage.</p>
+                <p>A lambda expression defined inside a block of code such as an if statement or for loop has block
+                    scope. A lambda expression with block scope cannot be accessed outside of the block of code in which
+                    it was declared. Curly braces define a block of code. A lambda expression written in-line such as
+                    the example above, numberList.removeIf(value -> value == null); is only available to the method it's
+                    passed to (in this case, removeIf()). Note that this is by far the most common usage.</p>
 
                 <h3>Lambda expression usage</h3>
-                <p>Now that we've discussed the use case for lambda expressions, let's talk about how to create and use one. We'll start with one example of a standard Java functional interface: Function&lt;T,R&gt;, then move on the others.</p>
+                <p>Now that we've discussed the use case for lambda expressions, let's talk about how to create and use
+                    one. We'll start with one example of a standard Java functional interface: Function&lt;T,R&gt;, then
+                    move on the others.</p>
 
                 <h4>The Function interface</h4>
-                <p>The first functional interface we want to introduce is Function&lt;T,R&gt;. This functional interface defines a method that accepts one parameter of type T, and returns a return value of type R. The two types can be any Java class or interface types, and can even be the same type.</p>
+                <p>The first functional interface we want to introduce is Function&lt;T,R&gt;. This functional interface
+                    defines a method that accepts one parameter of type T, and returns a return value of type R. The two
+                    types can be any Java class or interface types, and can even be the same type.</p>
 
-                <p>The <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html" target="_blank" rel="noopener noreferrer">interface definition itself</a> is:</p>
+                <p>The <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html"
+                        target="_blank" rel="noopener noreferrer">interface definition itself</a> is:</p>
 
                 <pre><code>public interface Function&lt;T,R&gt; {
     R apply(T t);
 }</code></pre>
 
-                <p>Notice that this follows the same rules as other Java interfaces that we've seen. The declaration uses the keyword, interface. There is exactly one method signature and it is followed by a semicolon, with no implementation.</p>
+                <p>Notice that this follows the same rules as other Java interfaces that we've seen. The declaration
+                    uses the keyword, interface. There is exactly one method signature and it is followed by a
+                    semicolon, with no implementation.</p>
 
-                <p>Before we show how a lambda expression makes implementing this interface easy, let's look at what a normal implementation would look like. We are going to use an example that assesses the value of an item, returning a String representation of the quality. If the input price is below a certain amount, we return "That's a great price!". If the input price is above a certain amount, we return "That's too expensive!" If the input price is somewhere in the middle, we will return, "That's a fair price.". Let's look at what a full class definition would look like (reminder: we'll declare the class for instructional purposes here, but we'll see how it is actually done in practice shortly):</p>
+                <p>Before we show how a lambda expression makes implementing this interface easy, let's look at what a
+                    normal implementation would look like. We are going to use an example that assesses the value of an
+                    item, returning a String representation of the quality. If the input price is below a certain
+                    amount, we return "That's a great price!". If the input price is above a certain amount, we return
+                    "That's too expensive!" If the input price is somewhere in the middle, we will return, "That's a
+                    fair price.". Let's look at what a full class definition would look like (reminder: we'll declare
+                    the class for instructional purposes here, but we'll see how it is actually done in practice
+                    shortly):</p>
 
                 <pre><code>public class PriceEvaluator implements Function&lt;BigDecimal, String&gt; {
     public String apply(BigDecimal price) {
@@ -150,11 +216,15 @@ numberList.removeIf(checkIfNull);</code></pre>
     }
 }</code></pre>
 
-                <p>To implement the Function interface, the class header must declare that it will implement the interface. Since Function is a generic interface, we must also declare the types being used. We are creating a class named PriceEvaluator that implements the interface Function with BigDecimal as the input type (T) and String as the result type (R):</p>
+                <p>To implement the Function interface, the class header must declare that it will implement the
+                    interface. Since Function is a generic interface, we must also declare the types being used. We are
+                    creating a class named PriceEvaluator that implements the interface Function with BigDecimal as the
+                    input type (T) and String as the result type (R):</p>
 
                 <pre><code>public class PriceEvaluator implements Function&lt;BigDecimal, String&gt;</code></pre>
 
-                <p>Next, we must override Function's abstract method, apply(). This method takes in a BigDecimal, which we've named price, and returns a String:</p>
+                <p>Next, we must override Function's abstract method, apply(). This method takes in a BigDecimal, which
+                    we've named price, and returns a String:</p>
 
                 <pre><code>public String apply(BigDecimal price) {</code></pre>
 
@@ -165,14 +235,17 @@ String response = priceEvaluator.apply(new BigDecimal(5));</code></pre>
 
                 <p>After running this code snippet, the response would be "That's a great price!".</p>
 
-                <p>As we learned with, polymorphism allows us to assign the new instance to a variable that is of the Function interface type, rather than the concrete type. This still allows us to call the apply() method, as it is defined in the interface:</p>
+                <p>As we learned with, polymorphism allows us to assign the new instance to a variable that is of the
+                    Function interface type, rather than the concrete type. This still allows us to call the apply()
+                    method, as it is defined in the interface:</p>
 
                 <pre><code>Function&lt;BigDecimal, String&gt; priceEvaluator = new PriceEvaluator();
 String response = priceEvaluator.apply(new BigDecimal(5));</code></pre>
 
                 <p>After running this code snippet, the response would still be "That's a great price!".</p>
 
-                <p>Let's now use a lambda expression instead of a separate class definition. First, we'll we assign the lambda expression to a variable, also of type Function&lt;BigDecimal, String&gt;:</p>
+                <p>Let's now use a lambda expression instead of a separate class definition. First, we'll we assign the
+                    lambda expression to a variable, also of type Function&lt;BigDecimal, String&gt;:</p>
 
                 <pre><code>Function&lt;BigDecimal, String&gt; priceEvaluator = price -> {
     if (price.compareTo(new BigDecimal(50)) == -1) {
@@ -184,11 +257,19 @@ String response = priceEvaluator.apply(new BigDecimal(5));</code></pre>
     }
 };</code></pre>
 
-                <p>Since the class created by our lambda expression has no name, we can only declare the variable of the interface type on the left-hand side of the equal sign:</p>
+                <p>Since the class created by our lambda expression has no name, we can only declare the variable of the
+                    interface type on the left-hand side of the equal sign:</p>
 
                 <pre><code>Function&lt;BigDecimal, String&gt; priceEvaluator</code></pre>
 
-                <p>This is similar to the example above where we used a class to implement the interface and we could assign it to a variable of the Function type, Function&lt;BigDecimal, String&gt; priceEvaluator = new PriceEvaluator();. The change defines the lambda expression for the implementing method inline rather than in a separate class file. On the right-hand side, we define the lambda expression instead of instantiating a new PriceEvaluator(). This provides the implementation for the Function interface's apply() method that we must override. Because the functional interface has just one method, Java knows exactly which method is being overridden, even though we don't say that we're implementing apply().</p>
+                <p>This is similar to the example above where we used a class to implement the interface and we could
+                    assign it to a variable of the Function type, Function&lt;BigDecimal, String&gt; priceEvaluator =
+                    new PriceEvaluator();. The change defines the lambda expression for the implementing method inline
+                    rather than in a separate class file. On the right-hand side, we define the lambda expression
+                    instead of instantiating a new PriceEvaluator(). This provides the implementation for the Function
+                    interface's apply() method that we must override. Because the functional interface has just one
+                    method, Java knows exactly which method is being overridden, even though we don't say that we're
+                    implementing apply().</p>
 
                 <p>There are three parts to the lambda expression:</p>
                 <ul>
@@ -201,13 +282,21 @@ String response = priceEvaluator.apply(new BigDecimal(5));</code></pre>
 
                 <pre><code>... = price -> {</code></pre>
 
-                <p>The variable price is the single argument to the apply() method. This variable is a BigDecimal. Java knows this by the first generic type declared in Function&lt;BigDecimal, String&gt;. The method argument can also be enclosed in parentheses like this:</p>
+                <p>The variable price is the single argument to the apply() method. This variable is a BigDecimal. Java
+                    knows this by the first generic type declared in Function&lt;BigDecimal, String&gt;. The method
+                    argument can also be enclosed in parentheses like this:</p>
 
                 <pre><code>... = (price) -> {</code></pre>
 
-                <p>When there is only one input argument in the lambda expression, using parentheses is optional. Note that ATA's checkstyle will prevent you from using parentheses if there is only one argument. When there are multiple inputs or no input you must use parentheses.</p>
+                <p>When there is only one input argument in the lambda expression, using parentheses is optional. Note
+                    that ATA's checkstyle will prevent you from using parentheses if there is only one argument. When
+                    there are multiple inputs or no input you must use parentheses.</p>
 
-                <p>After the input argument comes an arrow sign formed with a hyphen (-) and a greater-than sign (>). This separates the inputs from the method implementation. Following the arrow sign is an open curly brace that begins the method implementation. The curly braces are optional if you have only one line of code in your method. Since our example has multiple lines of code, we need the curly braces. The rest of the code sample is:</p>
+                <p>After the input argument comes an arrow sign formed with a hyphen (-) and a greater-than sign (>).
+                    This separates the inputs from the method implementation. Following the arrow sign is an open curly
+                    brace that begins the method implementation. The curly braces are optional if you have only one line
+                    of code in your method. Since our example has multiple lines of code, we need the curly braces. The
+                    rest of the code sample is:</p>
 
                 <pre><code>if (price.compareTo(new BigDecimal(50)) < 0) {
     return "That's a great price!";
@@ -217,7 +306,10 @@ String response = priceEvaluator.apply(new BigDecimal(5));</code></pre>
     return "That's too expensive!";
 }</code></pre>
 
-                <p>In this example, we have multiple return statements, which is fine for a functional interface that has a return value, just as with any method that returns a value. Some functional interfaces define methods with void return type, so they don't require return statements. Others do have return values, but the return statement is implied. We'll see examples of both later in this lesson.</p>
+                <p>In this example, we have multiple return statements, which is fine for a functional interface that
+                    has a return value, just as with any method that returns a value. Some functional interfaces define
+                    methods with void return type, so they don't require return statements. Others do have return
+                    values, but the return statement is implied. We'll see examples of both later in this lesson.</p>
 
                 <p>Once the lambda expression is implemented, we could use it like this:</p>
 
@@ -225,11 +317,19 @@ String response = priceEvaluator.apply(new BigDecimal(5));</code></pre>
 BigDecimal itemPrice = new BigDecimal("49.99");
 priceMap.computeIfAbsent(itemPrice, priceEvaluator);</code></pre>
 
-                <p>priceMap maps prices of items to the String "evaluation" of the price. The method, computeIfAbsent(), accepts a BigDecimal key and a Function. computeIfAbsent() first checks if the map contains the key. If the key already exists, computeIfAbsent() immediately returns. If the key does not exist in the map, computeIfAbsent() will add the key, mapping it to the value returned by calling the lambda expression, passing in itemPrice as its argument. After this code runs, priceMap would contain the entry:</p>
+                <p>priceMap maps prices of items to the String "evaluation" of the price. The method, computeIfAbsent(),
+                    accepts a BigDecimal key and a Function. computeIfAbsent() first checks if the map contains the key.
+                    If the key already exists, computeIfAbsent() immediately returns. If the key does not exist in the
+                    map, computeIfAbsent() will add the key, mapping it to the value returned by calling the lambda
+                    expression, passing in itemPrice as its argument. After this code runs, priceMap would contain the
+                    entry:</p>
 
                 <pre><code>&lt;49.99, "That's a great price!"&gt;</code></pre>
 
-                <p>Now, let's see how Java developers actually write this code: writing lambda expressions inline. Here, we'll pass the lambda expression directly into the computeIfAbsent() method as its second argument, rather than storing it in a local variable first. Because we're not using a variable, we don't have to declare the interface type. Here's what it looks like:</p>
+                <p>Now, let's see how Java developers actually write this code: writing lambda expressions inline. Here,
+                    we'll pass the lambda expression directly into the computeIfAbsent() method as its second argument,
+                    rather than storing it in a local variable first. Because we're not using a variable, we don't have
+                    to declare the interface type. Here's what it looks like:</p>
 
                 <pre><code>map.computeIfAbsent(itemPrice, price -> {
     if (price.compareTo(new BigDecimal(50)) < 0) {
@@ -241,28 +341,46 @@ priceMap.computeIfAbsent(itemPrice, priceEvaluator);</code></pre>
     }
 });</code></pre>
 
-                <p>Using a lambda expression can save time and increase readability compared to the first example where we wrote a whole class to implement this interface. Now that we have walked through an example of lambda expressions using the Function interface, let's move on to another standard Java functional interface, the Supplier interface.</p>
+                <p>Using a lambda expression can save time and increase readability compared to the first example where
+                    we wrote a whole class to implement this interface. Now that we have walked through an example of
+                    lambda expressions using the Function interface, let's move on to another standard Java functional
+                    interface, the Supplier interface.</p>
 
                 <h4>Supplier interface</h4>
-                <p>Our next functional interface is Supplier&lt;T&gt;, where T is the type of the result returned. A Supplier provides an object (often by generating a new one or pulling from a data structure) each time it is called. The code for the interface is:</p>
+                <p>Our next functional interface is Supplier&lt;T&gt;, where T is the type of the result returned. A
+                    Supplier provides an object (often by generating a new one or pulling from a data structure) each
+                    time it is called. The code for the interface is:</p>
 
                 <pre><code>public interface Supplier&lt;T&gt; {
     T get();
 }</code></pre>
 
-                <p>The abstract method in the Supplier functional interface is the get() method. Since get() has no method parameters, we only have one generic type, the result. It does not take input directly, but may access any variables within its scope to compute the next value to return.</p>
+                <p>The abstract method in the Supplier functional interface is the get() method. Since get() has no
+                    method parameters, we only have one generic type, the result. It does not take input directly, but
+                    may access any variables within its scope to compute the next value to return.</p>
 
-                <p>Let's look at an example that generates a random index of a list. We mentioned Suppliers may use variables in its scope to help determine what value to return. In this example we see a Random and a List being used. (For instructional purposes, we'll assign a variable to the lambda.)</p>
+                <p>Let's look at an example that generates a random index of a list. We mentioned Suppliers may use
+                    variables in its scope to help determine what value to return. In this example we see a Random and a
+                    List being used. (For instructional purposes, we'll assign a variable to the lambda.)</p>
 
                 <pre><code>List&lt;String&gt; participants = ImmutableList.of("Ana", "Mary", "Carlos");
 Random random = new Random();
 Supplier&lt;Integer&gt; randIndexGenr = () -> random.nextInt(participants.size());</code></pre>
 
-                <p>We declare a variable of the interface type, Supplier&lt;Integer&gt;. We've named the variable randIndexGenr (short for random index generator, to fit on one line in this reading). On the right side of the equal sign, we begin with empty parentheses: the Supplier functional interface takes no input into its get() method, so the parentheses are required and must be empty. Next, comes the arrow separator and then get()'s implementation. After the arrow, we do not have curly brackets because the body of the method is only one line and thus brackets aren't required. It doesn't appear to have a return statement, but it actually does!:</p>
+                <p>We declare a variable of the interface type, Supplier&lt;Integer&gt;. We've named the variable
+                    randIndexGenr (short for random index generator, to fit on one line in this reading). On the right
+                    side of the equal sign, we begin with empty parentheses: the Supplier functional interface takes no
+                    input into its get() method, so the parentheses are required and must be empty. Next, comes the
+                    arrow separator and then get()'s implementation. After the arrow, we do not have curly brackets
+                    because the body of the method is only one line and thus brackets aren't required. It doesn't appear
+                    to have a return statement, but it actually does!:</p>
 
                 <pre><code>random.nextInt(participants.size());</code></pre>
 
-                <p>If you drop the curly braces from your method, and the functional interface that your lambda expression is implementing has a return value, you drop the keyword return. It is most common to drop the curly braces and the return keyword, so you will often see it written that way! We could write it without this simplification for comparison (but don't do it this way!):</p>
+                <p>If you drop the curly braces from your method, and the functional interface that your lambda
+                    expression is implementing has a return value, you drop the keyword return. It is most common to
+                    drop the curly braces and the return keyword, so you will often see it written that way! We could
+                    write it without this simplification for comparison (but don't do it this way!):</p>
 
                 <pre><code>Supplier&lt;Integer&gt; randomIndexGenerator = () -> {
     return random.nextInt(participants.size());
@@ -276,7 +394,8 @@ Supplier&lt;Integer&gt; randIndexGenr = () -> random.nextInt(participants.size()
     System.out.println("Thank you.");
 }</code></pre>
 
-                <p>As we've seen above, we can pass a lambda expression that we have stored in a variable to the method (not usually done this way):</p>
+                <p>As we've seen above, we can pass a lambda expression that we have stored in a variable to the method
+                    (not usually done this way):</p>
 
                 <pre><code>callOnParticipant(randomIndexGenerator);</code></pre>
 
@@ -284,10 +403,15 @@ Supplier&lt;Integer&gt; randIndexGenr = () -> random.nextInt(participants.size()
 
                 <pre><code>callOnParticipant(() -> random.nextInt(participants.size()));</code></pre>
 
-                <p>Note: The one case where you use a variable to store the lambda expression is if you pass the identical lambda expression into multiple methods. In this case, you should not rewrite the lambda expression inline each time you want to use it. Pass your variable. The inline example is showing how to create and use a lambda expression for a single use. Because the single-use is the most common, you'll most often create and pass your lambda expressions inline.</p>
+                <p>Note: The one case where you use a variable to store the lambda expression is if you pass the
+                    identical lambda expression into multiple methods. In this case, you should not rewrite the lambda
+                    expression inline each time you want to use it. Pass your variable. The inline example is showing
+                    how to create and use a lambda expression for a single use. Because the single-use is the most
+                    common, you'll most often create and pass your lambda expressions inline.</p>
                 <h3>Understanding Functional Interfaces</h3>
 
-                <p>A functional interface in Java is an interface that contains exactly one abstract method. Lambda expressions provide a way to implement these interfaces concisely.</p>
+                <p>A functional interface in Java is an interface that contains exactly one abstract method. Lambda
+                    expressions provide a way to implement these interfaces concisely.</p>
                 <p>Here's an example of a functional interface and its implementation using lambda expression:</p>
                 <pre><code>// Functional interface definition
 @FunctionalInterface
@@ -305,59 +429,104 @@ return sb.reverse().toString();
 String result = reverser.process("Hello");  // Returns "olleH"</code></pre>
                 <p>The key built-in functional interfaces in the java.util.function package include:</p>
                 <ul>
-                    <li><strong>Function&lt;T,R&gt;</strong>: Takes a T argument and returns an R result. Method: <code>R apply(T t)</code></li>
-                    <li><strong>Consumer&lt;T&gt;</strong>: Takes a T argument and returns no result. Method: <code>void accept(T t)</code></li>
-                    <li><strong>Supplier&lt;T&gt;</strong>: Takes no arguments and returns a T result. Method: <code>T get()</code></li>
-                    <li><strong>Predicate&lt;T&gt;</strong>: Takes a T argument and returns a boolean. Method: <code>boolean test(T t)</code></li>
+                    <li><strong>Function&lt;T,R&gt;</strong>: Takes a T argument and returns an R result. Method:
+                        <code>R apply(T t)</code>
+                    </li>
+                    <li><strong>Consumer&lt;T&gt;</strong>: Takes a T argument and returns no result. Method:
+                        <code>void accept(T t)</code>
+                    </li>
+                    <li><strong>Supplier&lt;T&gt;</strong>: Takes no arguments and returns a T result. Method:
+                        <code>T get()</code>
+                    </li>
+                    <li><strong>Predicate&lt;T&gt;</strong>: Takes a T argument and returns a boolean. Method:
+                        <code>boolean test(T t)</code>
+                    </li>
                 </ul>
 
                 <h3>Summary</h3>
-                <p>In this reading we learned about Java's functional interfaces. We showed how a lambda expression can simplify implementing a functional interface using two different specific functional interfaces as examples. In the next reading, we will cover two more common functional interfaces (note: there are many more <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html" target="_blank" rel="noopener noreferrer">Java functional interfaces</a>, but you do not need to know/memorize these; just know that they exist for now). For now, let's stop here so you can give these two functional interfaces a try.</p>
+                <p>In this reading we learned about Java's functional interfaces. We showed how a lambda expression can
+                    simplify implementing a functional interface using two different specific functional interfaces as
+                    examples. In the next reading, we will cover two more common functional interfaces (note: there are
+                    many more <a
+                        href="https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html"
+                        target="_blank" rel="noopener noreferrer">Java functional interfaces</a>, but you do not need to
+                    know/memorize these; just know that they exist for now). For now, let's stop here so you can give
+                    these two functional interfaces a try.</p>
             </section>
 
             <div class="content-box">
                 <h2>More Functional Interfaces with Lambda Expressions</h2>
 
                 <div class="video-container">
-                    <iframe src="https://fast.wistia.net/embed/iframe/lh8c6zfjca" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe src="https://fast.wistia.net/embed/iframe/lh8c6zfjca" title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
                 </div>
 
                 <h3>Functional interfaces continued</h3>
-                <p>In the previous reading we learned about a couple different functional interfaces that are built into Java libraries and how to implement them with lambda expressions. Here we cover two more common functional interfaces, Consumer and Predicate.</p>
+                <p>In the previous reading we learned about a couple different functional interfaces that are built into
+                    Java libraries and how to implement them with lambda expressions. Here we cover two more common
+                    functional interfaces, Consumer and Predicate.</p>
 
                 <h3>Consumer interface</h3>
-                <p>Next up is Consumer, which defines a method that accepts an object as input argument and returns void. Consumers are commonly used when performing an operation on each member of a data structure, or updating another data structure by calling the Consumer on each element. The Consumer&lt;T&gt; interface definition, where T is the type of the argument passed into the operation is:</p>
+                <p>Next up is Consumer, which defines a method that accepts an object as input argument and returns
+                    void. Consumers are commonly used when performing an operation on each member of a data structure,
+                    or updating another data structure by calling the Consumer on each element. The Consumer&lt;T&gt;
+                    interface definition, where T is the type of the argument passed into the operation is:</p>
 
                 <pre><code>public interface Consumer&lt;T&gt; {
     void accept(T t);
 }</code></pre>
 
-                <p>The abstract method in the Consumer interface is the accept() method. This method has one parameter of type T and a void return type.</p>
+                <p>The abstract method in the Consumer interface is the accept() method. This method has one parameter
+                    of type T and a void return type.</p>
 
-                <p>Let's look at a call to a List method, forEach(), that accepts a Consumer, calling that method with a lambda expression implementation of Consumer:</p>
+                <p>Let's look at a call to a List method, forEach(), that accepts a Consumer, calling that method with a
+                    lambda expression implementation of Consumer:</p>
 
                 <pre><code>List&lt;String&gt; customerNames = fetchCustomerNames();
 
 customerNames.forEach(name -> System.out.println("Customer name: " + name));</code></pre>
 
-                <p>The lambda expression, name -> System.out.println("Customer name: " + name), prints out to System.out each customer's name. The lambda expression does not return any value. Since we have one input argument, we do not need parentheses around name. After the arrow, we do not have curly brackets because the body of the method is a single line. There is no return statement because the method we are implementing returns void.</p>
+                <p>The lambda expression, name -> System.out.println("Customer name: " + name), prints out to System.out
+                    each customer's name. The lambda expression does not return any value. Since we have one input
+                    argument, we do not need parentheses around name. After the arrow, we do not have curly brackets
+                    because the body of the method is a single line. There is no return statement because the method we
+                    are implementing returns void.</p>
 
-                <p>The List&lt;String&gt; interface's forEach(Consumer&lt;String&gt; action) method calls the Consumer's accept(String t) method for each entry in the List, passing in the String element as the argument. We could have defined a variable that points to the lambda expression, which demonstrates that the lambda expression is a valid Consumer&lt;String&gt; implementation.</p>
+                <p>The List&lt;String&gt; interface's forEach(Consumer&lt;String&gt; action) method calls the Consumer's
+                    accept(String t) method for each entry in the List, passing in the String element as the argument.
+                    We could have defined a variable that points to the lambda expression, which demonstrates that the
+                    lambda expression is a valid Consumer&lt;String&gt; implementation.</p>
 
                 <pre><code>Consumer&lt;String&gt; printCustomerName = name -> System.out.println("Customer name: " + name));</code></pre>
 
-                <p>(This might be helpful if we needed to pass that lambda to several different method calls, for example, if we needed to call forEach() on several different Lists. But in most cases, you'd use the inline version above)</p>
+                <p>(This might be helpful if we needed to pass that lambda to several different method calls, for
+                    example, if we needed to call forEach() on several different Lists. But in most cases, you'd use the
+                    inline version above)</p>
 
                 <h3>Predicate interface</h3>
-                <p>The final standard Java functional interface we'll discuss in this reading is the Predicate. A Predicate's test(T t) method accepts an object as its input argument, and returns a boolean. A Predicate is often used to filter (in or out) elements from a data structure, or to conditionally perform some operation on elements of a data structure. The functional interface definition of Predicate&lt;T&gt;, where T is the type of input supplied to the operation is:</p>
+                <p>The final standard Java functional interface we'll discuss in this reading is the Predicate. A
+                    Predicate's test(T t) method accepts an object as its input argument, and returns a boolean. A
+                    Predicate is often used to filter (in or out) elements from a data structure, or to conditionally
+                    perform some operation on elements of a data structure. The functional interface definition of
+                    Predicate&lt;T&gt;, where T is the type of input supplied to the operation is:</p>
 
                 <pre><code>public interface Predicate&lt;T&gt; {
     boolean test(T t);
 }</code></pre>
 
-                <p>The abstract method in this functional interface is the test() method. This method has one parameter of type T and a boolean return type. A Predicate performs a test on an object and indicates whether it meets a specified condition or not.</p>
+                <p>The abstract method in this functional interface is the test() method. This method has one parameter
+                    of type T and a boolean return type. A Predicate performs a test on an object and indicates whether
+                    it meets a specified condition or not.</p>
 
-                <p>Here's a call to another List method, removeIf(), that passes each element of the List to a Predicate's test(T t) method, and removes that element from the List if test(T t) returns true for that element. Here, we remove all palindromes from the List&lt;String&gt;, noPalindromesAllowed. The removeIf() method accepts a Predicate, calling the Predicate's test() method on each item in the list. If the item "satisfies the predicate", i.e. test(item) returns true, the item is removed from the list. In this example, if the String is a palindrome, it is removed.</p>
+                <p>Here's a call to another List method, removeIf(), that passes each element of the List to a
+                    Predicate's test(T t) method, and removes that element from the List if test(T t) returns true for
+                    that element. Here, we remove all palindromes from the List&lt;String&gt;, noPalindromesAllowed. The
+                    removeIf() method accepts a Predicate, calling the Predicate's test() method on each item in the
+                    list. If the item "satisfies the predicate", i.e. test(item) returns true, the item is removed from
+                    the list. In this example, if the String is a palindrome, it is removed.</p>
 
                 <pre><code>List&lt;String&gt; noPalidromesAllowed = fetchStringsThatMayIncludePalindromes();
 
@@ -366,11 +535,18 @@ noPalidromesAllowed.removeIf(text -> {
    return text.equals(reversedString);
 });</code></pre>
 
-                <p>Inside the call to removeIf(), we see our input variable, text, the arrow separator, and then test()'s implementation. With only one input argument, we do not need parentheses around the argument, text. After the arrow, we have an open curly brace, as our method is more than one line long. We then have a return statement to return the (boolean) result of the test, a closing curly brace and the parenthesis closing the removeIf() call.</p>
+                <p>Inside the call to removeIf(), we see our input variable, text, the arrow separator, and then
+                    test()'s implementation. With only one input argument, we do not need parentheses around the
+                    argument, text. After the arrow, we have an open curly brace, as our method is more than one line
+                    long. We then have a return statement to return the (boolean) result of the test, a closing curly
+                    brace and the parenthesis closing the removeIf() call.</p>
 
-                <p>For example, if fetchStringsThatMayIncludePalindromes() returned a List that included "tacocat" as one of its elements, this code would remove that element (and any other palindromes) from the List, noPalindromesAllowed.</p>
+                <p>For example, if fetchStringsThatMayIncludePalindromes() returned a List that included "tacocat" as
+                    one of its elements, this code would remove that element (and any other palindromes) from the List,
+                    noPalindromesAllowed.</p>
 
-                <p>If we stored the Predicate in a local variable to reuse across method calls, it would look like this:</p>
+                <p>If we stored the Predicate in a local variable to reuse across method calls, it would look like this:
+                </p>
 
                 <pre><code>Predicate&lt;String&gt; palindromeTest = text -> {
     String reversedString = new StringBuffer(text).reverse().toString();
@@ -378,18 +554,37 @@ noPalidromesAllowed.removeIf(text -> {
 };</code></pre>
 
                 <h3>Checked exceptions in lambda expressions</h3>
-                <p>Sometimes when writing a lambda expression for a standard Java functional interface, a method you're calling can potentially throw a checked exception. The code below takes a string containing a file name, and opens the file for reading data.</p>
+                <p>Sometimes when writing a lambda expression for a standard Java functional interface, a method you're
+                    calling can potentially throw a checked exception. The code below takes a string containing a file
+                    name, and opens the file for reading data.</p>
 
                 <pre><code>Function&lt;String, FileInputStream&gt; fileOpener = filename -> {
     File file = new File(filename);
     return new FileInputStream(file);
 }</code></pre>
 
-                <p>The FileInputStream <a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileInputStream.html#FileInputStream(java.io.File)" target="_blank" rel="noopener noreferrer">constructor</a> can throw a <a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileNotFoundException.html" target="_blank" rel="noopener noreferrer">FileNotFoundException</a>, which is a checked exception (it inherits from Exception via IOException, not RuntimeException) Checked exceptions must be handled or the method must include a throws clause in the method declaration. A lambda expression doesn't have a method declaration to add a throws clause. Further, Function's apply() method doesn't declare throws for any exceptions, so our implementation cannot either (throws clauses are part of a method's signature).</p>
+                <p>The FileInputStream <a
+                        href="https://docs.oracle.com/javase/8/docs/api/java/io/FileInputStream.html#FileInputStream(java.io.File)"
+                        target="_blank" rel="noopener noreferrer">constructor</a> can throw a <a
+                        href="https://docs.oracle.com/javase/8/docs/api/java/io/FileNotFoundException.html"
+                        target="_blank" rel="noopener noreferrer">FileNotFoundException</a>, which is a checked
+                    exception (it inherits from Exception via IOException, not RuntimeException) Checked exceptions must
+                    be handled or the method must include a throws clause in the method declaration. A lambda expression
+                    doesn't have a method declaration to add a throws clause. Further, Function's apply() method doesn't
+                    declare throws for any exceptions, so our implementation cannot either (throws clauses are part of a
+                    method's signature).</p>
 
-                <p>Java doesn't allow lambda expressions to declare throws because they are intended to be concise implementations of a single method interface. Recall from the Polymorphism and Interfaces lesson that when you implement an interface, your methods can only throw narrower exceptions than the method they override. Take a look back at each of the standard Java functional interfaces. None of the methods they define declare checked exceptions.</p>
+                <p>Java doesn't allow lambda expressions to declare throws because they are intended to be concise
+                    implementations of a single method interface. Recall from the Polymorphism and Interfaces lesson
+                    that when you implement an interface, your methods can only throw narrower exceptions than the
+                    method they override. Take a look back at each of the standard Java functional interfaces. None of
+                    the methods they define declare checked exceptions.</p>
 
-                <p>Our other option when handling checked exceptions is to surround them with a try-catch. In the catch block, you may choose to return a special value or throw an unchecked exception. Lambda expressions can't throw checked exceptions, but they can throw unchecked exceptions. Instead of throwing the checked exception we could wrap the exception in an unchecked exception, IllegalArgumentException:</p>
+                <p>Our other option when handling checked exceptions is to surround them with a try-catch. In the catch
+                    block, you may choose to return a special value or throw an unchecked exception. Lambda expressions
+                    can't throw checked exceptions, but they can throw unchecked exceptions. Instead of throwing the
+                    checked exception we could wrap the exception in an unchecked exception, IllegalArgumentException:
+                </p>
 
                 <pre><code>Function&lt;String, FileInputStream&gt; fileOpener = filename -> {
     File file = new File(filename);
@@ -401,7 +596,8 @@ noPalidromesAllowed.removeIf(text -> {
     }
 };</code></pre>
 
-                <p>We could also choose to ignore the not-found files, perhaps logging them for future follow-up (but forcing the calling code to deal with a null return value, which can cause its own challenges):</p>
+                <p>We could also choose to ignore the not-found files, perhaps logging them for future follow-up (but
+                    forcing the calling code to deal with a null return value, which can cause its own challenges):</p>
 
                 <pre><code>Function&lt;String, FileInputStream&gt; fileOpener = filename -> {
     File file = new File(filename);
@@ -414,22 +610,40 @@ noPalidromesAllowed.removeIf(text -> {
 };</code></pre>
 
                 <h3>Summary</h3>
-                <p>Functional interfaces are interfaces that contain only one abstract method. Java contains several standard functional interfaces that you can use and implement. The interfaces covered in the last two readings are Function, Supplier, Consumer, and Predicate, but <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html" target="_blank" rel="noopener noreferrer">there are many more standard functional interfaces</a>. You use lambda expressions to avoid writing a full class definition that implements a functional interface. Lambda expressions provide a concise way to implement these interfaces. Lambda expressions are frequently created inline inside method calls.</p>
+                <p>Functional interfaces are interfaces that contain only one abstract method. Java contains several
+                    standard functional interfaces that you can use and implement. The interfaces covered in the last
+                    two readings are Function, Supplier, Consumer, and Predicate, but <a
+                        href="https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html"
+                        target="_blank" rel="noopener noreferrer">there are many more standard functional
+                        interfaces</a>. You use lambda expressions to avoid writing a full class definition that
+                    implements a functional interface. Lambda expressions provide a concise way to implement these
+                    interfaces. Lambda expressions are frequently created inline inside method calls.</p>
 
-                <p>When writing lambda expressions, be sure you plan for handling checked exceptions. Since lambda expressions cannot throw checked exceptions, one way to handle this is to throw a RuntimeException (subclass) that is a wrapper for the checked exception.</p>
+                <p>When writing lambda expressions, be sure you plan for handling checked exceptions. Since lambda
+                    expressions cannot throw checked exceptions, one way to handle this is to throw a RuntimeException
+                    (subclass) that is a wrapper for the checked exception.</p>
 
-                <p>Before learning about functional interfaces, you were capable of solving each of the problems presented in this lesson, but you would likely have accomplished their solution by writing longer code. The examples in this lesson make use of of a different style of programming called functional programming. We'll continue to see examples written in this style and use more methods that accept functional interfaces as parameters.</p>
+                <p>Before learning about functional interfaces, you were capable of solving each of the problems
+                    presented in this lesson, but you would likely have accomplished their solution by writing longer
+                    code. The examples in this lesson make use of of a different style of programming called functional
+                    programming. We'll continue to see examples written in this style and use more methods that accept
+                    functional interfaces as parameters.</p>
             </div>
 
             <div class="content-box">
                 <h2>Method References</h2>
 
                 <div class="video-container">
-                    <iframe src="https://fast.wistia.net/embed/iframe/2mld4wqa25" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe src="https://fast.wistia.net/embed/iframe/2mld4wqa25" title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
                 </div>
 
                 <h3>Overview</h3>
-                <p>Sometimes a lambda expression does nothing but call an existing method. In those cases, it's often clearer to refer to the existing method by name. Method references enable you to do this; they are compact, easy-to-read lambda expressions for methods that already have a name.</p>
+                <p>Sometimes a lambda expression does nothing but call an existing method. In those cases, it's often
+                    clearer to refer to the existing method by name. Method references enable you to do this; they are
+                    compact, easy-to-read lambda expressions for methods that already have a name.</p>
 
                 <p>A method reference use two colons to separate the class type or object from the method.</p>
 
@@ -437,15 +651,20 @@ noPalidromesAllowed.removeIf(text -> {
 
                 <ul>
                     <li>Reference to an instance method of a particular object
-                        <br>format: containingObject::instanceMethodName</li>
+                        <br>format: containingObject::instanceMethodName
+                    </li>
                     <li>Reference to an instance method of an arbitrary object of a particular type
-                        <br>format: ContainingType::methodName</li>
+                        <br>format: ContainingType::methodName
+                    </li>
                     <li>Reference to a static method
-                        <br>format: ContainingClass::staticMethodName</li>
+                        <br>format: ContainingClass::staticMethodName
+                    </li>
                 </ul>
 
                 <h3>Reference to an Instance Method of a Particular Object</h3>
-                <p>When creating a CacheLoader for a Guava cache, we use the static factory method CacheLoader.from() which accepts a Function. This function tells the CacheLoader how to retrieve data in the case of a cache miss.</p>
+                <p>When creating a CacheLoader for a Guava cache, we use the static factory method CacheLoader.from()
+                    which accepts a Function. This function tells the CacheLoader how to retrieve data in the case of a
+                    cache miss.</p>
 
                 <p>For our example, let DelegateDao be defined as:</p>
 
@@ -467,7 +686,9 @@ noPalidromesAllowed.removeIf(text -> {
             .build(CacheLoader.from( key -> delegateDao.getDataFromDatabase(key) );
     } </code></pre>
 
-                <p>Since our lambda expression does nothing but provide an existing method as the function input, this is an opportunity for a method reference! We can replace our lambda expression with code that follows the pattern containingObject::instanceMethodName.</p>
+                <p>Since our lambda expression does nothing but provide an existing method as the function input, this
+                    is an opportunity for a method reference! We can replace our lambda expression with code that
+                    follows the pattern containingObject::instanceMethodName.</p>
 
                 <p>Our updated CachingDao looks like:</p>
 
@@ -480,14 +701,19 @@ noPalidromesAllowed.removeIf(text -> {
             .build( CacheLoader.from(delegateDao::getDataFromDatabase );
     } </code></pre>
 
-                <p>Note: we don't have any input variable in our new lambda expression that represents a key in the cache. We still have input to our Function, Java is just smart enough to expand the method reference to something like the longer lambda expression: key -> delegateDao.getDataFromDatabase(key).</p>
+                <p>Note: we don't have any input variable in our new lambda expression that represents a key in the
+                    cache. We still have input to our Function, Java is just smart enough to expand the method reference
+                    to something like the longer lambda expression: key -> delegateDao.getDataFromDatabase(key).</p>
 
-                <p>This case differs from the case below in that we need an object to call the method we are referencing. The input to our Function is being used as a argument to the method we are referencing. In the below case, we are calling the method we are referencing on the input object itself.</p>
+                <p>This case differs from the case below in that we need an object to call the method we are
+                    referencing. The input to our Function is being used as a argument to the method we are referencing.
+                    In the below case, we are calling the method we are referencing on the input object itself.</p>
 
                 <h3>Reference to an Instance Method of an Arbitrary Object of a Particular Type</h3>
                 <p>Suppose we have a List of String objects, and we want to remove all empty Strings from the List.</p>
 
-                <p>The removeIf method will remove all elements of a collection that satisfy a given Predicate. It will pass each item in the list to the Predicate to be evaluated.</p>
+                <p>The removeIf method will remove all elements of a collection that satisfy a given Predicate. It will
+                    pass each item in the list to the Predicate to be evaluated.</p>
 
                 <p>We'll use the messages list in our examples below:</p>
 
@@ -499,16 +725,23 @@ noPalidromesAllowed.removeIf(text -> {
 
                 <p>We are utilizing the String object method isEmpty.</p>
 
-                <p>Since our lambda expression does nothing but provide an existing method as the predicate input, this is an opportunity for a method reference! We can replace our lambda expression with code that follows the pattern ContainingClass::methodName.</p>
+                <p>Since our lambda expression does nothing but provide an existing method as the predicate input, this
+                    is an opportunity for a method reference! We can replace our lambda expression with code that
+                    follows the pattern ContainingClass::methodName.</p>
 
                 <pre><code>messages.removeIf( String::isEmpty() );</code></pre>
 
-                <p>Note: we don't have any input variable in our new lambda expression that represents an item from the messages list. We still have input to our Predicate, Java is just smart enough to expand the method reference to something like the longer lambda expression: message -> message.isEmpty().</p>
+                <p>Note: we don't have any input variable in our new lambda expression that represents an item from the
+                    messages list. We still have input to our Predicate, Java is just smart enough to expand the method
+                    reference to something like the longer lambda expression: message -> message.isEmpty().</p>
 
                 <h3>Reference to a Static Method</h3>
-                <p>Suppose we have a List of String objects, and we want to remove, not only empty but also blank or null values in our list. Apache's StringUtils class provides a static method isBlank that checks is the provided String is empty (""), null, or whitespace only (" ").</p>
+                <p>Suppose we have a List of String objects, and we want to remove, not only empty but also blank or
+                    null values in our list. Apache's StringUtils class provides a static method isBlank that checks is
+                    the provided String is empty (""), null, or whitespace only (" ").</p>
 
-                <p>The removeIf method will remove all elements of a collection that satisfy a given Predicate. It will pass each item in the list to the Predicate to be evaluated.</p>
+                <p>The removeIf method will remove all elements of a collection that satisfy a given Predicate. It will
+                    pass each item in the list to the Predicate to be evaluated.</p>
 
                 <p>We'll use the strings list in our examples below:</p>
 
@@ -520,21 +753,28 @@ noPalidromesAllowed.removeIf(text -> {
 
                 <p>We are utilizing the StringUtils static method isBlank.</p>
 
-                <p>Since our lambda expression does nothing but provide an existing method as the predicate input, this is an opportunity for a method reference! We can replace our lambda expression with code that follows the pattern ContainingClass::staticMethodName.</p>
+                <p>Since our lambda expression does nothing but provide an existing method as the predicate input, this
+                    is an opportunity for a method reference! We can replace our lambda expression with code that
+                    follows the pattern ContainingClass::staticMethodName.</p>
 
                 <pre><code>strings.removeIf(StringUtils::isBlank);</code></pre>
 
-                <p>Note: we don't have any input variable in our new lambda expression that represents an item from the strings list. We still have input to our Predicate, Java is just smart enough to expand the method reference to something like the longer lambda expression: s -> StringUtils.isBlank(s).</p>
+                <p>Note: we don't have any input variable in our new lambda expression that represents an item from the
+                    strings list. We still have input to our Predicate, Java is just smart enough to expand the method
+                    reference to something like the longer lambda expression: s -> StringUtils.isBlank(s).</p>
 
                 <h3>Summary</h3>
-                <p>Method references provide a way to write compact lambda expressions that simply reference an existing Java method. They can be used when you are calling an existing method on the input to your lambda expression, or when you are passing your input to an existing method.</p>
+                <p>Method references provide a way to write compact lambda expressions that simply reference an existing
+                    Java method. They can be used when you are calling an existing method on the input to your lambda
+                    expression, or when you are passing your input to an existing method.</p>
             </div>
 
             <section class="content-box">
                 <h2 class="section-title">Advanced Lambda Expressions</h2>
-                
+
                 <h3>Method References</h3>
-                <p>Method references provide an even more concise way to express lambda expressions that simply call an existing method.</p>
+                <p>Method references provide an even more concise way to express lambda expressions that simply call an
+                    existing method.</p>
                 <p>There are four types of method references:</p>
                 <pre><code>// 1. Reference to a static method
 Function&lt;String, Integer&gt; parser = Integer::parseInt;
@@ -548,7 +788,7 @@ Function&lt;String, Integer&gt; lengthFunc = String::length;
 
 // 4. Reference to a constructor
 Supplier&lt;List&lt;String&gt;&gt; listSupplier = ArrayList::new;</code></pre>
-        
+
                 <h3>Lambda Expressions with Streams</h3>
                 <p>Java's Stream API works seamlessly with lambda expressions to process collections of objects:</p>
                 <pre><code>List&lt;String&gt; names = Arrays.asList("Alice", "Bob", "Charlie", "Dave");
@@ -580,14 +820,19 @@ double averageLength = names.stream()
                 <h2>Guided Project</h2>
 
                 <div class="video-container">
-                    <iframe src="https://fast.wistia.net/embed/iframe/2asf78aa5q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe src="https://fast.wistia.net/embed/iframe/2asf78aa5q" title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
                 </div>
 
                 <div class="resource-list">
                     <h3>Resources</h3>
 
-                    <a href="https://github.com/BloomTechBackend/bd-lambda-expressions-stream-methods" target="_blank" rel="noopener noreferrer" class="btn">Lambda Expressions in Streams</a>
-                    <a href="https://github.com/BloomTechBackend/bd-lambda-expressions-ice-cream-service" target="_blank" rel="noopener noreferrer" class="btn">Ice Cream Parlor</a>
+                    <a href="https://github.com/BloomTechBackend/bd-lambda-expressions-stream-methods" target="_blank"
+                        rel="noopener noreferrer" class="btn">Lambda Expressions in Streams</a>
+                    <a href="https://github.com/BloomTechBackend/bd-lambda-expressions-ice-cream-service"
+                        target="_blank" rel="noopener noreferrer" class="btn">Ice Cream Parlor</a>
                 </div>
             </div>
 
@@ -595,18 +840,23 @@ double averageLength = names.stream()
                 <h2>Resources</h2>
                 <div class="card-grid">
                     <div class="card">
-                            <h3>Code-Along Materials</h3>
+                        <h3>Code-Along Materials</h3>
                         <div class="card-body">
-                                <a href="https://github.com/BloomTechBackend/bd-java-lambda-expressions-code-along-starter" target="_blank" rel="noopener noreferrer" class="btn">Lambda Expressions Starter</a>
-                                <a href="https://github.com/BloomTechBackend/bd-java-lambda-expressions-code-along-solution" target="_blank" rel="noopener noreferrer" class="btn">Lambda Expressions Solution</a>
+                            <a href="https://github.com/BloomTechBackend/bd-java-lambda-expressions-code-along-starter"
+                                target="_blank" rel="noopener noreferrer" class="btn">Lambda Expressions Starter</a>
+                            <a href="https://github.com/BloomTechBackend/bd-java-lambda-expressions-code-along-solution"
+                                target="_blank" rel="noopener noreferrer" class="btn">Lambda Expressions Solution</a>
                         </div>
                     </div>
-                    
+
                     <div class="card">
-                            <h3>Practice Projects</h3>
+                        <h3>Practice Projects</h3>
                         <div class="card-body">
-                                <a href="https://github.com/BloomTechBackend/bd-lambda-expressions-stream-methods" target="_blank" rel="noopener noreferrer" class="btn">Lambda Expressions in Streams Project</a>
-                                <a href="https://github.com/BloomTechBackend/bd-lambda-expressions-ice-cream-service" target="_blank" rel="noopener noreferrer" class="btn">Ice Cream Parlor Project</a>
+                            <a href="https://github.com/BloomTechBackend/bd-lambda-expressions-stream-methods"
+                                target="_blank" rel="noopener noreferrer" class="btn">Lambda Expressions in Streams
+                                Project</a>
+                            <a href="https://github.com/BloomTechBackend/bd-lambda-expressions-ice-cream-service"
+                                target="_blank" rel="noopener noreferrer" class="btn">Ice Cream Parlor Project</a>
                         </div>
                     </div>
                 </div>
@@ -614,4 +864,5 @@ double averageLength = names.stream()
         </section>
     </main>
 </body>
-</html> 
+
+</html>
