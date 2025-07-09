@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 1 - Executor Services - BD Unit 7 Sprint 26</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -26,39 +28,50 @@
             </ul>
         </nav>
     </header>
-    
+
     <main class="container">
         <section class="welcome">
             <h1>Module 1 - Executor Services</h1>
-            
+
             <div class="content-box module1-accent">
                 <h2>Module Overview</h2>
-                <p>Learn about ExecutorService and Thread Pools for concurrent programming in Java, enabling you to manage threads more efficiently.</p>
+                <p>Learn about ExecutorService and Thread Pools for concurrent programming in Java, enabling you to
+                    manage threads more efficiently.</p>
             </div>
 
             <div class="content-box">
                 <h2>Learning Objectives</h2>
                 <ul>
-                    <li>Design and implement functionality that uses an ExecutorService to complete independent tasks asynchronously</li>
-                    <li>Implement functionality that executes a task asynchronously by submitting a Runnable to an ExecutorService</li>
-                    <li>Implement code that terminates an ExecutorService without interrupting its executing threads</li>
-                    <li>Recall that an ExecutorService with a cached thread pool will reuse threads that have completed</li>
-                    <li>Recall that an ExecutorService uses a queue to hold tasks that haven't been assigned to a thread yet</li>
+                    <li>Design and implement functionality that uses an ExecutorService to complete independent tasks
+                        asynchronously</li>
+                    <li>Implement functionality that executes a task asynchronously by submitting a Runnable to an
+                        ExecutorService</li>
+                    <li>Implement code that terminates an ExecutorService without interrupting its executing threads
+                    </li>
+                    <li>Recall that an ExecutorService with a cached thread pool will reuse threads that have completed
+                    </li>
+                    <li>Recall that an ExecutorService uses a queue to hold tasks that haven't been assigned to a thread
+                        yet</li>
                     <li>Implement code to instantiate an ExecutorService that uses a cached thread pool</li>
                     <li>Explain the purpose of using an ExecutorService</li>
-                    <li>Outline when to use the newCachedThreadPool(), submit(), and shutdown() methods of the ExecutorService class</li>
+                    <li>Outline when to use the newCachedThreadPool(), submit(), and shutdown() methods of the
+                        ExecutorService class</li>
                     <li>Explain the benefits of using a cached thread pool</li>
                 </ul>
             </div>
 
             <div class="content-box">
                 <h2>Introduction to ExecutorService</h2>
-            
+
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Introduction to ExecutorService" src="https://fast.wistia.net/embed/iframe/3gmd8xk2dv" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Introduction to ExecutorService"
+                        src="https://fast.wistia.net/embed/iframe/3gmd8xk2dv" width="100%" height="360"
+                        name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
 
-                <p>The ExecutorService provides a higher-level replacement for working with threads directly. It separates task submission from execution details, allowing you to focus on <i>what</i> needs to be run rather than <i>how</i> it should be run.</p>
+                <p>The ExecutorService provides a higher-level replacement for working with threads directly. It
+                    separates task submission from execution details, allowing you to focus on <i>what</i> needs to be
+                    run rather than <i>how</i> it should be run.</p>
                 <p>Key benefits of ExecutorService include:</p>
                 <ul>
                     <li>Thread pooling and reuse</li>
@@ -77,25 +90,56 @@ executor.submit(() -> {
 executor.shutdown();</code></pre>
 
                 <h2>Overview</h2>
-                <p>In this lesson, we are focusing on another way to use threads called an ExecutorService. ExecutorService is an interface that makes it easy for us to use threading in our programs. With it, we can gain the benefits of concurrency with less effort. We simply submit tasks to it, and it handles the creation and maintenance of threads on its own through the use of thread pools.</p>
+                <p>In this lesson, we are focusing on another way to use threads called an ExecutorService.
+                    ExecutorService is an interface that makes it easy for us to use threading in our programs. With it,
+                    we can gain the benefits of concurrency with less effort. We simply submit tasks to it, and it
+                    handles the creation and maintenance of threads on its own through the use of thread pools.</p>
 
-                <p>In this reading, we'll focus on ExecutorService and how it works. We'll cover how to submit tasks to the service and what happens to those tasks once we do. We finish off the reading with how to properly shutdown an ExecutorService when we've completed our tasks.</p>
+                <p>In this reading, we'll focus on ExecutorService and how it works. We'll cover how to submit tasks to
+                    the service and what happens to those tasks once we do. We finish off the reading with how to
+                    properly shutdown an ExecutorService when we've completed our tasks.</p>
 
-                <p>In the next reading, we'll learn about thread pool functionality. We'll explain the lifecycle of how they create and reuse threads, and how they are used by ExecutorService.</p>
+                <p>In the next reading, we'll learn about thread pool functionality. We'll explain the lifecycle of how
+                    they create and reuse threads, and how they are used by ExecutorService.</p>
 
                 <h2>Intro to ExecutorService</h2>
-                <p>As we covered in previous lessons, threading is a useful tool that lets us expand the power of our programs and execute several tasks at once. In this lesson, we dive into ExecutorService, which makes it easier for us to utilize the benefits of threads.</p>
+                <p>As we covered in previous lessons, threading is a useful tool that lets us expand the power of our
+                    programs and execute several tasks at once. In this lesson, we dive into ExecutorService, which
+                    makes it easier for us to utilize the benefits of threads.</p>
 
-                <p>ExecutorService is an interface that manages threads and tasks. We submit tasks to it, in the form of Runnable interfaces. Each task we submit gets added to a queue in the ExecutorService, which uses a thread pool (more on those next reading), to create and maintain threads. When a thread is available for a task, the ExecutorService takes the next task in its queue and executes it in that thread.</p>
+                <p>ExecutorService is an interface that manages threads and tasks. We submit tasks to it, in the form of
+                    Runnable interfaces. Each task we submit gets added to a queue in the ExecutorService, which uses a
+                    thread pool (more on those next reading), to create and maintain threads. When a thread is available
+                    for a task, the ExecutorService takes the next task in its queue and executes it in that thread.</p>
 
-                <p>This interface saves us from manually creating threads to pass Runnable interfaces to each time we want to use threading. On top of that, the ExecutorService can take on more than one task at a time. We don't have to create a new service for each task. You can think of ExecutorService like the cab station at an airport. You submit tasks to its queue, and it runs down the queue, assigning tasks to threads as they become available.</p>
+                <p>This interface saves us from manually creating threads to pass Runnable interfaces to each time we
+                    want to use threading. On top of that, the ExecutorService can take on more than one task at a time.
+                    We don't have to create a new service for each task. You can think of ExecutorService like the cab
+                    station at an airport. You submit tasks to its queue, and it runs down the queue, assigning tasks to
+                    threads as they become available.</p>
 
-                <p>To see this in practice, let's consider the process of creating an account on the Amazon retail site. In this scenario, a user enters in personal information, payment details, and a photo avatar. When the user clicks on the "create account" button, the Amazon site performs several functions in the background. First, it must populate a new account with the info provided. Next, it needs to send the payment details to a secure server. Then it uploads the avatar to the Amazon photo service. Using an ExecutorService would be a good solution for these functions, as those calls could all be put in independent Runnable tasks and submitted to the ExecutorService when the user clicks on "create account". The user could then continue using the site while the account is created behind the scenes.</p>
+                <p>To see this in practice, let's consider the process of creating an account on the Amazon retail site.
+                    In this scenario, a user enters in personal information, payment details, and a photo avatar. When
+                    the user clicks on the "create account" button, the Amazon site performs several functions in the
+                    background. First, it must populate a new account with the info provided. Next, it needs to send the
+                    payment details to a secure server. Then it uploads the avatar to the Amazon photo service. Using an
+                    ExecutorService would be a good solution for these functions, as those calls could all be put in
+                    independent Runnable tasks and submitted to the ExecutorService when the user clicks on "create
+                    account". The user could then continue using the site while the account is created behind the
+                    scenes.</p>
 
                 <h2>Using an ExecutorService</h2>
-                <p>ExecutorService operates similarly to passing a Runnable interface to a thread object. The difference is that we don't need to create a thread object each time we want to run a Runnable interface, we just submit it to the ExecutorService. In the code snippet below, we're continuing with the Amazon account creation example to demonstrate the use of an ExecutorService.</p>
+                <p>ExecutorService operates similarly to passing a Runnable interface to a thread object. The difference
+                    is that we don't need to create a thread object each time we want to run a Runnable interface, we
+                    just submit it to the ExecutorService. In the code snippet below, we're continuing with the Amazon
+                    account creation example to demonstrate the use of an ExecutorService.</p>
 
-                <p>You'll note that we're using a lambda version of Runnable rather than a class implementation. With the lambda we can just pass in the code we want to run, instead of creating a new class with a run() method. We want to show how ExecutorService can have different tasks submitted to it. In your programs there may be similar reasons to use a lambda Runnable task over declaring a Runnable class. Submitting a class to ExecutorService works the same way as this as long as it implements Runnable.</p>
+                <p>You'll note that we're using a lambda version of Runnable rather than a class implementation. With
+                    the lambda we can just pass in the code we want to run, instead of creating a new class with a run()
+                    method. We want to show how ExecutorService can have different tasks submitted to it. In your
+                    programs there may be similar reasons to use a lambda Runnable task over declaring a Runnable class.
+                    Submitting a class to ExecutorService works the same way as this as long as it implements Runnable.
+                </p>
 
                 <pre><code>public class AmazonAccountManager {
     Runnable uploadPhoto = () -> {
@@ -134,7 +178,11 @@ Uploading photo.</code></pre>
 
                 <pre><code>executor = Executors.newCachedThreadPool();</code></pre>
 
-                <p>We create the ExecutorService by creating a newCachedThreadPool(). We'll be covering what a cached thread pool is in the next reading, so for now you just need to know it creates the ExecutorService. It should be noted that ExecutorService runs asynchronously. Meaning that once it's created, it operates concurrently to the main path of execution in your program. Not only does it execute the submitted tasks in other threads, the ExecutorService itself is operating in a different thread.</p>
+                <p>We create the ExecutorService by creating a newCachedThreadPool(). We'll be covering what a cached
+                    thread pool is in the next reading, so for now you just need to know it creates the ExecutorService.
+                    It should be noted that ExecutorService runs asynchronously. Meaning that once it's created, it
+                    operates concurrently to the main path of execution in your program. Not only does it execute the
+                    submitted tasks in other threads, the ExecutorService itself is operating in a different thread.</p>
 
                 <p>Next, we have these three method calls:</p>
 
@@ -142,41 +190,77 @@ Uploading photo.</code></pre>
 executor.submit(submitAccountInfo);
 executor.submit(submitBankInfo);</code></pre>
 
-                <p>This is how we submit tasks to the ExecutorService. The submit() method accepts a Runnable task as a parameter and sends it to the service. This is the same as creating a Thread object and passing in the Runnable task that way. submit() also returns a Future with information about the task's completion and return value, but we'll cover that in more detail in the upcoming Futures lesson.</p>
+                <p>This is how we submit tasks to the ExecutorService. The submit() method accepts a Runnable task as a
+                    parameter and sends it to the service. This is the same as creating a Thread object and passing in
+                    the Runnable task that way. submit() also returns a Future with information about the task's
+                    completion and return value, but we'll cover that in more detail in the upcoming Futures lesson.</p>
 
                 <p>Lastly, we have the final line to look at:</p>
 
                 <pre><code>executor.shutdown();</code></pre>
 
-                <p>This shuts down the ExecutorService in a controlled manner (or "gracefully"). Since ExecutorService runs in its own thread in the background, we need to manually shut it down when we are done with it, otherwise it can potentially keep running even after our method completes. We'll look at this more closely later in this reading.</p>
+                <p>This shuts down the ExecutorService in a controlled manner (or "gracefully"). Since ExecutorService
+                    runs in its own thread in the background, we need to manually shut it down when we are done with it,
+                    otherwise it can potentially keep running even after our method completes. We'll look at this more
+                    closely later in this reading.</p>
 
                 <h2>Using submit()</h2>
-                <p>There are a few more things to observe in this code. First, notice how we're able to submit more than one task in a row to the ExecutorService. Before, we created a new Thread for each Runnable task we wanted to run. Here, submit(), which accepts a Runnable, does that for us. The submit() call has the same effect as passing in a Runnable to a thread, and then calling Thread.start() to start the run() method.</p>
+                <p>There are a few more things to observe in this code. First, notice how we're able to submit more than
+                    one task in a row to the ExecutorService. Before, we created a new Thread for each Runnable task we
+                    wanted to run. Here, submit(), which accepts a Runnable, does that for us. The submit() call has the
+                    same effect as passing in a Runnable to a thread, and then calling Thread.start() to start the run()
+                    method.</p>
 
-                <p>It should be noted that the submit() call doesn't start a new thread immediately, all it does is add it to the ExecutorService task queue. The ExecutorService then assigns it to the next available thread in the thread pool once the task reaches the front of the queue. We have no direct control over when the execution happens (though for our purposes it will usually be right away). The ExecutorService doesn't change the functionality of our threads. It just simplifies the management of them.</p>
+                <p>It should be noted that the submit() call doesn't start a new thread immediately, all it does is add
+                    it to the ExecutorService task queue. The ExecutorService then assigns it to the next available
+                    thread in the thread pool once the task reaches the front of the queue. We have no direct control
+                    over when the execution happens (though for our purposes it will usually be right away). The
+                    ExecutorService doesn't change the functionality of our threads. It just simplifies the management
+                    of them.</p>
 
-                <p>The submit() call takes in a task and returns a Future object which holds information about the task, such as whether it has completed yet. Future can also give us a result from a completed task, but we need to submit a Callable instead of a Runnable to get a return value. We will go deeper into both Future and Callable in the next lesson.</p>
+                <p>The submit() call takes in a task and returns a Future object which holds information about the task,
+                    such as whether it has completed yet. Future can also give us a result from a completed task, but we
+                    need to submit a Callable instead of a Runnable to get a return value. We will go deeper into both
+                    Future and Callable in the next lesson.</p>
 
                 <h2>Shutting down an ExecutorService</h2>
-                <p>As part of operating an ExecutorService, it's important to know that we need to manually shut it down when we are done using it. Since ExecutorService runs concurrently in the background, it doesn't terminate when our program does. However, in most cases we want to shut down the service only after it doesn't have any active tasks. That's where the shutdown() method comes in.</p>
+                <p>As part of operating an ExecutorService, it's important to know that we need to manually shut it down
+                    when we are done using it. Since ExecutorService runs concurrently in the background, it doesn't
+                    terminate when our program does. However, in most cases we want to shut down the service only after
+                    it doesn't have any active tasks. That's where the shutdown() method comes in.</p>
 
-                <p>As mentioned before, shutdown() ends an ExecutorService gracefully. While there is a method shutdownNow(), which immediately stops the ExecutorService and any executing tasks, that would not be ideal as there may be tasks still executing or waiting to be executed that we still want to complete. What we want is to turn off the ExecutorService without slamming the brakes on execution. Calling shutdown()stops the service eventually, but only after all the current tasks in its queue are complete. Any tasks submitted after shutdown() is called will not be added to the queue. Using shutdown() to stop the ExecutorService gracefully lets us stop accepting more work without interrupting any active tasks.</p>
+                <p>As mentioned before, shutdown() ends an ExecutorService gracefully. While there is a method
+                    shutdownNow(), which immediately stops the ExecutorService and any executing tasks, that would not
+                    be ideal as there may be tasks still executing or waiting to be executed that we still want to
+                    complete. What we want is to turn off the ExecutorService without slamming the brakes on execution.
+                    Calling shutdown()stops the service eventually, but only after all the current tasks in its queue
+                    are complete. Any tasks submitted after shutdown() is called will not be added to the queue. Using
+                    shutdown() to stop the ExecutorService gracefully lets us stop accepting more work without
+                    interrupting any active tasks.</p>
 
                 <h2>Summary</h2>
-                <p>To summarize, the ExecutorService is an interface that provides concurrent thread management to let us use threading easily. With ExecutorService we can submit many tasks for execution without having to manually create a new thread for each task. We are responsible for shutting ExecutorService down manually by calling shutdown() after we have submitted all of our tasks.</p>
+                <p>To summarize, the ExecutorService is an interface that provides concurrent thread management to let
+                    us use threading easily. With ExecutorService we can submit many tasks for execution without having
+                    to manually create a new thread for each task. We are responsible for shutting ExecutorService down
+                    manually by calling shutdown() after we have submitted all of our tasks.</p>
 
                 <h2>Up Next</h2>
-                <p>In the next reading we'll dive into thread pools, how they work, and how they are used by ExecutorService.</p>
+                <p>In the next reading we'll dive into thread pools, how they work, and how they are used by
+                    ExecutorService.</p>
             </div>
 
             <div class="content-box">
                 <h2>Understanding Thread Pools</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Introduction to Thread Pools" src="https://fast.wistia.net/embed/iframe/71nkbgxrof" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Introduction to Thread Pools"
+                        src="https://fast.wistia.net/embed/iframe/71nkbgxrof" width="100%" height="360"
+                        name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
 
-                <p>Thread pools manage a collection of worker threads that efficiently execute submitted tasks. The cached thread pool dynamically adjusts its size based on workload, reusing idle threads when possible and creating new ones when needed.</p>
+                <p>Thread pools manage a collection of worker threads that efficiently execute submitted tasks. The
+                    cached thread pool dynamically adjusts its size based on workload, reusing idle threads when
+                    possible and creating new ones when needed.</p>
                 <p>Benefits of cached thread pools:</p>
                 <ul>
                     <li>Reduced overhead from thread creation and destruction</li>
@@ -196,25 +280,60 @@ for (int i = 0; i < 10; i++) {
 }</code></pre>
 
                 <h2>Overview</h2>
-                <p>In this lesson, we are focusing on the concepts behind the ExecutorService interface, the thread pool, and how it makes it easy for us to use threading in our programs. With thread pools, we can simply submit tasks to the ExecutorService, and the thread pool handles the management of threads by recycling existing threads or creating new ones as necessary.</p>
+                <p>In this lesson, we are focusing on the concepts behind the ExecutorService interface, the thread
+                    pool, and how it makes it easy for us to use threading in our programs. With thread pools, we can
+                    simply submit tasks to the ExecutorService, and the thread pool handles the management of threads by
+                    recycling existing threads or creating new ones as necessary.</p>
 
-                <p>In the last reading, we focused on ExecutorService and how it works. We covered how to submit tasks to the ExecutorService and what happened to those tasks once we did. We finished off the reading with how to properly shutdown an ExecutorService after we had submitted all of our tasks.</p>
+                <p>In the last reading, we focused on ExecutorService and how it works. We covered how to submit tasks
+                    to the ExecutorService and what happened to those tasks once we did. We finished off the reading
+                    with how to properly shutdown an ExecutorService after we had submitted all of our tasks.</p>
 
-                <p>In this reading, we focus on thread pool fundamentals and benefits. We go into the lifecycle of how they create and recycle threads, and finally we explain how they are used by ExecutorService.</p>
+                <p>In this reading, we focus on thread pool fundamentals and benefits. We go into the lifecycle of how
+                    they create and recycle threads, and finally we explain how they are used by ExecutorService.</p>
 
                 <h2>Intro to thread pools</h2>
-                <p>In the last lesson, we briefly mentioned that thread pools are how ExecutorService manage threads. When we initially introduced threading, we said that creating threads is expensive because creating them requires extra processing power to allocate the resources needed. In spite of the added benefits of threading, we cautioned that creating many threads for trivial tasks could slow down the speed of a program. Thread pools provide a solution that mitigates some of these issues.</p>
+                <p>In the last lesson, we briefly mentioned that thread pools are how ExecutorService manage threads.
+                    When we initially introduced threading, we said that creating threads is expensive because creating
+                    them requires extra processing power to allocate the resources needed. In spite of the added
+                    benefits of threading, we cautioned that creating many threads for trivial tasks could slow down the
+                    speed of a program. Thread pools provide a solution that mitigates some of these issues.</p>
 
-                <p>With ExecutorService, we have an interface that helps us create threads for shorter tasks. ExecutorService minimizes processor usage by recycling threads instead of constantly creating new ones. Even with ExecutorService, a performance hit can still be a problem, but recycling reduces the cost greatly. The recycling of threads is done using thread pools.</p>
+                <p>With ExecutorService, we have an interface that helps us create threads for shorter tasks.
+                    ExecutorService minimizes processor usage by recycling threads instead of constantly creating new
+                    ones. Even with ExecutorService, a performance hit can still be a problem, but recycling reduces the
+                    cost greatly. The recycling of threads is done using thread pools.</p>
 
-                <p>ExecutorService uses a thread pool to manage the threads for tasks. Instead of making a new thread each time a task is submitted, a thread pool can reuse threads that have completed, recycling them for more tasks in the ExecutorService queue. There are a few types of thread pools available, but we will be focusing on cached thread pools for this lesson. At creation, cached thread pools won't have any active threads. When the ExecutorService has tasks submitted to it, those tasks are added to its task queue. A cached thread pool creates a new thread when there isn't a thread available for the next task in the ExecutorService task queue. Once a task in a thread is completed, the cached thread pool marks that thread as available for one minute. If a new task appears in the queue in that time, the thread is recycled and the new task is assigned to the available thread. If unused, the thread is terminated after the time runs out. This process of thread creation, reuse, and deletion continues until the ExecutorService is shut down. This saves us from managing each thread on its own; the thread pool and ExecutorService do that job for us.</p>
+                <p>ExecutorService uses a thread pool to manage the threads for tasks. Instead of making a new thread
+                    each time a task is submitted, a thread pool can reuse threads that have completed, recycling them
+                    for more tasks in the ExecutorService queue. There are a few types of thread pools available, but we
+                    will be focusing on cached thread pools for this lesson. At creation, cached thread pools won't have
+                    any active threads. When the ExecutorService has tasks submitted to it, those tasks are added to its
+                    task queue. A cached thread pool creates a new thread when there isn't a thread available for the
+                    next task in the ExecutorService task queue. Once a task in a thread is completed, the cached thread
+                    pool marks that thread as available for one minute. If a new task appears in the queue in that time,
+                    the thread is recycled and the new task is assigned to the available thread. If unused, the thread
+                    is terminated after the time runs out. This process of thread creation, reuse, and deletion
+                    continues until the ExecutorService is shut down. This saves us from managing each thread on its
+                    own; the thread pool and ExecutorService do that job for us.</p>
 
-                <p>The primary use for thread pools and ExecutorService is for short-term and input/output bound tasks. Tasks like uploading a photo are ideal, because they have a short computation time with most time spent waiting for network communication. Long-term tasks, such as waiting for user input, are not as good because they don't have a well-defined end. Those types of tasks may be better off using their own thread separate from a thread pool. Remember that ExecutorService is designed to keep reusing threads, so tasks that are quick to complete will get the most benefit out of them.</p>
+                <p>The primary use for thread pools and ExecutorService is for short-term and input/output bound tasks.
+                    Tasks like uploading a photo are ideal, because they have a short computation time with most time
+                    spent waiting for network communication. Long-term tasks, such as waiting for user input, are not as
+                    good because they don't have a well-defined end. Those types of tasks may be better off using their
+                    own thread separate from a thread pool. Remember that ExecutorService is designed to keep reusing
+                    threads, so tasks that are quick to complete will get the most benefit out of them.</p>
 
-                <p>It is important to note that thread pools do not negate the problems around using threads! Race conditions, limited memory, and other issues can still be present and should be kept in mind. Thread pools only simplify the creation and reuse of threads for us.</p>
+                <p>It is important to note that thread pools do not negate the problems around using threads! Race
+                    conditions, limited memory, and other issues can still be present and should be kept in mind. Thread
+                    pools only simplify the creation and reuse of threads for us.</p>
 
                 <h2>Looking back at the AmazonAccountManager</h2>
-                <p>Let's look at the code example from the last reading. Recall that this program is creating a new Amazon user account. We have lambda Runnable tasks for uploading a photo, submitting account info, and submitting bank info. In the constructor we initialize our ExecutorService by calling newCachedThreadPool(). In the createAccount() method, we make three submit() calls to pass in the three tasks, then shut down the ExecutorService.</p>
+                <p>Let's look at the code example from the last reading. Recall that this program is creating a new
+                    Amazon user account. We have lambda Runnable tasks for uploading a photo, submitting account info,
+                    and submitting bank info. In the constructor we initialize our ExecutorService by calling
+                    newCachedThreadPool(). In the createAccount() method, we make three submit() calls to pass in the
+                    three tasks, then shut down the ExecutorService.</p>
 
                 <pre><code>public class AmazonAccountManager {
     Runnable uploadPhoto = () -> {
@@ -250,41 +369,73 @@ Securely submitting bank info.
 Uploading photo.
 Submitting account info.</code></pre>
 
-                <p>Let's look again at the line where we create our ExecutorService instance. Although we looked at it briefly in the last reading, we didn't talk about it in detail.</p>
+                <p>Let's look again at the line where we create our ExecutorService instance. Although we looked at it
+                    briefly in the last reading, we didn't talk about it in detail.</p>
 
                 <pre><code>executor = Executors.newCachedThreadPool();</code></pre>
 
-                <p>This line is where we create the thread pool. More specifically, we create a cached thread pool. As discussed above, this type of thread pool creates a new thread if none are currently available and keeps idle ones alive for one minute. This works well if your program has many short-term tasks to execute concurrently. While other types of thread pools exist for more specific scenarios, the cached thread pool used here is a good default choice and will be sufficient for your work in this unit.</p>
+                <p>This line is where we create the thread pool. More specifically, we create a cached thread pool. As
+                    discussed above, this type of thread pool creates a new thread if none are currently available and
+                    keeps idle ones alive for one minute. This works well if your program has many short-term tasks to
+                    execute concurrently. While other types of thread pools exist for more specific scenarios, the
+                    cached thread pool used here is a good default choice and will be sufficient for your work in this
+                    unit.</p>
 
-                <p>Moving on to the submit() calls, we know these are passing in the Runnable tasks. Let's talk about what exactly happens to them after that.</p>
+                <p>Moving on to the submit() calls, we know these are passing in the Runnable tasks. Let's talk about
+                    what exactly happens to them after that.</p>
 
                 <pre><code>executor.submit(uploadPhoto);
 executor.submit(submitAccountInfo);
 executor.submit(submitBankInfo);</code></pre>
 
-                <p>In the last reading, we said that these calls are like calling start() on a single thread. When submit is called, the tasks are added to the task queue in ExecutorService. The task queue is just like the Queues we learned about in the last unit; the first task added to it will be the first task assigned to a thread. The only control we have over this queue, however, is the order the tasks will be added to it. Keep in mind that all these tasks are executed concurrently in their threads! The last task added could still complete before the first task, depending on how long it takes each task to run.</p>
+                <p>In the last reading, we said that these calls are like calling start() on a single thread. When
+                    submit is called, the tasks are added to the task queue in ExecutorService. The task queue is just
+                    like the Queues we learned about in the last unit; the first task added to it will be the first task
+                    assigned to a thread. The only control we have over this queue, however, is the order the tasks will
+                    be added to it. Keep in mind that all these tasks are executed concurrently in their threads! The
+                    last task added could still complete before the first task, depending on how long it takes each task
+                    to run.</p>
 
-                <p>These calls do not directly create a new thread in the thread pool, however. As explained above, if there is a task waiting in the ExecutorService queue, a cached thread pool will either reuse a completed thread if one is available or else create a new thread and assign the task to it. This process repeats until there are no tasks in the ExecutorService queue. Once its task is completed, a thread remains idle for one minute. If no task is assigned to the thread before it times out, it is terminated.</p>
+                <p>These calls do not directly create a new thread in the thread pool, however. As explained above, if
+                    there is a task waiting in the ExecutorService queue, a cached thread pool will either reuse a
+                    completed thread if one is available or else create a new thread and assign the task to it. This
+                    process repeats until there are no tasks in the ExecutorService queue. Once its task is completed, a
+                    thread remains idle for one minute. If no task is assigned to the thread before it times out, it is
+                    terminated.</p>
 
-                <p>In the last unit we said that creating threads for each task is expensive for the processor. Using an ExecutorService can make threading more efficient. In this code snippet, a task could be completed before the thread pool has a need to create a new thread for the next task, allowing the first task's thread to be reused. Not to mention using ExecutorService is simpler to use, compared to manually creating new threads for these tasks.</p>
+                <p>In the last unit we said that creating threads for each task is expensive for the processor. Using an
+                    ExecutorService can make threading more efficient. In this code snippet, a task could be completed
+                    before the thread pool has a need to create a new thread for the next task, allowing the first
+                    task's thread to be reused. Not to mention using ExecutorService is simpler to use, compared to
+                    manually creating new threads for these tasks.</p>
 
                 <p>In the last line of createAccount(), we have the method call to terminate the ExecutorService.</p>
 
                 <pre><code>executor.shutdown();</code></pre>
 
-                <p>As part of the termination process, the ExecutorService stops adding tasks to its queue. Any tasks submitted to it after the shutdown() won't be executed. The thread pool will continue its normal operation, including creating new threads for unassigned tasks. The pool won't terminate until all tasks are completed.</p>
+                <p>As part of the termination process, the ExecutorService stops adding tasks to its queue. Any tasks
+                    submitted to it after the shutdown() won't be executed. The thread pool will continue its normal
+                    operation, including creating new threads for unassigned tasks. The pool won't terminate until all
+                    tasks are completed.</p>
 
                 <h2>Conclusion</h2>
-                <p>In this lesson, we've covered how ExecutorService and thread pools function, and how they benefit your program's efficiency. We learned how they can have many tasks assigned to them to be executed concurrently. We also learned how they manage threads behind the scenes by queuing up tasks and only using resources when needed. This framework saves time and hassle when you have many tasks that need concurrent execution. While they aren't a catch-all for every situation that uses threads, they are a good solution for efficiently managing many threads at once.</p>
+                <p>In this lesson, we've covered how ExecutorService and thread pools function, and how they benefit
+                    your program's efficiency. We learned how they can have many tasks assigned to them to be executed
+                    concurrently. We also learned how they manage threads behind the scenes by queuing up tasks and only
+                    using resources when needed. This framework saves time and hassle when you have many tasks that need
+                    concurrent execution. While they aren't a catch-all for every situation that uses threads, they are
+                    a good solution for efficiently managing many threads at once.</p>
             </div>
 
             <div class="content-box">
                 <h3>ExecutorService Best Practices</h3>
-                <p>Properly managing the lifecycle of an ExecutorService is critical to prevent resource leaks. When you're done with an executor, you should always shut it down properly to release its resources.</p>
+                <p>Properly managing the lifecycle of an ExecutorService is critical to prevent resource leaks. When
+                    you're done with an executor, you should always shut it down properly to release its resources.</p>
                 <p>Types of shutdown:</p>
                 <ul>
                     <li><code>shutdown()</code> - Graceful shutdown that allows already submitted tasks to complete</li>
-                    <li><code>shutdownNow()</code> - Attempts to stop all executing tasks and returns a list of tasks that were awaiting execution</li>
+                    <li><code>shutdownNow()</code> - Attempts to stop all executing tasks and returns a list of tasks
+                        that were awaiting execution</li>
                 </ul>
                 <pre><code>// Proper ExecutorService shutdown pattern
 ExecutorService executor = Executors.newCachedThreadPool();
@@ -302,11 +453,14 @@ try {
                 <h2>Guided Project</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Sprint 26 Executor Services Video" src="https://fast.wistia.net/embed/iframe/343atpmgl8" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Sprint 26 Executor Services Video"
+                        src="https://fast.wistia.net/embed/iframe/343atpmgl8" width="100%" height="360"
+                        name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
 
                 <div class="resource-links">
-                    <a href="https://github.com/BloomTechBackend/bd-executor-service-ring" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://github.com/BloomTechBackend/bd-executor-service-ring" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
                         Ring Device Updates Check
                     </a>
                 </div>
@@ -314,31 +468,49 @@ try {
 
             <div class="content-box">
                 <h2>Mastery Task 2: Concurrent Tasks</h2>
-                <p>The product detail page team has strict latency requirements for any content rendered "above the fold", which refers to any part of a product detail page that you see when the page first loads without scrolling down.</p>
+                <p>The product detail page team has strict latency requirements for any content rendered "above the
+                    fold", which refers to any part of a product detail page that you see when the page first loads
+                    without scrolling down.</p>
 
-                <p>We've been looking at our latency graphs, and we've discovered that our latency increases almost linearly with the number of TargetingPredicates in a TargetingGroup. It's probably because each TargetingPredicate calls the DAOs it needs on its own.</p>
+                <p>We've been looking at our latency graphs, and we've discovered that our latency increases almost
+                    linearly with the number of TargetingPredicates in a TargetingGroup. It's probably because each
+                    TargetingPredicate calls the DAOs it needs on its own.</p>
 
-                <p>You recall from the KindlePublishingService project that when RecommendationsService was slowing us down, you cached the calls using an in-memory cache. However, since our service runs on Lambda, our activities can run on different hosts every time, so any data we save in an in-memory cache will not be there in subsequent calls.</p>
+                <p>You recall from the KindlePublishingService project that when RecommendationsService was slowing us
+                    down, you cached the calls using an in-memory cache. However, since our service runs on Lambda, our
+                    activities can run on different hosts every time, so any data we save in an in-memory cache will not
+                    be there in subsequent calls.</p>
 
-                <p>We have learned to perform multiple I/O calls at the same time with an ExecutorService. By running all the predicates in a targeting group concurrently, we can choose an ad quickly enough to meet the latency requirements!</p>
+                <p>We have learned to perform multiple I/O calls at the same time with an ExecutorService. By running
+                    all the predicates in a targeting group concurrently, we can choose an ad quickly enough to meet the
+                    latency requirements!</p>
 
-                <p>Use an ExecutorService to concurrently call the predicates in each group. You may use a Future to store the results, but that's not required. You also don't have to use lambda expressions, but they will probably make your code more readable.</p>
+                <p>Use an ExecutorService to concurrently call the predicates in each group. You may use a Future to
+                    store the results, but that's not required. You also don't have to use lambda expressions, but they
+                    will probably make your code more readable.</p>
 
                 <h3>Exit Checklist:</h3>
                 <ul>
                     <li>You've implemented your new functionality with unit tests</li>
-                    <li>Running the gradle command <code>./gradlew -q clean :test --tests "com.tct.mastery.task2.*"</code> passes.</li>
-                    <li>Running the gradle command <code>./gradlew -q clean :test --tests com.tct.introspection.MT2IntrospectionTests</code> passes.</li>
+                    <li>Running the gradle command
+                        <code>./gradlew -q clean :test --tests "com.tct.mastery.task2.*"</code> passes.
+                    </li>
+                    <li>Running the gradle command
+                        <code>./gradlew -q clean :test --tests com.tct.introspection.MT2IntrospectionTests</code>
+                        passes.
+                    </li>
                 </ul>
             </div>
 
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
-                    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
                         Java ExecutorService Documentation
                     </a>
-                    <a href="https://www.baeldung.com/java-executor-service-tutorial" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://www.baeldung.com/java-executor-service-tutorial" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
                         Java ExecutorService Tutorial - Baeldung
                     </a>
                 </div>
@@ -346,4 +518,5 @@ try {
         </section>
     </main>
 </body>
-</html> 
+
+</html>
