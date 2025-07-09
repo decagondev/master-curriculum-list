@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3 - JSON Serialization - BD Unit 7 Sprint 25</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -30,17 +32,19 @@
     <main class="container">
         <section class="welcome">
             <h1>Module 3 - JSON Serialization</h1>
-            
+
             <div class="content-box">
                 <h2>Module Overview</h2>
-                <p>Learn about JSON serialization and deserialization in Java using the Jackson library, a powerful tool for converting between Java objects and JSON format.</p>
+                <p>Learn about JSON serialization and deserialization in Java using the Jackson library, a powerful tool
+                    for converting between Java objects and JSON format.</p>
             </div>
 
             <div class="content-box">
                 <h2>Learning Objectives</h2>
                 <ul>
                     <li>Implement code that serializes a class to JSON</li>
-                    <li>Implement code that deserializes a provided JSON string to an object of the class it represents</li>
+                    <li>Implement code that deserializes a provided JSON string to an object of the class it represents
+                    </li>
                     <li>Explain why serialization is used to transfer data</li>
                     <li>Define the terms serialization and deserialization</li>
                 </ul>
@@ -49,32 +53,74 @@
             <div class="content-box">
                 <h2>Serializing Java Objects to JSON</h2>
                 <h3>Serialization and deserialization</h3>
-                
-                <img src="https://tk-assets.lambdaschool.com/96ac005a-9f06-4f82-bb30-faed3ee447f8_image1.png" alt="Figure 1. Diagram showing serialization. An object is converted into JSON and then is either stored in a file, memory, or database." loading="lazy" style="max-width: 100%; height: auto; display: block;">
-                <figcaption>Figure 1. Diagram showing serialization. An object is converted into JSON and then is either stored in a file, memory, or database.</figcaption>
 
-                <p>As shown in Figure 1, serialization is the mechanism for converting the state of an object to another representation. We're going to focus on serializing objects to JSON. Once you've converted an object to JSON, you can store it in a file, memory, or database.</p>
+                <img src="https://tk-assets.lambdaschool.com/96ac005a-9f06-4f82-bb30-faed3ee447f8_image1.png"
+                    alt="Figure 1. Diagram showing serialization. An object is converted into JSON and then is either stored in a file, memory, or database."
+                    loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                <figcaption>Figure 1. Diagram showing serialization. An object is converted into JSON and then is either
+                    stored in a file, memory, or database.</figcaption>
 
-                <img src="https://tk-assets.lambdaschool.com/d6798608-9def-4577-bf73-721bd7b419f1_image2.png" alt="Figure 2. Diagram showing deserialization. JSON is removed from storage in either a file, memory, or database and is converted into an object." loading="lazy" style="max-width: 100%; height: auto; display: block;">
-                <figcaption>Figure 2. Diagram showing deserialization. JSON is removed from storage in either a file, memory, or database and is converted into an object.</figcaption>
+                <p>As shown in Figure 1, serialization is the mechanism for converting the state of an object to another
+                    representation. We're going to focus on serializing objects to JSON. Once you've converted an object
+                    to JSON, you can store it in a file, memory, or database.</p>
 
-                <p>As shown in Figure 2, deserialization is the reverse process, recreating the Java object from the stored JSON.</p>
+                <img src="https://tk-assets.lambdaschool.com/d6798608-9def-4577-bf73-721bd7b419f1_image2.png"
+                    alt="Figure 2. Diagram showing deserialization. JSON is removed from storage in either a file, memory, or database and is converted into an object."
+                    loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                <figcaption>Figure 2. Diagram showing deserialization. JSON is removed from storage in either a file,
+                    memory, or database and is converted into an object.</figcaption>
 
-                <p>Serialization is often used to persist an object. Persistence is the ability to maintain the state of an object after a runtime session ends. For example, if you have a main() method in Java where you create an object and manipulate its state, that state is lost as soon as the program stops running. Each time you run the main() method, the object will be recreated in its original state. However, if you wanted the changed state to persist across runtime sessions, you could serialize the object. The next time you run the main() method, you could then deserialize the object and get the saved state. Databases, which you already have experience with, are one common way of persisting information!</p>
+                <p>As shown in Figure 2, deserialization is the reverse process, recreating the Java object from the
+                    stored JSON.</p>
 
-                <p>In our example, you can see that serialization is the process of saving the state of an object and deserialization is the process of retrieving the state of an object from an earlier save. This process of serializing an object is also called marshalling an object. Likewise, extracting a data structure, or deserializing, is also called unmarshalling. These terms are often used interchangeably, but they're not quite the same thing---serializing is actually a type of marshalling. The difference between them, however, is subtle and difficult, and we will not focus on it in this reading.</p>
+                <p>Serialization is often used to persist an object. Persistence is the ability to maintain the state of
+                    an object after a runtime session ends. For example, if you have a main() method in Java where you
+                    create an object and manipulate its state, that state is lost as soon as the program stops running.
+                    Each time you run the main() method, the object will be recreated in its original state. However, if
+                    you wanted the changed state to persist across runtime sessions, you could serialize the object. The
+                    next time you run the main() method, you could then deserialize the object and get the saved state.
+                    Databases, which you already have experience with, are one common way of persisting information!</p>
+
+                <p>In our example, you can see that serialization is the process of saving the state of an object and
+                    deserialization is the process of retrieving the state of an object from an earlier save. This
+                    process of serializing an object is also called marshalling an object. Likewise, extracting a data
+                    structure, or deserializing, is also called unmarshalling. These terms are often used
+                    interchangeably, but they're not quite the same thing---serializing is actually a type of
+                    marshalling. The difference between them, however, is subtle and difficult, and we will not focus on
+                    it in this reading.</p>
 
                 <h3>Why do we serialize?</h3>
-                <p>We use serialization any time we want to save or send state. A document editing program might serialize an "undo" list, so when you reload a document you don't lose your editing history. A program that does many long-running computations might serialize the calculations performed so far, so if the user interrupts the program, you can continue where you left off. A command-line tool with many options and steps might serialize its progress, so a user could type something like "tool --continue" after fixing a problem. A call to an API across the network might serialize the request in order to send it to the service.</p>
+                <p>We use serialization any time we want to save or send state. A document editing program might
+                    serialize an "undo" list, so when you reload a document you don't lose your editing history. A
+                    program that does many long-running computations might serialize the calculations performed so far,
+                    so if the user interrupts the program, you can continue where you left off. A command-line tool with
+                    many options and steps might serialize its progress, so a user could type something like "tool
+                    --continue" after fixing a problem. A call to an API across the network might serialize the request
+                    in order to send it to the service.</p>
 
-                <p>We choose to use JSON because pretty much EVERYTHING can handle it. We often serialize and deserialize between Java applications, but data from a Java application can be serialized and then read by a different type of application. A Java application might serialize objects to a file and then a Python script can open that file and deserialize the data because it is in a shared language! It doesn't need to be a file, either: we can serialize an object and transfer it to another computer over a network connection. The data may be passed between many computers with different hardware and operating systems before it reaches the destination, which will still be able to deserialize it regardless of what language, operating system, or hardware it uses.</p>
+                <p>We choose to use JSON because pretty much EVERYTHING can handle it. We often serialize and
+                    deserialize between Java applications, but data from a Java application can be serialized and then
+                    read by a different type of application. A Java application might serialize objects to a file and
+                    then a Python script can open that file and deserialize the data because it is in a shared language!
+                    It doesn't need to be a file, either: we can serialize an object and transfer it to another computer
+                    over a network connection. The data may be passed between many computers with different hardware and
+                    operating systems before it reaches the destination, which will still be able to deserialize it
+                    regardless of what language, operating system, or hardware it uses.</p>
 
-                <p>Most major languages have libraries that aid in writing to and from JSON. In Java we use the Jackson library.</p>
+                <p>Most major languages have libraries that aid in writing to and from JSON. In Java we use the Jackson
+                    library.</p>
 
                 <h3>Serializing a class in Java</h3>
-                <p>You're creating a video game in Java that keeps track of the current state of your player. The state of your player may change depending on how many hit points they have, the current items in their inventory, etc. Each time you close and reload the game, these values need to be saved, meaning the state of your character must persist across play sessions. We can serialize the state of the character and store it in a file or database. When we reload the game, we can deserialize the character object from the most recently saved state. Now all the most recent character data is available from the saved state!</p>
+                <p>You're creating a video game in Java that keeps track of the current state of your player. The state
+                    of your player may change depending on how many hit points they have, the current items in their
+                    inventory, etc. Each time you close and reload the game, these values need to be saved, meaning the
+                    state of your character must persist across play sessions. We can serialize the state of the
+                    character and store it in a file or database. When we reload the game, we can deserialize the
+                    character object from the most recently saved state. Now all the most recent character data is
+                    available from the saved state!</p>
 
-                <p>Let's look at an example of how to serialize a Java object to JSON. The Character class is defined below.</p>
+                <p>Let's look at an example of how to serialize a Java object to JSON. The Character class is defined
+                    below.</p>
 
                 <pre><code>public class Character {
 
@@ -108,9 +154,12 @@
 }</code></pre>
 
                 <h3>Serializing and deserializing to JSON with Jackson</h3>
-                <p>We can serialize and deserialize objects using the Jackson library. This library provides the ObjectMapper class, which can create JSON from Java objects (serialize), and parse JSON from a String and create a Java object representing the parsed JSON (deserialize).</p>
+                <p>We can serialize and deserialize objects using the Jackson library. This library provides the
+                    ObjectMapper class, which can create JSON from Java objects (serialize), and parse JSON from a
+                    String and create a Java object representing the parsed JSON (deserialize).</p>
 
-                <p>To serialize an object with Jackson we use the method writeValueAsString(), which accepts an instance of a serialized class and returns a String.</p>
+                <p>To serialize an object with Jackson we use the method writeValueAsString(), which accepts an instance
+                    of a serialized class and returns a String.</p>
 
                 <pre><code>Character character = new Character();
 character.setCharacterName("Jane");
@@ -123,13 +172,17 @@ character.setInventory(inventory);
 ObjectMapper objectMapper = new ObjectMapper();
 String serializedCharacter = objectMapper.writeValueAsString(character);</code></pre>
 
-                <p>The above code snippet declares a new Character instance, character, and sets all its values. It then declares a new instance of the ObjectMapper class, objectMapper, and uses that instance to call the writeValueAsString() method. The character instance we created is passed into the method, serializing character into the JSON String, serializedCharacter.</p>
+                <p>The above code snippet declares a new Character instance, character, and sets all its values. It then
+                    declares a new instance of the ObjectMapper class, objectMapper, and uses that instance to call the
+                    writeValueAsString() method. The character instance we created is passed into the method,
+                    serializing character into the JSON String, serializedCharacter.</p>
 
                 <p>If we print out serializedCharacter, we get the following:</p>
 
                 <pre><code>{"characterName":"Jane","hitPoints":41,"inventory":["sword","shield"]}</code></pre>
 
-                <p>JSON stores the serialized character with the field name followed by the corresponding value. Each value in the inventory ArrayList is also stored separately between square brackets.</p>
+                <p>JSON stores the serialized character with the field name followed by the corresponding value. Each
+                    value in the inventory ArrayList is also stored separately between square brackets.</p>
 
                 <p>Let's take a look at another Character that has only its name field set.</p>
 
@@ -145,61 +198,97 @@ String serializedCharacter2 = objectMapper.writeValueAsString(character2);</code
 
                 <p>Notice that the unset fields are included, but set to their default values.</p>
 
-                <p>To deserialize a serialized object, we use the Jackson method readValue(), which accepts a String and a class and returns an instance of that class.</p>
+                <p>To deserialize a serialized object, we use the Jackson method readValue(), which accepts a String and
+                    a class and returns an instance of that class.</p>
 
                 <pre><code>Character deserializedCharacter = objectMapper.readValue(serializedCharacter, Character.class);</code></pre>
 
-                <p>The above code snippet uses the ObjectMapper instance, objectMapper, to call the readValue() method. The method is given the serializedCharacter string from the previous code snippet and the Character class. Notice, because the JSON representation has no information about what class this JSON maps to, we must provide it the readValue method. The deserialized Character is returned into the new instance of Character, deserializedCharacter.</p>
+                <p>The above code snippet uses the ObjectMapper instance, objectMapper, to call the readValue() method.
+                    The method is given the serializedCharacter string from the previous code snippet and the Character
+                    class. Notice, because the JSON representation has no information about what class this JSON maps
+                    to, we must provide it the readValue method. The deserialized Character is returned into the new
+                    instance of Character, deserializedCharacter.</p>
 
-                <p>We've seen very similar functionality before. The DynamoDBMapper acts just like the ObjectMapper in that it serializes Java objects to a string representation, as well as deserializes string representations to Java objects. The DynamoDB string representation isn't typical JSON though, it is DynamoDB JSON. For an item with one attribute called id, with a string value id-123456, the DynamoDB JSON would be:</p>
+                <p>We've seen very similar functionality before. The DynamoDBMapper acts just like the ObjectMapper in
+                    that it serializes Java objects to a string representation, as well as deserializes string
+                    representations to Java objects. The DynamoDB string representation isn't typical JSON though, it is
+                    DynamoDB JSON. For an item with one attribute called id, with a string value id-123456, the DynamoDB
+                    JSON would be:</p>
 
                 <pre><code>{"id":{"S":"id-123456"}}</code></pre>
 
-                <p>Just like Jackson, when we read from DynamoDB, via load, query, or scan we also must specify the class we want to deserialize to!</p>
+                <p>Just like Jackson, when we read from DynamoDB, via load, query, or scan we also must specify the
+                    class we want to deserialize to!</p>
 
-                <p>Note: if you want to see the DynamoDB JSON for an item, click on the item in the console to open the 'Edit item' popover. Select 'Text' instead of 'Tree', and then check the box for DynamoDB JSON.</p>
+                <p>Note: if you want to see the DynamoDB JSON for an item, click on the item in the console to open the
+                    'Edit item' popover. Select 'Text' instead of 'Tree', and then check the box for DynamoDB JSON.</p>
 
-                <p>Since serialized JSON is a String, you could serialize an object and save it in a DynamoDB S field. Since the format is different, DynamoDB would be unable to use the object's structure for filtering and querying. We prefer to store an object's attributes as separate DynamoDB fields.</p>
+                <p>Since serialized JSON is a String, you could serialize an object and save it in a DynamoDB S field.
+                    Since the format is different, DynamoDB would be unable to use the object's structure for filtering
+                    and querying. We prefer to store an object's attributes as separate DynamoDB fields.</p>
 
                 <h3>Caution: Limitations</h3>
-                <p>We won't encounter these problems in ATA code. We'll describe them briefly here to help you recognize them if you encounter them elsewhere. More details are readily available through web searches.</p>
+                <p>We won't encounter these problems in ATA code. We'll describe them briefly here to help you recognize
+                    them if you encounter them elsewhere. More details are readily available through web searches.</p>
 
-                <p>Serializing circular references, like a Child class with a reference to a Parent that has a reference back to the same Child, will cause an exception. You can mark one of the attributes with @JsonIgnore to break the loop.</p>
+                <p>Serializing circular references, like a Child class with a reference to a Parent that has a reference
+                    back to the same Child, will cause an exception. You can mark one of the attributes with @JsonIgnore
+                    to break the loop.</p>
 
-                <p>You also can't serialize a private field without a getter. Adding a getter is the easiest way to fix this.</p>
+                <p>You also can't serialize a private field without a getter. Adding a getter is the easiest way to fix
+                    this.</p>
 
-                <p>When deserializing, you need some way to build the starting object. Classes that don't have a public no-args constructor can't be deserialized. Like missing getters, adding the constructor is the easiest fix.</p>
+                <p>When deserializing, you need some way to build the starting object. Classes that don't have a public
+                    no-args constructor can't be deserialized. Like missing getters, adding the constructor is the
+                    easiest fix.</p>
 
-                <p>Deserializing an attribute with an interface type has the same problem: there's no way to build the starting object. If you know you'll always want to use the same concrete class, you can use the @JsonDeserialize annotation.</p>
+                <p>Deserializing an attribute with an interface type has the same problem: there's no way to build the
+                    starting object. If you know you'll always want to use the same concrete class, you can use the
+                    @JsonDeserialize annotation.</p>
 
-                <p>Deserializing won't automatically handle inheritance hierarchies. The @JsonTypeInfo and @JsonSubTypes annotations can handle these situations, and can also resolve the interface deserialization problem we described earlier.</p>
+                <p>Deserializing won't automatically handle inheritance hierarchies. The @JsonTypeInfo and @JsonSubTypes
+                    annotations can handle these situations, and can also resolve the interface deserialization problem
+                    we described earlier.</p>
 
                 <h3>Optional: Java's own byte stream serialization</h3>
-                <p>Java defines its own system for serializing and deserializing objects. While Jackson doesn't provide any information about the class, Java's ObjectOutputStream and ObjectInputStream verify that they're reading the same class that was written. However, they can only serialize classes that implement Serializable and provide a private static final long serialVersionUID instance variable that acts as a sort of version number. In ATA, we'll use Jackson for our serialization needs.</p>
+                <p>Java defines its own system for serializing and deserializing objects. While Jackson doesn't provide
+                    any information about the class, Java's ObjectOutputStream and ObjectInputStream verify that they're
+                    reading the same class that was written. However, they can only serialize classes that implement
+                    Serializable and provide a private static final long serialVersionUID instance variable that acts as
+                    a sort of version number. In ATA, we'll use Jackson for our serialization needs.</p>
 
                 <h3>Conclusion</h3>
-                <p>In this reading, you learned about serializing Java objects to JSON and then deserializing JSON back to Java objects. Serialization is very useful for sending and receiving data across networks and persisting data across runtime sessions. Additionally, you now know about the importance of a serialVersionUID to keep track of class versions.</p>
+                <p>In this reading, you learned about serializing Java objects to JSON and then deserializing JSON back
+                    to Java objects. Serialization is very useful for sending and receiving data across networks and
+                    persisting data across runtime sessions. Additionally, you now know about the importance of a
+                    serialVersionUID to keep track of class versions.</p>
             </div>
 
             <div class="content-box">
                 <h2>Guided Project</h2>
 
                 <div class="video-container">
-                    <iframe src="https://fast.wistia.net/embed/iframe/dzurgbz4hs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe src="https://fast.wistia.net/embed/iframe/dzurgbz4hs" title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
                 </div>
 
                 <div class="resources-links">
-                    <a href="https://github.com/BloomTechBackend/bd-dynamodb-scan-and-serialization" target="_blank" rel="noopener noreferrer" class="resource-link">Still in the ice cream business</a>
+                    <a href="https://github.com/BloomTechBackend/bd-dynamodb-scan-and-serialization" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">Still in the ice cream business</a>
                 </div>
             </div>
 
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
-                    <a href="https://github.com/FasterXML/jackson" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://github.com/FasterXML/jackson" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
                         Jackson GitHub Repository
                     </a>
-                    <a href="https://www.baeldung.com/jackson" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://www.baeldung.com/jackson" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
                         Jackson JSON Tutorial - Baeldung
                     </a>
                 </div>
@@ -207,4 +296,5 @@ String serializedCharacter2 = objectMapper.writeValueAsString(character2);</code
         </section>
     </main>
 </body>
-</html> 
+
+</html>
