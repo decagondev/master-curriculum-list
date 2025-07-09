@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3: DynamoDB Delete - BD Unit 6 Sprint 21</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -30,28 +32,40 @@
     <main class="container">
         <section class="welcome">
             <h1>Module 3: DynamoDB Delete</h1>
-            
+
             <div class="video-container">
-                <iframe class="wistia_embed" title="Introduction to DynamoDB Delete Operations" src="https://fast.wistia.net/embed/iframe/ybnd9vr8ad" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                <iframe class="wistia_embed" title="Introduction to DynamoDB Delete Operations"
+                    src="https://fast.wistia.net/embed/iframe/ybnd9vr8ad" allow="autoplay; fullscreen"
+                    allowfullscreen></iframe>
             </div>
-            
+
             <div class="note-box">
                 <h3>Learning Objectives</h3>
                 <ul>
-                    <li>Implement functionality that deletes an item from a provided DynamoDB table by partition key</li>
-                    <li>Implement functionality that deletes an item from a provided DynamoDB table by partition and sort key</li>
+                    <li>Implement functionality that deletes an item from a provided DynamoDB table by partition key
+                    </li>
+                    <li>Implement functionality that deletes an item from a provided DynamoDB table by partition and
+                        sort key</li>
                     <li>Implement functionality that conditionally deletes an item from a provided DynamoDB table</li>
-                    <li>Design and implement functionality to deactivate rather than delete an item from a provided DynamoDB table in order to prevent loss of information</li>
+                    <li>Design and implement functionality to deactivate rather than delete an item from a provided
+                        DynamoDB table in order to prevent loss of information</li>
                 </ul>
             </div>
-            
+
             <div class="content-box">
                 <h2>Introduction to DynamoDB Delete Operations</h2>
 
-                <p>In the previous unit, you were introduced to one of Amazon's database services: DynamoDB. You learned how to annotate a Plain Old Java Object (POJO) to map a table item to Java, and use the DynamoDBMapper methods load() and save() to get, create, and update items in a table. In this reading we're going to discuss how to use the DynamoDBMapper method delete() to remove items from a table.</p>
+                <p>In the previous unit, you were introduced to one of Amazon's database services: DynamoDB. You learned
+                    how to annotate a Plain Old Java Object (POJO) to map a table item to Java, and use the
+                    DynamoDBMapper methods load() and save() to get, create, and update items in a table. In this
+                    reading we're going to discuss how to use the DynamoDBMapper method delete() to remove items from a
+                    table.</p>
 
                 <h3>Deleting an Item with a Partition Key</h3>
-                <p>Remember your Shoes table? It was created to help organize your closet by keeping track of the shoes you own and where they're stored. Each shoe has a unique id (shoe_id), a location of where they're stored (cubby_location) and then attributes about their color, style, and occasion. The table uses only a partition key, which is shoe_id.</p>
+                <p>Remember your Shoes table? It was created to help organize your closet by keeping track of the shoes
+                    you own and where they're stored. Each shoe has a unique id (shoe_id), a location of where they're
+                    stored (cubby_location) and then attributes about their color, style, and occasion. The table uses
+                    only a partition key, which is shoe_id.</p>
 
                 <table>
                     <tr>
@@ -84,7 +98,10 @@
                     </tr>
                 </table>
 
-                <p>Your grey athletic sneakers have gotten pretty worn down and it's time to throw them out (shoe_id = "SN01"). Since you're throwing the shoes out, you want to delete this item from your table to reflect the change. We can use the DynamoDBMapper delete() method to remove the shoes from your table.</p>
+                <p>Your grey athletic sneakers have gotten pretty worn down and it's time to throw them out (shoe_id =
+                    "SN01"). Since you're throwing the shoes out, you want to delete this item from your table to
+                    reflect the change. We can use the DynamoDBMapper delete() method to remove the shoes from your
+                    table.</p>
 
                 <p>Let's review the fully annotated Shoe POJO we created in the previous unit:</p>
 
@@ -147,19 +164,30 @@ public class Shoe {
     }
 }</code></pre>
 
-                <p>Using the above Shoe POJO, deleting SN01 from the Shoes table with the DynamoDBMapper delete() method looks like the following:</p>
+                <p>Using the above Shoe POJO, deleting SN01 from the Shoes table with the DynamoDBMapper delete() method
+                    looks like the following:</p>
 
                 <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
 Shoe shoe = new Shoe();
 shoe.setShoeId("SN01");
 mapper.delete(shoe);</code></pre>
 
-                <p>The first line creates an instance of DynamoDBMapper, just like we did in the load() and save() methods. Then we create a new instance of the Shoe class, shoe, and set shoeId to "SN01". The final line of code uses our new mapper instance to call the delete method, which accepts shoe.</p>
+                <p>The first line creates an instance of DynamoDBMapper, just like we did in the load() and save()
+                    methods. Then we create a new instance of the Shoe class, shoe, and set shoeId to "SN01". The final
+                    line of code uses our new mapper instance to call the delete method, which accepts shoe.</p>
 
-                <p>Like the save() method, the delete() method accepts an object, which in this case is our new instance of shoe. The delete() method, however, only uses the object's key values to determine which item to delete. Since our Shoes table only uses a partition key, shoeId, the only value we need to set before passing in the object is shoeId. You do not need to call load() to retrieve the other values of the Shoe item from DynamoDB before deleting it. You can pass in an object that has more values set, but at the bare minimum the key values must be set.</p>
+                <p>Like the save() method, the delete() method accepts an object, which in this case is our new instance
+                    of shoe. The delete() method, however, only uses the object's key values to determine which item to
+                    delete. Since our Shoes table only uses a partition key, shoeId, the only value we need to set
+                    before passing in the object is shoeId. You do not need to call load() to retrieve the other values
+                    of the Shoe item from DynamoDB before deleting it. You can pass in an object that has more values
+                    set, but at the bare minimum the key values must be set.</p>
 
                 <h3>Deleting an Item with a Partition + Sort Key</h3>
-                <p>In the previous unit we also had a Songs table, which keeps track of the songs on our playlist. Each song has an artist (partition key), a song title (sort key), and then attributes about their genre, year released, and whether the song has been favorited. The table uses a composite primary key of artist and song title.</p>
+                <p>In the previous unit we also had a Songs table, which keeps track of the songs on our playlist. Each
+                    song has an artist (partition key), a song title (sort key), and then attributes about their genre,
+                    year released, and whether the song has been favorited. The table uses a composite primary key of
+                    artist and song title.</p>
 
                 <p>Let's look at the Songs table:</p>
 
@@ -215,7 +243,11 @@ mapper.delete(shoe);</code></pre>
                     </tr>
                 </table>
 
-                <p>The song "I Gotta Feeling" by the Black Eyed Peas is overplayed and not one of your favorites anyways, so you've decided to delete it from your playlist ("Black Eyed Peas", "I Gotta Feeling"). Since you're deleting the song from your playlist, you want to delete the item from your table to reflect the change. We can once again use DynamoDBMapper.delete() to remove the song from the table.</p>
+                <p>The song "I Gotta Feeling" by the Black Eyed Peas is overplayed and not one of your favorites
+                    anyways, so you've decided to delete it from your playlist ("Black Eyed Peas", "I Gotta Feeling").
+                    Since you're deleting the song from your playlist, you want to delete the item from your table to
+                    reflect the change. We can once again use DynamoDBMapper.delete() to remove the song from the table.
+                </p>
 
                 <p>Let's review the fully annotated Song POJO we created in the previous unit:</p>
 
@@ -273,7 +305,8 @@ public class Song {
     }
 }</code></pre>
 
-                <p>Using the above Song class, deleting "I Gotta Feeling" by the Black Eyed Peas with the DynamoDBMapper delete() method looks like this:</p>
+                <p>Using the above Song class, deleting "I Gotta Feeling" by the Black Eyed Peas with the DynamoDBMapper
+                    delete() method looks like this:</p>
 
                 <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
 Song song = new Song();
@@ -281,31 +314,63 @@ song.setArtist("Black Eyed Peas");
 song.setSongTitle("I Gotta Feeling");
 mapper.delete(song);</code></pre>
 
-                <p>This code snippet looks very similar to the code snippet for deleting a shoe from our Shoes table. The first line creates an instance of DynamoDBMapper, then we create a new instance of the Song class, song, and set the artist to "Black Eyed Peas" and the song title to "I Gotta Feeling". The final line of code uses our new mapper instance to call the delete() method, which accepts song.</p>
+                <p>This code snippet looks very similar to the code snippet for deleting a shoe from our Shoes table.
+                    The first line creates an instance of DynamoDBMapper, then we create a new instance of the Song
+                    class, song, and set the artist to "Black Eyed Peas" and the song title to "I Gotta Feeling". The
+                    final line of code uses our new mapper instance to call the delete() method, which accepts song.</p>
 
-                <p>As we discussed in the previous section, the delete() method accepts an object, which in this case is our new instance of song. The delete() method, however, only uses the object's key values to determine which item to delete. Our Songs table uses a composite primary key, so we need to make sure we set values for both the artist and the songTitle. As we stated previously, you can have more values than just the keys set, but at the bare minimum, the key values must be set for the delete() method to know which item to remove.</p>
+                <p>As we discussed in the previous section, the delete() method accepts an object, which in this case is
+                    our new instance of song. The delete() method, however, only uses the object's key values to
+                    determine which item to delete. Our Songs table uses a composite primary key, so we need to make
+                    sure we set values for both the artist and the songTitle. As we stated previously, you can have more
+                    values than just the keys set, but at the bare minimum, the key values must be set for the delete()
+                    method to know which item to remove.</p>
 
                 <h3>Idempotent Delete</h3>
-                <p>What happens if you attempt to delete an item that doesn't exist in the table? Nothing! If DynamoDBMapper can't find the item, it therefore has nothing to delete, but there are no errors or indicators that anything was different than if the item had been deleted. This is a purposeful feature. Delete is an idempotent operation, meaning that if you run the operation multiple times on the same item, the response is unchanged. If the method gave a different response based on whether the item existed or not, the response would change, and the method wouldn't be idempotent.</p>
+                <p>What happens if you attempt to delete an item that doesn't exist in the table? Nothing! If
+                    DynamoDBMapper can't find the item, it therefore has nothing to delete, but there are no errors or
+                    indicators that anything was different than if the item had been deleted. This is a purposeful
+                    feature. Delete is an idempotent operation, meaning that if you run the operation multiple times on
+                    the same item, the response is unchanged. If the method gave a different response based on whether
+                    the item existed or not, the response would change, and the method wouldn't be idempotent.</p>
 
-                <p>It is possible to specify conditions so that the delete() method indicates whether there was an item to delete, but you don't need to worry about that now. For now, just understand that the response of the delete() method will remain the same whether or not there is an item to remove.</p>
-                
-                <p>DynamoDB provides several ways to delete data from your tables. In this module, we focus on using the <code>DynamoDBMapper.delete()</code> method to remove items from DynamoDB tables. Understanding how to properly delete data is crucial for maintaining your database and ensuring data integrity throughout your application.</p>
-                
-                <p>Delete operations in DynamoDB are designed to be idempotent, which means that you can execute the same delete operation multiple times without changing the result beyond the initial application. This is important for handling retries and error recovery in distributed systems.</p>
+                <p>It is possible to specify conditions so that the delete() method indicates whether there was an item
+                    to delete, but you don't need to worry about that now. For now, just understand that the response of
+                    the delete() method will remain the same whether or not there is an item to remove.</p>
+
+                <p>DynamoDB provides several ways to delete data from your tables. In this module, we focus on using the
+                    <code>DynamoDBMapper.delete()</code> method to remove items from DynamoDB tables. Understanding how
+                    to properly delete data is crucial for maintaining your database and ensuring data integrity
+                    throughout your application.
+                </p>
+
+                <p>Delete operations in DynamoDB are designed to be idempotent, which means that you can execute the
+                    same delete operation multiple times without changing the result beyond the initial application.
+                    This is important for handling retries and error recovery in distributed systems.</p>
             </div>
 
             <div class="content-box">
                 <h2>Conditions for Deleting</h2>
 
                 <div class="video-container">
-                    <iframe title="Conditions for Deleting in DynamoDB" src="https://fast.wistia.net/embed/iframe/v96gapiu1h" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe title="Conditions for Deleting in DynamoDB"
+                        src="https://fast.wistia.net/embed/iframe/v96gapiu1h" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
                 </div>
 
-                <p>In the previous reading, we learned how to remove items from a table using the DynamoDBMapper delete() method. Having the ability to delete any item from a table can cause issues, however, and it can be useful to set up conditions to limit deletion. In this reading, we'll be discussing how to set restrictions on deleting items and designing your table attributes in a way that you don't need to delete items at all.</p>
+                <p>In the previous reading, we learned how to remove items from a table using the DynamoDBMapper
+                    delete() method. Having the ability to delete any item from a table can cause issues, however, and
+                    it can be useful to set up conditions to limit deletion. In this reading, we'll be discussing how to
+                    set restrictions on deleting items and designing your table attributes in a way that you don't need
+                    to delete items at all.</p>
 
                 <h3>Conditional Deletes</h3>
-                <p>To prevent loss of data, you may want to restrict which items can be removed to prevent accidental or premature deletion. For example, imagine you're starting an online clothing store to sell some of your old clothes. Each item has a unique id (partition key), a clothing type, color, price, and current status. The value of the status attribute is either "not sold", "sold", "shipped", or "received".</p>
+                <p>To prevent loss of data, you may want to restrict which items can be removed to prevent accidental or
+                    premature deletion. For example, imagine you're starting an online clothing store to sell some of
+                    your old clothes. Each item has a unique id (partition key), a clothing type, color, price, and
+                    current status. The value of the status attribute is either "not sold", "sold", "shipped", or
+                    "received".</p>
 
                 <p>The ClothingItems table:</p>
 
@@ -408,9 +473,13 @@ public class Clothing {
     }
 }</code></pre>
 
-                <p>To ensure you're not accidentally deleting values before they've been received by the buyer, you decide to implement a condition that an item can only be deleted when status = "received". In order to create this condition, we need to use the DynamoDBDeleteExpression class to create a new delete expression and pass it in to our delete() method along with the Clothing object.</p>
+                <p>To ensure you're not accidentally deleting values before they've been received by the buyer, you
+                    decide to implement a condition that an item can only be deleted when status = "received". In order
+                    to create this condition, we need to use the DynamoDBDeleteExpression class to create a new delete
+                    expression and pass it in to our delete() method along with the Clothing object.</p>
 
-                <p>The code to delete the pair of boots in our table (id = "bo_3980264e"), which have already been received by the buyer, is as follows:</p>
+                <p>The code to delete the pair of boots in our table (id = "bo_3980264e"), which have already been
+                    received by the buyer, is as follows:</p>
 
                 <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
 Clothing boots = new Clothing();
@@ -428,36 +497,55 @@ try {
 
                 <p>This is doing a few things, so let's walk through it line by line.</p>
 
-                <p>The first three lines are familiar: we create our mapper instance, create a new Clothing instance, boots, and then set the id for boots since id is the partition key of the table.</p>
+                <p>The first three lines are familiar: we create our mapper instance, create a new Clothing instance,
+                    boots, and then set the id for boots since id is the partition key of the table.</p>
 
                 <p>We then enter in a try statement where we create a new instance of DynamoDBDeleteExpression.</p>
 
                 <pre><code>DynamoDBDeleteExpression deleteExpression = new DynamoDBDeleteExpression();</code></pre>
 
-                <p>This class enables adding options to a delete operation. In our example, we are adding the option to delete only if an attribute has a particular value. To learn more about DynamoDBDeleteExpression, see the <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/datamodeling/DynamoDBDeleteExpression.html" target="_blank" rel="noopener noreferrer">DynamoDBDeleteExpression javadoc</a>.</p>
+                <p>This class enables adding options to a delete operation. In our example, we are adding the option to
+                    delete only if an attribute has a particular value. To learn more about DynamoDBDeleteExpression,
+                    see the <a
+                        href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/datamodeling/DynamoDBDeleteExpression.html"
+                        target="_blank" rel="noopener noreferrer">DynamoDBDeleteExpression javadoc</a>.</p>
 
-                <p>The following line creates a new HashMap called expected and puts a new entry in the map, specifying that the status attribute should have the value of "received" in order to be deleted.</p>
+                <p>The following line creates a new HashMap called expected and puts a new entry in the map, specifying
+                    that the status attribute should have the value of "received" in order to be deleted.</p>
 
                 <pre><code>Map<String, ExpectedAttributeValue> expected = new HashMap<>();
 expected.put("status", new ExpectedAttributeValue(new AttributeValue("received")));</code></pre>
 
-                <p>In this code snippet, the HashMap key is the String name of the DynamoDB item attribute. The value is an ExpectedAttributeValue. The ExpectedAttributeValue accepts a new AttributeValue, which is the value you expect the attribute to be to meet your delete condition. Since we only want to delete items when the attribute status has a value of "received", the key in our HashMap is "status" and the value is the ExpectedAttributeValue, "received". You can learn more about ExpectedAttributeValue in the <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/model/ExpectedAttributeValue.html" target="_blank" rel="noopener noreferrer">ExpectedAttributeValue javadoc</a>. The next line of code sets the expected delete expression of our previously instantiated DynamoDBDeleteExpression, deleteExpression, to the HashMap, expected.</p>
+                <p>In this code snippet, the HashMap key is the String name of the DynamoDB item attribute. The value is
+                    an ExpectedAttributeValue. The ExpectedAttributeValue accepts a new AttributeValue, which is the
+                    value you expect the attribute to be to meet your delete condition. Since we only want to delete
+                    items when the attribute status has a value of "received", the key in our HashMap is "status" and
+                    the value is the ExpectedAttributeValue, "received". You can learn more about ExpectedAttributeValue
+                    in the <a
+                        href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/model/ExpectedAttributeValue.html"
+                        target="_blank" rel="noopener noreferrer">ExpectedAttributeValue javadoc</a>. The next line of
+                    code sets the expected delete expression of our previously instantiated DynamoDBDeleteExpression,
+                    deleteExpression, to the HashMap, expected.</p>
 
                 <pre><code>deleteExpression.setExpected(expected);</code></pre>
 
-                <p>The line after that is where we finally use DynamoDBMapper.delete() to attempt to delete the item.</p>
+                <p>The line after that is where we finally use DynamoDBMapper.delete() to attempt to delete the item.
+                </p>
 
                 <pre><code>mapper.delete(boots, deleteExpression);</code></pre>
 
-                <p>We're passing in both our previously created boots object and the deleteExpression, which has the delete condition we're using to attempt to delete the item.</p>
+                <p>We're passing in both our previously created boots object and the deleteExpression, which has the
+                    delete condition we're using to attempt to delete the item.</p>
 
-                <p>The final section is a catch statement, which catches a ConditionalCheckFailedException if the item we attempt to delete does not meet the expected condition.</p>
+                <p>The final section is a catch statement, which catches a ConditionalCheckFailedException if the item
+                    we attempt to delete does not meet the expected condition.</p>
 
                 <pre><code>catch (ConditionalCheckFailedException e) {
     System.out.println(e);
 }</code></pre>
 
-                <p>Returning to our ClothingItems table, if we attempt to delete the brown boots, we will be successful, because the value of status is "received", therefore meeting our delete condition.</p>
+                <p>Returning to our ClothingItems table, if we attempt to delete the brown boots, we will be successful,
+                    because the value of status is "received", therefore meeting our delete condition.</p>
 
                 <table>
                     <tr>
@@ -497,7 +585,8 @@ expected.put("status", new ExpectedAttributeValue(new AttributeValue("received")
                     </tr>
                 </table>
 
-                <p>If we attempt to delete the jeans, however, the item will not be deleted, and instead will catch a ConditionalCheckFailedException, because the value of status is "sold", not "received".</p>
+                <p>If we attempt to delete the jeans, however, the item will not be deleted, and instead will catch a
+                    ConditionalCheckFailedException, because the value of status is "sold", not "received".</p>
 
                 <table>
                     <tr>
@@ -538,7 +627,8 @@ expected.put("status", new ExpectedAttributeValue(new AttributeValue("received")
                 </table>
 
                 <h3>Active vs. Inactive Items</h3>
-                <p>Sometimes it's better not to delete items from a table, so that you don't lose any information. In the previous unit we discussed the ClubMembers table, which keeps track of members in a club.</p>
+                <p>Sometimes it's better not to delete items from a table, so that you don't lose any information. In
+                    the previous unit we discussed the ClubMembers table, which keeps track of members in a club.</p>
 
                 <table>
                     <tr>
@@ -578,7 +668,13 @@ expected.put("status", new ExpectedAttributeValue(new AttributeValue("received")
                     </tr>
                 </table>
 
-                <p>The ClubMembers table includes an active attribute, which indicates each member's current status in the club. If a ClubMember decides to deactivate their membership for a year or two, then active = "false", but they're not deleted from the table. This means that if they decide to reactivate their membership at any point, all their information is still there! If a member was deleted and then decided to rejoin the club, you'd have to re-enter all their information. If there's a chance the item's information may be relevant later, even if it currently isn't, it can be better to list the item as "inactive" instead of deleting it from the table.</p>
+                <p>The ClubMembers table includes an active attribute, which indicates each member's current status in
+                    the club. If a ClubMember decides to deactivate their membership for a year or two, then active =
+                    "false", but they're not deleted from the table. This means that if they decide to reactivate their
+                    membership at any point, all their information is still there! If a member was deleted and then
+                    decided to rejoin the club, you'd have to re-enter all their information. If there's a chance the
+                    item's information may be relevant later, even if it currently isn't, it can be better to list the
+                    item as "inactive" instead of deleting it from the table.</p>
 
                 <table>
                     <tr>
@@ -613,7 +709,12 @@ expected.put("status", new ExpectedAttributeValue(new AttributeValue("received")
                     </tr>
                 </table>
 
-                <p>Thinking back to the Task class you set up in the previous activity, you delete each task after it's completed. A few months later, one of the systems that was created is having an error and you want to see who completed the relevant task so they can fix it. Since the task was deleted, however, you're not sure who completed it. To avoid this issue in the future, you decide to keep track of whether a task is "active" (needs to be completed) or "inactive" (completed) instead of deleting it.</p>
+                <p>Thinking back to the Task class you set up in the previous activity, you delete each task after it's
+                    completed. A few months later, one of the systems that was created is having an error and you want
+                    to see who completed the relevant task so they can fix it. Since the task was deleted, however,
+                    you're not sure who completed it. To avoid this issue in the future, you decide to keep track of
+                    whether a task is "active" (needs to be completed) or "inactive" (completed) instead of deleting it.
+                </p>
 
                 <table>
                     <tr>
@@ -667,52 +768,76 @@ expected.put("status", new ExpectedAttributeValue(new AttributeValue("received")
                     </tr>
                 </table>
 
-                <p>By keeping track of active vs. inactive you're not losing any data and can still access the item even if it's not in use. You can make the "active" attribute the sort key for your table and use the attribute to sort your table and only retrieve active items. In the ClubMembers table, the active value is a boolean because it isn't a key value. Key values, however, cannot be of type boolean, so for our TaskTracker table, we can use the String type instead!</p>
+                <p>By keeping track of active vs. inactive you're not losing any data and can still access the item even
+                    if it's not in use. You can make the "active" attribute the sort key for your table and use the
+                    attribute to sort your table and only retrieve active items. In the ClubMembers table, the active
+                    value is a boolean because it isn't a key value. Key values, however, cannot be of type boolean, so
+                    for our TaskTracker table, we can use the String type instead!</p>
 
-                <p>In a future lesson you'll learn how to query a table and return multiple active items, but for now you can use the load() method to only retrieve an item if it's active.</p>
+                <p>In a future lesson you'll learn how to query a table and return multiple active items, but for now
+                    you can use the load() method to only retrieve an item if it's active.</p>
 
                 <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
 Task taskActive = mapper.load(Task.class, "JO4387", "active");</code></pre>
 
-                <p>This code snippet will load task "JO4387" only if the attribute status is currently active, meaning that the job still needs to be completed. Since task "JO4387" is currently active, the item is returned by the load() method.</p>
+                <p>This code snippet will load task "JO4387" only if the attribute status is currently active, meaning
+                    that the job still needs to be completed. Since task "JO4387" is currently active, the item is
+                    returned by the load() method.</p>
 
-                <p>The following code snippet, however, will retrieve a null value, because the task "JO1154" is currently inactive.</p>
+                <p>The following code snippet, however, will retrieve a null value, because the task "JO1154" is
+                    currently inactive.</p>
 
                 <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
 Task taskInactive = mapper.load(Task.class, " JO1154", "active");</code></pre>
 
-                <p>Since keeping track of active vs. inactive items allows us to still understand whether an item is currently in use or not, you will more commonly use this table design than deleting items from a table. Deleting items from a table, even if you are doing so with a condition, can lead to loss of data that you may need to access at some point. Think carefully about the design of your tables so that you can keep track of active items instead of having to delete items when they're no longer in use.</p>
+                <p>Since keeping track of active vs. inactive items allows us to still understand whether an item is
+                    currently in use or not, you will more commonly use this table design than deleting items from a
+                    table. Deleting items from a table, even if you are doing so with a condition, can lead to loss of
+                    data that you may need to access at some point. Think carefully about the design of your tables so
+                    that you can keep track of active items instead of having to delete items when they're no longer in
+                    use.</p>
             </div>
 
             <div class="content-box">
                 <h2>Guided Project</h2>
-            
+
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="DynamoDB Delete Operations Guided Project" src="https://fast.wistia.net/embed/iframe/xu7199xl5r" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                    <iframe class="wistia_embed" title="DynamoDB Delete Operations Guided Project"
+                        src="https://fast.wistia.net/embed/iframe/xu7199xl5r" allow="autoplay; fullscreen"
+                        allowfullscreen></iframe>
                 </div>
 
                 <div class="resource-links">
-                    <a href="https://github.com/BloomTechBackend/bd-dynamodb-delete-invites" target="_blank" rel="noopener noreferrer" class="btn">Invites</a>
+                    <a href="https://github.com/BloomTechBackend/bd-dynamodb-delete-invites" target="_blank"
+                        rel="noopener noreferrer" class="btn">Invites</a>
                 </div>
             </div>
 
             <div class="content-box">
                 <h2>Setup Your Sprint 21 Challenge Repo</h2>
 
-                <p>This Sprint culminates in a Sprint Challenge project. You should begin by forking and cloning the Sprint Challenge starter repo:</p>
+                <p>This Sprint culminates in a Sprint Challenge project. You should begin by forking and cloning the
+                    Sprint Challenge starter repo:</p>
 
-                <p><a href="https://github.com/BloomTechBackend/bd-KindlePublishingService" target="_blank" rel="noopener noreferrer">Sprint 21 Challenge Starter Repo</a></p>
+                <p><a href="https://github.com/BloomTechBackend/bd-KindlePublishingService" target="_blank"
+                        rel="noopener noreferrer">Sprint 21 Challenge Starter Repo</a></p>
 
                 <p>This will be your project repo for Sprint 21-23.</p>
 
-                <p>This resource is also visible under the Sprint Challenge section of the course page. After each module, you will be assigned a mastery task with instructions on adding to or modifying the starter code for the challenge. Upon completion of all mastery tasks, the Sprint Challenge project will be complete and ready for you to submit to CodeGrade. The CodeGrade submission page is available under the Sprint Challenge section on the modules page.</p>
+                <p>This resource is also visible under the Sprint Challenge section of the course page. After each
+                    module, you will be assigned a mastery task with instructions on adding to or modifying the starter
+                    code for the challenge. Upon completion of all mastery tasks, the Sprint Challenge project will be
+                    complete and ready for you to submit to CodeGrade. The CodeGrade submission page is available under
+                    the Sprint Challenge section on the modules page.</p>
             </div>
 
             <div class="content-box">
                 <h2>Mastery Task 1: Killing Me Softly</h2>
 
                 <h3>Milestone 1: Create class and sequence diagrams</h3>
-                <p>One of the action items from the design review was to add a class diagram with the existing classes in the service. Create a class diagram of the classes in the following packages and how they relate to each other:</p>
+                <p>One of the action items from the design review was to add a class diagram with the existing classes
+                    in the service. Create a class diagram of the classes in the following packages and how they relate
+                    to each other:</p>
 
                 <ul>
                     <li>com.amazon.ata.kindlepublishingservice.activity (except ExecuteTctActivity.java)</li>
@@ -731,29 +856,54 @@ Task taskInactive = mapper.load(Task.class, " JO1154", "active");</code></pre>
                     <li>com.amazon.ata.kindlepublishingservice.publishing</li>
                 </ul>
 
-                <p>The DynamoDB model classes in the diagram must include all fields and types used to model the DynamoDB table, and which fields will represent the partition and (if any) sort key. You do not need to provide any other annotations, but be sure to indicate the Java type. In each provided model, we've chosen to use an enum to represent the value of an attribute. You'll see this annotation: @DynamoDBTypeConvertedEnum on the getter of the attribute. This tells the DynamoDBMapper to convert the enum to a string value when storing it in the table, but allows your Java code to restrict the attribute to a set of allowed values. Use the enum type in your diagram.</p>
+                <p>The DynamoDB model classes in the diagram must include all fields and types used to model the
+                    DynamoDB table, and which fields will represent the partition and (if any) sort key. You do not need
+                    to provide any other annotations, but be sure to indicate the Java type. In each provided model,
+                    we've chosen to use an enum to represent the value of an attribute. You'll see this annotation:
+                    @DynamoDBTypeConvertedEnum on the getter of the attribute. This tells the DynamoDBMapper to convert
+                    the enum to a string value when storing it in the table, but allows your Java code to restrict the
+                    attribute to a set of allowed values. Use the enum type in your diagram.</p>
 
                 <p>Use the src/resources/mastery-task1-kindle-publishing-CD.puml to document the class diagram.</p>
 
-                <p>Next, create a sequence diagram for the API we'll be working on in milestone 2, RemoveBookFromCatalog. You can use the existing sequence diagrams in the design document as a starter. Include any error handling the APIs are expected to perform, as well as their interactions with other classes.</p>
+                <p>Next, create a sequence diagram for the API we'll be working on in milestone 2,
+                    RemoveBookFromCatalog. You can use the existing sequence diagrams in the design document as a
+                    starter. Include any error handling the APIs are expected to perform, as well as their interactions
+                    with other classes.</p>
 
-                <p>Update src/resources/mastery-task1-remove-book-SD.puml with a sequence diagram for your planned implementation of the RemoveBookFromCatalog operation.</p>
+                <p>Update src/resources/mastery-task1-remove-book-SD.puml with a sequence diagram for your planned
+                    implementation of the RemoveBookFromCatalog operation.</p>
 
-                <p>Recall: We can use <a href="http://wiki.plantuml.net/site/sequence-diagram#grouping_message" target="_blank" rel="noopener noreferrer">PlantUML's alt syntax <span class="external_link_icon" style="margin-inline-start: 5px; display: inline-block; text-indent: initial; " role="presentation"><svg viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg" style="width:1em; height:1em; vertical-align:middle; fill:currentColor">
-                    <path d="M1226.667 267c88.213 0 160 71.787 160 160v426.667H1280v-160H106.667v800C106.667 1523 130.56 1547 160 1547h1066.667c29.44 0 53.333-24 53.333-53.333v-213.334h106.667v213.334c0 88.213-71.787 160-160 160H160c-88.213 0-160-71.787-160-160V427c0-88.213 71.787-160 160-160Zm357.706 442.293 320 320c20.8 20.8 20.8 54.614 0 75.414l-320 320-75.413-75.414 228.907-228.906H906.613V1013.72h831.254L1508.96 784.707l75.413-75.414Zm-357.706-335.626H160c-29.44 0-53.333 24-53.333 53.333v160H1280V427c0-29.333-23.893-53.333-53.333-53.333Z" fill-rule="evenodd"></path>
-                </svg>
-                <span class="screenreader-only"></span></span></a> to represent if/else cases for validation.</p>
+                <p>Recall: We can use <a href="http://wiki.plantuml.net/site/sequence-diagram#grouping_message"
+                        target="_blank" rel="noopener noreferrer">PlantUML's alt syntax <span class="external_link_icon"
+                            style="margin-inline-start: 5px; display: inline-block; text-indent: initial; "
+                            role="presentation"><svg viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg"
+                                style="width:1em; height:1em; vertical-align:middle; fill:currentColor">
+                                <path
+                                    d="M1226.667 267c88.213 0 160 71.787 160 160v426.667H1280v-160H106.667v800C106.667 1523 130.56 1547 160 1547h1066.667c29.44 0 53.333-24 53.333-53.333v-213.334h106.667v213.334c0 88.213-71.787 160-160 160H160c-88.213 0-160-71.787-160-160V427c0-88.213 71.787-160 160-160Zm357.706 442.293 320 320c20.8 20.8 20.8 54.614 0 75.414l-320 320-75.413-75.414 228.907-228.906H906.613V1013.72h831.254L1508.96 784.707l75.413-75.414Zm-357.706-335.626H160c-29.44 0-53.333 24-53.333 53.333v160H1280V427c0-29.333-23.893-53.333-53.333-53.333Z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                            <span class="screenreader-only"></span></span></a> to represent if/else cases for
+                    validation.</p>
 
                 <p>Recall: We can add the @DynamoDBHashKey and @DynamoDBRangeKey annotations to the class diagram.</p>
 
                 <h3>Milestone 2: Implement RemoveBookFromCatalog</h3>
-                <p>We already got a head start on this. You'll need to now add some logic to do a soft delete. We don't want to lose previous versions of the book that we have sold to customers. Instead, we'll mark the current version as inactive so that it can never be returned by the GetBook operation, essentially deleted.</p>
+                <p>We already got a head start on this. You'll need to now add some logic to do a soft delete. We don't
+                    want to lose previous versions of the book that we have sold to customers. Instead, we'll mark the
+                    current version as inactive so that it can never be returned by the GetBook operation, essentially
+                    deleted.</p>
 
-                <p>We'll need to update our CatalogDao to implement this "delete" functionality and use that in our Activity class.</p>
+                <p>We'll need to update our CatalogDao to implement this "delete" functionality and use that in our
+                    Activity class.</p>
 
-                <p>When writing unit tests for your new logic in CatalogDao, we encourage you to use <a href="https://site.mockito.org/javadoc/current/org/mockito/ArgumentCaptor.html" target="_blank" rel="noopener noreferrer">ArgumentCaptor</a>s. To see one in action in the project take a look at the getBookFromCatalog_oneVersion_returnVersion1 unit test in the CatalogDaoTest class.</p>
+                <p>When writing unit tests for your new logic in CatalogDao, we encourage you to use <a
+                        href="https://site.mockito.org/javadoc/current/org/mockito/ArgumentCaptor.html" target="_blank"
+                        rel="noopener noreferrer">ArgumentCaptor</a>s. To see one in action in the project take a look
+                    at the getBookFromCatalog_oneVersion_returnVersion1 unit test in the CatalogDaoTest class.</p>
 
-                <p>We've generated some catalog data and put it in your CatalogItemVersions DynamoDb table. You can find a book there to remove, or feel free to add any additional test data.</p>
+                <p>We've generated some catalog data and put it in your CatalogItemVersions DynamoDb table. You can find
+                    a book there to remove, or feel free to add any additional test data.</p>
 
                 <p>Run MasteryTaskOneDesignTests to make sure all tests for this task are passing.</p>
 
@@ -767,4 +917,5 @@ Task taskInactive = mapper.load(Task.class, " JO1154", "active");</code></pre>
         </section>
     </main>
 </body>
-</html> 
+
+</html>
