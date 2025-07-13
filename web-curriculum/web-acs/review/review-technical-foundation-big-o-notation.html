@@ -1,364 +1,340 @@
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Review Technical Foundation: Big O Notation</title>
-<meta name="identifier" content="gf15a3915f86191cfa7f187333ec758bf"/>
-<meta name="editing_roles" content="teachers"/>
-<meta name="workflow_state" content="active"/>
-<style>
-  /* Dark theme styles */
-  body {
-    background-color: #1e1e1e;
-    color: #e0e0e0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    line-height: 1.6;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  h2, h3, h4 {
-    color: #bbb;
-    margin-top: 25px;
-    margin-bottom: 15px;
-  }
-  
-  a {
-    color: #61afef;
-    text-decoration: none;
-  }
-  
-  a:hover {
-    text-decoration: underline;
-  }
-  
-  p, ul, ol {
-    margin-bottom: 15px;
-  }
-  
-  ul, ol {
-    padding-left: 25px;
-  }
-  
-  li {
-    margin-bottom: 8px;
-  }
-  
-  .code-block {
-    background-color: #2c2c2c;
-    padding: 15px;
-    border-radius: 5px;
-    margin: 15px 0;
-    font-family: 'Courier New', Courier, monospace;
-    white-space: pre;
-    overflow-x: auto;
-    color: #d4d4d4;
-    border: 1px solid #444;
-  }
-  
-  .leetcode-link {
-    color: #e6b450;
-    text-decoration: none;
-  }
-  
-  .leetcode-link:hover {
-    text-decoration: underline;
-  }
-  
-  .concept-section {
-    margin-bottom: 20px;
-    padding: 15px;
-    border-left: 3px solid #93005a;
-    background-color: #252525;
-    border-radius: 0 5px 5px 0;
-  }
-  
-  .complexity-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 15px 0;
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  
-  .complexity-table th, .complexity-table td {
-    border: 1px solid #444;
-    padding: 12px;
-  }
-  
-  .complexity-table th {
-    background-color: #333;
-    text-align: left;
-  }
-  
-  .complexity-table tr:nth-child(even) {
-    background-color: #2a2a2a;
-  }
-  
-  iframe {
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Review Technical Foundation: Big O Notation</title>
+  <meta name="identifier" content="gf15a3915f86191cfa7f187333ec758bf" />
+  <meta name="editing_roles" content="teachers" />
+  <meta name="workflow_state" content="active" />
+  <style>
+    /* Dark theme styles */
+    body {
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h2,
+    h3,
+    h4 {
+      color: #bbb;
+      margin-top: 25px;
+      margin-bottom: 15px;
+    }
+
+    a {
+      color: #61afef;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    p,
+    ul,
+    ol {
+      margin-bottom: 15px;
+    }
+
+    ul,
+    ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    .code-block {
+      background-color: #2c2c2c;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 15px 0;
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre;
+      overflow-x: auto;
+      color: #d4d4d4;
+      border: 1px solid #444;
+    }
+
+    .leetcode-link {
+      color: #e6b450;
+      text-decoration: none;
+    }
+
+    .leetcode-link:hover {
+      text-decoration: underline;
+    }
+
+    .concept-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-left: 3px solid #93005a;
+      background-color: #252525;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .complexity-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .complexity-table th,
+    .complexity-table td {
+      border: 1px solid #444;
+      padding: 12px;
+    }
+
+    .complexity-table th {
+      background-color: #333;
+      text-align: left;
+    }
+
+    .complexity-table tr:nth-child(even) {
+      background-color: #2a2a2a;
+    }
+
+    iframe {
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+  </style>
 </head>
+
 <body>
-<div class="concept-section">
-  <h2>Big O Notation: Understanding Algorithm Efficiency</h2>
-  <p>Big O notation is a fundamental concept in computer science used to describe the performance or complexity of an algorithm. It provides a standardized way to express how the runtime or space requirements of an algorithm grow as the input size increases.</p>
-  
-  <p>After reviewing this material, you will be able to:</p>
+  <div class="concept-section">
+    <h2>Big O Notation: Understanding Algorithm Efficiency</h2>
+    <p>Big O notation is a fundamental concept in computer science used to describe the performance or complexity of an
+      algorithm. It provides a standardized way to express how the runtime or space requirements of an algorithm grow as
+      the input size increases.</p>
+
+    <p>After reviewing this material, you will be able to:</p>
+    <ul>
+      <li>Analyze algorithms to determine their time and space complexity</li>
+      <li>Compare algorithms based on their efficiency</li>
+      <li>Recognize common time complexities (O(1), O(log n), O(n), O(n log n), O(n²), etc.)</li>
+      <li>Apply optimization techniques to improve algorithm efficiency</li>
+      <li>Make informed decisions about algorithm selection for specific problems</li>
+    </ul>
+  </div>
+
+  <p><span>As you go through the topics covered in this unit, you will see the importance of Big O Notation. For
+      example, you will be able to assess and choose sorting algorithms based on efficiency according to some predefined
+      inputs.&nbsp;</span></p>
+
+  <p>Watch this video to learn more about Big O Notation. This video will cover:</p>
   <ul>
-    <li>Analyze algorithms to determine their time and space complexity</li>
-    <li>Compare algorithms based on their efficiency</li>
-    <li>Recognize common time complexities (O(1), O(log n), O(n), O(n log n), O(n²), etc.)</li>
-    <li>Apply optimization techniques to improve algorithm efficiency</li>
-    <li>Make informed decisions about algorithm selection for specific problems</li>
+    <li aria-level="1"><span>How complex algorithms are in time and space</span></li>
+    <li aria-level="1"><span>How Big O notation translates this complexity and how it can be used to rank algorithms
+        regarding their efficiency</span></li>
+    <li aria-level="1"><span>Why knowing about Big O Notation is important for job interviews and the GCA</span></li>
   </ul>
-</div>
 
-<p><span>As you go through the topics covered in this unit, you will see the importance of Big O Notation. For example, you will be able to assess and choose sorting algorithms based on efficiency according to some predefined inputs.&nbsp;</span></p>
+  <p><strong><iframe class="wistia_embed" title="ACS Sprints 12, 24 Module 2 CC Big O Notation Video"
+        src="https://fast.wistia.net/embed/iframe/rtrnfk2g7y" width="640" height="360" name="wistia_embed"
+        allow="fullscreen" loading="lazy"></iframe></strong></p>
 
-<p>Watch this video to learn more about Big O Notation. This video will cover:</p>
-<ul>
-  <li aria-level="1"><span>How complex algorithms are in time and space</span></li>
-  <li aria-level="1"><span>How Big O notation translates this complexity and how it can be used to rank algorithms regarding their efficiency</span></li>
-  <li aria-level="1"><span>Why knowing about Big O Notation is important for job interviews and the GCA</span></li>
-</ul>
+  <h3>Common Time Complexities Explained</h3>
 
-<p><strong><iframe class="wistia_embed" title="ACS Sprints 12, 24 Module 2 CC Big O Notation Video" src="https://fast.wistia.net/embed/iframe/rtrnfk2g7y" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe></strong></p>
+  <table class="complexity-table">
+    <tr>
+      <th>Notation</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Example</th>
+    </tr>
+    <tr>
+      <td>O(1)</td>
+      <td>Constant</td>
+      <td>Runtime is independent of input size</td>
+      <td>Array access, hash table insertion/retrieval</td>
+    </tr>
+    <tr>
+      <td>O(log n)</td>
+      <td>Logarithmic</td>
+      <td>Runtime grows logarithmically with input size</td>
+      <td>Binary search, balanced search trees</td>
+    </tr>
+    <tr>
+      <td>O(n)</td>
+      <td>Linear</td>
+      <td>Runtime grows linearly with input size</td>
+      <td>Simple traversal, linear search</td>
+    </tr>
+    <tr>
+      <td>O(n log n)</td>
+      <td>Linearithmic</td>
+      <td>Combination of linear and logarithmic growth</td>
+      <td>Efficient sorting algorithms (merge sort, quicksort)</td>
+    </tr>
+    <tr>
+      <td>O(n²)</td>
+      <td>Quadratic</td>
+      <td>Runtime grows with the square of input size</td>
+      <td>Nested loops, bubble sort, insertion sort</td>
+    </tr>
+    <tr>
+      <td>O(2^n)</td>
+      <td>Exponential</td>
+      <td>Runtime doubles with each additional input element</td>
+      <td>Recursive solutions without memoization</td>
+    </tr>
+  </table>
 
-<h3>Common Time Complexities Explained</h3>
+  <h3>Code Examples with Different Time Complexities</h3>
 
-<table class="complexity-table">
-  <tr>
-    <th>Notation</th>
-    <th>Name</th>
-    <th>Description</th>
-    <th>Example</th>
-  </tr>
-  <tr>
-    <td>O(1)</td>
-    <td>Constant</td>
-    <td>Runtime is independent of input size</td>
-    <td>Array access, hash table insertion/retrieval</td>
-  </tr>
-  <tr>
-    <td>O(log n)</td>
-    <td>Logarithmic</td>
-    <td>Runtime grows logarithmically with input size</td>
-    <td>Binary search, balanced search trees</td>
-  </tr>
-  <tr>
-    <td>O(n)</td>
-    <td>Linear</td>
-    <td>Runtime grows linearly with input size</td>
-    <td>Simple traversal, linear search</td>
-  </tr>
-  <tr>
-    <td>O(n log n)</td>
-    <td>Linearithmic</td>
-    <td>Combination of linear and logarithmic growth</td>
-    <td>Efficient sorting algorithms (merge sort, quicksort)</td>
-  </tr>
-  <tr>
-    <td>O(n²)</td>
-    <td>Quadratic</td>
-    <td>Runtime grows with the square of input size</td>
-    <td>Nested loops, bubble sort, insertion sort</td>
-  </tr>
-  <tr>
-    <td>O(2^n)</td>
-    <td>Exponential</td>
-    <td>Runtime doubles with each additional input element</td>
-    <td>Recursive solutions without memoization</td>
-  </tr>
-</table>
-
-<h3>Code Examples with Different Time Complexities</h3>
-
-<h4>O(1) - Constant Time</h4>
-<div class="code-block">
-// O(1) - Accessing an array element
-function getElement(arr, index) {
-  return arr[index]; // Direct access, always same number of operations
-}
-
-// O(1) - Hash table lookup
-function hasKey(obj, key) {
-  return key in obj; // Direct hash lookup
-}
-</div>
-
-<h4>O(log n) - Logarithmic Time</h4>
-<div class="code-block">
-// O(log n) - Binary search
-function binarySearch(sortedArray, target) {
-  let left = 0;
-  let right = sortedArray.length - 1;
-  
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    
-    if (sortedArray[mid] === target) {
-      return mid; // Found the target
-    } else if (sortedArray[mid] < target) {
-      left = mid + 1; // Search in the right half
-    } else {
-      right = mid - 1; // Search in the left half
+  <h4>O(1) - Constant Time</h4>
+  <div class="code-block">
+    // O(1) - Accessing an array element
+    function getElement(arr, index) {
+    return arr[index]; // Direct access, always same number of operations
     }
-  }
-  
-  return -1; // Target not found
-}
-</div>
 
-<h4>O(n) - Linear Time</h4>
-<div class="code-block">
-// O(n) - Linear search
-function linearSearch(array, target) {
-  for (let i = 0; i < array.length; i++) {
-    if (array[i] === target) {
-      return i;
+    // O(1) - Hash table lookup
+    function hasKey(obj, key) {
+    return key in obj; // Direct hash lookup
     }
-  }
-  return -1;
-}
+  </div>
 
-// O(n) - Find maximum value
-function findMax(array) {
-  let max = array[0];
-  for (let i = 1; i < array.length; i++) {
-    if (array[i] > max) {
-      max = array[i];
-    }
-  }
-  return max;
-}
-</div>
+  <h4>O(log n) - Logarithmic Time</h4>
+  <div class="code-block">
+    // O(log n) - Binary search
+    function binarySearch(sortedArray, target) {
+    let left = 0;
+    let right = sortedArray.length - 1;
 
-<h4>O(n log n) - Linearithmic Time</h4>
-<div class="code-block">
-// O(n log n) - Merge sort
-function mergeSort(array) {
-  if (array.length <= 1) return array;
-  
-  const mid = Math.floor(array.length / 2);
-  const left = mergeSort(array.slice(0, mid));
-  const right = mergeSort(array.slice(mid));
-  
-  return merge(left, right);
-}
+    while (left <= right) { const mid=Math.floor((left + right) / 2); if (sortedArray[mid]===target) { return mid; //
+      Found the target } else if (sortedArray[mid] < target) { left=mid + 1; // Search in the right half } else {
+      right=mid - 1; // Search in the left half } } return -1; // Target not found } </div>
 
-function merge(left, right) {
-  const result = [];
-  let i = 0, j = 0;
-  
-  while (i < left.length && j < right.length) {
-    if (left[i] <= right[j]) {
-      result.push(left[i++]);
-    } else {
-      result.push(right[j++]);
-    }
-  }
-  
-  return result.concat(left.slice(i)).concat(right.slice(j));
-}
-</div>
+      <h4>O(n) - Linear Time</h4>
+      <div class="code-block">
+        // O(n) - Linear search
+        function linearSearch(array, target) {
+        for (let i = 0; i < array.length; i++) { if (array[i]===target) { return i; } } return -1; } // O(n) - Find
+          maximum value function findMax(array) { let max=array[0]; for (let i=1; i < array.length; i++) { if (array[i]>
+          max) {
+          max = array[i];
+          }
+          }
+          return max;
+          }
+      </div>
 
-<h4>O(n²) - Quadratic Time</h4>
-<div class="code-block">
-// O(n²) - Bubble sort
-function bubbleSort(array) {
-  for (let i = 0; i < array.length; i++) {
-    for (let j = 0; j < array.length - i - 1; j++) {
-      if (array[j] > array[j + 1]) {
-        // Swap elements
-        [array[j], array[j + 1]] = [array[j + 1], array[j]];
-      }
-    }
-  }
-  return array;
-}
+      <h4>O(n log n) - Linearithmic Time</h4>
+      <div class="code-block">
+        // O(n log n) - Merge sort
+        function mergeSort(array) {
+        if (array.length <= 1) return array; const mid=Math.floor(array.length / 2); const left=mergeSort(array.slice(0,
+          mid)); const right=mergeSort(array.slice(mid)); return merge(left, right); } function merge(left, right) {
+          const result=[]; let i=0, j=0; while (i < left.length && j < right.length) { if (left[i] <=right[j]) {
+          result.push(left[i++]); } else { result.push(right[j++]); } } return
+          result.concat(left.slice(i)).concat(right.slice(j)); } </div>
 
-// O(n²) - Checking all pairs in an array
-function findAllPairs(array) {
-  const pairs = [];
-  for (let i = 0; i < array.length; i++) {
-    for (let j = i + 1; j < array.length; j++) {
-      pairs.push([array[i], array[j]]);
-    }
-  }
-  return pairs;
-}
-</div>
+          <h4>O(n²) - Quadratic Time</h4>
+          <div class="code-block">
+            // O(n²) - Bubble sort
+            function bubbleSort(array) {
+            for (let i = 0; i < array.length; i++) { for (let j=0; j < array.length - i - 1; j++) { if (array[j]>
+              array[j + 1]) {
+              // Swap elements
+              [array[j], array[j + 1]] = [array[j + 1], array[j]];
+              }
+              }
+              }
+              return array;
+              }
 
-<h3>Space Complexity</h3>
-<p>Space complexity refers to the amount of memory an algorithm uses relative to its input size. Like time complexity, it's also expressed using Big O notation.</p>
+              // O(n²) - Checking all pairs in an array
+              function findAllPairs(array) {
+              const pairs = [];
+              for (let i = 0; i < array.length; i++) { for (let j=i + 1; j < array.length; j++) { pairs.push([array[i],
+                array[j]]); } } return pairs; } </div>
 
-<div class="code-block">
-// O(1) space complexity - constant extra space
-function sumArray(arr) {
-  let sum = 0;  // single variable, constant space
-  for (let i = 0; i < arr.length; i++) {
-    sum += arr[i];
-  }
-  return sum;
-}
+                <h3>Space Complexity</h3>
+                <p>Space complexity refers to the amount of memory an algorithm uses relative to its input size. Like
+                  time complexity, it's also expressed using Big O notation.</p>
 
-// O(n) space complexity - linear extra space
-function createDoubledArray(arr) {
-  const doubled = [];  // new array that grows with input size
-  for (let i = 0; i < arr.length; i++) {
-    doubled.push(arr[i] * 2);
-  }
-  return doubled;
-}
-</div>
+                <div class="code-block">
+                  // O(1) space complexity - constant extra space
+                  function sumArray(arr) {
+                  let sum = 0; // single variable, constant space
+                  for (let i = 0; i < arr.length; i++) { sum +=arr[i]; } return sum; } // O(n) space complexity - linear
+                    extra space function createDoubledArray(arr) { const doubled=[]; // new array that grows with input
+                    size for (let i=0; i < arr.length; i++) { doubled.push(arr[i] * 2); } return doubled; } </div>
 
-<h3>Practice with LeetCode Problems</h3>
+                    <h3>Practice with LeetCode Problems</h3>
 
-<p>Note: Previously, this course referenced the CodeSignal Arcade for practice, which is no longer available. The LeetCode problems below follow the same principles and are an excellent alternative for practicing algorithm efficiency and preparing for technical interviews.</p>
+                    <p>Note: Previously, this course referenced the CodeSignal Arcade for practice, which is no longer
+                      available. The LeetCode problems below follow the same principles and are an excellent alternative
+                      for practicing algorithm efficiency and preparing for technical interviews.</p>
 
-<h4>Problems by Time Complexity:</h4>
+                    <h4>Problems by Time Complexity:</h4>
 
-<p><strong>O(1) and O(log n) Problems:</strong></p>
-<ul>
-  <li><a href="https://leetcode.com/problems/search-in-a-binary-search-tree/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Search in a Binary Search Tree</a> - Practice O(log n) binary search tree traversal</li>
-  <li><a href="https://leetcode.com/problems/power-of-two/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Power of Two</a> - Solve in O(1) time using bit manipulation</li>
-</ul>
+                    <p><strong>O(1) and O(log n) Problems:</strong></p>
+                    <ul>
+                      <li><a href="https://leetcode.com/problems/search-in-a-binary-search-tree/" class="leetcode-link"
+                          target="_blank" rel="noopener noreferrer">Search in a Binary Search Tree</a> - Practice O(log
+                        n) binary search tree traversal</li>
+                      <li><a href="https://leetcode.com/problems/power-of-two/" class="leetcode-link" target="_blank"
+                          rel="noopener noreferrer">Power of Two</a> - Solve in O(1) time using bit manipulation</li>
+                    </ul>
 
-<p><strong>O(n) Problems:</strong></p>
-<ul>
-  <li><a href="https://leetcode.com/problems/two-sum/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Two Sum</a> - Can be solved in O(n) time with a hash map</li>
-  <li><a href="https://leetcode.com/problems/maximum-subarray/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Maximum Subarray</a> - Practice Kadane's algorithm (O(n))</li>
-</ul>
+                    <p><strong>O(n) Problems:</strong></p>
+                    <ul>
+                      <li><a href="https://leetcode.com/problems/two-sum/" class="leetcode-link" target="_blank"
+                          rel="noopener noreferrer">Two Sum</a> - Can be solved in O(n) time with a hash map</li>
+                      <li><a href="https://leetcode.com/problems/maximum-subarray/" class="leetcode-link"
+                          target="_blank" rel="noopener noreferrer">Maximum Subarray</a> - Practice Kadane's algorithm
+                        (O(n))</li>
+                    </ul>
 
-<p><strong>O(n log n) Problems:</strong></p>
-<ul>
-  <li><a href="https://leetcode.com/problems/sort-an-array/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Sort an Array</a> - Implement efficient sorting algorithms</li>
-  <li><a href="https://leetcode.com/problems/merge-intervals/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Merge Intervals</a> - Requires sorting, then linear processing</li>
-</ul>
+                    <p><strong>O(n log n) Problems:</strong></p>
+                    <ul>
+                      <li><a href="https://leetcode.com/problems/sort-an-array/" class="leetcode-link" target="_blank"
+                          rel="noopener noreferrer">Sort an Array</a> - Implement efficient sorting algorithms</li>
+                      <li><a href="https://leetcode.com/problems/merge-intervals/" class="leetcode-link" target="_blank"
+                          rel="noopener noreferrer">Merge Intervals</a> - Requires sorting, then linear processing</li>
+                    </ul>
 
-<p><strong>Algorithm Optimization Problems:</strong></p>
-<ul>
-  <li><a href="https://leetcode.com/problems/contains-duplicate/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Contains Duplicate</a> - Compare O(n²) vs O(n) approaches</li>
-  <li><a href="https://leetcode.com/problems/find-peak-element/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Find Peak Element</a> - Can be optimized from O(n) to O(log n)</li>
-</ul>
+                    <p><strong>Algorithm Optimization Problems:</strong></p>
+                    <ul>
+                      <li><a href="https://leetcode.com/problems/contains-duplicate/" class="leetcode-link"
+                          target="_blank" rel="noopener noreferrer">Contains Duplicate</a> - Compare O(n²) vs O(n)
+                        approaches</li>
+                      <li><a href="https://leetcode.com/problems/find-peak-element/" class="leetcode-link"
+                          target="_blank" rel="noopener noreferrer">Find Peak Element</a> - Can be optimized from O(n)
+                        to O(log n)</li>
+                    </ul>
 
-<h3>Big O Cheat Sheet Summary</h3>
+                    <h3>Big O Cheat Sheet Summary</h3>
 
-<p>When analyzing algorithms, remember these key principles:</p>
+                    <p>When analyzing algorithms, remember these key principles:</p>
 
-<ul>
-  <li><strong>Focus on the dominant term:</strong> Drop constants and lower-order terms (e.g., O(2n) → O(n), O(n² + n) → O(n²))</li>
-  <li><strong>Consider worst-case scenario:</strong> Unless specified otherwise, Big O represents the upper bound (worst case)</li>
-  <li><strong>Analyze both time and space:</strong> Sometimes you can trade one for the other</li>
-  <li><strong>Context matters:</strong> O(n log n) might be better than O(n) if the constant factors are vastly different</li>
-</ul>
+                    <ul>
+                      <li><strong>Focus on the dominant term:</strong> Drop constants and lower-order terms (e.g., O(2n)
+                        → O(n), O(n² + n) → O(n²))</li>
+                      <li><strong>Consider worst-case scenario:</strong> Unless specified otherwise, Big O represents
+                        the upper bound (worst case)</li>
+                      <li><strong>Analyze both time and space:</strong> Sometimes you can trade one for the other</li>
+                      <li><strong>Context matters:</strong> O(n log n) might be better than O(n) if the constant factors
+                        are vastly different</li>
+                    </ul>
 
-<p>Understanding Big O notation will help you make informed decisions about algorithm selection and optimization, which is crucial for both technical interviews and real-world software development.</p>
+                    <p>Understanding Big O notation will help you make informed decisions about algorithm selection and
+                      optimization, which is crucial for both technical interviews and real-world software development.
+                    </p>
 
 </body>
+
 </html>

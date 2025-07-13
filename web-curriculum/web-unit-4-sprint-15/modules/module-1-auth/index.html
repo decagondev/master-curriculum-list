@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 1 - Intro to Authentication</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -29,10 +31,12 @@
     <main class="container">
         <section class="welcome">
             <h1>Module 1: Introduction to Authentication</h1>
-            
+
             <div class="content-box module1-accent">
                 <h2>What is Authentication</h2>
-                <p>Authentication is the process by which our Web API verifies a client's identity that is trying to access a resource. This is different from authorization, which comes after authentication and determines what type of access a user should have.</p>
+                <p>Authentication is the process by which our Web API verifies a client's identity that is trying to
+                    access a resource. This is different from authorization, which comes after authentication and
+                    determines what type of access a user should have.</p>
 
                 <p>Adding authentication to a Web API requires that an API can:</p>
                 <ul>
@@ -42,7 +46,9 @@
                     <li>Add a way for users to reset their passwords.</li>
                 </ul>
 
-                <p>Proper authentication is difficult. There is a constant race between security experts with innovative ways to protect our information and attackers coming up with ways to circumvent those security measures.</p>
+                <p>Proper authentication is difficult. There is a constant race between security experts with innovative
+                    ways to protect our information and attackers coming up with ways to circumvent those security
+                    measures.</p>
 
                 <p>Some of the things we need to take into account when implementing authentication are:</p>
                 <ul>
@@ -53,39 +59,56 @@
 
                 <div class="note-box">
                     <h3>How to Build It</h3>
-                    <p>Let's tackle the first one, password storage. The rule of thumb is: NEVER, EVER, under no circumstances, store user passwords in plain text. Then what are the two main options:</p>
-                <ul>
-                    <li>encryption.</li>
-                    <li>hashing.</li>
-                </ul>
+                    <p>Let's tackle the first one, password storage. The rule of thumb is: NEVER, EVER, under no
+                        circumstances, store user passwords in plain text. Then what are the two main options:</p>
+                    <ul>
+                        <li>encryption.</li>
+                        <li>hashing.</li>
+                    </ul>
 
-                <h3>Password Hashing vs. Encryption for password storage</h3>
-                <ul>
-                    <li>Encryption goes two ways. First, it utilizes plain text and private keys to generate encrypted passwords and then reverses the process to match an original password.</li>
-                    <li>Cryptographic hashes only go one way: parameters + input = hash. It is pure; given the same parameters and input, it generates the same hash.</li>
-                </ul>
+                    <h3>Password Hashing vs. Encryption for password storage</h3>
+                    <ul>
+                        <li>Encryption goes two ways. First, it utilizes plain text and private keys to generate
+                            encrypted passwords and then reverses the process to match an original password.</li>
+                        <li>Cryptographic hashes only go one way: parameters + input = hash. It is pure; given the same
+                            parameters and input, it generates the same hash.</li>
+                    </ul>
 
-                <p>Suppose the database of users and keys is compromised. In that case, it is possible to decrypt the passwords to their original values, which is bad because users often share passwords across different sites. This is one reason why cryptographic hashing is the preferred method for storing user passwords.</p>
+                    <p>Suppose the database of users and keys is compromised. In that case, it is possible to decrypt
+                        the passwords to their original values, which is bad because users often share passwords across
+                        different sites. This is one reason why cryptographic hashing is the preferred method for
+                        storing user passwords.</p>
 
-                <h3>Password Strength</h3>
-                <p>Password length alone is not enough to slow password guessing, but long passwords are generally better than short, complicated ones. It is a trade-off between convenience and security.</p>
+                    <h3>Password Strength</h3>
+                    <p>Password length alone is not enough to slow password guessing, but long passwords are generally
+                        better than short, complicated ones. It is a trade-off between convenience and security.</p>
 
-                <p>Visit <a href="https://www.grc.com/haystack.htm" target="_blank" rel="noopener noreferrer">this site</a> to see how a combination of password length and complexity affects an attacker's ability to pre-generate password hashes.</p>
+                    <p>Visit <a href="https://www.grc.com/haystack.htm" target="_blank" rel="noopener noreferrer">this
+                            site</a> to see how a combination of password length and complexity affects an attacker's
+                        ability to pre-generate password hashes.</p>
 
-                <h3>Brute-Force Attack Mitigation</h3>
-                <p>A common way that attackers circumvent hashing algorithms is by pre-calculating hashes for all possible character combinations up to a particular length using common hashing techniques. The results of said calculations are stored in a database table known as a rainbow table. Whenever there is a breach, the attacker checks every breached password against their table.</p>
+                    <h3>Brute-Force Attack Mitigation</h3>
+                    <p>A common way that attackers circumvent hashing algorithms is by pre-calculating hashes for all
+                        possible character combinations up to a particular length using common hashing techniques. The
+                        results of said calculations are stored in a database table known as a rainbow table. Whenever
+                        there is a breach, the attacker checks every breached password against their table.</p>
 
-                <p>Which Cryptographic Hashing Algorithm should we use? MD5, SHA-1, SHA-2, SHA-3? None of these, because they are flawed, these algorithms are optimized for speed, not security.</p>
+                    <p>Which Cryptographic Hashing Algorithm should we use? MD5, SHA-1, SHA-2, SHA-3? None of these,
+                        because they are flawed, these algorithms are optimized for speed, not security.</p>
 
-                <p>We aim to slow down hackers' ability to get at a user's password. To do so, we will add time to our security algorithm to produce what is known as a key derivation function.</p>
+                    <p>We aim to slow down hackers' ability to get at a user's password. To do so, we will add time to
+                        our security algorithm to produce what is known as a key derivation function.</p>
 
-                <p>[Hash] + [Time] = [Key Derivation Function].</p>
+                    <p>[Hash] + [Time] = [Key Derivation Function].</p>
 
-                <p>In the next section, we'll learn how to use a popular Key Derivation library to store user passwords safely.</p>
+                    <p>In the next section, we'll learn how to use a popular Key Derivation library to store user
+                        passwords safely.</p>
                 </div>
 
                 <h3>Hashing Passwords</h3>
-                <p>Instead of writing our key derivation function (fancy name for hashing function), we'll use a well-known and popular module called <a href="https://www.npmjs.com/package/bcryptjs" target="_blank" rel="noopener noreferrer">bcryptjs</a>.</p>
+                <p>Instead of writing our key derivation function (fancy name for hashing function), we'll use a
+                    well-known and popular module called <a href="https://www.npmjs.com/package/bcryptjs"
+                        target="_blank" rel="noopener noreferrer">bcryptjs</a>.</p>
 
                 <p>Bcryptjs features include:</p>
                 <ul>
@@ -94,7 +117,9 @@
                     <li>accumulative hashing rounds</li>
                 </ul>
 
-                <p>Having an algorithm that hashes the information multiple times (rounds) means an attacker needs to have the hash, know the algorithm used, and how many rounds were used to generate the hash in the first place.</p>
+                <p>Having an algorithm that hashes the information multiple times (rounds) means an attacker needs to
+                    have the hash, know the algorithm used, and how many rounds were used to generate the hash in the
+                    first place.</p>
 
                 <div class="note-box">
                     <h3>How to Build It</h3>
@@ -129,13 +154,16 @@ if (!user || !bcrypt.compareSync(credentials.password, user.password)) {
 // the user is valid, continue on</code></pre>
 
                     <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/lhgx4vxtxm" title="Password Hashing with Bcrypt" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                        <iframe src="https://fast.wistia.net/embed/iframe/lhgx4vxtxm"
+                            title="Password Hashing with Bcrypt" allow="fullscreen" loading="lazy"></iframe>
                     </div>
                 </div>
                 <h3>Verifying passwords with Bcrypt</h3>
-                <p>Use bcrypt.compareSync(), passing the password guess in plain text and the password hash from the database to validate credentials.</p>
+                <p>Use bcrypt.compareSync(), passing the password guess in plain text and the password hash from the
+                    database to validate credentials.</p>
 
-                <p>If the password guess is valid, the method returns true. Otherwise, it returns false. This is because the library hashes the password guess first and then compares the hashes.</p>
+                <p>If the password guess is valid, the method returns true. Otherwise, it returns false. This is because
+                    the library hashes the password guess first and then compares the hashes.</p>
 
                 <div class="note-box">
                     <h3>How to Build It</h3>
@@ -162,16 +190,20 @@ if (!user || !bcrypt.compareSync(credentials.password, user.password)) {
 });</code></pre>
 
                     <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/3yg5238eaw" title="Verifying Passwords with Bcrypt" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                        <iframe src="https://fast.wistia.net/embed/iframe/3yg5238eaw"
+                            title="Verifying Passwords with Bcrypt" allow="fullscreen" loading="lazy"></iframe>
                     </div>
                 </div>
                 <h3>In-memory sessions</h3>
 
-                <p>Sessions provide a way to persist data across requests. For example, we'll use them to save authentication information, so there is no need to re-enter credentials on every new request the client makes to the server.</p>
+                <p>Sessions provide a way to persist data across requests. For example, we'll use them to save
+                    authentication information, so there is no need to re-enter credentials on every new request the
+                    client makes to the server.</p>
 
                 <p>When using sessions, each client will have a unique session stored on the server.</p>
 
-                <p>Now that we have a solution for keeping authentication information, we need to transmit that information between the client and server. For that, we'll use cookies.</p>
+                <p>Now that we have a solution for keeping authentication information, we need to transmit that
+                    information between the client and server. For that, we'll use cookies.</p>
 
                 <div class="note-box">
                     <h3>Authentication Workflow for sessions</h3>
@@ -188,17 +220,25 @@ if (!user || !bcrypt.compareSync(credentials.password, user.password)) {
                     </ol>
                 </div>
 
-                <p>To understand how cookies are transmitted and stored in the browser, we need to look at the basic structure of an HTTP message. Every HTTP message, be it a request or a response, has two main parts: the headers and the body.</p>
+                <p>To understand how cookies are transmitted and stored in the browser, we need to look at the basic
+                    structure of an HTTP message. Every HTTP message, be it a request or a response, has two main parts:
+                    the headers and the body.</p>
 
-                <p>The headers are a set of key/value stores that include information about the request. There are several standard headers, but we can add our own if needed.</p>
+                <p>The headers are a set of key/value stores that include information about the request. There are
+                    several standard headers, but we can add our own if needed.</p>
 
-                <p>To send cookies, the server adds the Set-Cookie header to the response like so: "Set-Cookie": "session=12345". Notice how the value of a header is just a string. The browser will read the header and save a cookie called session with the value 12345 in this example. We will use a library that takes care of creating and sending the cookie.</p>
+                <p>To send cookies, the server adds the Set-Cookie header to the response like so: "Set-Cookie":
+                    "session=12345". Notice how the value of a header is just a string. The browser will read the header
+                    and save a cookie called session with the value 12345 in this example. We will use a library that
+                    takes care of creating and sending the cookie.</p>
 
                 <p>The body contains the data portion of the message.</p>
 
-                <p>The browser will add the "Cookie": "session=12345" header on every subsequent request and the server.</p>
+                <p>The browser will add the "Cookie": "session=12345" header on every subsequent request and the server.
+                </p>
 
-                <p>Cookies are not accessible from JavaScript or anywhere because they are cryptographically signed and very secure.</p>
+                <p>Cookies are not accessible from JavaScript or anywhere because they are cryptographically signed and
+                    very secure.</p>
 
                 <p>There are sever libraries for handling sessions in Node.js, below are two examples:</p>
                 <ul>
@@ -229,14 +269,16 @@ if (!user || !bcrypt.compareSync(credentials.password, user.password)) {
                 <h3>Storing Session Data in Memory</h3>
                 <ul>
                     <li>Data stored in memory is wiped when the server restarts</li>
-                    <li>Causes memory leaks as more memory is used as the application continues to store data in session for different clients</li>
+                    <li>Causes memory leaks as more memory is used as the application continues to store data in session
+                        for different clients</li>
                     <li>Good for development due to its simplicity</li>
                 </ul>
 
                 <h3>Using cookies to transfer session data</h3>
                 <p>Advantages when using cookies:</p>
                 <ul>
-                    <li>A cookie is a small key/value pair data structure passed back and forth between client and server and stored in the browser</li>
+                    <li>A cookie is a small key/value pair data structure passed back and forth between client and
+                        server and stored in the browser</li>
                     <li>The server uses it to store information about a particular client/user</li>
                 </ul>
 
@@ -254,8 +296,10 @@ if (!user || !bcrypt.compareSync(credentials.password, user.password)) {
                 <p>Drawbacks when using cookies:</p>
                 <ul>
                     <li>Small size, around 4KB</li>
-                    <li>Send in every request, increasing the request size if too much information is stored in them</li>
-                    <li>If an attacker gets a hold of the private key used to encrypt the cookie, they could read the cookie data</li>
+                    <li>Send in every request, increasing the request size if too much information is stored in them
+                    </li>
+                    <li>If an attacker gets a hold of the private key used to encrypt the cookie, they could read the
+                        cookie data</li>
                 </ul>
 
                 <h3>Storing Session Data in Memory Cache</h3>
@@ -288,10 +332,13 @@ if (!user || !bcrypt.compareSync(credentials.password, user.password)) {
                     <li>The server uses the session id to find the session data in the database</li>
                     <li>Retrieving data from a database is slower than reading from a memory cache</li>
                     <li>It causes chatter between the server and the database</li>
-                    <li>Need to manage/remove old sessions manually, or the database will be filled with unused session data. Most libraries now manage this for you</li>
+                    <li>Need to manage/remove old sessions manually, or the database will be filled with unused session
+                        data. Most libraries now manage this for you</li>
                 </ul>
 
-                <p>Here is a list of <a href="https://github.com/expressjs/session#compatible-session-stores">express-session compatible stores</a></p>
+                <p>Here is a list of <a
+                        href="https://github.com/expressjs/session#compatible-session-stores">express-session compatible
+                        stores</a></p>
 
                 <div class="note-box">
                     <h3>How to Build It</h3>
@@ -314,9 +361,13 @@ server.use(
   })
 );</code></pre>
 
-                    <p>The resave option forces the session to be saved back to the session store, even if the session wasn't modified during the request.</p>
+                    <p>The resave option forces the session to be saved back to the session store, even if the session
+                        wasn't modified during the request.</p>
 
-                    <p>The saveUninitialized flag, forces a session that is "uninitialized" to be saved to the store. A session is uninitialized when it is new but not modified. Choosing false is useful for implementing login sessions, reducing server storage usage, or complying with laws that require permission before setting a cookie.</p>
+                    <p>The saveUninitialized flag, forces a session that is "uninitialized" to be saved to the store. A
+                        session is uninitialized when it is new but not modified. Choosing false is useful for
+                        implementing login sessions, reducing server storage usage, or complying with laws that require
+                        permission before setting a cookie.</p>
 
                     <p>Now we can store session data in one route handler and read it in another.</p>
 
@@ -330,18 +381,24 @@ app.get('/greet', (req, res) => {
   res.send(`hello ${req.session.name}`);
 });</code></pre>
 
-                    <p>The server sends back a session id with every response, and the client then sends back that session id on every request.</p>
+                    <p>The server sends back a session id with every response, and the client then sends back that
+                        session id on every request.</p>
 
-                    <p><a href="https://www.npmjs.com/package/express-session">express-session</a> uses in-memory storage by default.</p>
+                    <p><a href="https://www.npmjs.com/package/express-session">express-session</a> uses in-memory
+                        storage by default.</p>
 
-                    <p>Note how we generalize the session cookie's name, to make it harder for attackers to know which library we're using to manage our sessions. This is akin to using a helmet to hide the X-Powered-By=Express header.</p>
+                    <p>Note how we generalize the session cookie's name, to make it harder for attackers to know which
+                        library we're using to manage our sessions. This is akin to using a helmet to hide the
+                        X-Powered-By=Express header.</p>
 
                     <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/5e2hrnzuu8" title="Implementing Session Management" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                        <iframe src="https://fast.wistia.net/embed/iframe/5e2hrnzuu8"
+                            title="Implementing Session Management" allow="fullscreen" loading="lazy"></iframe>
                     </div>
                 </div>
                 <h3>Implement Logout</h3>
-                <p>Sessions remain active until they reach the expiration time configured when they were created, but we need to invalidate the session immediately when a user logs out.</p>
+                <p>Sessions remain active until they reach the expiration time configured when they were created, but we
+                    need to invalidate the session immediately when a user logs out.</p>
 
                 <p>We can do this by removing the session from our session store. Each library does it differently.</p>
 
@@ -361,9 +418,11 @@ app.get('/greet', (req, res) => {
   }
 });</code></pre>
 
-                    <p>The destroy() method removes the session from the store and eliminates the req.session property. This effectively logs out the user by invalidating their session.</p>
+                    <p>The destroy() method removes the session from the store and eliminates the req.session property.
+                        This effectively logs out the user by invalidating their session.</p>
                     <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/6vj4tr1h28" title="Implementing User Logout" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                        <iframe src="https://fast.wistia.net/embed/iframe/6vj4tr1h28" title="Implementing User Logout"
+                            allow="fullscreen" loading="lazy"></iframe>
                     </div>
                 </div>
                 <h3>Protecting Routes</h3>
@@ -375,7 +434,8 @@ app.get('/greet', (req, res) => {
                 </ol>
                 <div class="note-box">
                     <h3>How to Build It</h3>
-                    <p>We'll start by writing a piece of middleware we can use locally to restrict access to protected routes.</p>
+                    <p>We'll start by writing a piece of middleware we can use locally to restrict access to protected
+                        routes.</p>
 
                     <pre><code>function protected(req, res, next) {
   if (req.session && req.session.userId) {
@@ -385,7 +445,8 @@ app.get('/greet', (req, res) => {
   }
 }</code></pre>
 
-                    <p>This middleware verifies that we have a session and that the userId is set. We could use username or any other value to verify access to a resource.</p>
+                    <p>This middleware verifies that we have a session and that the userId is set. We could use username
+                        or any other value to verify access to a resource.</p>
 
                     <p>Then, we add that middleware to the endpoints we'd like to protect.</p>
 
@@ -398,63 +459,82 @@ app.get('/greet', (req, res) => {
                     <p>The /api/users endpoint is only accessible when the client is logged in.</p>
 
                     <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/4zv6i69yos" title="Protecting Routes with Authentication" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                        <iframe src="https://fast.wistia.net/embed/iframe/4zv6i69yos"
+                            title="Protecting Routes with Authentication" allow="fullscreen" loading="lazy"></iframe>
                     </div>
-                </div>                
                 </div>
+            </div>
 
-                <div class="content-box module1-accent">
-                    <h2>Guided Project</h2>
-                  <p><a href="https://github.com/bloominstituteoftechnology/node-auth1-guided" target="_blank" rel="noopener noreferrer">Intro to Authentication Starter Code</a></p>
-                  <p><a href="https://github.com/bloominstituteoftechnology/node-auth1-guided-solution" target="_blank" rel="noopener noreferrer">Intro to Authentication Solution</a></p>
-                  <div class="video-container">
-                      <iframe src="https://fast.wistia.net/embed/iframe/ctn0dnz405" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
-                  </div>
-                  <div class="note-box">
+            <div class="content-box module1-accent">
+                <h2>Guided Project</h2>
+                <p><a href="https://github.com/bloominstituteoftechnology/node-auth1-guided" target="_blank"
+                        rel="noopener noreferrer">Intro to Authentication Starter Code</a></p>
+                <p><a href="https://github.com/bloominstituteoftechnology/node-auth1-guided-solution" target="_blank"
+                        rel="noopener noreferrer">Intro to Authentication Solution</a></p>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/ctn0dnz405" title="Guided Project"
+                        allow="fullscreen" loading="lazy"></iframe>
+                </div>
+                <div class="note-box">
                     <h3>NOTE</h3>
-                    <p>The versions of project dependencies used in the recording are slightly different from the ones used in the starter and solution repositories, but this should not have any impact on the relevant code of the Guided Project.</p>
+                    <p>The versions of project dependencies used in the recording are slightly different from the ones
+                        used in the starter and solution repositories, but this should not have any impact on the
+                        relevant code of the Guided Project.</p>
 
-                    <p>The versions used in the repositories are more recent, and thus more similar to the versions you will install if you create a project from scratch.</p>
-                  </div>
+                    <p>The versions used in the repositories are more recent, and thus more similar to the versions you
+                        will install if you create a project from scratch.</p>
                 </div>
-    
-                <div class="content-box module1-accent">
-                    <h3>Module 1 Project: Authentication</h3>
-    
-                    <p>The module project contains advanced problems that will challenge and stretch your understanding of the module's content. The project has built-in tests for you to check your work, and the solution video is available in case you need help or want to see how we solved each challenge, but remember, there is always more than one way to solve a problem. Before reviewing the solution video, be sure to attempt the project and try solving the challenges yourself.</p>
-                    
-    
-                    <h3>Instructions</h3>
-    
-                    <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
-                    <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/node-auth1-project" target="_blank" rel="noopener noreferrer">Node Authentication</a></p>
-    
-                    <ul>
-                        <li>Fork the repository,</li>
-                        <li>clone it to your machine, and</li>
-                        <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
-                        <li>submit your completed project to the BloomTech Portal</li>
-                    </ul>
-    
-                    <h3>Solution</h3>
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/hr50j3c06h" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
-                    </div>
+            </div>
+
+            <div class="content-box module1-accent">
+                <h3>Module 1 Project: Authentication</h3>
+
+                <p>The module project contains advanced problems that will challenge and stretch your understanding of
+                    the module's content. The project has built-in tests for you to check your work, and the solution
+                    video is available in case you need help or want to see how we solved each challenge, but remember,
+                    there is always more than one way to solve a problem. Before reviewing the solution video, be sure
+                    to attempt the project and try solving the challenges yourself.</p>
+
+
+                <h3>Instructions</h3>
+
+                <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo
+                    to your own GitHub account, and clone it down to your computer:</p>
+                <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/node-auth1-project"
+                        target="_blank" rel="noopener noreferrer">Node Authentication</a></p>
+
+                <ul>
+                    <li>Fork the repository,</li>
+                    <li>clone it to your machine, and</li>
+                    <li>open the README.md file in VSCode, where you will find instructions on completing this Project.
+                    </li>
+                    <li>submit your completed project to the BloomTech Portal</li>
+                </ul>
+
+                <h3>Solution</h3>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/hr50j3c06h" title="Solution Video"
+                        allow="fullscreen" loading="lazy"></iframe>
                 </div>
+            </div>
 
             <section class="resource-section">
                 <h2 class="resource-section-title">Additional Resources</h2>
                 <div class="resource-links">
-                    <a href="https://www.npmjs.com/package/bcryptjs" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://www.npmjs.com/package/bcryptjs" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
                         bcryptjs NPM Package
                     </a>
-                    <a href="https://auth0.com/blog/hashing-in-action-understanding-bcrypt/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://auth0.com/blog/hashing-in-action-understanding-bcrypt/" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
                         Understanding bcrypt
                     </a>
-                    <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
                         OWASP Authentication Best Practices
                     </a>
-                    <a href="https://expressjs.com/en/advanced/best-practice-security.html" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://expressjs.com/en/advanced/best-practice-security.html" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
                         Express.js Security Best Practices
                     </a>
                 </div>
@@ -462,4 +542,5 @@ app.get('/greet', (req, res) => {
         </section>
     </main>
 </body>
-</html> 
+
+</html>
