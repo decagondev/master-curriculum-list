@@ -1,364 +1,384 @@
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Prepare for Code-Along 4: Graphs & Advanced Algorithms</title>
-<meta name="identifier" content="g06019a2c987b75165068c9ba504e89b7"/>
-<meta name="editing_roles" content="teachers"/>
-<meta name="workflow_state" content="active"/>
-<style>
-  .code-block {
-    background-color: #f5f5f5;
-    padding: 15px;
-    border-radius: 5px;
-    margin: 15px 0;
-    font-family: monospace;
-    white-space: pre;
-    overflow-x: auto;
-  }
-  
-  .resource-link {
-    color: #FF8C00;
-    text-decoration: none;
-  }
-  
-  .resource-link:hover {
-    text-decoration: underline;
-  }
-  
-  .objectives-section {
-    margin-bottom: 20px;
-    padding: 10px;
-    border-left: 3px solid #93005a;
-    background-color: #f9f9f9;
-  }
-  
-  .content-section {
-    margin-bottom: 20px;
-  }
-  
-  .checklist li {
-    margin-bottom: 8px;
-  }
-  
-  .checklist li::before {
-    content: "☐ ";
-  }
-  
-  .btn {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 5px 0;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: bold;
-  }
-  
-  .btn-primary {
-    background-color: #93005a;
-    color: #ffffff;
-  }
-  
-  .btn-secondary {
-    background-color: #00808c;
-    color: #ffffff;
-  }
-  
-  .btn-tertiary {
-    background-color: #ff4b00;
-    color: #ffffff;
-  }
-</style>
-</head>
-<body>
-<h1>Prepare for Code-Along 4: Graphs & Advanced Algorithms</h1>
-
-<div class="objectives-section">
-  <h2>Learning Objectives</h2>
-  <p>After participating in this Code-Along, you will be able to:</p>
-  <ul>
-    <li>Implement graph data structures using different representations</li>
-    <li>Apply common graph traversal algorithms (BFS and DFS)</li>
-    <li>Solve pathfinding problems using graph algorithms</li>
-    <li>Analyze time and space complexity of graph operations</li>
-    <li>Develop solutions for real-world problems that can be modeled as graphs</li>
-  </ul>
-</div>
-
-<h2>What Will You Need To Attend this Code-Along?</h2>
-<p><a href="https://github.com/bloominstituteoftechnology/web_code_along_20.1_graphs_starter" class="btn btn-primary" target="_blank" rel="noopener">STARTER LINK</a></p>
-<p><a href="https://github.com/bloominstituteoftechnology/web_code_along_20.1_graphs_solution" class="btn btn-secondary" target="_blank" rel="noopener">SOLUTION LINK</a></p>
-<p><a href="https://app.bloomtech.com/live-events" class="btn btn-tertiary" target="_blank" rel="noopener">SCHEDULE CODE-ALONG</a></p>
-<hr>
-
-<h2>What is a Code-Along?</h2>
-<p><span>Code-Alongs are live experiences taught by our expert instructors designed to prepare you for concepts found in the sprint challenges. Code-Alongs are your opportunity to work on complex job-ready problems in a live and engaging environment.</span></p>
-<p><span>Code-Alongs are live classes 50 minutes in length designed to offer deeper insights into learning your core competencies and are offered seven days a week in the morning, afternoon, and evening.</span></p>
-<p><span>Because Code-Alongs delve deeper into a core competency, you will need to come to class prepared to have the best experience.</span></p>
-<hr>
-
-<div class="content-section">
-  <h2>Graph Fundamentals</h2>
-  <p>Graphs are versatile data structures that represent a collection of nodes (vertices) connected by edges. They're ideal for modeling relationships, networks, and connections.</p>
-  
-  <h3>Key Graph Concepts:</h3>
-  <ul>
-    <li><strong>Vertex/Node:</strong> An object or entity in the graph</li>
-    <li><strong>Edge:</strong> A connection between two vertices</li>
-    <li><strong>Directed/Undirected:</strong> Edges may have a direction or be bidirectional</li>
-    <li><strong>Weighted/Unweighted:</strong> Edges may have associated values (weights)</li>
-    <li><strong>Cyclic/Acyclic:</strong> Graphs that contain cycles or don't</li>
-    <li><strong>Connected/Disconnected:</strong> All vertices are reachable from every other vertex or not</li>
-  </ul>
-  
-  <h3>Common Graph Representations:</h3>
-  
-  <div class="code-block">
-// 1. Adjacency List representation
-class Graph {
-  constructor() {
-    this.adjacencyList = {};
-  }
-  
-  addVertex(vertex) {
-    if (!this.adjacencyList[vertex]) {
-      this.adjacencyList[vertex] = [];
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prepare for Code-Along 4: Graphs & Advanced Algorithms</title>
+  <meta name="identifier" content="g06019a2c987b75165068c9ba504e89b7" />
+  <meta name="editing_roles" content="teachers" />
+  <meta name="workflow_state" content="active" />
+  <style>
+    .code-block {
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 15px 0;
+      font-family: monospace;
+      white-space: pre;
+      overflow-x: auto;
     }
-  }
-  
-  addEdge(vertex1, vertex2) {
-    // For undirected graph
-    this.adjacencyList[vertex1].push(vertex2);
-    this.adjacencyList[vertex2].push(vertex1);
-  }
-  
-  removeEdge(vertex1, vertex2) {
-    this.adjacencyList[vertex1] = this.adjacencyList[vertex1].filter(
+
+    .resource-link {
+      color: #FF8C00;
+      text-decoration: none;
+    }
+
+    .resource-link:hover {
+      text-decoration: underline;
+    }
+
+    .objectives-section {
+      margin-bottom: 20px;
+      padding: 10px;
+      border-left: 3px solid #93005a;
+      background-color: #f9f9f9;
+    }
+
+    .content-section {
+      margin-bottom: 20px;
+    }
+
+    .checklist li {
+      margin-bottom: 8px;
+    }
+
+    .checklist li::before {
+      content: "☐ ";
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 5px 0;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .btn-primary {
+      background-color: #93005a;
+      color: #ffffff;
+    }
+
+    .btn-secondary {
+      background-color: #00808c;
+      color: #ffffff;
+    }
+
+    .btn-tertiary {
+      background-color: #ff4b00;
+      color: #ffffff;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Prepare for Code-Along 4: Graphs & Advanced Algorithms</h1>
+
+  <div class="objectives-section">
+    <h2>Learning Objectives</h2>
+    <p>After participating in this Code-Along, you will be able to:</p>
+    <ul>
+      <li>Implement graph data structures using different representations</li>
+      <li>Apply common graph traversal algorithms (BFS and DFS)</li>
+      <li>Solve pathfinding problems using graph algorithms</li>
+      <li>Analyze time and space complexity of graph operations</li>
+      <li>Develop solutions for real-world problems that can be modeled as graphs</li>
+    </ul>
+  </div>
+
+  <h2>What Will You Need To Attend this Code-Along?</h2>
+  <p><a href="https://github.com/bloominstituteoftechnology/web_code_along_20.1_graphs_starter" class="btn btn-primary"
+      target="_blank" rel="noopener noreferrer">STARTER LINK</a></p>
+  <p><a href="https://github.com/bloominstituteoftechnology/web_code_along_20.1_graphs_solution"
+      class="btn btn-secondary" target="_blank" rel="noopener noreferrer">SOLUTION LINK</a></p>
+  <p><a href="https://app.bloomtech.com/live-events" class="btn btn-tertiary" target="_blank"
+      rel="noopener noreferrer">SCHEDULE CODE-ALONG</a></p>
+  <hr>
+
+  <h2>What is a Code-Along?</h2>
+  <p><span>Code-Alongs are live experiences taught by our expert instructors designed to prepare you for concepts found
+      in the sprint challenges. Code-Alongs are your opportunity to work on complex job-ready problems in a live and
+      engaging environment.</span></p>
+  <p><span>Code-Alongs are live classes 50 minutes in length designed to offer deeper insights into learning your core
+      competencies and are offered seven days a week in the morning, afternoon, and evening.</span></p>
+  <p><span>Because Code-Alongs delve deeper into a core competency, you will need to come to class prepared to have the
+      best experience.</span></p>
+  <hr>
+
+  <div class="content-section">
+    <h2>Graph Fundamentals</h2>
+    <p>Graphs are versatile data structures that represent a collection of nodes (vertices) connected by edges. They're
+      ideal for modeling relationships, networks, and connections.</p>
+
+    <h3>Key Graph Concepts:</h3>
+    <ul>
+      <li><strong>Vertex/Node:</strong> An object or entity in the graph</li>
+      <li><strong>Edge:</strong> A connection between two vertices</li>
+      <li><strong>Directed/Undirected:</strong> Edges may have a direction or be bidirectional</li>
+      <li><strong>Weighted/Unweighted:</strong> Edges may have associated values (weights)</li>
+      <li><strong>Cyclic/Acyclic:</strong> Graphs that contain cycles or don't</li>
+      <li><strong>Connected/Disconnected:</strong> All vertices are reachable from every other vertex or not</li>
+    </ul>
+
+    <h3>Common Graph Representations:</h3>
+
+    <div class="code-block">
+      // 1. Adjacency List representation
+      class Graph {
+      constructor() {
+      this.adjacencyList = {};
+      }
+
+      addVertex(vertex) {
+      if (!this.adjacencyList[vertex]) {
+      this.adjacencyList[vertex] = [];
+      }
+      }
+
+      addEdge(vertex1, vertex2) {
+      // For undirected graph
+      this.adjacencyList[vertex1].push(vertex2);
+      this.adjacencyList[vertex2].push(vertex1);
+      }
+
+      removeEdge(vertex1, vertex2) {
+      this.adjacencyList[vertex1] = this.adjacencyList[vertex1].filter(
       v => v !== vertex2
-    );
-    this.adjacencyList[vertex2] = this.adjacencyList[vertex2].filter(
+      );
+      this.adjacencyList[vertex2] = this.adjacencyList[vertex2].filter(
       v => v !== vertex1
-    );
-  }
-  
-  removeVertex(vertex) {
-    while (this.adjacencyList[vertex].length) {
+      );
+      }
+
+      removeVertex(vertex) {
+      while (this.adjacencyList[vertex].length) {
       const adjacentVertex = this.adjacencyList[vertex].pop();
       this.removeEdge(vertex, adjacentVertex);
-    }
-    delete this.adjacencyList[vertex];
-  }
-}
-
-// 2. Adjacency Matrix representation
-// For a graph with 4 vertices (0, 1, 2, 3)
-const adjacencyMatrix = [
-  [0, 1, 0, 1], // Vertex 0 is connected to 1 and 3
-  [1, 0, 1, 0], // Vertex 1 is connected to 0 and 2
-  [0, 1, 0, 1], // Vertex 2 is connected to 1 and 3
-  [1, 0, 1, 0]  // Vertex 3 is connected to 0 and 2
-];
-  </div>
-</div>
-
-<div class="content-section">
-  <h2>Graph Traversal Algorithms</h2>
-  <p>Traversing a graph means visiting all the vertices in a particular order. The two main traversal methods are:</p>
-  
-  <h3>1. Depth-First Search (DFS)</h3>
-  <p>DFS explores as far as possible along a branch before backtracking. It can be implemented recursively or using a stack.</p>
-  
-  <div class="code-block">
-// Recursive DFS implementation
-function depthFirstSearchRecursive(graph, start) {
-  const result = [];
-  const visited = {};
-  
-  function dfs(vertex) {
-    if (!vertex) return null;
-    
-    visited[vertex] = true;
-    result.push(vertex);
-    
-    graph.adjacencyList[vertex].forEach(neighbor => {
-      if (!visited[neighbor]) {
-        return dfs(neighbor);
       }
-    });
-  }
-  
-  dfs(start);
-  return result;
-}
-
-// Iterative DFS implementation using a stack
-function depthFirstSearchIterative(graph, start) {
-  const stack = [start];
-  const result = [];
-  const visited = {};
-  visited[start] = true;
-  
-  while (stack.length) {
-    const currentVertex = stack.pop();
-    result.push(currentVertex);
-    
-    graph.adjacencyList[currentVertex].forEach(neighbor => {
-      if (!visited[neighbor]) {
-        visited[neighbor] = true;
-        stack.push(neighbor);
+      delete this.adjacencyList[vertex];
       }
-    });
-  }
-  
-  return result;
-}
-  </div>
-  
-  <h3>2. Breadth-First Search (BFS)</h3>
-  <p>BFS visits all the vertices at the current level before moving to vertices at the next level. It uses a queue data structure.</p>
-  
-  <div class="code-block">
-// BFS implementation
-function breadthFirstSearch(graph, start) {
-  const queue = [start];
-  const result = [];
-  const visited = {};
-  visited[start] = true;
-  
-  while (queue.length) {
-    const currentVertex = queue.shift();
-    result.push(currentVertex);
-    
-    graph.adjacencyList[currentVertex].forEach(neighbor => {
-      if (!visited[neighbor]) {
-        visited[neighbor] = true;
-        queue.push(neighbor);
       }
-    });
-  }
-  
-  return result;
-}
-  </div>
-</div>
 
-<div class="content-section">
-  <h2>Common Graph Algorithms and Applications</h2>
-  
-  <h3>1. Shortest Path Algorithms</h3>
-  <p>These algorithms find the shortest path between vertices in a graph.</p>
-  
-  <div class="code-block">
-// Dijkstra's Algorithm (simplified)
-function dijkstra(graph, start, end) {
-  const nodes = new PriorityQueue();
-  const distances = {};
-  const previous = {};
-  const path = []; // to return at end
-  let smallest;
-  
-  // Build up initial state
-  for (let vertex in graph.adjacencyList) {
-    if (vertex === start) {
+      // 2. Adjacency Matrix representation
+      // For a graph with 4 vertices (0, 1, 2, 3)
+      const adjacencyMatrix = [
+      [0, 1, 0, 1], // Vertex 0 is connected to 1 and 3
+      [1, 0, 1, 0], // Vertex 1 is connected to 0 and 2
+      [0, 1, 0, 1], // Vertex 2 is connected to 1 and 3
+      [1, 0, 1, 0] // Vertex 3 is connected to 0 and 2
+      ];
+    </div>
+  </div>
+
+  <div class="content-section">
+    <h2>Graph Traversal Algorithms</h2>
+    <p>Traversing a graph means visiting all the vertices in a particular order. The two main traversal methods are:</p>
+
+    <h3>1. Depth-First Search (DFS)</h3>
+    <p>DFS explores as far as possible along a branch before backtracking. It can be implemented recursively or using a
+      stack.</p>
+
+    <div class="code-block">
+      // Recursive DFS implementation
+      function depthFirstSearchRecursive(graph, start) {
+      const result = [];
+      const visited = {};
+
+      function dfs(vertex) {
+      if (!vertex) return null;
+
+      visited[vertex] = true;
+      result.push(vertex);
+
+      graph.adjacencyList[vertex].forEach(neighbor => {
+      if (!visited[neighbor]) {
+      return dfs(neighbor);
+      }
+      });
+      }
+
+      dfs(start);
+      return result;
+      }
+
+      // Iterative DFS implementation using a stack
+      function depthFirstSearchIterative(graph, start) {
+      const stack = [start];
+      const result = [];
+      const visited = {};
+      visited[start] = true;
+
+      while (stack.length) {
+      const currentVertex = stack.pop();
+      result.push(currentVertex);
+
+      graph.adjacencyList[currentVertex].forEach(neighbor => {
+      if (!visited[neighbor]) {
+      visited[neighbor] = true;
+      stack.push(neighbor);
+      }
+      });
+      }
+
+      return result;
+      }
+    </div>
+
+    <h3>2. Breadth-First Search (BFS)</h3>
+    <p>BFS visits all the vertices at the current level before moving to vertices at the next level. It uses a queue
+      data structure.</p>
+
+    <div class="code-block">
+      // BFS implementation
+      function breadthFirstSearch(graph, start) {
+      const queue = [start];
+      const result = [];
+      const visited = {};
+      visited[start] = true;
+
+      while (queue.length) {
+      const currentVertex = queue.shift();
+      result.push(currentVertex);
+
+      graph.adjacencyList[currentVertex].forEach(neighbor => {
+      if (!visited[neighbor]) {
+      visited[neighbor] = true;
+      queue.push(neighbor);
+      }
+      });
+      }
+
+      return result;
+      }
+    </div>
+  </div>
+
+  <div class="content-section">
+    <h2>Common Graph Algorithms and Applications</h2>
+
+    <h3>1. Shortest Path Algorithms</h3>
+    <p>These algorithms find the shortest path between vertices in a graph.</p>
+
+    <div class="code-block">
+      // Dijkstra's Algorithm (simplified)
+      function dijkstra(graph, start, end) {
+      const nodes = new PriorityQueue();
+      const distances = {};
+      const previous = {};
+      const path = []; // to return at end
+      let smallest;
+
+      // Build up initial state
+      for (let vertex in graph.adjacencyList) {
+      if (vertex === start) {
       distances[vertex] = 0;
       nodes.enqueue(vertex, 0);
-    } else {
+      } else {
       distances[vertex] = Infinity;
       nodes.enqueue(vertex, Infinity);
-    }
-    previous[vertex] = null;
-  }
-  
-  // As long as there is something to visit
-  while (nodes.values.length) {
-    smallest = nodes.dequeue().val;
-    
-    if (smallest === end) {
+      }
+      previous[vertex] = null;
+      }
+
+      // As long as there is something to visit
+      while (nodes.values.length) {
+      smallest = nodes.dequeue().val;
+
+      if (smallest === end) {
       // We are done
       // Build up path to return
       while (previous[smallest]) {
-        path.push(smallest);
-        smallest = previous[smallest];
+      path.push(smallest);
+      smallest = previous[smallest];
       }
       break;
-    }
-    
-    if (smallest || distances[smallest] !== Infinity) {
-      for (let neighbor in graph.adjacencyList[smallest]) {
-        // Find neighboring node
-        let nextNode = graph.adjacencyList[smallest][neighbor];
-        // Calculate new distance to neighboring node
-        let candidate = distances[smallest] + nextNode.weight;
-        if (candidate &lt; distances[nextNode.node]) {
-          // Updating new smallest distance to neighbor
-          distances[nextNode.node] = candidate;
-          // Updating previous - How we got to neighbor
-          previous[nextNode.node] = smallest;
-          // Enqueue in priority queue with new priority
-          nodes.enqueue(nextNode.node, candidate);
-        }
       }
-    }
-  }
-  return path.concat(smallest).reverse();
-}
-  </div>
-  
-  <h3>2. Connected Components</h3>
-  <p>Finding all connected components in an undirected graph:</p>
-  
-  <div class="code-block">
-function connectedComponents(graph) {
-  const visited = {};
-  const components = [];
-  
-  for (let vertex in graph.adjacencyList) {
-    if (!visited[vertex]) {
+
+      if (smallest || distances[smallest] !== Infinity) {
+      for (let neighbor in graph.adjacencyList[smallest]) {
+      // Find neighboring node
+      let nextNode = graph.adjacencyList[smallest][neighbor];
+      // Calculate new distance to neighboring node
+      let candidate = distances[smallest] + nextNode.weight;
+      if (candidate &lt; distances[nextNode.node]) {
+      // Updating new smallest distance to neighbor
+      distances[nextNode.node] = candidate;
+      // Updating previous - How we got to neighbor
+      previous[nextNode.node] = smallest;
+      // Enqueue in priority queue with new priority
+      nodes.enqueue(nextNode.node, candidate);
+      }
+      }
+      }
+      }
+      return path.concat(smallest).reverse();
+      }
+    </div>
+
+    <h3>2. Connected Components</h3>
+    <p>Finding all connected components in an undirected graph:</p>
+
+    <div class="code-block">
+      function connectedComponents(graph) {
+      const visited = {};
+      const components = [];
+
+      for (let vertex in graph.adjacencyList) {
+      if (!visited[vertex]) {
       const component = [];
       exploreComponent(vertex, visited, component, graph);
       components.push(component);
-    }
-  }
-  
-  return components;
-}
+      }
+      }
 
-function exploreComponent(vertex, visited, component, graph) {
-  visited[vertex] = true;
-  component.push(vertex);
-  
-  graph.adjacencyList[vertex].forEach(neighbor => {
-    if (!visited[neighbor]) {
+      return components;
+      }
+
+      function exploreComponent(vertex, visited, component, graph) {
+      visited[vertex] = true;
+      component.push(vertex);
+
+      graph.adjacencyList[vertex].forEach(neighbor => {
+      if (!visited[neighbor]) {
       exploreComponent(neighbor, visited, component, graph);
-    }
-  });
-}
+      }
+      });
+      }
+    </div>
   </div>
-</div>
 
-<h2>Prepare For Success</h2>
-<p><iframe class="wistia_embed" title="Code-Along Learner Facing Walkthrough Video" src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe></p>
-<p>The best Code-Along experiences happen when you are ready before coming to class. Your instructors created a starting point and a solution for each of your Code-Alongs to ensure you have what you need to succeed.</p>
-<hr>
+  <h2>Prepare For Success</h2>
+  <p><iframe class="wistia_embed" title="Code-Along Learner Facing Walkthrough Video"
+      src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" width="640" height="360" name="wistia_embed"
+      allow="fullscreen" loading="lazy"></iframe></p>
+  <p>The best Code-Along experiences happen when you are ready before coming to class. Your instructors created a
+    starting point and a solution for each of your Code-Alongs to ensure you have what you need to succeed.</p>
+  <hr>
 
-<h2>Ideal Code-Along Preparation Checklist:</h2>
-<ul class="checklist">
+  <h2>Ideal Code-Along Preparation Checklist:</h2>
+  <ul class="checklist">
     <li>Review the core concepts of graphs and their representations</li>
     <li>Practice implementing basic graph operations (add/remove vertices/edges)</li>
     <li>Understand the difference between DFS and BFS traversals</li>
     <li>Complete the module projects related to graph algorithms</li>
     <li>Set up your development environment with the starter code</li>
-</ul>
+  </ul>
 
-<h2>Practice Problems to Try Before the Code-Along</h2>
-<p>To get the most out of this Code-Along, try solving these graph-related problems:</p>
-<ul>
-  <li><a href="https://leetcode.com/problems/number-of-islands/" class="resource-link" target="_blank" rel="noopener">Number of Islands</a></li>
-  <li><a href="https://leetcode.com/problems/course-schedule/" class="resource-link" target="_blank" rel="noopener">Course Schedule</a></li>
-  <li><a href="https://leetcode.com/problems/clone-graph/" class="resource-link" target="_blank" rel="noopener">Clone Graph</a></li>
-  <li><a href="https://leetcode.com/problems/word-ladder/" class="resource-link" target="_blank" rel="noopener">Word Ladder</a></li>
-</ul>
+  <h2>Practice Problems to Try Before the Code-Along</h2>
+  <p>To get the most out of this Code-Along, try solving these graph-related problems:</p>
+  <ul>
+    <li><a href="https://leetcode.com/problems/number-of-islands/" class="resource-link" target="_blank"
+        rel="noopener noreferrer">Number of Islands</a></li>
+    <li><a href="https://leetcode.com/problems/course-schedule/" class="resource-link" target="_blank"
+        rel="noopener noreferrer">Course Schedule</a></li>
+    <li><a href="https://leetcode.com/problems/clone-graph/" class="resource-link" target="_blank"
+        rel="noopener noreferrer">Clone Graph</a></li>
+    <li><a href="https://leetcode.com/problems/word-ladder/" class="resource-link" target="_blank"
+        rel="noopener noreferrer">Word Ladder</a></li>
+  </ul>
 
 </body>
+
 </html>

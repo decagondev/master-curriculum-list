@@ -1,335 +1,1566 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 1: The DOM - Web Unit 2 Sprint 5</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23; /* Dark background color */
-            color: #ffffff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #222831; /* Darker container background */
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #ff5722; /* Orange accent color */
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-            color: #ff7043; /* Lighter orange on hover */
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722; /* Orange accent color */
-            padding-bottom: 10px;
-        }
-        .content-section {
-            margin-bottom: 40px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            padding: 20px;
-            border: 1px solid #333a47;
-        }
-        h2 {
-            color: #ff5722; /* Orange accent color */
-            margin-top: 0;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #333a47;
-        }
-        p {
-            color: #b3b3b3;
-        }
-        .video-container {
-            margin: 20px 0;
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            border: 1px solid #333a47;
-            border-radius: 4px;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-        .resources-section {
-            margin-top: 40px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border-left: 4px solid #ff5722; /* Orange accent border */
-        }
-        .resources-section h2 {
-            color: #ffffff;
-            margin-top: 0;
-        }
-        .resources-section ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .resources-section li {
-            margin-bottom: 10px;
-        }
-        .resources-section a {
-            color: #ff5722; /* Orange accent color */
-            text-decoration: none;
-        }
-        .resources-section a:hover {
-            text-decoration: underline;
-            color: #ff7043; /* Lighter orange on hover */
-        }
-        
-        /* Logo styling */
-        .logo {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .logo svg {
-            margin-right: 15px;
-        }
-        .logo-text {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ffffff;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
-    <div class="container">
-        
-        <a href="../../index.html" class="back-link">← Back to Course Overview</a>
-        <h1>Module 1: The DOM</h1>
-        <p>In this module, you'll learn about the Document Object Model (DOM) and how to manipulate it using JavaScript. The DOM is a programming interface for web documents that represents the page as a structured tree of objects, enabling JavaScript to interact with and modify HTML and CSS dynamically.</p>
-
-        <div class="content-section">
-            <h2>Introduction to the DOM</h2>
-            <p>Learn about what the DOM is and how it represents your HTML document as a tree of objects. The DOM is not part of JavaScript but a Web API used by JavaScript to interact with HTML documents, providing a structured representation where each element becomes a node in the tree.</p>
-            <div class="video-container">
-                <iframe src="https://fast.wistia.net/embed/iframe/cr0762ej29" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-            <div class="concept-details">
-                <h3>Key Concepts</h3>
-                <p>When a web page is loaded into a browser, the browser first looks for the HTML file. Next, the browser uses the HTML file as a blueprint or instructions on building the page. Finally, the browser parses these instructions and builds a model for the page's look and functionality using Javascript. This model is a Javascript Object containing every element in order on the page. This object is referred to as the DOM or Document Object Model.</p>
-                <p>The DOM is built as a data structure known as a 'Tree' because parent elements have nested children elements (or leaves). As with physical trees, we can follow tree branches to get to the exact leaf (or leaves) that we want to access. Each branch of our DOM tree can be its own tree.</p>
-                <p>When the DOM is built and the webpage is loaded, developers get access to it in the form of the global Javascript object <code>document</code>. <code>document</code> contains the entire hierarchy of the page, each element (or DOM node), and it also contains dozens of built in methods and properties.</p>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <h2>Understanding the DOM Structure</h2>
-            <p>Explore the hierarchical structure of the DOM and how elements are related to each other. You'll learn about parent-child relationships, sibling elements, and how the browser creates this tree structure from your HTML document.</p>
-            <div class="video-container">
-                <iframe src="https://fast.wistia.net/embed/iframe/gql589kbx4" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-            <div class="concept-details">
-                <h3>DOM Tree Structure</h3>
-                <p>The DOM represents your HTML as a tree structure, with each HTML element becoming a node in the tree. The <code>document</code> object is the root node, and all other elements are child nodes organized in a hierarchical structure. Understanding this structure is important for navigating and manipulating elements efficiently.</p>
-                <p>Key relationships in the DOM tree include:</p>
-                <ul>
-                    <li><strong>Parent-child</strong>: Elements can contain other elements, creating a parent-child relationship</li>
-                    <li><strong>Siblings</strong>: Elements that share the same parent</li>
-                    <li><strong>Ancestors-descendants</strong>: Elements higher or lower in the hierarchy relative to a given element</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <h2>DOM Selectors</h2>
-            <p>Learn about different ways to select elements from the DOM using various methods like getElementById, getElementsByClassName, getElementsByTagName and how each returns different types of collections or individual elements.</p>
-            <div class="video-container">
-                <iframe src="https://fast.wistia.net/embed/iframe/q0orhsemfk" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-            <div class="concept-details">
-                <h3>Types of DOM Selectors</h3>
-                <p>To manipulate elements on the DOM, we need to select them. There are many ways of doing this; for example, we can select the body and the head by asking for them (<code>document.body</code>, <code>document.head</code>). But, when we want to go deeper, that's where things get complicated. Thankfully, <code>document</code> has several built-in methods for accessing the exact element(s) we want.</p>
-                <h4><code>getElement</code> Methods</h4>
-                <p>These are the original methods for selecting elements from the DOM. They each take a single string as the only argument, containing either the id or class you are looking for.</p>
-                <ul>
-                    <li><code>document.getElementsByTagName('p')</code> - Returns an HTMLCollection containing all elements with the specified tag name</li>
-                    <li><code>document.getElementById('idName')</code> - Returns a single element with the specified ID</li>
-                    <li><code>document.getElementsByClassName('className')</code> - Returns an HTMLCollection containing all elements with the specified class</li>
-                </ul>
-                <h4><code>querySelector</code> Methods</h4>
-                <p>These are the newest element selection methods added to the DOM. These methods allow us to select element(s) based on CSS style selectors (remember . is class and # is id).</p>
-                <ul>
-                    <li><code>document.querySelector('.custom-style')</code> - Returns the first element that matches the selector</li>
-                    <li><code>document.querySelectorAll('queryString')</code> - Returns all elements matching the query string as a NodeList</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <h2>Selecting Nodes with querySelector</h2>
-            <p>Master the use of querySelector to find specific elements in the DOM using CSS selector syntax. This powerful method allows you to select elements using the same selectors you use in CSS, making it versatile and intuitive.</p>
-            <div class="video-container">
-                <iframe src="https://fast.wistia.net/embed/iframe/ywjli0v2yl" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-            <div class="concept-details">
-                <h3>Using querySelector</h3>
-                <p>This method will search for and return the <strong>first element</strong> that matches the value passed into the method. Remember that the biggest change from the older DOM selection methods is that we now need to pass the proper CSS selector into the argument.</p>
-                <p>For example, to select an element with class "custom-style", you would use:</p>
-                <pre><code>document.querySelector('.custom-style');</code></pre>
-                <p>Note that we use the dot (.) to specify we're looking for a class. If we wanted to select an element by ID, we would use the pound/hash (#) symbol:</p>
-                <pre><code>document.querySelector('#main-header');</code></pre>
-                <p>You can also use more complex CSS selectors:</p>
-                <pre><code>document.querySelector('nav a.active');</code></pre>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <h2>Selecting Node Lists with querySelectorAll</h2>
-            <p>Learn how to select multiple elements using querySelectorAll and work with NodeLists. Unlike some other collection methods, querySelectorAll returns a static NodeList that won't automatically update when the DOM changes.</p>
-            <div class="video-container">
-                <iframe src="https://fast.wistia.net/embed/iframe/6ok9fd6q1v" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-            <div class="concept-details">
-                <h3>Working with querySelectorAll</h3>
-                <p>This method will search for and return ALL elements matching the query string. This method returns these elements in an array-like object called a <code>NodeList</code>.</p>
-                <p>A NodeList is similar to an array but doesn't have all the same methods. It does support <code>forEach</code>, but not methods like <code>map</code> or <code>reduce</code>.</p>
-                <p>You can convert a NodeList to a true Array using:</p>
-                <pre><code>const elements = document.querySelectorAll('.item');
-const elementsArray = Array.from(elements);</code></pre>
-                <p>Once converted to an array, you can use all array methods on the collection.</p>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <h2>Iterating Over Node Lists</h2>
-            <p>Explore different ways to iterate over NodeLists using forEach and other methods. You'll learn how to process collections of DOM elements to apply changes to multiple elements efficiently.</p>
-            <div class="video-container">
-                <iframe src="https://fast.wistia.net/embed/iframe/75avuuv6jl" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-            <div class="concept-details">
-                <h3>The Difference between HTMLCollection, NodeList, and Array</h3>
-                <p>When we use <code>getElementsByClassName()</code> or <code>querySelectorAll()</code> we get back either an <code>HTMLCollection</code> or a <code>NodeList</code> respectively. We refer to these as 'array-like objects.' They both have numerical zero-based indices and the length property, but that is all they share with an Array. <code>NodeList</code> does take it one step further and has access to <code>.forEach</code>.</p>
-                <p>To iterate over a NodeList, you can use the forEach method:</p>
-                <pre><code>const items = document.querySelectorAll('.item');
-items.forEach(item => {
-  item.classList.add('selected');
-});</code></pre>
-                <p>For HTMLCollections, you'll need to either convert to an array first or use a traditional for loop:</p>
-                <pre><code>const items = document.getElementsByClassName('item');
-for (let i = 0; i < items.length; i++) {
-  items[i].classList.add('selected');
-}</code></pre>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <h2>Setting Text Content</h2>
-            <p>Learn how to modify text content of elements using textContent. This property allows you to set or get the text content of an element, replacing any existing content and removing all HTML tags.</p>
-            <div class="video-container">
-                <iframe src="https://fast.wistia.net/embed/iframe/simtvvkk96" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-            <div class="concept-details">
-                <h3>Modifying Text Content</h3>
-                <p>Once you've selected an element, one of the simplest ways to modify it is by changing its text content. The <code>textContent</code> property gives you access to all the text within an element and its descendants.</p>
-                <p>To get the text content of an element:</p>
-                <pre><code>const text = document.querySelector('.message').textContent;</code></pre>
-                <p>To set the text content of an element:</p>
-                <pre><code>document.querySelector('.message').textContent = 'New message';</code></pre>
-                <p>Note that using <code>textContent</code> will replace all child elements with the new text. If you want to preserve HTML formatting, you can use <code>innerHTML</code> instead, but be cautious with <code>innerHTML</code> as it can introduce security risks if used with user-provided content.</p>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <h2>Building New Elements</h2>
-            <p>Master the creation of new DOM elements using createElement and techniques for configuring them with attributes, content, and styles before adding them to the document.</p>
-            <div class="video-container">
-                <iframe src="https://fast.wistia.net/embed/iframe/xkclbyj3b7" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-            <div class="concept-details">
-                <h3>Creating Elements Dynamically</h3>
-                <p>The DOM allows us to create entirely new elements using the <code>createElement</code> method. These elements exist in memory but aren't part of the DOM until we add them.</p>
-                <p>Basic steps for creating a new element:</p>
-                <ol>
-                    <li>Create the element using <code>document.createElement('tagName')</code></li>
-                    <li>Configure the element by setting attributes, text content, and styles</li>
-                    <li>Append the element to the DOM</li>
-                </ol>
-                <p>Example:</p>
-                <pre><code>// Create a new paragraph
-const paragraph = document.createElement('p');
-
-// Add text content
-paragraph.textContent = 'This is a new paragraph.';
-
-// Add a class
-paragraph.classList.add('info-text');
-
-// Add an attribute
-paragraph.setAttribute('data-id', '123');
-
-// Set inline style
-paragraph.style.color = 'blue';</code></pre>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <h2>Adding Elements to the DOM</h2>
-            <p>Learn different methods to add elements to the DOM, including appendChild, prepend, and insertAdjacentElement. These methods allow you to precisely control where new elements are placed in the document structure.</p>
-            <div class="video-container">
-                <iframe src="https://fast.wistia.net/embed/iframe/8khv35riq0" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-            <div class="concept-details">
-                <h3>DOM Insertion Methods</h3>
-                <p>After creating an element, you need to add it to the DOM. There are several methods to do this, each with different placement options:</p>
-                <ul>
-                    <li><code>appendChild</code>: Adds as the last child of the parent element</li>
-                    <li><code>prepend</code>: Adds as the first child of the parent element</li>
-                    <li><code>insertBefore</code>: Adds before a specified reference node</li>
-                    <li><code>insertAdjacentElement</code>: Provides precise control using position strings</li>
-                </ul>
-                <p>Example using <code>appendChild</code>:</p>
-                <pre><code>const paragraph = document.createElement('p');
-paragraph.textContent = 'New paragraph';
-document.querySelector('.container').appendChild(paragraph);</code></pre>
-                
-                <p>Example using <code>insertAdjacentElement</code>:</p>
-                <pre><code>const paragraph = document.createElement('p');
-paragraph.textContent = 'New paragraph';
-const referenceElement = document.querySelector('.reference');
-
-// Possible positions: 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
-referenceElement.insertAdjacentElement('afterend', paragraph);</code></pre>
-            </div>
-        </div>
-
-        <div class="resources-section">
-            <h2>Additional Resources</h2>
+    <header>
+        <nav>
+            <div class="logo">Web Unit 2 Sprint 5</div>
             <ul>
-                <li><a href="https://github.com/bloominstituteoftechnology/web-s05-practice-problems" target="_blank" rel="noopener">Practice Problems Repository</a></li>
-                <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model" target="_blank" rel="noopener">MDN Web Docs - DOM</a></li>
-                <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector" target="_blank" rel="noopener">MDN Web Docs - querySelector</a></li>
-                <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll" target="_blank" rel="noopener">MDN Web Docs - querySelectorAll</a></li>
-                <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentElement" target="_blank" rel="noopener">MDN Web Docs - insertAdjacentElement</a></li>
-                <li><a href="https://developer.chrome.com/docs/devtools/dom/" target="_blank" rel="noopener">Chrome DevTools - Viewing and changing the DOM</a></li>
-                <li><a href="https://www.freecodecamp.org/news/manipulate-html-and-css-using-javascript/" target="_blank" rel="noopener">How to Interact with the DOM using JavaScript</a></li>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module1/index.html" class="active">Module 1: The DOM</a>
+                        <a href="../module2/index.html">Module 2: Events in the Browser</a>
+                        <a href="../module3/index.html">Module 3: Building Components</a>
+                        <a href="../module4/index.html">Module 4: Consuming Data From the Network</a>
+                    </div>
+                </li>
+                <li><a href="https://github.com/bloominstituteoftechnology/web-s05-practice-problems" target="_blank"
+                        rel="noopener noreferrer">Practice Problems</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-        </div>
-    </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="welcome">
+
+            <h1>Module 1: The DOM</h1>
+            <div class="content-box module1-accent">
+                <h2>HTML and the DOM</h2>
+                <p>Static web pages with HTML and CSS might work fine for some scenarios. But now we are going to start
+                    adding more functionality to our applications, by building dynamic web pages!</p>
+
+                <p>One of the first steps in building vibrant, dynamic web pages and applications is learning about the
+                    Document Object Model, or DOM for short. The DOM is an Object (with methods and properties) exposed
+                    by the browser to the application, allowing your code to change the page. DOM manipulation is at the
+                    core of every framework, and before we start using frameworks, we need to understand the DOM.</p>
+
+                <p>A large part of your dynamic web page will rely on JavaScript code running in the browser, monitoring
+                    interactions from users, making calculations, to ultimately change elements and styles on the page.
+                    To accomplish that, the code will interact with the DOM to monitor events and update the page. The
+                    initial HTML and CSS files will act as a placeholder for the startup page, defining elements and
+                    styles, which can be selected and modified by the JavaScript code.</p>
+
+                <p>The DOM is a standard embraced by the Industry, enabling applications to behave dynamically and
+                    consistently, regardless of the browser being used. By accessing every single piece of the webpage,
+                    the code running in the browser can arbitrarily change anything in the page, at any time! In theory,
+                    the DOM is language-agnostic, but we will be working with JavaScript throughout the rest of this
+                    Sprint.</p>
+
+                <p>This is a high-level representation of the browser, which will become more clear as we move on.
+                    Notice how each everything you've learned to this point is represented in the DOM:</p>
+
+                <p>The image shows an internal diagram of the browser, where HTML, JavaScript and CSS files collectively
+                    define the DOM, which is rendered to the screen. The DOM is also connected to external sources such
+                    as mouse and keyboard, to be able to react to user interactions and possibly update the screen.
+                    Finally, the DOM is also connected to the browser's development tools, which can be used to inspect
+                    and modify the local representation of the DOM on the user's screen.</p>
+
+                <img src="../../assets/images/dom1.png" alt="DOM Diagram">
+
+                <p>To access and modify elements in the page, the JavaScript code will read and write properties, as
+                    well as execute methods of the DOM object. Under the hood, the browser will receive updates and
+                    render a new page. In practice, the DOM is acting as an interface between the application (JS code)
+                    and the user's screen / mouse / keyboard.</p>
+
+                <p>Developers can also use the browser's Developer Tools to quickly interact with the DOM, making it
+                    easy to debug and experiment.</p>
+
+                <p>In this Core Competency, you will learn how the DOM is structured and how to leverage the DOM to turn
+                    your static webpage into a dynamic webpage.</p>
+
+                <p>So let's get started!</p>
+
+                <h3>Understanding the DOM</h3>
+
+                <p>When a web page is loaded into a browser, the browser first looks for the HTML file to start building
+                    the page in memory. The HTML file may have external references or internal code for CSS, JavaScript
+                    etc., and all this collection of instructions are used to build a model for the page's look and
+                    functionality. In the end, this model - or representation - will contain every single piece of the
+                    rendered page: sections, tags, graphics, text, and their corresponding styles and event listeners.
+                </p>
+
+                <p>This model, as we know, is an object called DOM (Document Object Model). Notice that the DOM is not
+                    the actual code that renders the page, but instead, an interface (Application Programming Interface,
+                    or API) to the browser's internal rendering engine, which can be accessed programmatically.</p>
+
+                <p>The DOM is built as a data structure known as a 'Tree' because parent elements have nested children
+                    elements (or leaves). As with physical trees, we can follow tree branches to get to the exact leaf
+                    (or leaves) that we want to access. Each branch of our DOM tree can be its own tree. It is important
+                    to remember this as we move through this lesson.</p>
+
+                <img src="../../assets/images/dom2.jpg" alt="DOM Tree">
+
+                <p>When the webpage is loaded and the DOM is built, developers get access to it in the form of the
+                    global Javascript object called <code>document</code>. <code>document</code> contains the entire
+                    hierarchy of the page, each element (or DOM node), and dozens of built in methods and properties. We
+                    can use these methods and properties to manipulate what we see on the screen. The 'document' object
+                    tree is intimately linked to the actual HTML structure of the page. If you update the DOM, you'll
+                    update the page.</p>
+
+                <div class="side-note">
+                    <p>Note: There are so many methods and properties on <code>document</code> (and its subsequent
+                        elements and collections) that it would take a lot longer to properly cover them all. We will
+                        only be covering the few most commonly used. From this point forward you will be expected to
+                        reference the official documentation to learn more about the different methods and properties
+                        available, when your need arises for something other than what we have taught. This is a very
+                        good habit to get into as we progress deeper into the course.</p>
+                </div>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's look at a simple example of building a webpage that demonstrates the DOM structure. This
+                        example creates a color palette selector:</p>
+
+                    <pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+ &lt;head&gt;
+   &lt;title&gt;Kolors Palette Selector&lt;/title&gt;
+   &lt;style&gt;
+     .container {
+       display: flex;
+       justify-content: center;
+     }
+     .rectangle {
+       border: 1px solid black;
+       margin: 2px;
+       width: 10vw;
+       height: 50vh;
+       text-align: center;
+       padding-top: 10px;
+       font-weight: 700;
+       color: white;
+       text-shadow: 1px 1px black;
+     }
+   &lt;/style&gt;
+ &lt;/head&gt;
+ &lt;body&gt;
+   &lt;h1&gt;Kolors Palette Selector&lt;/h1&gt;
+   &lt;button type="button" id="palettebtn"&gt;Change Palette&lt;/button&gt;
+   &lt;div class="container"&gt;
+     &lt;div class="rectangle"&gt;&lt;/div&gt;
+     &lt;div class="rectangle"&gt;&lt;/div&gt;
+     &lt;div class="rectangle"&gt;&lt;/div&gt;
+     &lt;div class="rectangle"&gt;&lt;/div&gt;
+     &lt;div class="rectangle"&gt;&lt;/div&gt;
+   &lt;/div&gt;
+ &lt;/body&gt;
+&lt;/html&gt;</pre>
+
+                    <p>As you can see in this example, the DOM tree structure starts with the HTML root element,
+                        branches into head and body sections, and further branches into various elements like the button
+                        and container div with its five rectangle children. This hierarchical structure is what makes
+                        DOM traversal and manipulation possible.</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/k4rcg5le7z?seo=false"
+                            title="Building a Color Palette Selector" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Inspecting the DOM with Chrome DevTools</h3>
+
+                <p>Now that we understand the concept of DOM, let's investigate it a bit further by visiting a live
+                    website and updating the DOM manually. Follow these steps in order:</p>
+
+                <div class="side-note">
+                    <h3>Hands-on DOM Inspection Tutorial</h3>
+                    <p><strong>Prerequisite:</strong> This tutorial assumes you are using Google Chrome. You can get
+                        similar results in any other browser but these steps were tailored for a chrome experience.</p>
+
+                    <ol>
+                        <li>Navigate to bloomtech.com</li>
+                        <li>Right click on the main heading/title and you should see a dropdown with an option to
+                            inspect. Click that option and chrome developer tools should activate.</li>
+                        <li>The developer tools should be showing the selection you made when you right clicked.</li>
+                        <li>Double click the content of the heading. You should now be able to edit the text of the
+                            header.</li>
+                        <li>Update the text with anything you'd like. For this example, I will update the text to say
+                            "Hello there!" You won't see any changes until you deselect the content in the chrome
+                            developer tools.</li>
+                        <li>Now try updating the content and HTML of other elements on the page.</li>
+                    </ol>
+
+                    <p><strong>Notice that if you refresh the page, the changes you made are gone!</strong> That is
+                        because the elements you were editing existed only in the internal model in memory, and were not
+                        permanent!</p>
+                </div>
+
+                <p>You now have experienced editing the DOM without writing any code, just by using the inspector tool.
+                    Next, you will briefly interact with DOM programmatically, using the browser's console:</p>
+
+                <div class="side-note">
+                    <p>Open the console in your web browser by pressing F12 on Windows or command + option + i on Mac.
+                        Enter document in the console:</p>
+                    <pre>> document</pre>
+                    <p><em>Pro Tip: typing a variable name in the console is the same as logging the contents of the
+                            variable by using console.log(variable_name).</em></p>
+                    <p>Click the arrow to expand the object. Notice how it contains all of the HTML elements (otherwise
+                        now known as DOM nodes) on the page. Hover over these nodes and notice how the element on the
+                        page is highlighted.</p>
+                </div>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's walk through how to build and test this color palette application using Chrome's developer
+                        tools:</p>
+
+                    <ol>
+                        <li>First, load the page in Chrome to see the initial layout with the title and five empty
+                            rectangles</li>
+                        <li>Open Chrome DevTools (F12 or right-click > Inspect)</li>
+                        <li>In the console tab, type <code>document</code> to examine the DOM tree structure</li>
+                        <li>Notice how the document object shows all HTML elements in a hierarchical tree matching your
+                            code</li>
+                        <li>Hover over elements in the tree to highlight them in the page</li>
+                        <li>Right-click one of the rectangle divs and select "Inspect"</li>
+                        <li>In the Styles tab, find the .rectangle class</li>
+                        <li>Add <code>background-color: yellow;</code> to test coloring</li>
+                    </ol>
+
+                    <img src="../../assets/images/dom3.jpg" alt="DOM Tree">
+
+                    <p>This testing process reveals important implementation details:</p>
+                    <ul>
+                        <li>The document object provides programmatic access to all page elements</li>
+                        <li>Each rectangle div can be individually selected and styled</li>
+                        <li>The background-color property will be key for setting palette colors</li>
+                        <li>Changes made in DevTools are temporary and reset on page reload</li>
+                    </ul>
+
+                    <img src="../../assets/images/dom4.jpg" alt="DOM Tree">
+
+                    <p>This exploration through DevTools helps validate the DOM manipulation approach needed for the
+                        final implementation - selecting individual rectangle elements and updating their background
+                        colors programmatically rather than modifying the CSS class directly.</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/fzy7cy5ynz?seo=false&videoFoam=false"
+                            title="DOM Structure and Visualization" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h3>Inspecting the global document object</h3>
+
+                <p>The window object refers to the actual window (or tab) where the JavaScript code is running.</p>
+
+                <p>Some may argue that the window object is not really part of the DOM, but a separate object model
+                    exposed by the browser. In our case, it really doesn't matter, since they are all global objects,
+                    with similar APIs, which can be accessed by the JavaScript code to change the page.</p>
+
+                <p>A window object always contains a document object (the tree structure of the contents of the page),
+                    and also properties and methods related to the actual window (height, width, browsing history,
+                    browser version, open URL, show alerts, enter fullscreen mode, resize etc.)</p>
+
+                <div class="side-note">
+                    <p><em>Pro Tip: when your JavaScript code runs a global function like setTimeout, it is actually
+                            running a method from the global window object! The window object is in fact the global
+                            scope for the script, but we don't need to explicitly write 'window.setTimeout'.</em></p>
+                </div>
+
+                <p>Once again, open the console in Chrome (F12 on Windows or command + option + i on Mac), enter window
+                    and expand its contents. You will notice the object contains literally dozens of properties and
+                    methods (which are followed by the 'f' symbol), and possibly some particular global variables
+                    defined by the current page's script.</p>
+
+                <p>Let's try some of them!</p>
+
+                <p>The window object has some interesting methods for dialogs. Type in the console to see what happens:
+                </p>
+
+                <pre>> window.alert("You have been hacked!");</pre>
+                <p>This will display a simple pop-up message for the user.</p>
+
+                <pre>> window.prompt("Enter your super-secret password to continue...");</pre>
+                <p>This will stop the execution of the script to gather input from the user. The input is returned as a
+                    string. If the user clicks cancel, null is returned.</p>
+
+                <div class="side-note">
+                    <p><em>Pro Tip: by stopping the execution of the script, your application might behave unexpectedly,
+                            particularly if it's waiting for a timer or listening for other events. Always make sure
+                            that it is safe to halt execution.</em></p>
+                </div>
+
+                <p>The location object inside the window object has properties and methods to get, for instance, the
+                    current url and the originating site. Let's do a full page reload from the server:</p>
+
+                <pre>> window.location.reload(true);</pre>
+
+                <p>The history property can be used to access information about any previously visited pages in the
+                    current browser session. Let's first verify if we have anything in our history:</p>
+
+                <pre>> window.history.length;</pre>
+
+                <p>And then go back to the previous page:</p>
+
+                <pre>> window.history.back();</pre>
+
+                <p>It's often desired to open a new window / site from within your script. Let's assign this new window
+                    to a const so we can access it later:</p>
+
+                <pre>> const newsite = window.open("https://google.com");</pre>
+
+                <p>Let's access the screen object to check some dimensions:</p>
+
+                <pre>> window.screen.height;</pre>
+
+                <p>for the total height of the current window, and:</p>
+
+                <pre>> window.screen.availHeight;</pre>
+
+                <p>for the actual page area, excluding menus.</p>
+
+                <p>Finally, just for fun, let's access the document object inside the window to make a radical page
+                    update:</p>
+
+                <pre>> window.document.write("What's happened!?");</pre>
+
+                <p>At this point, you are probably convinced that your application can do pretty much anything to create
+                    very interesting and dynamic pages! You can rely on the browser's Developer Tools to try any code or
+                    update any page element manually.</p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Kolors is ready to start designing and coding the script for the dynamic website!</p>
+
+                    <p>The PM wants to welcome the page visitors, give them a more personal experience and possibly
+                        collect some data which can be useful later. Your first step is to get the client's name using a
+                        pop-up. This will be used later to display some information on the page:</p>
+
+                    <pre>&lt;script&gt;
+const clientName = window.prompt("Welcome to Kolors! Please enter your company's name:");
+&lt;/script&gt;</pre>
+
+                    <p>For now, this code is added inside a new &lt;script&gt; tag in the HTML file.</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/yze2ddxn56?seo=false&videoFoam=false"
+                            title="Working with Client Names and Prompts" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Inspecting a DOM node</h3>
+
+                <p>Let's dig a little deeper and check some properties and methods of one of the document nodes. The
+                    body is probably a good choice since it will often contain the bulk of the page content.</p>
+
+                <p>document.body returns a reference to the body node, allowing us to set or read the document's
+                    element. The node returned is an object inside the document object, with several properties and
+                    methods. Let's check some properties!</p>
+
+                <p>Navigate to <a href="https://google.com" target="_blank"
+                        rel="noopener noreferrer">https://google.com</a></p>
+
+                <p>Its body should have no background color set. You should get an empty string by typing in the
+                    console:</p>
+
+                <pre>> document.body.style.backgroundColor;</pre>
+
+                <p>Let's make the page really ugly:</p>
+
+                <pre>> document.body.style.backgroundColor = "Yellow";</pre>
+
+                <p>Argh! Change it back:</p>
+
+                <pre>> document.body.style.backgroundColor = "";</pre>
+
+                <div class="side-note">
+                    <p>By the way, when setting style properties this way, in effect you are adding an inline style to
+                        the HTML, meaning it will most certainly override any CSS definitions! Keep that in mind and
+                        understand that you could also set styles programmatically by accessing and modifying the
+                        stylesheet of the DOM (although we are not covering that here).</p>
+                </div>
+
+                <p>Let's log the complete HTML inside the body:</p>
+
+                <pre>> document.body.innerHTML;</pre>
+
+                <p>Pretty much every single DOM node will have the innerHTML property. Who could imagine such a large
+                    content for a simple page?</p>
+
+                <p>The returned content is hard to read in the console, being a serialized string with no coloring or
+                    indentation. But it should be easy to work with inside a well designed script, which could remove
+                    the tags, replace text etc. If you go through the list of properties and methods by typing:</p>
+
+                <pre>> document.body.innerHTML.
+// notice the dot in the end, instead of the semicolon, making a list of properties and methods appear in the console</pre>
+
+                <p>You will realize how you could easily manipulate the innerHTML text with methods such as slice,
+                    split, trim etc.</p>
+
+                <p>What are the child nodes inside the body?</p>
+
+                <pre>> document.body.childNodes;</pre>
+
+                <p>And you get a nice visualization of the NodeList "array" (more on this later), including any classes
+                    or IDs associated with the elements. And:</p>
+
+                <pre>> document.body.parentNode;</pre>
+
+                <p>Should return the complete section, including the body itself. This next code:</p>
+
+                <pre>> document.body.nodeType;</pre>
+
+                <p>Should return 1, meaning the body is an ELEMENT. Other common node types are 2=attribute, 3=text,
+                    9=document.</p>
+
+                <p>This command below should return 9, right?</p>
+
+                <pre>> document.body.parentNode.parentNode.nodeType;</pre>
+
+                <p>Finally, notice there are some global variables inside the document tree, like those containing
+                    closure_uid in the Google homepage. These variables (or constants) have been declared somewhere in
+                    the page script and are available to any code that you add to the scripts.</p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>While designing and experimenting with the Kolors page In the console, you log the body to check
+                        its contents:</p>
+
+                    <pre>> document.body;</pre>
+
+                    <p>This is a good practice to be able to focus on the main code, as most of the time you don't
+                        really need to see information about other tags like header, title, style etc.</p>
+
+                    <p>The div.container has a 'flex' icon in the elements tab (and also in the console), indicating
+                        this is a parent flexbox container, nice!</p>
+
+                    <p>As the developer, you know that changing the background color of the rectangles is ultimately the
+                        goal of the script. You decide to test it using the console. You choose one of the rectangles,
+                        right-click, and select "Edit as HTML". It is easy to toggle any CSS attributes, and even add
+                        new ones inside the element.style section.</p>
+
+                    <p>At this point, you are very comfortable with the Developer Tools and have revisited several
+                        possibilities to visualize the DOM, manipulate properties and manage the window. You can't wait
+                        to write JavaScript code to actually build the application!</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/ydwfsp9cvj?seo=false&videoFoam=false"
+                            title="Inspecting DOM Elements" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Conclusion</h3>
+
+                <p>This was a deep one! You have learned what the DOM is, how it relates to the HTML page and the
+                    browser, and how you can access the DOM using different approaches to change the page!</p>
+
+                <p>We don't need to complicate it. The DOM is just a bridge for our script to read from and write to the
+                    browser. If you have a solid HTML/CSS file to begin with, you won't ever have to worry about editing
+                    HTML or CSS in your application. Everything will be done through JavaScript, in real time, for a
+                    very dynamic and interactive web page.</p>
+
+            </div>
+            <div class="content-box module1-accent">
+                <h2>Selecting DOM Elements</h2>
+
+                <p>At this point, you should have a good understanding of the Document Object Model. You have interacted
+                    with the DOM using the console, and other developer tools to manipulate elements, change styles and
+                    text, read and write properties, and even run methods.</p>
+
+                <p>In this Core Competency, you will learn how to select elements of the live page to manipulate them
+                    with code. Selecting elements (or nodes) is one of the first steps in every DOM manipulation
+                    application.</p>
+
+                <p>There are many ways of selecting elements. In it's simplest form, you can select the body and the
+                    head by asking explicitly for them (document.body, document.head). However, things may get
+                    impractical when you need to select specific elements down the tree. Thankfully, the 'document'
+                    object has several built-in methods for accessing the exact element(s) you want. Let's dive in!</p>
+
+                <h3>Selecting nodes by ID</h3>
+
+                <p>The original JavaScript methods for selecting elements from the DOM start with 'getElement'. These
+                    methods take a single string as the only argument, being the desired element's id, tag, or class.
+                </p>
+
+                <p>Let's start with getElementById.</p>
+
+                <p>This method will take a single string as an argument containing the id of an element, search through
+                    the DOM, and return the matching element (which should be unique).</p>
+
+                <pre>document.getElementById('idName');</pre>
+
+                <p>The returned value is an object representing the node. Most of the time, you would assign the
+                    returned node to a variable to be able to manipulate the node later in the code.</p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's revisit this section of code for the Kolors application:</p>
+
+                    <pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;!-- ... --&gt;
+&lt;body&gt;
+   &lt;h1&gt;Kolors Palette Selector&lt;/h1&gt;
+   &lt;button type="button" id="palettebtn"&gt;Change Palette&lt;/button&gt;
+   &lt;div class="container"&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+      &lt;div class="rectangle"&gt;&lt;/div&gt;
+   &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+                    <p>You remember from the application briefing that the page visitor would use a button to see
+                        different color palettes. When designing the HTML, you have instinctively added a button and
+                        assigned an ID for it. Good choice because now it will be easy to select this node to access its
+                        properties and methods. At some point, you know that this button will react to clicks and
+                        possibly receive a different styling and text content.</p>
+
+                    <p>You create a reference to the button and add it to your code:</p>
+
+                    <pre>const paletteBtn = document.getElementById('#palettebtn');</pre>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/tac9iot43m?seo=false&videoFoam=false"
+                            title="Selecting DOM Elements by ID" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Selecting collections by class and tag</h3>
+
+                <p>The getElementsByTagName method will also take a single string as an argument containing the tag name
+                    of the elements you want to select. It will return an array-like object called HTMLCollection
+                    containing all the elements in the document that match the tag name supplied, regardless of their
+                    actual location in the tree.</p>
+
+                <p>We will discuss what an HTMLCollection is after we talk about the rest of our selector methods. To
+                    get all the nodes in the document, you would write:</p>
+
+                <pre>document.getElementsByTagName('p');</pre>
+
+                <p>The 'array-like' return value is a collection of objects, each one referencing a p node.</p>
+
+                <p>The getElementsByClassName method will take a single string as an argument containing the class of
+                    the elements you want to select. It will return an HTMLCollection containing all of the elements
+                    that hold the given class.</p>
+
+                <p>The following code:</p>
+
+                <pre>document.getElementsByClassName('big');</pre>
+
+                <p>Will return a collection with all the elements pertaining to the 'big' class, regardless of their
+                    actual type/tag (p, h1 etc.).</p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>As the developer for Kolors, you are creating variables for nodes that you will eventually
+                        manipulate in code. One of the key purposes of the application is to dynamically change the
+                        background color of the rectangles.</p>
+
+                    <p>Let's revisit the relevant HTML:</p>
+
+                    <pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;!-- etc --&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Kolors Palette Selector&lt;/h1&gt;
+    &lt;button type="button" id="palettebtn"&gt;Change Palette&lt;/button&gt;
+    &lt;div class="container"&gt;
+       &lt;div class="rectangle"&gt;&lt;/div&gt;
+       &lt;div class="rectangle"&gt;&lt;/div&gt;
+       &lt;div class="rectangle"&gt;&lt;/div&gt;
+       &lt;div class="rectangle"&gt;&lt;/div&gt;
+       &lt;div class="rectangle"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre>
+
+                    <p>To select all rectangles, you realize that you could use either tag or class:</p>
+
+                    <pre>//This will get the rectangles and also the first div (container) node.
+const colorBars = document.getElementsByTagName('div');
+
+//This will return the exact 5 rectangles (nodes).
+const colorBars = document.getElementsByClassName('rectangle');</pre>
+
+                    <p>More than ever, you are convinced that properly assigning classes and IDs when designing the HTML
+                        can greatly facilitate the JavaScript code!</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/opcyeuudz2?seo=false&videoFoam=false"
+                            title="Selecting DOM Elements by Class and Tag" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Selecting nodes with .querySelector()</h3>
+
+                <p>Over time, new node selection methods have been incorporated into JavaScript, particularly after the
+                    new CSS selectors were defined and adopted. These methods start with querySelector and allow us to
+                    select element(s) based on CSS style selectors (remember . is for classes and # is for ids). Each
+                    method takes a string containing the selector(s) and returns the element(s).</p>
+
+                <p>The querySelector method will search for and return the first element that matches the value passed
+                    into the method. Remember that the most significant change from the older DOM selection methods is
+                    that we must pass the proper CSS selector into the argument. If we passed custom-style and not
+                    .custom-style we would error out because the dot needs to be added to specify the custom-styleclass.
+                </p>
+
+                <p>To return the first node pertaining to the custom-style class, you would use:</p>
+
+                <pre>document.querySelector('.custom-style');</pre>
+
+                <p>Don't forget the string quotes! And to get the node with the custom-id ID:</p>
+
+                <pre>document.querySelector('#custom-id');</pre>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>You are trying to select each of the rectangles on your Kolors page. If the rectangles had IDs,
+                        you would be able to select them individually using this method. Maybe they should have ids, but
+                        for now, you will have to resort to tags or classes. The problem is only the first node would be
+                        returned. So this method doesn't seem appropriate for selecting the rectangles.</p>
+
+                    <p>Nevertheless, you could use querySelector to get the button or the flex container, since they are
+                        unique in the document:</p>
+
+                    <pre>// Either one to return the button node
+document.querySelector('#palettebtn');
+document.querySelector('button');
+
+// To get the div.container node
+document.querySelector('.container');</pre>
+
+                    <p>And by using the CSS selector style, you can get very specific if you need it, with something
+                        like this:</p>
+
+                    <pre>// To get the first div with .container class inside the body
+document.querySelector('body div .container');</pre>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/ywjli0v2yl?seo=false&videoFoam=false"
+                            title="Using querySelector for DOM Selection" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Selecting node lists with .querySelectorAll()</h3>
+
+                <p>The last method, querySelectorAll, will search for and return all elements matching the query string.
+                    This method returns the nodes in an array-like object called NodeList.</p>
+
+                <p>A NodeList is also an 'array-like' object similar to an HTMLCollection, but exposes the forEach()
+                    method which can be very useful to iterate over the nodes.</p>
+
+                <p>If you wanted to select all elements with the .special class attribute, but only those inside the
+                    body, you would write:</p>
+
+                <pre>document.querySelectorAll('body .special');</pre>
+
+                <p>And get a NodeList containing one or more objects, each referencing a special class node inside the
+                    body.</p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>The application's specifications dictate that all rectangles should change color when the user
+                        selects a new palette. You like the idea of working with NodeLists and being able to quickly
+                        iterate over all the rectangles instead of selecting one by one.</p>
+
+                    <p>By using the class name, you can assign all of the rectangle nodes to a reference by simply
+                        using:</p>
+
+                    <pre>const colorBars = document.querySelectorAll('.rectangle');</pre>
+
+                    <p>To test and verify the selection, you use the browser's console and type:</p>
+
+                    <pre>> const colorBars = document.querySelectorAll('.rectangle');
+> colorBars;
+NodeList(4)
+  0: div.rectangle
+  1: div.rectangle
+  2: div.rectangle
+  3: div.rectangle
+  4: div.rectangle
+  length: 5
+  __proto__: NodeList</pre>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/6ok9fd6q1v?seo=false&videoFoam=false"
+                            title="Using querySelectorAll for Multiple Elements" allow="fullscreen"
+                            loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Iterating over a node list with .forEach()</h3>
+                <p>Before iterating over a NodeList object using forEach(), let's learn about some differences between
+                    NodeList, HTMLCollection, and Array.</p>
+
+                <p>When we use getElementsByClassName() or querySelectorAll(), we get back either an HTMLCollection or a
+                    NodeList, respectively. We refer to these as 'array-like objects.' They both have numerical
+                    zero-based indices and a length property, but that is all they share with an Array. No .reduce(),
+                    .map(), or any other array method exists on these objects.</p>
+
+                <p>Consider this HTML:</p>
+
+                <pre>&lt;header&gt;
+&lt;h1 class="main-header"&gt;Selectors!&lt;/h1&gt;
+&lt;nav class="main-nav"&gt;
+  &lt;a href="#" class="nav-item"&gt;Home&lt;/a&gt;
+  &lt;a href="#" class="nav-item"&gt;About&lt;/a&gt;
+  &lt;a href="#" class="nav-item"&gt;Blog&lt;/a&gt;
+  &lt;a href="#" class="nav-item"&gt;Contact&lt;/a&gt;
+&lt;/nav&gt;
+&lt;/header&gt;</pre>
+
+                <p>If you select a single node and log it:</p>
+                <pre>> const mySelection = document.querySelector("a")
+You get:
+&lt;a href='#' class='nav-item'&gt;Home&lt;/a&gt;</pre>
+
+                <p>This is the representation of the node in the console, but remember that it's an object with
+                    properties and methods. You will learn about some of the most common properties and methods of
+                    document nodes later. For now, you can log the length of the text content of the node with the
+                    following:</p>
+
+                <pre>> mySelection.innerText.length;
+4</pre>
+
+                <p>Now if you select multiple nodes and log the result:</p>
+                <pre>> const multipleSelections = document.querySelectorAll('a');
+> multipleSelections;</pre>
+
+                <p>As expected, the result is quite different from the first case:</p>
+                <pre>NodeList(4)
+  0: a.nav-item
+  1: a.nav-item
+  2: a.nav-item
+  3: a.nav-item
+  length: 4
+  __proto__: NodeList</pre>
+
+                <p>Again, this is a graphical representation of a NodeList object. Each one of the nodes in the list is
+                    exactly the same type of node that was returned in the first case, when selecting a single element.
+                    You can verify that with:</p>
+
+                <pre>> multipleSelections[2];
+&lt;a href='#' class='nav-item'&gt;Blog&lt;/a&gt;</pre>
+
+                <p>Accessing elements in this way is extremely powerful and will allow you to be creative if an HTML
+                    solution is not possible or practical. For example, imagine you didn't have a class or ID to hook
+                    into; you could use the NodeList index to get the job done!</p>
+
+                <div class="side-note">
+                    <h3>Pro tip:</h3>
+                    <p>The Array class contains a method to create an array object from an array-like object called
+                        .from(). To use this method, you would pass the HTMLCollection object or the NodeList object as
+                        its only argument:</p>
+
+                    <pre>> const nodeArray = Array.from(multipleSelections);</pre>
+
+                    <p>From this point, you could use any array method to manipulate the nodes!</p>
+                </div>
+
+                <p>In many cases, though, the forEach() available in a NodeList should be enough. This is an example to
+                    create a loop over all nodes and log their text content:</p>
+
+                <pre>multipleSelections.forEach(function(currentNode, currentIndex){
+console.log('This is node index:', currentIndex);
+console.log(currentNode.innerText);
+};</pre>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Remember that all five color bars (rectangles) are already available in your script through the
+                        colorBars NodeList.</p>
+
+                    <p>It is clear from Product Management that at some point, the button on the page will trigger a
+                        function, which will, in turn, iterate over all color bars and change their color. You decide to
+                        add more code to the application as a placeholder:</p>
+
+                    <pre>const colorBars = document.querySelectorAll('.rectangle');
+
+const changePalette = () => {
+colorBars.forEach((rectangleElement, rectangleIndex) => {
+    // future manipulation code
+});
+};</pre>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/75avuuv6jl?seo=false&videoFoam=false"
+                            title="Working with NodeLists" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Conclusion</h3>
+
+                <p>Selecting nodes (elements, text, etc.) from the DOM is critical to every dynamic application. The
+                    document object offers several methods to precisely select what you need.</p>
+
+                <p>By assigning selections to variables, you will have the nodes available to your application
+                    throughout the life of the page.</p>
+
+                <p>The querySelector methods benefit from the CSS selectors format and return an iterable NodeList when
+                    selecting multiple nodes.</p>
+
+            </div>
+
+            <div class="content-box module1-accent">
+                <h2>Manipulating DOM Elements</h2>
+
+                <p>While selecting nodes is a necessary step before actually doing something with them, the core of the
+                    application is really how and when you manipulate the nodes by changing their styles, text, or
+                    attaching event listeners.</p>
+
+                <p>Every node selected is an object in itself, exposing properties and methods relevant to the node
+                    type. After we have captured our node (e.g.
+                    <code>const element = document.querySelector('#idName');</code>) we can access that element and
+                    assign values to its properties. Once again, there are dozens of properties and methods given to us
+                    on each element. You will read about many of the commonly used properties and methods here.</p>
+
+                <h3>Setting text with .textContent()</h3>
+
+                <p>When we want to update the text using the DOM, the go-to property is called <code>textContent</code>.
+                    We can both read and write text inside of elements using <code>textContent</code>. The
+                    <code>textContent</code> property essentially represents whatever text is between the open and
+                    closing tags of an HTML element.</p>
+
+                <p>If the HTML element has nested (children) elements, the text from all children will also be returned,
+                    excluding their HTML tags.</p>
+
+                <p>You can use the assignment operator <code>=</code> to reset the text of an element. Keep in mind that
+                    setting this property on a node removes all of its children and replaces them with the new single
+                    text node.</p>
+
+                <p>Consider the HTML below:</p>
+
+                <pre>&lt;h2 class="second-heading"&gt;I am the DOM&lt;/h2&gt;</pre>
+
+                <p>You can update the text in this h2 element. First, set up a reference to our element on the DOM:</p>
+
+                <pre>> const secondHeading = document.querySelector('.second-heading');</pre>
+
+                <p>You are now prepared to update the content of our heading. You can update the content to say "DOM
+                    updated!"</p>
+
+                <pre>> secondHeading.textContent = "DOM updated!";
+> secondHeading;
+&lt;h2 class="second-heading"&gt;DOM updated!&lt;/h2&gt;</pre>
+
+                <p>Notice that you are first getting the text node of the element and then setting a new value!</p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's look at an example of using textContent to update multiple elements. In this example, we'll
+                        build a color palette display that updates when a button is clicked.</p>
+
+                    <pre>const palette = [
+  "Charcoal",
+  "264653", 
+  "Persian green",
+  "2a9d8f",
+  "Saffron", 
+  "e9c46a",
+  "Sandy brown",
+  "f4a261",
+  "Burnt sienna",
+  "e76f51",
+];</pre>
+
+                    <p>We can create a function that will update the text content of multiple color bars when triggered:
+                    </p>
+
+                    <pre>const paletteBtn = document.getElementById('palettebtn');
+const colorBars = document.querySelectorAll('.rectangle');
+
+const changePalette = () => {
+  colorBars.forEach((bar, index) => {
+    bar.textContent = palette[index*2];
+    //future code
+  });
+};</pre>
+
+                    <p>The forEach loop iterates through each color bar element, using the index parameter to access
+                        corresponding color names from our palette array. By multiplying the index by 2, we skip over
+                        the hex codes and only display the color names.</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/simtvvkk96?seo=false&videoFoam=false"
+                            title="Manipulating Text Content" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Setting attributes with .setAttribute()</h3>
+
+                <p>HTML elements may have several attributes, either hard coded or through a CSS stylesheet. Updating
+                    HTML attributes is vital to DOM manipulation.</p>
+
+                <p>Consider the HTML tag below:</p>
+
+                <pre>&lt;img class="custom-img" src="" alt="Kitty image" /&gt;</pre>
+
+                <p>Updating the DOM usually happens in two steps.</p>
+
+                <p>Step 1: Select the element:</p>
+
+                <pre>> const catImage = document.querySelector('.custom-img');</pre>
+
+                <p>Step 2: Use the desired attribute property to update the element</p>
+
+                <pre>> catImage.alt = 'Just a cute cat!';</pre>
+
+                <p>You can even chain the two steps together like this:</p>
+
+                <pre>> const catImage = document.querySelector('.custom-img').alt = 'Just a cute cat!';</pre>
+
+                <p>Now let's update the (empty) src attribute with this URL:</p>
+
+                <pre>https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350</pre>
+
+                <p>Instead of accessing the property with the "dot" notation (e.g. element.src) and setting the value
+                    with the equal sign (=), you could also use the .setAttribute() method like this:</p>
+
+                <pre>catImage.setAttribute('src', 'https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350');</pre>
+
+                <p>.setAttribute() takes two arguments, the attribute to set, and the value to be assigned to that
+                    attribute. By using a method instead of the property, you would have more flexibility in some
+                    scenarios. For instance, you could create a reusable function that would take the the element,
+                    attribute and value:</p>
+
+                <pre>function flexAttribute(targetElement, attr, val) {
+   tagetElement.setAttribute(attr, val);
+}</pre>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's add hover text to our color bars that shows both the color name and hex code. We can do
+                        this by setting the title attribute:</p>
+
+                    <pre>const changePalette = () => {
+  colorBars.forEach((bar, index) => {
+    bar.textContent = palette[index*2];
+    bar.title = palette[index*2] + "- #" + palette[index*2 + 1];
+    //future code
+  });
+};</pre>
+
+                    <p>Now when users hover over a color bar, they'll see both the color name and its corresponding hex
+                        code value. The title attribute provides a native browser tooltip that appears on hover, making
+                        it a simple way to add additional information without cluttering the interface.</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/tkuhca3xo1?seo=false&videoFoam=false"
+                            title="Setting Element Attributes" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Setting inline styles with .style()</h3>
+
+                <p>Every element contains a style object which can be accessed through the .style property. The style
+                    object contains every available style as a key and a value.</p>
+
+                <p>When using .style, you can read any existing HTML inline style set on the element, or add new ones.
+                </p>
+
+                <p>Using this HTML as reference:</p>
+
+                <pre>&lt;header&gt;
+  &lt;h1 class="main-header"&gt;Dom Manipulation&lt;/h1&gt;
+  &lt;nav class="main-nav"&gt;
+    &lt;a href="#" class="nav-item"&gt;Home&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;About&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;Blog&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;Contact&lt;/a&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;</pre>
+
+                <p>You can select a node and change its style:</p>
+
+                <pre>> const mainHeader = document.querySelector('.main-header');
+> mainHeader;
+&lt;h1 class="main-header"&gt;Dom Manipulation&lt;/h1&gt;
+> mainHeader.style.color;
+''
+> mainHeader.style.color = 'blue';
+'blue'</pre>
+
+                <div class="side-note">
+                    <h3>Important Note</h3>
+                    <p>Changing a property on the style object will effectively give this element an inline style.
+                        Inline styles have the highest specificity, overriding any other selector except !important.
+                        VERY IMPORTANT to note that this does NOT access or change anything in the CSS file.</p>
+                </div>
+
+                <p>See this other example using forEach():</p>
+
+                <pre>const navNode = document.querySelector('.main-vav');
+navNode.forEach((node, idx) => {
+  node.style.textTransform = "uppercase";
+  console.log("The text from element",idx,"in the NodeList has changed to:",val.innerText);
+});</pre>
+
+                <p>When using JavaScript to update CSS style properties, we need to be careful to remember that
+                    JavaScript does not accept dashes (-) as a valid naming value! Therefore, whenever a CSS property
+                    contains a dash (such as background-color), we must use camel casing in JavaScript.</p>
+
+                <p>Example in CSS:</p>
+
+                <pre>.some-class {
+  background-color: gray;
+}</pre>
+
+                <p>The JavaScript version would look like this:</p>
+
+                <pre>const someClass = document.querySelector('.some-class');
+someClass.style.backgroundColor = "gray";</pre>
+
+                <div class="side-note">
+                    <h3>Pro Tip</h3>
+                    <p>Don't forget the string quotes when you assign a value to a CSS property.</p>
+                </div>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's look at a practical example of changing styles with JavaScript. In this code snippet from
+                        the Kolor application, we're updating the background colors of color bars:</p>
+
+                    <pre>const changePalette = () => {
+  colorBars.forEach((bar, index) => {
+    bar.textContent = palette[index*2];
+    bar.title = palette[index*2] + "- #" + palette[index*2 + 1];
+    bar.style.backgroundColor = "#" + palette[index*2 + 1];
+  });
+};</pre>
+
+                    <p>This code:</p>
+                    <ul>
+                        <li>Iterates through each color bar element</li>
+                        <li>Sets the text content to the color name</li>
+                        <li>Adds a title attribute with the color name and hex code</li>
+                        <li>Changes the background color using the hex value</li>
+                    </ul>
+                </div>
+
+                <h3>Manipulating classes and IDs with .className, .classList and .id</h3>
+
+                <p>As the names suggest, you can use <code>.className</code> and <code>.id</code> properties to read and
+                    write the class and id attributes of any node.</p>
+
+                <p><code>.className</code> accesses or assigns a string containing all of the classes on the element.
+                    While <code>.id</code> accesses or assigns a string containing the id of the element.</p>
+
+                <p>Setting these properties will override declarations in the CSS stylesheet. If you need an element to
+                    be part of multiple classes, make sure to include all of them in the assigned string!</p>
+
+                <p>Access the className and id properties of the mainHeader node in the console:</p>
+
+                <pre>> mainHeader.className;
+'main-header'
+> mainHeader.className = 'main-header warning-style';
+'main-header warning-style'
+> mainHeader.id;
+''
+> mainHeader.id = 'header1';
+'header1'</pre>
+
+                <p><code>.classList</code> returns an array-like object of all the classes on the element and makes it
+                    easy to add or remove individual classes for the node. There are many useful methods available on
+                    classList.</p>
+
+                <p>A classList is a DOMTokenList type. Similarly to a NodeList, A DOMTokenList is an array-like object
+                    with a numerical zero-based index, a length property, and several methods like
+                    <code>.contains()</code> and <code>.forEach()</code>.</p>
+
+                <p>Most notably, the methods <code>.add()</code>, <code>.remove()</code>, and <code>.toggle()</code> are
+                    very useful. Toggle will add the class if it does not exist and remove it if it does. Very helpful
+                    in some common cases!</p>
+
+                <p>These methods take a single string representing the class:</p>
+
+                <pre>> mainHeader.className;
+'main-header'
+> mainHeader.classList.add('bold-header');
+> mainHeader.classList;
+DOMTokenList(2) ['main-header', 'bold-header', value: 'main-header bold-header']
+> mainHeader.className;
+'main-header bold-header'
+> mainHeader.classList.remove('main-header');
+> mainHeader.className;
+'bold-header'
+> mainHeader.classList.toggle('highlight');
+> mainHeader.className;
+'bold-header highlight'
+> mainHeader.classList.toggle('highlight');
+> mainHeader.className;
+'bold-header'</pre>
+
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's look at a practical example of using IDs and classList in the Kolors project:</p>
+
+                    <p>First, we can set unique IDs for each color bar using the HEX codes from our palette:</p>
+
+                    <pre>const changePalette = () => {
+  colorBars.forEach((bar, index) => {
+    bar.textContent = palette[index*2];
+    bar.title = palette[index*2] + "- #" + palette[index*2 + 1];
+    bar.style.backgroundColor = "#" + palette[index*2 + 1];
+    bar.id = palette[index*2 + 1];
+})};
+</pre>
+
+                    <p>Then, we can add theme-switching functionality using classList.toggle():</p>
+
+                    <p>In your CSS:</p>
+                    <pre>.dark-theme {
+   background-color: black;
+   color: white;
+}</pre>
+
+                    <p>And the JavaScript function to toggle the theme:</p>
+
+                    <pre>const toggleTheme = () => {
+  document.querySelector('body').classList.toggle('dark-theme');
+};</pre>
+
+                    <p>This demonstrates how IDs can be used for unique element identification and how
+                        classList.toggle() provides an elegant way to switch between styles.</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/px1onbvkpg?seo=false&videoFoam=false"
+                            title="Working with Classes and IDs" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Accessing the children and the parent nodes with .parentNode and .children</h3>
+
+                <p>The .parentNode and .children properties are used to access relatives of the element, so you can
+                    effectively traverse the document tree up and down. In practice, using these properties is like
+                    making a new selection. You would then access some other property of the selection to perform an
+                    update.</p>
+
+                <p>These properties are read-only.</p>
+
+                <p>Again, let's use the HTML below:</p>
+
+                <pre>&lt;header&gt;
+  &lt;h1 class="main-header"&gt;Dom Manipulation&lt;/h1&gt;
+  &lt;nav class="main-nav"&gt;
+    &lt;a href="#" class="nav-item"&gt;Home&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;About&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;Blog&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;Contact&lt;/a&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;</pre>
+
+                <p>And select a new node to test the properties:</p>
+
+                <pre>> const navNode = document.querySelector('.main-vav');
+// returns an HTMLCollection of all the children of that node
+> navNode.children;
+HTMLCollection(4) [a.nav-item, a.nav-item, a.nav-item, a.nav-item]
+// returns the parent node of the node
+> navNode.parentNode;
+&lt;header&gt;...&lt;/header&gt;</pre>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's look at a practical example of using these properties. When building a color palette
+                        application like Kolors, you might want to inspect the relationships between elements:</p>
+
+                    <pre>// temporary code
+const containerNode = document.querySelector('.container');
+console.log('These are the children of the flex container:');
+console.log(containerNode.children);
+console.log('And this is the parent, with all the siblings:');
+console.log(containerNode.parentNode);</pre>
+
+                    <p>This code helps visualize the DOM structure by logging the container's children (the color
+                        swatches) and its parent element along with siblings. This kind of debugging code is valuable
+                        during development but should be removed before production.</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/ow4yy0t528?seo=false&videoFoam=false"
+                            title="DOM Tree Navigation" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+
+
+                </div>
+                <h3>Conclusion</h3>
+
+                <p>Manipulating nodes is at the core of a dynamic application! Styles, attributes, classes and IDs can
+                    be easily changed by directly accessing the properties of a node.</p>
+
+                <p>As long as you design a minimal and flexible HTML/CSS structure, there's no need to make important
+                    hard-coded decisions early on. You are free to change elements as you code the application, focused
+                    on JavaScript.</p>
+
+                <p>For instance, if you assign IDs to nodes that are supposed to be manipulated inside your application,
+                    it all comes down to making a simple selection and accessing some properties.</p>
+
+                <p>The classList array-like object is particularly useful when you create classes (including complex
+                    ones) in the CSS stylesheet, saving you a lot of time and code in the application implementation.
+                </p>
+            </div>
+
+            <div class="content-box module1-accent">
+                <h2>Adding New Elements to the DOM</h2>
+
+                <p>In a dynamic application, you will often need to create elements which were not originally hard-coded
+                    in the HTML.</p>
+
+                <p>A typical scenario is to add elements based on user interaction, like displaying a warning pop-up or
+                    expanding an element to show more text. Since you need to be conscious about the page's "real
+                    estate", cluttering and ease of use, and you never know how the user will interact with the
+                    application, a lot of the elements may be created on the fly, instead of being hard-coded in the
+                    HTML.</p>
+
+                <p>Creating elements programmatically usually translates to more responsive and flexible applications!
+                </p>
+
+                <p>In this Core Competency, you will learn how to create elements and attach them to the DOM using
+                    different approaches. As you will see, any type of element can be created and inserted anywhere in
+                    the document.</p>
+
+                <h3>Creating DOM elements with .createElement()</h3>
+
+                <p>The <code>.createElement()</code> method will generate a new element in memory, meaning it won't be
+                    attached to the DOM until you explicitly add it to the document. You will be able to style the new
+                    element and insert it to the page only when you are ready.</p>
+
+                <p>The argument to this method is the tag name (e.g., <code>h1</code>, <code>p</code>):</p>
+
+                <pre>const newHeader = document.createElement('h1');</pre>
+
+                <p>The code above will create an <code>h1</code> element in memory. Don't forget to assign the new
+                    element to a reference, otherwise you won't be able to later manipulate it and attach it to the DOM.
+                </p>
+
+                <p>If you log the new node in the console, you will get an empty h1 element:</p>
+
+                <pre>> newHeader;
+&lt;h1&gt;&lt;/h1&gt;</pre>
+
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's look at a practical example. In the Kolors application, when the page loads, you'll want
+                        to:</p>
+                    <ol>
+                        <li>Ask for the company name using a prompt</li>
+                        <li>Create a welcome message header</li>
+                        <li>Create a toggle button for dark mode</li>
+                    </ol>
+
+                    <p>Here's how to do it:</p>
+
+                    <pre>// Get company name on page load
+const clientName = window.prompt("Welcome to Kolors! Please enter your company's name:");
+
+// Create welcome message header
+const welcomeMsg = document.createElement('h2');
+
+// Create dark mode toggle button
+const toggleBtn = document.createElement('button');</pre>
+
+                    <p>These elements are now created in memory but aren't yet visible on the page. In the next section,
+                        we'll learn how to add content to these elements and attach them to the DOM.</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/d7c8yabbrd?seo=false&videoFoam=false"
+                            title="Creating DOM Elements" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Building out a new element</h3>
+
+                <p>With the newHeader in memory, you can manipulate it just like any other existing element in the DOM.
+                </p>
+
+                <p>You could add text and some styling with:</p>
+
+                <pre>newHeader.textContent = "I'm a fresh H1 header!";
+newHeader.style.color = "yellow";</pre>
+
+                <p>And log the resulting node to verify:</p>
+
+                <pre>> newHeader;
+&lt;h1 style="color: yellow;"&gt;I'm a fresh H1 header!&lt;/h1&gt;</pre>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's continue building out the Kolors page elements. First, let's add the welcome message text
+                        and some basic styling:</p>
+
+                    <pre>welcomeMsg.textContent = 'Welcome ' + clientName + ', we are excited to help you choose the perfect palette!\nUse the button to shuffle through some beautiful color combinations.';
+welcomeMsg.style.border = '1px solid grey';
+welcomeMsg.style.padding = '0.5em';</pre>
+
+                    <p>Next, we'll set up the toggle button with its initial text and an ID for later reference:</p>
+
+                    <pre>toggleBtn.textContent = 'Dark Theme OFF';
+toggleBtn.id = 'togglebtn';</pre>
+
+                    <p>These elements are now fully configured but still only exist in memory. In the next section,
+                        we'll learn how to add them to the page.</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/xkclbyj3b7?seo=false&videoFoam=false"
+                            title="Building DOM Elements" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Adding children with .appendChild() and .prepend()</h3>
+
+                <p>You're now ready to make your newly created elements show up on the page! All elements created in
+                    memory will be inserted (or attached) to some existing element in the document, as a child.</p>
+
+                <p>You first select the parent node and then use either its .appendChild() or .prepend() methods to
+                    attach the child. Calling one of these methods will add your element into the DOM.</p>
+
+                <p>Let's use the HTML below as an example:</p>
+
+                <pre>&lt;header&gt;
+  &lt;h1 class="main-header"&gt;Dom Manipulation&lt;/h1&gt;
+  &lt;nav class="main-nav"&gt;
+    &lt;a href="#" class="nav-item"&gt;Home&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;About&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;Blog&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;Contact&lt;/a&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;</pre>
+
+                <p>By using .appendChild(), you can add a new element under the selected element after all of the
+                    existing children:</p>
+
+                <pre>> document.querySelector('header').appendChild(newHeader);</pre>
+
+                <p>You effectively added the new h1 node to the end of the header section, as the last child, after the
+                    nav section. The resulting HTML structure in the DOM (not in the original HTML file!) will be:</p>
+
+                <pre>&lt;header&gt;
+  &lt;h1 class="main-header"&gt;Dom Manipulation&lt;/h1&gt;
+  &lt;nav class="main-nav"&gt;
+    &lt;a href="#" class="nav-item"&gt;Home&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;About&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;Blog&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;Contact&lt;/a&gt;
+  &lt;/nav&gt;
+  &lt;h1 style="color: yellow;"&gt;I'm a fresh H1 header!&lt;/h1&gt;
+&lt;/header&gt;</pre>
+
+                <p>And by using .prepend(), you can add the element before all the other existing child elements:</p>
+
+                <pre>> document.querySelector('header').prepend(newHeader);</pre>
+
+                <p>You would get the new h1 element as the first child inside the header parent:</p>
+
+                <pre>&lt;header&gt;
+  &lt;h1 style="color: yellow;"&gt;I'm a fresh H1 header!&lt;/h1&gt;
+  &lt;h1 class="main-header"&gt;Dom Manipulation&lt;/h1&gt;
+  &lt;nav class="main-nav"&gt;
+    &lt;a href="#" class="nav-item"&gt;Home&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;About&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;Blog&lt;/a&gt;
+    &lt;a href="#" class="nav-item"&gt;Contact&lt;/a&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;</pre>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's look at a practical example. Say you have this HTML structure for a color palette app:</p>
+
+                    <pre>&lt;body&gt;
+  &lt;h1&gt;Kolors Palette Selector&lt;/h1&gt;
+  &lt;button type="button" id="palettebtn"&gt;Change Palette&lt;/button&gt;
+  &lt;div class="container"&gt;
+    &lt;div class="rectangle"&gt;&lt;/div&gt;
+    &lt;div class="rectangle"&gt;&lt;/div&gt;
+    &lt;div class="rectangle"&gt;&lt;/div&gt;
+    &lt;div class="rectangle"&gt;&lt;/div&gt;
+    &lt;div class="rectangle"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;</pre>
+
+                    <p>And you want to add a welcome message at the top and a toggle button at the bottom. You can use
+                        prepend() and appendChild() like this:</p>
+
+                    <pre>document.querySelector('body').prepend(welcomeMsg);
+document.querySelector('body').appendChild(toggleBtn);</pre>
+
+                    <p>This will place the welcome message as the first element in the body, and the toggle button as
+                        the last element - effectively bookending your content.</p>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/0sbhuyszzs?seo=false&videoFoam=false"
+                            title="Adding Elements to the DOM" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Adding elements to the DOM with .insertAdjacentElement()</h3>
+
+                <p>The <code>.insertAdjacentElement()</code> method is more flexible than <code>.appendChild()</code> or
+                    <code>.prepend()</code>, and it allows you to choose other positions to insert new elements. This
+                    method takes two arguments:</p>
+
+                <pre>targetElement.insertAdjacentElement(position, element);</pre>
+
+                <p>Where position is a string representing the position relative to the target element. The options for
+                    position are:</p>
+
+                <ul>
+                    <li><code>'beforebegin'</code> - just before the target element, as a sibling</li>
+                    <li><code>'afterbegin'</code> - similar to prepend(), as the first child inside the target element
+                    </li>
+                    <li><code>'beforeend'</code> - similar to appendChild(), as the last child inside the target element
+                    </li>
+                    <li><code>'afterend'</code> - just after the target element, as a sibling</li>
+                </ul>
+
+                <p>Say you want to target an existing element in the page. The placement works like this:</p>
+
+                <pre>&lt;body&gt;
+  &lt;!-- beforebegin --&gt;
+  &lt;p&gt;
+    &lt;!-- afterbegin --&gt;
+    Existing text (or element) inside the paragraph
+    &lt;!-- beforeend --&gt;
+  &lt;/p&gt;
+  &lt;!-- afterend --&gt;
+&lt;/body&gt;</pre>
+
+                <div class="side-note">
+                    <h3>Important Note</h3>
+                    <p>The <code>beforebegin</code> and <code>afterend</code> positions only work if the node is in a
+                        tree and has a parent element.</p>
+                </div>
+
+                <p>Let's look at a practical example. Say you have this HTML structure for a color palette app:</p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Here's the HTML structure:</p>
+
+                    <pre>&lt;div class="container"&gt;
+  &lt;h1&gt;Color Palette Generator&lt;/h1&gt;
+  &lt;div class="palette"&gt;
+    &lt;div class="color" style="background-color: #FF5733"&gt;#FF5733&lt;/div&gt;
+    &lt;div class="color" style="background-color: #33FF57"&gt;#33FF57&lt;/div&gt;
+    &lt;div class="color" style="background-color: #3357FF"&gt;#3357FF&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;button id="palettebtn"&gt;Generate New Palette&lt;/button&gt;
+&lt;/div&gt;</pre>
+
+                    <p>And here's how you would modify the JavaScript to place elements in specific positions:</p>
+
+                    <pre>document.querySelector('h1').insertAdjacentElement('afterend', welcomeMsg);
+document.querySelector('#palettebtn').insertAdjacentElement('beforebegin', toggleBtn);</pre>
+
+                    <p>This code will:</p>
+                    <ul>
+                        <li>Place the welcome message right after the h1 heading</li>
+                        <li>Place the toggle button right before the "Generate New Palette" button</li>
+                    </ul>
+
+                    <p>You haven't implemented the button behavior yet, and of course you only have one palette for now.
+                        But this is how the page looks like at this point:</p>
+
+                    <img src="../../assets/images/dom5.jpg" alt="DOM Manipulation">
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/8khv35riq0?seo=false&videoFoam=false"
+                            title="DOM Element Positioning" allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Conclusion</h3>
+
+                <p>In this module, you learned about the Document Object Model (DOM) and how to manipulate it using
+                    JavaScript. You explored DOM structure, selecting elements, and modifying content. You also learned
+                    about different methods for inserting and positioning elements within the DOM tree.</p>
+
+                <p>Key takeaways:</p>
+                <ul>
+                    <li>The DOM represents HTML documents as a tree structure of objects</li>
+                    <li>Elements can be selected using methods like <code>querySelector()</code> and
+                        <code>querySelectorAll()</code></li>
+                    <li>DOM elements can be created, modified, and removed dynamically</li>
+                    <li>Elements can be inserted at specific positions using <code>insertAdjacentElement()</code></li>
+                </ul>
+
+                <p>With these fundamentals, you're now equipped to create more dynamic and interactive web applications
+                    by manipulating the DOM effectively.</p>
+            </div>
+
+            <div class="content-box module1-accent">
+                <h2>Guided Project</h2>
+                <p><a href="https://github.com/bloominstituteoftechnology/web-guided-project-dom-1" target="_blank"
+                        rel="noopener noreferrer">DOM I Starter Code</a></p>
+                <p><a href="https://github.com/bloominstituteoftechnology/web-guided-project-dom-1-solution"
+                        target="_blank" rel="noopener noreferrer">DOM I Solution</a></p>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/me4ww77iz8" title="Guided Project"
+                        allow="fullscreen" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="content-box module1-accent">
+                <h3>Module 1 Project: The DOM</h3>
+
+                <p>You will develop a JavaScript project that involves creating widgets for a webpage. The project will
+                    require you to manipulate the DOM using JavaScript by adding CSS classes to HTML elements, loading
+                    random content from arrays, dynamically creating and appending HTML elements, and more. The variety
+                    of tasks you will encounter here mimics the tasks you will get on the job.</p>
+                <p>The module project contains advanced problems that will challenge and stretch your understanding of
+                    the module's content. The project has built-in tests for you to check your work, and the solution
+                    video is available in case you need help or want to see how we solved each challenge, but remember,
+                    there is always more than one way to solve a problem. Before reviewing the solution video, be sure
+                    to attempt the project and try solving the challenges yourself.</p>
+
+
+                <h3>Instructions</h3>
+
+                <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo
+                    to your own GitHub account, and clone it down to your computer:</p>
+                <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/W_S5M2_Project" target="_blank"
+                        rel="noopener noreferrer">The DOM</a></p>
+
+                <ul>
+                    <li>Fork the repository,</li>
+                    <li>clone it to your machine, and</li>
+                    <li>open the README.md file in VSCode, where you will find instructions on completing this Project.
+                    </li>
+                    <li>submit your completed project to the BloomTech Portal</li>
+                </ul>
+
+                <h3>Solution</h3>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/4hz3j60xoh?seo=false&videoFoam=false"
+                        title="Solution Video" allow="fullscreen" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <section class="resource-section">
+                <h2 class="resource-section-title">Additional Resources</h2>
+                <div class="resource-links">
+                    <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
+                        MDN: Introduction to the DOM
+                    </a>
+                    <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
+                        MDN: document.querySelector()
+                    </a>
+                    <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
+                        MDN: document.querySelectorAll()
+                    </a>
+                    <a href="https://javascript.info/dom-nodes" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
+                        JavaScript.info: DOM Tree
+                    </a>
+                </div>
+            </section>
+        </section>
+    </main>
 </body>
-</html> 
+
+</html>

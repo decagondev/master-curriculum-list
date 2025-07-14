@@ -1,397 +1,604 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3 - Composing Side Effects</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23; /* Dark background color */
-            color: #ffffff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #222831; /* Darker container background */
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #ff5722; /* Orange accent color */
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-            color: #ff7043; /* Lighter orange on hover */
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722; /* Orange accent color */
-            padding-bottom: 10px;
-        }
-        .content-section {
-            margin-bottom: 40px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            padding: 20px;
-            border: 1px solid #333a47;
-        }
-        h2 {
-            color: #ff5722; /* Orange accent color */
-            margin-top: 0;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #333a47;
-        }
-        p {
-            color: #b3b3b3;
-        }
-        .video-container {
-            margin: 20px 0;
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            border: 1px solid #333a47;
-            border-radius: 4px;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-        .resources-section {
-            margin-top: 40px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border-left: 4px solid #ff5722; /* Orange accent border */
-        }
-        .resources-section h3 {
-            color: #ffffff;
-            margin-top: 0;
-        }
-        .resources-section ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .resources-section li {
-            margin-bottom: 10px;
-        }
-        .resources-section a {
-            color: #ff5722; /* Orange accent color */
-            text-decoration: none;
-        }
-        .resources-section a:hover {
-            text-decoration: underline;
-            color: #ff7043; /* Lighter orange on hover */
-        }
-        code {
-            background-color: #333a47;
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-family: 'Courier New', Courier, monospace;
-            color: #ff5722;
-        }
-        
-        /* Logo styling */
-        .logo {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .logo svg {
-            margin-right: 15px;
-        }
-        .logo-text {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ffffff;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
-    <div class="container">
-        
-        <a href="../../index.html" class="back-link">← Back to Course Overview</a>
-        <h1>Module 3 - Composing Side Effects</h1>
-
-        <div class="content-section">
-            <h2>Understanding Side Effects</h2>
-            <p>Learn what side effects are in React components and when to use them.</p>
-            
-            <p>In React, side effects are operations that affect something outside the scope of the current function. These include data fetching, subscriptions, manual DOM manipulations, logging, and other operations that don't directly relate to rendering but are necessary for your application to work correctly.</p>
-            
-            <p>Examples of side effects in React components include:</p>
-            <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Fetching data from an API</li>
-                <li>Setting up event listeners or subscriptions</li>
-                <li>Manually changing the DOM</li>
-                <li>Writing to local storage</li>
-                <li>Setting timers with setTimeout or setInterval</li>
-                <li>Logging information to the console</li>
+    <header>
+        <nav>
+            <div class="logo">Web Unit 2 Sprint 6</div>
+            <ul>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module1/index.html">Module 1: React Components and Component States</a>
+                        <a href="../module2/index.html">Module 2: Component Composition</a>
+                        <a href="../module3/index.html" class="active">Module 3: Composing Side Effects</a>
+                        <a href="../module4/index.html">Module 4: Advanced Styling Techniques</a>
+                    </div>
+                </li>
+                <li><a href="https://github.com/bloominstituteoftechnology/web-s06-practice-problems">Practice
+                        Problems</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-            
-            <p>React provides the useEffect hook specifically for handling side effects in functional components. This hook lets you perform side effects in a controlled and predictable way.</p>
-            
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Side Effects in React" src="https://fast.wistia.net/embed/iframe/nuvbui0xtd" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-        </div>
+        </nav>
+    </header>
 
-        <div class="content-section">
-            <h2>Working with Side Effects</h2>
-            <p>Master the techniques of working with side effects in React components.</p>
-            
-            <p>The useEffect hook is the primary way to implement side effects in React functional components. It takes two arguments: a function that contains the side effect code, and an optional dependency array.</p>
-            
-            <p>The basic syntax of useEffect is:</p>
-            
-            <pre><code>import React, { useEffect } from 'react';
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 3 - Composing Side Effects</h1>
 
-function MyComponent() {
-  useEffect(() => {
-    // Side effect code goes here
-    
-    // Optional cleanup function
-    return () => {
-      // Cleanup code goes here
-    };
-  }, [/* dependency array */]);
-  
-  return (
-    // JSX for rendering
-  );
-}</code></pre>
-            
-            <p>The dependency array determines when the effect runs:</p>
-            <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li><strong>No dependency array</strong>: The effect runs after every render</li>
-                <li><strong>Empty dependency array []</strong>: The effect runs only once after the initial render (component mount)</li>
-                <li><strong>With dependencies [dep1, dep2, ...]</strong>: The effect runs after the initial render and whenever any of the dependencies change</li>
-            </ul>
-            
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Working with Side Effects" src="https://fast.wistia.net/embed/iframe/6qfckl2jvy" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-        </div>
+            <div class="content-box module3-accent">
+                <h2>The effect hook</h2>
+                <p>It's time to learn about the world of Side Effects in React!</p>
 
-        <div class="content-section">
-            <h2>Triggering Side Effects</h2>
-            <p>Learn how to trigger side effects based on state and prop changes.</p>
-            
-            <p>One of the most powerful features of useEffect is the ability to selectively run side effects when specific values change. This is achieved through the dependency array, which tells React to only re-run the effect when the listed values have changed.</p>
-            
-            <p>Here's an example where an effect runs whenever a search query changes:</p>
-            
-            <pre><code>import React, { useState, useEffect } from 'react';
+                <p>"Side Effects" refer to actions that execute when something changes in the scope of a component.
+                    That's a very generic statement, but that's precisely the point of side effects. For instance, you
+                    can run code conditionally if a particular state is updated or any of the received props changes.
+                </p>
 
-function SearchResults() {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
-  
-  useEffect(() => {
-    // Skip the effect on first render with empty query
-    if (query === '') return;
-    
-    console.log(`Searching for: ${query}`);
-    
-    // Fetch search results based on query
-    const fetchResults = async () => {
-      try {
-        const response = await fetch(`https://api.example.com/search?q=${query}`);
-        const data = await response.json();
-        setResults(data.results);
-      } catch (error) {
-        console.error('Error fetching results:', error);
-      }
-    };
-    
-    fetchResults();
-  }, [query]); // Only re-run when query changes
-  
-  return (
+                <p>Some examples of common side effects would be network requests, logging, initiating a timer, or
+                    performing some calculations.</p>
+
+                <p>By using the useEffect() hook, your application will be able to reach new levels of responsiveness
+                    and implement complex behaviors. Let's dive in!</p>
+
+                <h3>Working with side effects</h3>
+                <p>Let's first revisit the concept of a React component's lifecycle.</p>
+
+                <h3>Component Lifecycle</h3>
+                <p>When React renders a component in the DOM, the component is said to be mounted.</p>
+
+                <p>From then on, a component will enter the update phase. It will be executed or "rendered" (although
+                    the latter term might suggest a DOM render) whenever it is called by a parent component, with or
+                    without props, and whenever its local state changes.</p>
+
+                <p>For instance, a parent component might call a child component with props, or an onClick callback
+                    might change the component's state. These events will cause the component function to run and
+                    compute a new JSX output. React then compares the output with the browser's DOM to determine if an
+                    update is needed. If a component's new JSX matches what is currently on the DOM, React will not
+                    update the DOM. However, if the new JSX is different, React will update the DOM with the new
+                    content. React can improve the application's responsiveness and save computing power by only making
+                    necessary DOM updates.</p>
+
+                <p>Finally, when React removes a component from the DOM, the component is said to be unmounted.</p>
+
+                <h3>Side Effects and the Effect Hook</h3>
+                <p>Now that you better understand the component's lifecycle, you will learn how to fit effects in the
+                    lifecycle context and decide when to run them.</p>
+
+                <p>The useEffect hook tells React that a component needs to run some side effect when a particular
+                    condition occurs. This hook is declared inside the component function, usually right after the
+                    state/props declarations, and always outside the return statement (JSX).</p>
+
+                <p>The argument of the hook is the callback function with the actual side effect code. To set up an
+                    effect, you first import the hook:</p>
+
+                <pre><code>import {useEffect} from 'react';</code></pre>
+
+                <p>And then pass the callback to the hook (arrow syntax used here):</p>
+
+                <pre><code>useEffect( () => {} );</code></pre>
+
+                <p>Using this basic declaration above, you will set the effect to run whenever any of the component's
+                    props or state is updated and only if they are updated.</p>
+
+                <p>This is how it works:</p>
+
+                <ul>
+                    <li>After the initial render and subsequent updates, React creates a snapshot of the component's
+                        state, props, and other variables within its scope.</li>
+                    <li>After a re-render is triggered, React compares the new snapshot of the component's state, props,
+                        and other variables with the previous snapshot that was stored.</li>
+                    <li>When the component is executed again, React will compare the current snapshot with the previous
+                        and check if there's any change.</li>
+                    <li>If React detects that any of the values in the snapshot have changed since the last render, it
+                        will execute the callback function specified in the useEffect hook.</li>
+                </ul>
+
+                <div class="side-note">
+                    <p><strong>Pro Tip:</strong> Most of the time, changes in props or state inside a component will
+                        cause React to update the real DOM, so that the new data is shown somewhere in the user
+                        interface. Effects run after any changes to the DOM are finished. However, effects will execute
+                        even if React determines that no changes to the DOM are necessary.</p>
+                </div>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's see an example of how useEffect works. We'll modify our ScoreBoard component from the
+                        previous module:</p>
+
+                    <pre><code>import React, {useEffect} from 'react';
+
+export default function ScoreBoard(props) {
+const {score, player} = props;
+useEffect( () => {
+    console.log("The component has updated.");
+});
+
+return (
     &lt;div&gt;
-      &lt;input 
-        type="text" 
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search..."
-      /&gt;
-      &lt;ul&gt;
-        {results.map(item => (
-          &lt;li key={item.id}&gt;{item.title}&lt;/li&gt;
-        ))}
-      &lt;/ul&gt;
+        &lt;h3&gt;
+            {player} is at {score}
+        &lt;/h3&gt;
     &lt;/div&gt;
-  );
-}</code></pre>
-            
-            <p>In this example, the useEffect hook runs whenever the query state changes. This creates a reactive search feature where the results update as the user types.</p>
-            
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Triggering Side Effects" src="https://fast.wistia.net/embed/iframe/n59j5h4w6y" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-        </div>
+  )
+};</code></pre>
 
-        <div class="content-section">
-            <h2>Fetching Data on Component Mount</h2>
-            <p>Learn how to fetch data when a component mounts using side effects.</p>
-            
-            <p>A common use case for useEffect is fetching data when a component first mounts. This is done by using an empty dependency array, which ensures the effect only runs once after the initial render.</p>
-            
-            <p>Here's an example of fetching data on component mount:</p>
-            
-            <pre><code>import React, { useState, useEffect } from 'react';
+                    <p>Run the app, and open the dev tools console. You will see the initial log message, which happened
+                        right after the component was mounted. That's because the previous component's snapshot was
+                        non-existing, so there has been a change! That's why side effects always run upon mounting.</p>
 
-function UserProfile({ userId }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    // Function to fetch user data
-    const fetchUser = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`https://api.example.com/users/${userId}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-        
-        const userData = await response.json();
-        setUser(userData);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchUser();
-  }, [userId]); // Re-fetch when userId changes
-  
-  if (loading) return &lt;div&gt;Loading...&lt;/div&gt;;
-  if (error) return &lt;div&gt;Error: {error}&lt;/div&gt;;
-  if (!user) return &lt;div&gt;No user data found&lt;/div&gt;;
-  
+                    <p>Click on the Decrease button. Nothing happens! That's because the score prop is not changing; all
+                        the props remain the same. Now click on Increase, and you will get another log message!</p>
+
+                    <p>Since the hook is in the same function scope, it can also access props and state. Replace the
+                        useEffect hook with this one:</p>
+
+                    <pre><code>useEffect( () => {
+    console.log("The new score is", score);
+});</code></pre>
+
+                    <p>By the way, you don't use brackets here to access score because this is pure JS, not JSX.</p>
+
+                    <p>Under the hood, this is the order of events in React:</p>
+
+                    <ol>
+                        <li>Component is mounted, scope changes, so the callback function is registered to be executed
+                            later;</li>
+                        <li>The JSX output is calculated;</li>
+                        <li>React updates the DOM;</li>
+                        <li>The callback function is executed (message logged);</li>
+                        <li>You click on Decrease;</li>
+                        <li>Scope does not change, the component is not executed.</li>
+                        <li>You click on Increase;</li>
+                        <li>Scope changes (score prop changes), the component is executed;</li>
+                        <li>The effect (callback) is placed in the execution queue;</li>
+                        <li>The JSX output is calculated;</li>
+                        <li>The JSX output is different from the previous, React updates the DOM with the new content;
+                        </li>
+                        <li>The effect is executed (message logged);</li>
+                        <li>etc.</li>
+                    </ol>
+
+                    <p>Next, you will learn how to selectively trigger the side effect!</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/6qfckl2jvy?seo=false" title="Solution Video"
+                            allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Triggering side effects</h3>
+                <p>The actual effects of side effects and when they are supposed to run are entirely up to your
+                    application design. By default, the callback passed to useEffect() will run every time the
+                    component's scope is changed. But side effects can be configured to run selectively in different
+                    ways:</p>
+
+                <ul>
+                    <li>Just once after the component is mounted, and never again.</li>
+                    <li>Anytime there's an update, including on mount (default).</li>
+                    <li>When there are updates related only to specific props or state</li>
+                    <li>And optionally run additional clean-up code when the component is unmounted (more on this
+                        later).</li>
+                </ul>
+
+                <p>By carefully designing when to run your side effects, you can save computing resources, improve the
+                    user experience, and avoid infamous infinite loops! Let's talk more about infinite loops.</p>
+
+                <p>Consider this situation: your component executes, a side effect is triggered, and the effect
+                    effectively changes the state. React will notice the state change and rerun the component. The
+                    component will trigger the side effect, and the process starts again. You just got an infinite loop
+                    that will crash the browser.</p>
+
+                <p>To avoid infinite loops, you should follow some general rules regarding side effects:</p>
+
+                <ul>
+                    <li>Avoid unconditionally changing state inside side effects</li>
+                    <li>Avoid the default behavior and configure side effects to be triggered only when specific props
+                        or state are changed</li>
+                    <li>Consider if a particular effect should run only once upon mounting.</li>
+                </ul>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's see how you can change the default behavior of useEffect(). You do this by passing in a
+                        dependency array as a second argument to the hook:</p>
+
+                    <pre><code>useEffect( () => {}, [dependencies] );</code></pre>
+
+                    <p>In this first example below, we are passing an empty dependency array to useEffect(), which
+                        configures the effect to run only once upon mounting. Now the ScoreBoard component can be
+                        updated:</p>
+
+                    <pre><code>import React, {useEffect} from 'react';
+
+export default function ScoreBoard(props) {
+const {score, player} = props;
+
+useEffect( () => {
+    console.log("The component has mounted.");
+}, []);
+
+return (
+    &lt;div&gt;
+        &lt;h3&gt;
+            {player} is at {score}
+        &lt;/h3&gt;
+    &lt;/div&gt;
+  )
+};</code></pre>
+
+                    <p>If you check the console output while you click on the buttons, you will see only one log message
+                        which took place upon mounting. Technically, the callback was registered to be executed later.
+                        The component rendered the DOM, then the callback was executed, and the message was logged.</p>
+
+                    <p>Let's add some more effects. Update the ScoreBoard.js file with this code:</p>
+
+                    <pre><code>import React, {useEffect} from 'react';
+
+export default function ScoreBoard(props) {
+const {score, player} = props;
+
+useEffect( () => {
+    console.log("The component has mounted.");
+}, []);
+useEffect( () => {
+    console.log("The new score is", score);
+}, [score]);
+useEffect( () => {
+    console.log("The new player is", player);
+}, [player]);
+
+return (
+    &lt;div&gt;
+        &lt;h3&gt;
+            {player} is at {score}
+        &lt;/h3&gt;
+    &lt;/div&gt;
+  )
+};</code></pre>
+
+                    <p>Again, check the console output while you click on the buttons. What's happening here?</p>
+
+                    <p>We have added three side effects to our component. As you know, the first one is triggered only
+                        upon mounting (empty dependency array). The second one has [score] as the dependency array,
+                        which sets the effect to run whenever the score prop changes, ignoring any other props or state.
+                        The last one will trigger the effect only when the player prop changes, which never happens in
+                        our current app, except for the initial mounting.</p>
+
+                    <p>In summary, every effect will trigger at least on mounting and subsequently whenever any of the
+                        state/props in the dependency array changes. These are the possibilities:</p>
+
+                    <p><code>useEffect(fn);</code><br>
+                        fn executed on mounting and upon changes in any state/props.</p>
+
+                    <p><code>useEffect(fn, []);</code><br>
+                        fn executed on mounting only.</p>
+
+                    <p><code>useEffect(fn, [state1, state2, prop1]);</code><br>
+                        fn executed on mounting and upon changes in either state1, state2, or prop1.</p>
+
+                    <p class="side-note">Pro Tip: In this latter case, changes in any other state/props will run the
+                        component function (and possibly update the DOM) but will not trigger the effect.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/n59j5h4w6y?seo=false" title="Solution Video"
+                            allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h3>Fetching data on component mount</h3>
+                <p>One everyday use for side effects is to fetch data from remote servers. Applications often rely on
+                    retrieving up-to-date data from the web, either from third-party public services or private services
+                    designed to be accessed by internal clients.</p>
+
+                <p>For instance, the app might need to get current weather information for a particular city and update
+                    that information on the screen every 5 minutes. Another app used by a company's employees may need
+                    to access a private database to get contact information for clients whenever the user clicks on a
+                    particular button. These are perfect scenarios for using side effects!</p>
+
+                <p>All these data can be exposed as web service APIs, making it easy for client-side code to get what it
+                    needs when it needs it. Many web APIs return data in the JSON format, which is considerably more
+                    efficient than formats like XML, and is easily manipulated in JavaScript. In the examples below, you
+                    will be using the more powerful axios JS module for fetching JSON data, as opposed to the native
+                    fetch() JS method.</p>
+
+                <p>By the way, web APIs usually are not restricted to certain types of clients. The same information you
+                    can get in your React app is also available for other clients running Python, for instance, as long
+                    as they all have authorization to access the service.</p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>For the web service, you will be using a local server containing some sample data. The API will
+                        be exposed at port 9009, and is part of the same Bloomtech's React bootstrapping tool version
+                        0.1.6</p>
+
+                    <p>Go ahead and initiate a new project with:</p>
+
+                    <pre><code>npx @bloomtools/react@0.1.6 pics
+cd pics
+npm install
+npm run dev</code></pre>
+
+                    <p>The project has Axios installed already. If it didn't, you would run the following command in the
+                        same directory:</p>
+
+                    <pre><code>npm install axios</code></pre>
+
+                    <h3>Fetching Data when a Component Mounts</h3>
+                    <p>For this first example, you will fetch a random image when the component mounts and render it to
+                        the DOM. The API in the local development server will return a JSON object containing the url
+                        and any details about a random picture. Make sure the API is working by testing:</p>
+
+                    <pre><code>http://localhost:9009/api/pics/random</code></pre>
+
+                    <p>And you should get something like this:</p>
+
+                    <pre><code>{"file":"https://bloominstituteoftechnology.github.io/img/karthik-sreenivas-rsx-joaKYrk-unsplash.jpg","detail":"Photo by Karthik Sreenivas on Unsplash"}</code></pre>
+
+                    <p>The JSON object returned by the server contains two keys: file with the actual URL and detail
+                        with the license attribution information.</p>
+
+                    <p>The first thing we'll do is get our App component ready. You will create some state, declare an
+                        empty effect hook and format the proper JSX. Edit the App.js file:</p>
+
+                    <pre><code>import React, {useState, useEffect} from 'react';
+
+export default function App() {
+  // Initialize state to hold the image URL
+  const [pic, setPic] = useState("");
+  useEffect(() => {}, []); // Not synced with any data, so this effect only fires once
+
   return (
-    &lt;div className="user-profile"&gt;
-      &lt;h2&gt;{user.name}&lt;/h2&gt;
-      &lt;p&gt;Email: {user.email}&lt;/p&gt;
-      &lt;p&gt;Username: {user.username}&lt;/p&gt;
-      &lt;p&gt;Phone: {user.phone}&lt;/p&gt;
+    &lt;div className="App"&gt;
+      &lt;h1&gt;This is a nice random picture!&lt;/h1&gt;
+      &lt;img src={pic} alt="a random picture" /&gt;
     &lt;/div&gt;
   );
+};</code></pre>
+
+                    <p>Now we can add the fetch logic. You will add another state and JSX element for the detail value.
+                        We'll use the Axios module here:</p>
+
+                    <pre><code>import React, {useState, useEffect} from 'react';
+import axios from 'axios';
+
+export default function App() {
+  // Initialize state to hold the image URL
+  const [pic, setPic] = useState("");
+  // Initialize state to hold the image author
+  const [info, setInfo] = useState("");
+  useEffect( () => {
+    axios
+      .get("http://localhost:9009/api/pics/random")
+      // Which we then set to state
+      .then(res => {
+        setPic(res.data.file);
+        setInfo(res.data.detail)
+      })
+      // Always include error handling
+      .catch(err => console.log(err));
+  }, []); // Not synced with any data, so this effect only fires once
+
+  return (
+    &lt;div className="App"&gt;
+      &lt;h1&gt;This is a nice random picture!&lt;/h1&gt;
+      &lt;img src={pic} height="300px" alt="a random picture" /&gt;
+      &lt;h2&gt;{info}&lt;/h2&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+
+                    <p>Wait! You just learned that we should avoid changing state inside the effect! And that's exactly
+                        what's happening here: the effect is calling setPic() and setInfo. Well, fetching data always
+                        means saving the data, so the effect must update state. Since the state is changing, you have to
+                        be very careful here about infinite loops. One solution is to set the effect to run only once on
+                        mounting by setting the last argument of useEffect as an empty array (which is what the code is
+                        doing). Another solution would be to use the dependency array to monitor state other than pic
+                        and info.</p>
+
+                    <p class="side-note">Pro Tip: when designing and testing components, add a console.log statement at
+                        the beginning of the function so you know exactly how many times the component was fired:</p>
+
+                    <pre><code>import React, {useState, useEffect} from 'react';
+import axios from 'axios';
+
+export default function App() {
+  console.log("App component fired");
+  const [pic, setPic] = useState("");
+  .
+  .
+  .
 }</code></pre>
-            
-            <p>This pattern is incredibly common in React applications. It handles three important states: loading, error, and success, providing a good user experience regardless of the API response.</p>
-            
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Fetching Data on Component Mount" src="https://fast.wistia.net/embed/iframe/8kdb4y2n49" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-        </div>
 
-        <div class="content-section">
-            <h2>Cleaning Up Side Effects</h2>
-            <p>Learn how to clean up side effects when a component unmounts.</p>
-            
-            <p>Some side effects need to be cleaned up when a component unmounts to prevent memory leaks or unexpected behavior. Examples include canceling network requests, clearing timers, or removing event listeners.</p>
-            
-            <p>In useEffect, you can return a cleanup function which React will call when the component unmounts or before the effect runs again (if the dependencies change).</p>
-            
-            <p>Here's an example with a timer that gets properly cleaned up:</p>
-            
-            <pre><code>import React, { useState, useEffect } from 'react';
+                    <p>In our case, if you inspect the browser's console, you will notice that App is running twice upon
+                        mounting. Technically, this is what's happening:</p>
 
-function Timer() {
-  const [count, setCount] = useState(0);
-  
+                    <ol>
+                        <li>App updates the DOM with an empty picture and empty info.</li>
+                        <li>The effect is triggered</li>
+                        <li>App state is changed</li>
+                        <li>React notices the state change and fires App again</li>
+                        <li>App updates the DOM with the picture and info.</li>
+                    </ol>
+
+                    <p>There's not much you can do to avoid this double-run. Just keep that in mind and always inspect
+                        the console to check if your component is running much more often than you would expect. In most
+                        cases, the solution will be changing the dependency array.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/8kdb4y2n49?seo=false" title="Solution Video"
+                            allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <h3>Cleaning up on component unmount</h3>
+                <p>Imagine a component that subscribes to an API on mounting to receive live updates from the Stock
+                    Market. When this component is no longer needed by the application and is eventually unmounted, the
+                    subscription should be canceled. Otherwise, your application might waste resources or create memory
+                    leaks and overflows.</p>
+
+                <p>This situation is not unique to React. Any application that deals with subscriptions, event
+                    listeners, and other pieces of code that are constantly waiting for live events must have a way to
+                    clean up resources and "kill" processes that are no longer needed. This design pattern of cleaning
+                    up unneeded resources avoids security and performance issues. React will handle unmounting
+                    components that are no longer needed, but you will be responsible for cleaning up any resources used
+                    in any effects you created.</p>
+
+                <p>To clean up any resources used in an effect in React, you can return a function from useEffect like
+                    this:</p>
+
+                <pre><code>useEffect(() => {
+  // We write our desired effect as always.
+  console.log("The effect has run.");
+
+  // Returning a function will tell React that you want this
+  // code to run when the component unmounts
+  return () => console.log("This code runs when the component is unmounted");
+});</code></pre>
+
+                <p>The syntax above tells React that there's some extra code that must be saved for later and that this
+                    code should be executed when the component unmounts. This is the perfect time to clean up any
+                    resources you want to remove.</p>
+
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's edit the App component and add an event listener to the DOM:</p>
+
+                    <pre><code>import React, {useState, useEffect} from 'react';
+
+export default function App() {
+  console.log("App component has run.");
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
   useEffect(() => {
-    console.log('Setting up timer...');
-    const intervalId = setInterval(() => {
-      setCount(prevCount => prevCount + 1);
-    }, 1000);
-    
-    // Cleanup function
-    return () => {
-      console.log('Cleaning up timer...');
-      clearInterval(intervalId);
-    };
-  }, []); // Empty dependency array means this runs once on mount
-  
-  return &lt;div&gt;Counter: {count}&lt;/div&gt;;
-}</code></pre>
-            
-            <p>Another common example is removing event listeners:</p>
-            
-            <pre><code>import React, { useState, useEffect } from 'react';
+    const handleMouseMove = e => setPosition({ x: e.clientX, y: e.clientY });
+    window.addEventListener("mousemove", handleMouseMove);
+    console.log("Effect has run, event listener added.");
 
-function WindowSize() {
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    
-    // Add event listener
-    window.addEventListener('resize', handleResize);
-    
-    // Cleanup: remove event listener
     return () => {
-      window.removeEventListener('resize', handleResize);
+      console.log("App component unmounted, effect has removed the event listener.");
+      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
-  
-  return &lt;div&gt;Window width: {windowWidth}px&lt;/div&gt;;
-}</code></pre>
-            
-            <p>Proper cleanup is essential for building robust React applications that don't leak memory or continue performing operations when they shouldn't.</p>
-            
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Cleaning Up Side Effects" src="https://fast.wistia.net/embed/iframe/5sfqmnsguq" width="640" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-        </div>
 
-        <div class="content-section">
-            <h2>Module Project</h2>
-            <p>Apply your knowledge by building a React application that demonstrates side effects and data fetching.</p>
-            <div class="resources-section">
-                <h3>Project Resources</h3>
+  return (
+    &lt;div&gt;
+      &lt;h3&gt;Mouse position:&lt;/h3&gt;
+      {position.x}:{position.y}
+    &lt;/div&gt;
+  );
+};</code></pre>
+
+                    <p>The effect is triggered only once on mounting. From that point, the event listener will take care
+                        of updating the state of the component. You can verify this behavior by inspecting the console.
+                    </p>
+
+                    <p class="side-note">Pro Tip: when declaring auxiliary functions like handleMouseMove above, always
+                        do it inside the useEffect() hook to guarantee that all state and order of execution will be
+                        synchronized in React.</p>
+
+                    <p>Now try removing the dependency array, refreshing the app, and checking the console. The effect
+                        is now triggering for every mouse move, which is not desired nor necessary. But React is
+                        preventing you from creating a mess by assuming that any clean-up code declared in the effect
+                        should be executed between effect runs.</p>
+
+                    <p>In other words, the clean-up code is executed not only when the component is unmounted but also
+                        when the effect is re-triggered.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/5sfqmnsguq?seo=false" title="Solution Video"
+                            allow="fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h3>Conclusion</h3>
+                <p>A well-designed React application should use effects to implement most of its core logic. Effects can
+                    be perfectly synchronized with user interactions and DOM rendering as long as you understand the
+                    order of execution and the effect's dependencies in React. When you first begin to code effects,
+                    sooner or later, you will run into infinite loops and unexpected behaviors. Use the console to
+                    verify what's happening, follow the golden rules of React, and you will become an Effects Master in
+                    no time!</p>
+            </div>
+            <div class="content-box module3-accent">
+                <h2>Guided Project</h2>
+                <p><a href="https://github.com/bloominstituteoftechnology/web-guided-project-component-side-effects"
+                        target="_blank" rel="noopener noreferrer">Composing Side Effects </a>Starter Code</p>
+                <p><a href="https://github.com/bloominstituteoftechnology/web-guided-project-component-side-effects-solution"
+                        target="_blank" rel="noopener noreferrer">Composing Side Effects </a>Solution</p>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/u1yku5ol77" title="Guided Project"
+                        allow="fullscreen" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="content-box module3-accent">
+                <h3>Module 3 Project: Composing React Components</h3>
+
+                <p>This project will be used for both module 3 and module 4. In this project, you will build an
+                    application to show the NASA photo of the day. You will start from scratch and build the entire app.
+                    You don't have any design specs to follow for this project, so start by making simple drawings that
+                    outline how your app will look. These simple drawings are called "wireframes" and it's as simple as
+                    using a pencil and drawing some boxes. Make the wireframe simple initially since you don't know what
+                    data you'll get back from NASA.</p>
+
+                <p>When you do get the data back, there may be more or less than you expected, so your design plans may
+                    change. That's totally fine and very normal in the real world. Just make the proper adjustments and
+                    move forward!</p>
+
+                <p>This is a really fun project, and one to show your family and friends when you've finished. Have some
+                    fun with it!</p>
+                <p>The module project contains advanced problems that will challenge and stretch your understanding of
+                    the module's content. The project has built-in tests for you to check your work, and the solution
+                    video is available in case you need help or want to see how we solved each challenge, but remember,
+                    there is always more than one way to solve a problem. Before reviewing the solution video, be sure
+                    to attempt the project and try solving the challenges yourself.</p>
+
+
+                <h3>Instructions</h3>
+
+                <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo
+                    to your own GitHub account, and clone it down to your computer:</p>
+                <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/W_S6M3_Project" target="_blank"
+                        rel="noopener noreferrer">Nasa Photo of the Day</a></p>
+
                 <ul>
-                    <li><a href="https://github.com/bloominstituteoftechnology/web-guided-project-side-effects" target="_blank" rel="noopener">Project Repository</a></li>
-                    <li><a href="https://github.com/bloominstituteoftechnology/web-guided-project-side-effects-solution" target="_blank" rel="noopener">Solution Repository</a></li>
+                    <li>Fork the repository,</li>
+                    <li>clone it to your machine, and</li>
+                    <li>open the README.md file in VSCode, where you will find instructions on completing this Project.
+                    </li>
+                    <li>submit your completed project to the BloomTech Portal</li>
                 </ul>
-            </div>
-        </div>
 
-        <div class="resources-section">
-            <h3>Additional Resources</h3>
-            <ul>
-                <li><a href="https://reactjs.org/docs/hooks-effect.html" target="_blank" rel="noopener">Using the Effect Hook</a></li>
-                <li><a href="https://reactjs.org/docs/hooks-reference.html#useeffect" target="_blank" rel="noopener">useEffect API Reference</a></li>
-                <li><a href="https://reactjs.org/docs/hooks-faq.html#is-it-safe-to-omit-functions-from-the-list-of-dependencies" target="_blank" rel="noopener">Effect Dependencies FAQ</a></li>
-                <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API" target="_blank" rel="noopener">Fetch API</a></li>
-                <li><a href="https://www.w3schools.com/react/react_useeffect.asp" target="_blank" rel="noopener">React useEffect Hooks (W3Schools)</a></li>
-                <li><a href="https://medium.com/@dev_abhi/useeffect-what-when-and-how-95045bcf0f32" target="_blank" rel="noopener">useEffect() — what, when and how</a></li>
-            </ul>
-        </div>
-    </div>
+                <h3>Solution</h3>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/tauasx5sli?seo=false&videoFoam=false"
+                        title="Solution Video" allow="fullscreen" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <section class="resource-section">
+                <h2 class="resource-section-title">Additional Resources</h2>
+                <div class="resource-links">
+                    <a href="https://reactjs.org/docs/hooks-effect.html" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
+                        Using the Effect Hook
+                    </a>
+                    <a href="https://reactjs.org/docs/hooks-reference.html#useeffect" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
+                        useEffect API Reference
+                    </a>
+                    <a href="https://reactjs.org/docs/hooks-faq.html#is-it-safe-to-omit-functions-from-the-list-of-dependencies"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
+                        Effect Dependencies FAQ
+                    </a>
+                    <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
+                        Fetch API
+                    </a>
+                </div>
+            </section>
+        </section>
+    </main>
 </body>
-</html> 
+
+</html>

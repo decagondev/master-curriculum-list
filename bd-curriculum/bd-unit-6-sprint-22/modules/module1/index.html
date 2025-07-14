@@ -1,368 +1,878 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 1: Stacks and Queues - BD Unit 6 Sprint 22</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23;
-            color: #ffffff;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: #222831;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722;
-            padding-bottom: 10px;
-        }
-        pre, code {
-            background-color: #1a1d23;
-            border-radius: 4px;
-        }
-        pre {
-            padding: 10px;
-        }
-        code {
-            padding: 2px 5px;
-            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
-            color: #e6e6e6;
-        }
-        .section {
-            margin-bottom: 40px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border: 1px solid #333a47;
-        }
-        .section-title {
-            color: #ffffff;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #333a47;
-        }
-        .video-container {
-            margin: 20px 0;
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 4px;
-        }
-        p {
-            color: #b3b3b3;
-            margin-bottom: 16px;
-        }
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .card {
-            background-color: #2a303c;
-            border: 1px solid #333a47;
-            border-radius: 4px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .card-header {
-            padding: 15px;
-            background-color: #333a47;
-        }
-        .card-header h3 {
-            margin: 0;
-        }
-        .card-body {
-            padding: 15px;
-            flex-grow: 1;
-            color: #b3b3b3;
-        }
-        .card-body p {
-            margin-top: 0;
-        }
-        .card-body ul {
-            margin-top: 10px;
-            padding-left: 20px;
-        }
-        .card-footer {
-            padding: 15px;
-            border-top: 1px solid #333a47;
-        }
-        .btn {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #ff5722;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .btn:hover {
-            background-color: #ff7043;
-            box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
-            color: white;
-            text-decoration: none;
-        }
-        ul, ol {
-            color: #b3b3b3;
-            margin-bottom: 20px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        a {
-            color: #ff5722;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-            color: #ff7043;
-        }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background-color: #2a303c;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .back-button:hover {
-            background-color: #333a47;
-        }
-        .learning-objectives {
-            margin: 20px 0;
-            padding: 20px;
-            border-radius: 4px;
-            background-color: #333a47;
-            border-left: 4px solid #ff5722;
-        }
-        .learning-objectives h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .learning-objectives ul {
-            margin-top: 10px;
-            margin-bottom: 0;
-        }
-        code {
-            background-color: #1a1d23;
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
-            color: #e6e6e6;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
-    <div class="container">
-        <a href="../../index.html" class="back-button">← Back to Home</a>
-        
-        <h1>Module 1: Stacks and Queues</h1>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Introduction to Data Structures" src="https://fast.wistia.net/embed/iframe/10kapi1c5g" allow="autoplay; fullscreen" allowfullscreen></iframe>
-        </div>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Introduction to Complexity" src="https://fast.wistia.net/embed/iframe/oq49wbuuvh" allow="autoplay; fullscreen" allowfullscreen></iframe>
-        </div>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Sprint 22 Stacks and Queues Video" src="https://fast.wistia.net/embed/iframe/3ty0bce2py" allow="autoplay; fullscreen" allowfullscreen></iframe>
-        </div>
-        
-        <div class="learning-objectives">
-            <h3>Learning Objectives</h3>
+    <header>
+        <nav>
+            <div class="logo">BD Unit 6 Sprint 22</div>
             <ul>
-                <li>Understand the stack and queue data structures and their differences</li>
-                <li>Implement stack and queue operations using Java collections</li>
-                <li>Analyze the time and space complexity of stack and queue operations</li>
-                <li>Apply stacks and queues to solve programming problems</li>
-                <li>Understand the use cases for each data structure in real-world applications</li>
-                <li>Predict the result of stack operations based on its Last-In-First-Out (LIFO) behavior</li>
-                <li>Predict the result of queue operations based on its First-In-First-Out (FIFO) behavior</li>
-                <li>Implement functionality that utilizes stacks for tracking changes or state</li>
-                <li>Implement functionality that utilizes queues for ordering processing tasks</li>
-                <li>Design solutions that appropriately choose between stack and queue based on requirements</li>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module1/index.html" class="active">Module 1 - Stacks and Queues</a>
+                        <a href="../module2/index.html">Module 2 - Computer Hardware and OS</a>
+                        <a href="../module3/index.html">Module 3 - Immutability and Final</a>
+                        <a href="../module4/index.html">Module 4 - In-Memory Caching</a>
+                    </div>
+                </li>
+                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-        </div>
-        
-        <section class="section">
-            <h2 class="section-title">Understanding Stacks</h2>
-            <p>Stacks follow a Last-In-First-Out (LIFO) order, similar to a stack of blocks where you can only add or remove from the top. The most recently added item is always the first one you can remove.</p>
-            
-            <p>Key operations include:</p>
-            <ul>
-                <li><code>push(element)</code> - Adds an element to the top of the stack</li>
-                <li><code>pop()</code> - Removes and returns the top element</li>
-                <li><code>peek()</code> - Returns but does not remove the top element</li>
-                <li><code>isEmpty()</code> - Checks if the stack is empty</li>
-            </ul>
-            
-            <p>Real-world uses of stacks include:</p>
-            <ul>
-                <li>Undo functionality in applications</li>
-                <li>Browser history tracking</li>
-                <li>Function call management (call stack)</li>
-                <li>Expression evaluation and syntax checking</li>
-            </ul>
-            
-            <div class="code-example">
-                <pre><code>Stack&lt;String&gt; history = new Stack&lt;&gt;();
-history.push("edit document");
-history.push("delete paragraph");
-history.push("add image");
+        </nav>
+    </header>
 
-// Undo last action
-String lastAction = history.pop(); // returns "add image"</code></pre>
-            </div>
-        </section>
-        
-        <section class="section">
-            <h2 class="section-title">Understanding Queues</h2>
-            <p>Queues follow a First-In-First-Out (FIFO) order, similar to people waiting in line. The first item added to the queue will be the first one removed.</p>
-            
-            <p>Key operations include:</p>
-            <ul>
-                <li><code>add(element)</code> or <code>offer(element)</code> - Adds an element to the end of the queue</li>
-                <li><code>remove()</code> or <code>poll()</code> - Removes and returns the front element</li>
-                <li><code>element()</code> or <code>peek()</code> - Returns but does not remove the front element</li>
-                <li><code>isEmpty()</code> - Checks if the queue is empty</li>
-            </ul>
-            
-            <p>Real-world uses of queues include:</p>
-            <ul>
-                <li>Printer job processing</li>
-                <li>Task scheduling</li>
-                <li>Request handling in web servers</li>
-                <li>Breadth-first search in graph algorithms</li>
-            </ul>
-            
-            <div class="code-example">
-                <pre><code>Queue&lt;PrintJob&gt; printQueue = new LinkedList&lt;&gt;();
-printQueue.add(new PrintJob("document1.pdf"));
-printQueue.add(new PrintJob("photo.jpg"));
-printQueue.add(new PrintJob("report.docx"));
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 1: Stacks and Queues</h1>
 
-// Process next job
-PrintJob nextJob = printQueue.remove(); // returns document1.pdf job</code></pre>
-            </div>
-        </section>
-        
-        <section class="section">
-            <h2 class="section-title">Time and Space Complexity</h2>
-            <p>Understanding the performance characteristics of stacks and queues is essential for efficient application design:</p>
-            
-            <h3>Stack Operations (using Java's Stack)</h3>
-            <ul>
-                <li><code>push()</code> - O(1) time complexity</li>
-                <li><code>pop()</code> - O(1) time complexity</li>
-                <li><code>peek()</code> - O(1) time complexity</li>
-                <li>Space complexity - O(n) where n is the number of elements</li>
-            </ul>
-            
-            <h3>Queue Operations (using LinkedList implementation)</h3>
-            <ul>
-                <li><code>add()/offer()</code> - O(1) time complexity</li>
-                <li><code>remove()/poll()</code> - O(1) time complexity</li>
-                <li><code>peek()/element()</code> - O(1) time complexity</li>
-                <li>Space complexity - O(n) where n is the number of elements</li>
-            </ul>
-            
-            <p>These constant-time operations make stacks and queues highly efficient for their specific use cases.</p>
-        </section>
+            <div class="content-box module1-accent">
+                <h2>Overview</h2>
+                <p>This module introduces you to two fundamental data structures in computer science: stacks and queues.
+                    These structures organize and store data in different ways, each with unique principles and use
+                    cases. You'll learn their operations, implementation techniques, and real-world applications.</p>
 
-        <section class="section">
-            <h2 class="section-title">Resources</h2>
-            <div class="card-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Stacks and Queues Code-Along Starter</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Starter code for stacks and queues implementation.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="https://github.com/BloomTechBackend/bd-stacks-and-queues-codealong-starter" class="btn" target="_blank" rel="noopener">View Repository</a>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Stacks and Queues Code-Along Solution</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Solution code for stacks and queues implementation.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="https://github.com/BloomTechBackend/bd-stacks-and-queues-codealong-solution" class="btn" target="_blank" rel="noopener">View Repository</a>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Stacks and Queues Examples</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Additional examples of stacks and queues in practice.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="https://github.com/BloomTechBackend/bd-stacks-and-queues-examples" class="btn" target="_blank" rel="noopener">View Repository</a>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Code-Alongs</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Additional code-along exercises for this sprint.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="../../code-alongs/index.html" class="btn">View Code-Alongs</a>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Sprint Challenge</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Access the sprint challenge for this unit.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="../../sprint-challenge/index.html" class="btn">View Challenge</a>
-                    </div>
+                <div class="note-box">
+                    <h3>Learning Objectives</h3>
+                    <ul>
+                        <li>Understand the conceptual model and operations of stack and queue data structures</li>
+                        <li>Implement stacks and queues using arrays and linked lists</li>
+                        <li>Analyze time and space complexity for different operations</li>
+                        <li>Identify common applications and use cases</li>
+                    </ul>
                 </div>
             </div>
+
+            <div class="content-box">
+                <h2>Queues</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Queues" src="https://fast.wistia.net/embed/iframe/oq49wbuuvh"
+                        allow="fullscreen" allowfullscreen></iframe>
+                </div>
+
+                <p>A Queue is a list of ordered objects similar to LinkedList or ArrayList, but it handles inserts and
+                    removes differently. Unlike either of the previous two lists, in which data can be accessed by any
+                    node, queues follow a First-In-First-Out (FIFO) order. Imagine a line at the bank, the first person
+                    in line is the first one to be helped and then leave the line. Queues work in the same way.</p>
+
+                <h3>Queue usage</h3>
+                <p>FIFO order is helpful when you need to address information in the order that it enters the system.
+                    However, if you needed to access information in random order, then Queues would be a bad choice for
+                    object organization. Returning to the line at the bank, if people randomly walked out of the line to
+                    be helped, then the line would serve no purpose. A Queue makes it so that only the first and last
+                    elements in the list can be affected as shown in Figure 1 illustrates. If you need more flexibility,
+                    an ArrayList allows elements anywhere in the list to be changed or accessed.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/2221edac-43c2-4416-9990-c18ea2f10767_image1.png"
+                    alt="Figure 1" loading="lazy"
+                    style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+                <p>Figure 1: An overview of a Queue. New items are added to the End of the Queue. Items are removed from
+                    the front of the queue.</p>
+
+                <h3>Example: Printer queues</h3>
+                <p>Let's look at another example: printers handle jobs in the order they are sent, so printers also
+                    follow FIFO order. When you turn on a printer, it has a queue started. Each job sent to the printer
+                    gets added to the end of the queue. As the printer completes a job, it removes it from the front of
+                    the queue and moves to the next job waiting to be completed. With this format, whichever job was
+                    submitted first is completed first, and then the printer moves to the next job assigned. This is an
+                    example of FIFO order.</p>
+
+                <h3>Creating a Queue</h3>
+                <p>Java's Queue interface provides methods to access its elements in FIFO order. In order to instantiate
+                    a Queue, we need a class that implements Queue. We want a list data structure that provides fast
+                    removal from the front and fast additions to the end.</p>
+
+                <p>Before we re-invent the wheel, let's check with the list data structures we know about. What about
+                    ArrayList? It handles the addition of elements at the end of the list in constant time, O(1), but
+                    what about removing the first element of an ArrayList? This requires shifting all of the elements to
+                    the left, which leads to a linear time, O(n), operation.</p>
+
+                <p>What about LinkedList? Just like an ArrayList, adding to the end of the list is fast. We point the
+                    tail to a new element and update the tail reference to our new element. This can be done in constant
+                    time, O(1). Can we do better than ArrayList when we remove from the front? We update our head
+                    pointer to the second element in the list, and we've successfully removed the first element in
+                    constant time, O(1).</p>
+
+                <p>Because LinkedList offers constant time operations for FIFO access, it is used when we construct a
+                    Queue.</p>
+
+                <p>Queue&lt;E&gt; is a generic interface just like List&lt;E&gt;. When you declare one you have to tell
+                    Java what type of elements you will store in your queue. Below we have constructed a Queue of
+                    PrintJobs for our printer example.</p>
+
+                <pre><code>Queue&lt;PrintJob&gt; printJobs = new LinkedList&lt;&gt;();</code></pre>
+
+                <p>Queues have two jobs, adding to the end of the queue and removing from the front, so we will focus
+                    our learning on the interface's add and remove methods. Queues also offer a few other methods for
+                    convenience that you can read about in the <a
+                        href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Queue.html"
+                        target="_blank" rel="noopener noreferrer">Javadoc</a> if you would like to learn more.</p>
+
+                <h3>Adding a Job</h3>
+                <p>For a printer to complete a job, it must first receive a job. As stated above, our printer is using a
+                    Queue to handle the printing jobs in order, and so it is constantly checking its Queue for jobs. In
+                    order to get something printed, the PrintJob will need to be added to the Queue. We do this by using
+                    the add method as illustrated in Figure 2. According to the FIFO structure, anything added to a
+                    Queue is put at the end. This means that as more things are added to the Queue, they will be
+                    addressed after the objects earlier in the line are completed. When you use add, make sure you
+                    include whatever object you intend to put in the Queue within the parentheses.</p>
+
+                <p>The code for creating PrintJobs and adding them to the queue looks like the following:</p>
+
+                <pre><code>Queue&lt;PrintJob&gt; printJobs = new LinkedList&lt;&gt;();
+
+PrintJob cat = new PrintJob("~/Photos/cat.png");
+PrintJob dog = new PrintJob("~/Photos/dog.png");
+
+printJobs.add(cat);
+printJobs.add(dog);</code></pre>
+
+                <img src="https://tk-assets.lambdaschool.com/5a5de043-7951-4171-9965-a0b87d995137_image2.png"
+                    alt="Figure 2" loading="lazy"
+                    style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                <p>Figure 2: The process of adding items to our PrintJob Queue.</p>
+
+                <h3>Removing a Job</h3>
+                <p>The printer's Queue now contains jobs. How does the printer know which job to pick so that it is
+                    working on the one submitted first? In our example, cat is submitted first. The printer does not
+                    need to worry about selection order because it's Queue will always provide the jobs in the correct
+                    order. It just needs to call remove on the Queue to get the first job as shown in Figure 3. The
+                    element at the front of the queue will often be referred to as the head. This will return a PrintJob
+                    and remove it from the Queue. Since remove always takes from the front of the queue and cannot
+                    remove just any job, no arguments need to be specified within the parentheses.</p>
+
+                <p>The code for removing a job from the Queue looks like the following:</p>
+
+                <pre><code>PrintJob catPrintJob = printJobs.remove();
+PrintJob dogPrintJob = printJobs.remove();</code></pre>
+
+                <img src="https://tk-assets.lambdaschool.com/527750d8-3e60-467e-9bae-0ea0f01eba19_image3.png"
+                    alt="Figure 3" loading="lazy"
+                    style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                <p>Figure 3: The process of removing items from our PrintJob Queue.</p>
+
+                <p>If remove is called when the queue is empty, it will throw a NoSuchElementException. Queue's poll
+                    method also removes the head or returns null if the queue is empty.</p>
+
+                <h3>Iterating over Jobs and more</h3>
+                <p>Similar to Lists, you can iterate over items in a Queue using Iterators. You can also use for-each
+                    loops for iteration, as you would for Lists.</p>
+
+                <p>If you want to iterate over all elements in a Queue while removing elements, you can utilize the
+                    isEmpty method in a while loop, as follows:</p>
+
+                <pre><code>while (!printJobs.isEmpty()) {
+    PrintJob job = printJobs.remove();
+    ...
+}</code></pre>
+
+                <p>Queue exposes other methods from Collection, such as clear, size, etc. To determine which methods are
+                    available via the Queue interface, check out the Queue <a
+                        href="https://docs.oracle.com/javase/8/docs/api/java/util/Queue.html" target="_blank"
+                        rel="noopener noreferrer">Javadoc</a>.</p>
+
+                <h3>Runtime of Queue Operations</h3>
+                <p>As discussed above, the linked list implementation of queues provide constant time, O(1), insertion
+                    and removal. Queues are not a good data structure choice if searches need to be performed on the
+                    data. To determine if an element is in a queue, you need to remove each element until you find the
+                    one you are seeking. In the worst case you are looking for an element near the back of the queue.
+                    This gives you linear time, O(n).</p>
+
+                <p>In reference to the printer, it does not need to search for the next job. The printer just needs to
+                    know the next job, and it looks at the head of the queue. Completed jobs are then removed and a new
+                    head comes available for the printer.</p>
+
+                <h3>Putting it all together</h3>
+                <p>Let's take a minute to look at our example of using queues. Here is the code for our PrintManager
+                    class that manages our print queue.</p>
+
+                <pre><code>public class PrintManager {
+    private Queue&lt;PrintJob&gt; printQueue;
+    public PrintManager() {
+        printQueue = new LinkedList&lt;&gt;();
+    }
+
+    public void addPrintJob(PrintJob toAdd) {
+        printQueue.add(toAdd);
+    }
+
+    public PrintJob printNextJob(){
+        return printQueue.remove();
+    }
+
+}</code></pre>
+
+                <p>When an instance of our PrintManager is created, it makes a new instance of a LinkedList Queue that
+                    will be used to store the print jobs. The PrintJob class becomes a container to hold a reference to
+                    the file needing to be printed.</p>
+
+                <p>For the purposes of this example, we've simplified our PrintManager to have only two methods. The
+                    first method adds a PrintJob to our print Queue.</p>
+
+                <pre><code>public void addPrintJob(PrintJob toAdd) {
+    printQueue.add(toAdd);
+}</code></pre>
+
+                <p>The addPrintJob method accepts the PrintJob and uses the add method of the Queue to add the PrintJob
+                    to the end of the print queue. The add method always adds to the end of the Queue.</p>
+
+                <p>The second method in our PrintManager class is used when the printer is ready to print the next item.
+                    This printNextJob() method is designed to simply use the remove method from the Queue to remove the
+                    first item from the Queue and return it to the calling method.</p>
+
+                <pre><code>public PrintJob printNextJob(){
+    return printQueue.remove();
+}</code></pre>
+
+                <p>As soon as the printer is ready for a job and the PrintManager gives it to the printer (via
+                    printNextJob), there is no longer a need for that item to be in the queue anymore.</p>
+
+                <p>Adding to the back and removing from the front of the Queue are the primary use cases for the Queue
+                    interface. They are a great way to keep track of events, requests or other objects that need to be
+                    handled in the order they are received.</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Queue Data Structure</h2>
+                <p>A queue is a linear data structure that follows the First-In-First-Out (FIFO) principle. The first
+                    item added to the queue is the first one to be removed.</p>
+
+                <h3>Queue Operations</h3>
+                <ul>
+                    <li><strong>Enqueue</strong>: Add an element to the end of the queue</li>
+                    <li><strong>Dequeue</strong>: Remove and return the front element from the queue</li>
+                    <li><strong>Peek/Front</strong>: Return the front element without removing it</li>
+                    <li><strong>isEmpty</strong>: Check if the queue is empty</li>
+                    <li><strong>Size</strong>: Return the number of elements in the queue</li>
+                </ul>
+
+                <h3>Common Applications</h3>
+                <ul>
+                    <li>Task scheduling in operating systems</li>
+                    <li>Print job queuing</li>
+                    <li>Breadth-first search algorithm</li>
+                    <li>Buffering in I/O operations</li>
+                </ul>
+
+                <h3>Java Implementation</h3>
+                <pre><code>// Linked list based queue implementation
+public class LinkedQueue&lt;T&gt; {
+    private static class Node&lt;T&gt; {
+        T data;
+        Node&lt;T&gt; next;
+        
+        Node(T data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+    
+    private Node&lt;T&gt; front;
+    private Node&lt;T&gt; rear;
+    private int size;
+    
+    public LinkedQueue() {
+        front = rear = null;
+        size = 0;
+    }
+    
+    public void enqueue(T item) {
+        Node&lt;T&gt; newNode = new Node&lt;&gt;(item);
+        
+        if (isEmpty()) {
+            front = rear = newNode;
+        } else {
+            rear.next = newNode;
+            rear = newNode;
+        }
+        
+        size++;
+    }
+    
+    public T dequeue() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("Queue is empty");
+        }
+        
+        T data = front.data;
+        front = front.next;
+        
+        if (front == null) {
+            rear = null;
+        }
+        
+        size--;
+        return data;
+    }
+    
+    public T peek() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("Queue is empty");
+        }
+        
+        return front.data;
+    }
+    
+    public boolean isEmpty() {
+        return front == null;
+    }
+    
+    public int size() {
+        return size;
+    }
+}</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h2>Stacks</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Stacks" src="https://fast.wistia.net/embed/iframe/10kapi1c5g"
+                        allow="fullscreen" allowfullscreen></iframe>
+                </div>
+
+                <p>Stacks are another way of keeping ordered lists, while providing a different access pattern than
+                    Queues, LinkedLists, or ArrayLists. It restricts access to its elements in a similar way to a Queue
+                    rather than to LinkedList or ArrayList. Stack follows a specific access pattern called
+                    Last-In-First-Out (LIFO). If you imagine a tower of blocks, the last block you add to the tower is
+                    the only one that you can remove without disturbing the other tower blocks. To reach the very first
+                    block in the tower, each block on top of it must be systematically removed one by one. Stack works
+                    in the same way.</p>
+
+                <h3>Uses of a stack</h3>
+                <p>LIFO order is helpful when you need the most recent item added to the system. Like Queue, Stack
+                    preserves a specific ordering of data. It is not designed for easy access or removal of any item in
+                    the list only the most recently entered. If we return to the block example, pulling random blocks
+                    from the middle of the tower would cause it to tumble down. A Stack makes it impossible to pull from
+                    the middle of the list and protects a list's sequential integrity. Only the top element in the list
+                    can be accessed as shown in Figure 1.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/8868071f-2003-450d-97d7-98e7bce7a4ba_image1.png"
+                    alt="Figure 1" loading="lazy"
+                    style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                <p>Figure 1: Overview of a Stack. We push() Object #2 onto the top of the stack and then can pop() it
+                    off again.</p>
+
+                <h3>Example: Undoing a mistake</h3>
+                <p>When you write code, you make a mistake occasionally and want to undo your work. If you hit the undo
+                    button, it removes the last letter you typed because the software keeps track of your actions and
+                    can undo them at your request. Each key you type is added to the Stack sequentially. When you click
+                    undo, it deletes your key presses in the reverse order you entered them. The last key you pressed,
+                    is the first keystroke that is undone, which is an excellent example of LIFO.</p>
+
+                <h3>Creating a stack</h3>
+                <p>In Java Stack is a class, not an interface. Stack is a generic class, which requires us to declare
+                    the type of elements we will store in it when we instantiate it. Below we have constructed a Stack
+                    of Strings for our undo example.</p>
+
+                <pre><code>Stack&lt;String&gt; pastTyping = new Stack&lt;&gt;();</code></pre>
+
+                <p>Similarly to Queues, Stacks have two jobs: adding and removing. However, all changes are from the top
+                    of the stack only. For this lesson, we will focus our attention on the push() and pop() methods,
+                    which are the adding and removing vocabulary for a Stack. There are other methods provided by Stack
+                    that you can read about in the <a
+                        href="https://docs.oracle.com/javase/7/docs/api/java/util/Stack.html" target="_blank"
+                        rel="noopener noreferrer">JavaDoc</a> if you would like to learn more.</p>
+
+                <h3>Push to add elements</h3>
+                <p>Just like adding a block to our tower, The push method adds elements to the top of the stack. When
+                    you type in coding software, it uses push to add your keystrokes onto a stack as shown in Figure 2.
+                    The stack builds a sequential history stacking each element on the previous as shown in Figure 3 and
+                    Figure 4. When you push, be sure to include the object you intend to put on the stack within the
+                    method's parentheses. The code for creating and adding keystrokes to the Stack looks like the
+                    following:</p>
+
+                <pre><code>Stack&lt;String&gt; pastTyping = new Stack&lt;&gt;();
+
+String keyPress1 = "c";
+String keyPress2 = "a";
+String keyPress3 = "t";
+
+pastTyping.push(keyPress1);
+pastTyping.push(keyPress2);
+pastTyping.push(keyPress3);</code></pre>
+
+                <img src="https://tk-assets.lambdaschool.com/2ecb3856-2d8d-4cf7-94b9-54e686ad059e_image2.png"
+                    alt="Figure 2" loading="lazy"
+                    style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                <p>Figure 2: Adding the last letter typed ("c") onto the top of the Stack by using the push() method.
+                </p>
+
+                <img src="https://tk-assets.lambdaschool.com/1639cffa-59d8-4b76-9b9b-5461c6a956b8_image3.png"
+                    alt="Figure 2" loading="lazy"
+                    style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                <p>Figure 3: As the next letter "a" is pushed onto the top of the stack, the "c" now becomes the bottom
+                    of the Stack.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/b368e301-4728-43a4-bd2c-976670b24f47_image4.png"
+                    alt="Figure 2" loading="lazy"
+                    style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                <p>Figure 4: With the addition of the letter "t" being pushed onto the stack, "a" and "c" both get
+                    pushed further down. "c" is still the bottom of the stack.</p>
+
+                <h3>Pop to remove elements</h3>
+                <p>Now that the typing history stack contains keystrokes, you can remove them using the pop method.
+                    Unlike Queue's remove method, which removes the element that has been around the longest, pop
+                    removes the most recently added element as shown in Figure 5. When you press the undo button in your
+                    coding software, the program looks at the stack it has built of your keystrokes and pops off the
+                    most recent change. Similar to remove, you do not have to specify any parameters for pop because it
+                    only removes the item at the top of the stack.</p>
+
+                <p>The code for popping the most recently added keystroke off the Stack looks like the following:</p>
+
+                <pre><code>String lastKeyPress = pastTyping.pop();</code></pre>
+
+                <img src="https://tk-assets.lambdaschool.com/a93fa5e1-4ba3-42b0-8e95-52d492c82e3f_image5.png"
+                    alt="Figure 5" loading="lazy"
+                    style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                <p>Figure 5: Calling pop() on our stack returns the item most recently added to the stack.</p>
+
+                <p>Calling pop on our stack returns the keystroke most recently added to the stack, and so the String
+                    variable lastKeyPressed is set to "t". If you hit undo again, the next most recently added item,
+                    "a", would pop off the stack as shown in Figure 6.</p>
+
+                <img src="https://tk-assets.lambdaschool.com/aee45121-87ee-4424-a842-9bc27d7c078f_image6.png"
+                    alt="Figure 6" loading="lazy"
+                    style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                <p>Figure 6: Calling pop() again on our stack returns the next most recently added item to the stack.
+                </p>
+
+                <p>Keep in mind, if pop is called when the stack is empty it will throw an EmptyStackException. Stack
+                    does provide an empty method to test if the stack is empty. Be sure to either catch the exception or
+                    check if it's empty before you try to pop an item off the stack.</p>
+
+                <h3>Iterate over elements and more!</h3>
+                <p>Because Stack is a subinterface of List, you can iterate over a Stack using ListIterators. You can
+                    also use for-each loops for iteration, as you would for Lists.</p>
+
+                <p>If you want to iterate over all elements in a Stack while removing elements, you can utilize the
+                    isEmpty() method in a while loop, as follows:</p>
+
+                <pre><code>while (!pastTyping.isEmpty()) {
+    String lastKeyPressed = pastTyping.pop();
+    ...
+}</code></pre>
+
+                <p>Stack exposes other methods from List, like size, clear, etc. To determine which methods Stack
+                    exposes, check out the <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Stack.html"
+                        target="_blank" rel="noopener noreferrer">Stack javadoc</a>.</p>
+
+                <h3>Runtime of stack operations</h3>
+                <p>While Java has already implemented the Stack class for us, let's think about how we might implement
+                    it while optimizing for pushing and popping. We can use a list data structure that we restrict
+                    access to, by only providing ways to add and remove from the same end of the list. This is a great
+                    example of using composition to expose a contract that differs from its contained class! We could do
+                    this with either ArrayList or a LinkedList, since both provide efficient ways of adding/removing
+                    from one end of the list.</p>
+
+                <p>Let's explore the case of using a LinkedList a little deeper. We'll treat the front of the list as
+                    the top of our stack. When a call to push is made, we can call LinkedList's addFirst method to add
+                    the element to the top of the stack (front of the list). After the three push calls from above, our
+                    stack's underlying LinkedList would look like this:</p>
+
+                <img src="https://tk-assets.lambdaschool.com/7fd061bc-ad66-4f89-acc3-36108258c445_image7.png"
+                    alt="Figure 7" loading="lazy"
+                    style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                <p>Figure 7: LinkedList with three items.</p>
+
+                <p>The runtime of push is equivalent to LinkedList's addFirst method, which is constant, O(1).
+                    Regardless of the size of our list, adding to the front only requires an update to the head pointer,
+                    and linking our new node to the previous head.</p>
+
+                <p>For the call to pop, we want to remove the most recently added element. This will be at the front of
+                    our list. We can remove the first element in the list by calling LinkedList's remove method. After a
+                    call to pop, our stack's underlying LinkedList would look like this:</p>
+
+                <img src="https://tk-assets.lambdaschool.com/d32cfefa-f1be-4a12-a541-306d15933077_image8.png"
+                    alt="Figure 8" loading="lazy"
+                    style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                <p>Figure 8: Our LinkedList after removing the head.</p>
+
+                <p>The runtime of pop is equivalent to LinkedList's remove method. Removing from the front of a
+                    LinkedList requires updating our head pointer to the second element in the list. This is done in
+                    constant time, O(1).</p>
+
+                <h3>Putting it all together</h3>
+                <p>Let's review the full example outlined for Stacks. Here is the code for a ChangeTracker class that a
+                    typing software could use to track changes you made to a document.</p>
+
+                <pre><code>public class ChangeTracker {
+    private Stack&lt;String&gt; pastTyping;
+    public ChangeTracker() {
+        pastTyping = new Stack&lt;&gt;();
+    }
+
+    public void addToStack(String textToAdd) {
+        pastTyping.push(textToAdd);
+    }
+
+    public String undo() {
+        return pastTyping.pop();
+    }
+
+}</code></pre>
+
+                <p>When an instance of ChangeTracker is created, it generates a new instance of a Stack that will be
+                    used to store the keystrokes.</p>
+
+                <p>Remember, that Stacks are their own class and are initialized just like any other class.</p>
+
+                <p>For the purposes of this example, we simplified our ChangeTracker to have only two methods. In the
+                    first method, addToStack, the given String is pushed onto the Stack. In an actual program, these
+                    actions would likely be more complex, but for the sake of example we have simplified it to a single
+                    keystroke.</p>
+
+                <pre><code>public void addToStack(String textToAdd) {
+    pastTyping.push(textToAdd);
+}</code></pre>
+
+                <p>The other method in our ChangeTracker class is the method used to undo your last change. The undo()
+                    method is designed to simply use the pop() method from the Stack class to remove the most recently
+                    added item from the Stack and return it to the calling method.</p>
+
+                <pre><code>public String undo() {
+    return pastTyping.pop();
+}</code></pre>
+
+                <p>Pushing to and popping from the top of the Stack are the primary use cases for a stack. They are a
+                    great way to keep track of recent changes that need to be handled in the reverse order they are
+                    received.</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Stack Data Structure</h2>
+                <p>A stack is a linear data structure that follows the Last-In-First-Out (LIFO) principle. The last item
+                    added to the stack is the first one to be removed.</p>
+
+                <h3>Stack Operations</h3>
+                <ul>
+                    <li><strong>Push</strong>: Add an element to the top of the stack</li>
+                    <li><strong>Pop</strong>: Remove and return the top element from the stack</li>
+                    <li><strong>Peek</strong>: Return the top element without removing it</li>
+                    <li><strong>isEmpty</strong>: Check if the stack is empty</li>
+                    <li><strong>Size</strong>: Return the number of elements in the stack</li>
+                </ul>
+
+                <h3>Common Applications</h3>
+                <ul>
+                    <li>Function call stack in programming languages</li>
+                    <li>Undo functionality in applications</li>
+                    <li>Expression evaluation and syntax parsing</li>
+                    <li>Backtracking algorithms</li>
+                </ul>
+
+                <h3>Java Implementation</h3>
+                <pre><code>// Array-based stack implementation
+public class ArrayStack&lt;T&gt; {
+    private T[] array;
+    private int top;
+    private int capacity;
+    
+    @SuppressWarnings("unchecked")
+    public ArrayStack(int capacity) {
+        this.capacity = capacity;
+        array = (T[]) new Object[capacity];
+        top = -1;
+    }
+    
+    public void push(T item) {
+        if (isFull()) {
+            throw new StackOverflowError("Stack is full");
+        }
+        array[++top] = item;
+    }
+    
+    public T pop() {
+        if (isEmpty()) {
+            throw new EmptyStackException();
+        }
+        return array[top--];
+    }
+    
+    public T peek() {
+        if (isEmpty()) {
+            throw new EmptyStackException();
+        }
+        return array[top];
+    }
+    
+    public boolean isEmpty() {
+        return top == -1;
+    }
+    
+    public boolean isFull() {
+        return top == capacity - 1;
+    }
+    
+    public int size() {
+        return top + 1;
+    }
+}</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h2>Java Collections Framework</h2>
+                <p>Java provides built-in implementations for stacks and queues in the Collections Framework.</p>
+
+                <h3>Stack Implementation</h3>
+                <pre><code>import java.util.Stack;
+
+// Using Java's built-in Stack class
+Stack&lt;String&gt; stack = new Stack&lt;&gt;();
+stack.push("First");
+stack.push("Second");
+stack.push("Third");
+
+// Outputs: Third
+System.out.println(stack.pop());
+
+// Outputs: Second
+System.out.println(stack.peek());</code></pre>
+
+                <h3>Queue Implementation</h3>
+                <pre><code>import java.util.LinkedList;
+import java.util.Queue;
+
+// Using LinkedList as a Queue implementation
+Queue&lt;String&gt; queue = new LinkedList&lt;&gt;();
+queue.add("First");
+queue.add("Second");
+queue.add("Third");
+
+// Outputs: First
+System.out.println(queue.remove());
+
+// Outputs: Second
+System.out.println(queue.peek());</code></pre>
+
+                <div class="note-box">
+                    <h3>Important Note</h3>
+                    <p>While Java does provide a Stack class, it extends Vector and has some performance limitations.
+                        For production code, consider using:</p>
+                    <ul>
+                        <li><code>ArrayDeque</code> for both stack and queue implementations (faster than Stack and
+                            LinkedList)</li>
+                        <li><code>Deque&lt;Integer&gt; stack = new ArrayDeque&lt;&gt;()</code> with <code>push()</code>
+                            and <code>pop()</code> methods for stack operations</li>
+                        <li><code>Deque&lt;Integer&gt; queue = new ArrayDeque&lt;&gt;()</code> with <code>add()</code>
+                            and <code>remove()</code> methods for queue operations</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Performance Analysis</h2>
+                <p>Understanding the time and space complexity of stack and queue operations is crucial for efficient
+                    algorithm design.</p>
+
+                <h3>Stack Time Complexity</h3>
+                <ul>
+                    <li><strong>Push</strong>: O(1)</li>
+                    <li><strong>Pop</strong>: O(1)</li>
+                    <li><strong>Peek</strong>: O(1)</li>
+                    <li><strong>Search</strong>: O(n)</li>
+                </ul>
+
+                <h3>Queue Time Complexity</h3>
+                <ul>
+                    <li><strong>Enqueue</strong>: O(1)</li>
+                    <li><strong>Dequeue</strong>: O(1)</li>
+                    <li><strong>Peek</strong>: O(1)</li>
+                    <li><strong>Search</strong>: O(n)</li>
+                </ul>
+
+                <p>Both data structures offer constant-time operations for their primary functions (adding and removing
+                    elements), making them highly efficient for their intended use cases.</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Common Variations</h2>
+
+                <h3>Stack Variations</h3>
+                <ul>
+                    <li><strong>Min/Max Stack</strong>: Keeps track of minimum/maximum values in stack</li>
+                    <li><strong>Balanced Parentheses</strong>: Validates expression syntax</li>
+                    <li><strong>Infix to Postfix Conversion</strong>: Converts human-readable expressions to
+                        machine-computable form</li>
+                </ul>
+
+                <h3>Queue Variations</h3>
+                <ul>
+                    <li><strong>Double-ended Queue (Deque)</strong>: Allows insertion and removal at both ends</li>
+                    <li><strong>Priority Queue</strong>: Elements are dequeued based on priority rather than FIFO</li>
+                    <li><strong>Circular Queue</strong>: Efficient use of fixed-size storage by wrapping around</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h2>Summary</h2>
+
+                <h3>Queues</h3>
+                <p>Queues are great for any process where objects need to be addressed on a first-come-first-served
+                    basis. Adding to and removing values from a queue provide FIFO access to its elements. To create a
+                    queue in Java, we use the Queue&lt;E&gt; interface and the LinkedList&lt;E&gt; class. Access to the
+                    front of the queue is provided via the remove() method and the add() method allows addition to the
+                    end.</p>
+
+                <h3>Stacks</h3>
+                <p>Stacks, on the other hand, only have access to the last element added to the stack, providing the
+                    ability to access its objects in LIFO order. Stacks build a history as elements are added, which
+                    makes them valuable for processes that need to be able to undo or review previously seen items. In
+                    Java, Stack&lt;E&gt; is a class with two important methods: push() and pop(). These methods allow
+                    data to be added and removed only from the top of the stack.</p>
+
+                <h3>Operation Runtimes</h3>
+                <table>
+                    <tr>
+                        <th>Queues</th>
+                        <th>Stacks</th>
+                    </tr>
+                    <tr>
+                        <td>add O(1)</td>
+                        <td>push O(1)</td>
+                    </tr>
+                    <tr>
+                        <td>remove O(1)</td>
+                        <td>pop O(1)</td>
+                    </tr>
+                </table>
+
+                <h3>Which is better?</h3>
+                <p>Queues and stacks are both lists that have a specific way of inserting and removing objects. Due to
+                    the way they are set up, they have a constant access time since no searching needs to be done; there
+                    is only one way in and one way out. While this could lead one to believe they are essentially the
+                    same, they have very different uses. To focus on their use in programming, stacks lend themselves to
+                    working better with recursive logic since you peel away layer by layer off the stack. In contrast,
+                    queues work well with iterative logic by handling each object individually before moving on to the
+                    next.</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Guided Project</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Sprint 22 Stacks and Queues Guided Project Video"
+                        src="https://fast.wistia.net/embed/iframe/3ty0bce2py" allow="fullscreen"
+                        allowfullscreen></iframe>
+                </div>
+
+                <p>"Stacks and Queues" is an instructor guided activity, so there is no README.</p>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-stacks-and-queues-examples" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
+                        Stacks and Queues Examples
+                    </a>
+                    <a href="https://github.com/BloomTechBackend/bd-stacks-and-queues-examples" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
+                        Stacks and Queues
+                    </a>
+                    <a href="https://github.com/BloomTechBackend/bd-stacks-and-queues" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
+                        Stretch Opportunity: Palindrome and Bracket Linter
+                    </a>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Mastery Task 2: Submit to the Process</h2>
+                <p>We currently have an API to retrieve books, but we need a way to submit Kindle books for publishing
+                    so we can continue to grow our catalog!</p>
+
+                <p>Publishing a Kindle book is a long, multi-step process, so we can't complete the whole process within
+                    a single API call. To handle this, we've decided to save each book publish request into a class
+                    called BookPublishRequestManager that will allow requests to be processed later. That way the caller
+                    of SubmitBookForPublishing gets an immediate response with a publishingRecordId that they can use to
+                    check back on the status of their book publish request by calling GetPublishingStatus. This is
+                    similar to the workflow for orders on the Amazon retail website — you place an order and get an
+                    orderId back, which you can use later to check the current status of your order. This is known as
+                    asynchronous processing, since our service doesn't make the user wait until the entire publishing
+                    process completes.</p>
+
+                <p>The BookPublishRequestManager should manage a collection of book publish requests, ensuring that
+                    requests are processed in the same order that they are submitted.</p>
+
+                <p>You will need to do the following:</p>
+
+                <ul>
+                    <li>Create the BookPublishRequestManager class in the
+                        com.amazon.ata.kindlepublishingservice.publishing package.</li>
+                    <li>The BookPublishRequest class has been provided to you in the
+                        com.amazon.ata.kindlepublishingservice.publishing package.</li>
+                    <li>Implement BookPublishRequestManager's addBookPublishRequest method which adds the given
+                        BookPublishRequest to the collection.</li>
+                    <li>Implement getBookPublishRequestToProcess which retrieves the next BookPublishRequest in line for
+                        publishing and returns it. If there are no requests to publish this should return null. This
+                        will be called in a later task when we implement processing the book publish requests.</li>
+                    <li>Since nothing is currently using the BookPublishRequestManager we don't need to update any
+                        Dagger classes yet. We can still set ourselves up with a more testable BookPublishRequestManager
+                        class by accepting any dependencies of our class into our constructor.</li>
+                </ul>
+
+                <p>The SubmitBookForPublishingActivity currently only saves an item in the PublishingStatus table to
+                    record that we have received the book publish request to be processed. Now that you have the
+                    BookPublishRequestManager, finish the SubmitBookForPublishing operation by updating
+                    SubmitBookForPublishingActivity, to add BookPublishRequests to the manager for processing, based on
+                    the design doc's implementation notes and diagram.</p>
+
+                <p>We need to ensure we have added the correct Provider methods and annotated our constructors properly
+                    to make inject our BookPublishRequestManager. The service is already setup to use Dagger.</p>
+
+                <p>Finally, in order to make sure we only attempt to publish books in our catalog, you will need to add
+                    a new void method validateBookExists to the CatalogDao class, which the activity can call to check
+                    if the provided bookId exists in the catalog, and throws a BookNotFoundException if it doesn't. This
+                    is to meet the requirement in the design doc where the book's latest version in the catalog can be
+                    active or inactive, since we will allow users to publish a new version of an inactive book. Make
+                    sure to add additional unit tests for this case!</p>
+
+                <p>To test your new API, try submitting requests with a non-existent bookId, with an active bookId, and
+                    with an inactive bookId to ensure you are getting expected results back.</p>
+
+                <p>Run MasteryTaskTwoSubmitBookForPublishingTests to validate your changes.</p>
+
+                <h3>Exit Checklist:</h3>
+                <ul>
+                    <li>You've built BookPublishRequestManager, which includes methods for adding and retrieving
+                        BookPublishRequests.</li>
+                    <li>You've updated SubmitBookForPublishingActivity according to the design doc, which allows books
+                        to be submitted for publishing and returns a response with a publishingRecordId.</li>
+                    <li>You added unit tests to cover your new code.</li>
+                    <li>MasteryTaskTwoSubmitBookForPublishingTests passes</li>
+                </ul>
+            </div>
+
+            <section class="resource-section">
+                <h2 class="resource-section-title">Additional Resources</h2>
+                <div class="resource-links">
+                    <a href="https://docs.oracle.com/javase/tutorial/collections/implementations/stack.html"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
+                        Oracle's Java Stack Tutorial
+                    </a>
+                    <a href="https://docs.oracle.com/javase/tutorial/collections/implementations/queue.html"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
+                        Oracle's Java Queue Tutorial
+                    </a>
+                    <a href="https://www.baeldung.com/java-stack" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
+                        Baeldung's Guide to Java Stack
+                    </a>
+                    <a href="https://www.baeldung.com/java-queue" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
+                        Baeldung's Guide to Java Queue
+                    </a>
+                </div>
+            </section>
         </section>
-    </div>
+    </main>
 </body>
+
 </html>
