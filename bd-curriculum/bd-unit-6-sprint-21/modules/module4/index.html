@@ -1,440 +1,962 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 4: DynamoDB Query - BD Unit 6 Sprint 21</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23;
-            color: #ffffff;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: #222831;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722;
-            padding-bottom: 10px;
-        }
-        .section {
-            margin-bottom: 40px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border: 1px solid #333a47;
-        }
-        .section-title {
-            color: #ffffff;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #333a47;
-        }
-        .video-container {
-            margin: 20px 0;
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 4px;
-        }
-        p {
-            color: #b3b3b3;
-            margin-bottom: 16px;
-        }
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .card {
-            background-color: #2a303c;
-            border: 1px solid #333a47;
-            border-radius: 4px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .card-header {
-            padding: 15px;
-            background-color: #333a47;
-        }
-        .card-header h3 {
-            margin: 0;
-        }
-        .card-body {
-            padding: 15px;
-            flex-grow: 1;
-            color: #b3b3b3;
-        }
-        .card-body p {
-            margin-top: 0;
-        }
-        .card-body ul {
-            margin-top: 10px;
-            padding-left: 20px;
-        }
-        .card-footer {
-            padding: 15px;
-            border-top: 1px solid #333a47;
-        }
-        .btn {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #ff5722;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .btn:hover {
-            background-color: #ff7043;
-            box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
-            color: white;
-            text-decoration: none;
-        }
-        ul, ol {
-            color: #b3b3b3;
-            margin-bottom: 20px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        a {
-            color: #ff5722;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-            color: #ff7043;
-        }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background-color: #2a303c;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .back-button:hover {
-            background-color: #333a47;
-        }
-        .learning-objectives {
-            margin: 20px 0;
-            padding: 20px;
-            border-radius: 4px;
-            background-color: #333a47;
-            border-left: 4px solid #ff5722;
-        }
-        .learning-objectives h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .learning-objectives ul {
-            margin-top: 10px;
-            margin-bottom: 0;
-        }
-        pre, code {
-            background-color: #1a1d23;
-            border-radius: 4px;
-        }
-        pre {
-            padding: 10px;
-        }
-        code {
-            padding: 2px 5px;
-            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
-            color: #e6e6e6;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
-    <div class="container">
-        <a href="../../index.html" class="back-button">← Back to Home</a>
-        
-        <h1>Module 4: DynamoDB Query</h1>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Introduction to Databases" src="https://fast.wistia.net/embed/iframe/mf9t79n9mr" allow="autoplay; fullscreen" allowfullscreen></iframe>
-        </div>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Sprint 21 DynamoDB Query Video" src="https://fast.wistia.net/embed/iframe/j3zecaqmdh" allow="autoplay; fullscreen" allowfullscreen></iframe>
-        </div>
-        
-        <div class="learning-objectives">
-            <h3>Learning Objectives</h3>
+    <header>
+        <nav>
+            <div class="logo">BD Unit 6 Sprint 21</div>
             <ul>
-                <li>Design and implement functionality that uses a query to retrieve items with a given partition key from a provided DynamoDB table</li>
-                <li>Design and implement functionality that uses a paginated query to retrieve items with a given partition key from a provided DynamoDB table</li>
-                <li>Design and implement functionality that uses a comparison operator to narrow the scope of a query on a provided DynamoDB table</li>
-                <li>Design and implement functionality that uses a comparison operator to narrow the scope of a paginated query on a provided DynamoDB table</li>
-                <li>Design and implement functionality that retrieves a specific number of items from a provided DynamoDB table</li>
-                <li>Explain when to query a DynamoDB table</li>
-                <li>Recall that only DynamoDB tables that use a composite primary key can be queried</li>
-                <li>Define pagination</li>
-                <li>Compare and contrast using query() and queryPage() on DynamoDB tables</li>
-                <li>Explain how to retrieve the results of a paginated query that come after a given item in a DynamoDB table using exclusiveStartKey</li>
-                <li>Explain how to limit the number of items retrieved from a query of a DynamoDB table using withLimit</li>
-                <li>Explain how to query a DynamoDB table using the comparison operators = , &lt; , &lt;= , &gt; , &gt;=, begins_with, and between in order to retrieve a more specific output</li>
-                <li>Explain the impacts of eventual consistency in DynamoDB</li>
-                <li>Define eventual consistency</li>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module1/index.html">Module 1: Iterators</a>
+                        <a href="../module2/index.html">Module 2: Spring Boot</a>
+                        <a href="../module3/index.html">Module 3: DynamoDB Delete</a>
+                        <a href="../module4/index.html" class="active">Module 4: DynamoDB Query</a>
+                    </div>
+                </li>
+                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-        </div>
-        
-        <section class="section">
-            <h2 class="section-title">Introduction to DynamoDB Query Operations</h2>
-            <p>The Query operation is one of the most powerful features of Amazon DynamoDB. It allows you to retrieve multiple items from a table or secondary index using the primary key attributes. Query provides fast, efficient access to data by leveraging the table's structure, making it essential for applications that need to access data in specific patterns.</p>
-            
-            <p>Unlike the Scan operation, which examines every item in a table, Query only looks at items with the specified partition key value, making it much more efficient for large tables. Query operations can be further refined using sort key conditions, allowing for precise data retrieval based on your application's needs.</p>
-            
-            <p>It's important to note that <strong>only tables with a composite primary key</strong> (partition key + sort key) can be queried effectively. This is one of the benefits of using a composite key structure in your database design.</p>
-        </section>
-        
-        <section class="section">
-            <h2 class="section-title">Key Topics</h2>
-            <div class="card-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Query Basics</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Learn the fundamentals of DynamoDB Query operations.</p>
-                        <ul>
-                            <li>Query syntax and parameters</li>
-                            <li>Required and optional parameters</li>
-                            <li>Query vs. Scan operations</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Key Condition Expressions</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Define conditions for querying based on primary key attributes.</p>
-                        <ul>
-                            <li>Partition key equality</li>
-                            <li>Sort key conditions</li>
-                            <li>Comparison operators</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Filter Expressions</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Apply additional filtering on query results.</p>
-                        <ul>
-                            <li>Filtering non-key attributes</li>
-                            <li>Logical operators</li>
-                            <li>Expression attribute names and values</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Query Result Management</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Control how query results are returned and processed.</p>
-                        <ul>
-                            <li>Pagination using LastEvaluatedKey</li>
-                            <li>Controlling sort order</li>
-                            <li>Limiting result count</li>
-                        </ul>
-                    </div>
-                </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 4: DynamoDB Query</h1>
+
+            <div class="note-box">
+                <h3>Learning Objectives</h3>
+                <ul>
+                    <li>Implement functionality that queries a provided DynamoDB table by partition key</li>
+                    <li>Implement functionality that queries a provided DynamoDB table by partition key and sort key
+                    </li>
+                    <li>Discuss how to query a provided DynamoDB table using a secondary index</li>
+                </ul>
             </div>
-        </section>
-        
-        <section class="section">
-            <h2 class="section-title">DynamoDB Query Implementation</h2>
-            
-            <h3>Basic Query for Items with the Same Partition Key</h3>
-            <p>Here's how to query a DynamoDB table to retrieve all items with a specific partition key value:</p>
-            
-            <pre><code>public List&lt;Song&gt; getSongsByArtist(String artist) {
+
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Sprint 21 DynamoDB Query Video"
+                    src="https://fast.wistia.net/embed/iframe/mf9t79n9mr" allow="fullscreen" allowfullscreen></iframe>
+            </div>
+
+            <div class="content-box">
+                <h2>Introduction to DynamoDB Query Operations</h2>
+                <p>The Query operation is one of the most powerful features of Amazon DynamoDB. It allows you to
+                    retrieve multiple items from a table or secondary index using the primary key attributes. Query
+                    provides fast, efficient access to data by leveraging the table's structure, making it essential for
+                    applications that need to access data in specific patterns.</p>
+
+                <p>Unlike the Scan operation, which examines every item in a table, Query only looks at items with the
+                    specified partition key value, making it much more efficient for large tables. Query operations can
+                    be further refined using sort key conditions, allowing for precise data retrieval based on your
+                    application's needs.</p>
+
+                <p>It's important to note that <strong>only tables with a composite primary key</strong> (partition key
+                    + sort key) can be queried effectively. This is one of the benefits of using a composite key
+                    structure in your database design.</p>
+
+                <h3>DynamoDBMapper Query Methods</h3>
+                <p>In previous lessons, you've learned about the DynamoDBMapper methods load(), save(), and delete(). Up
+                    to this point, you've been able to use the load() method to get one item from a table based on the
+                    key(s) for the table. We've mentioned throughout these lessons, however, that there's a way to query
+                    a table to retrieve multiple items. In this lesson, you're going to learn how to retrieve multiple
+                    items from a table using DynamoDBMapper methods query() and queryPage().</p>
+
+                <h3>Querying the Songs Table</h3>
+                <p>In previous lessons, we've used the Songs table as an example with a composite primary key. Let's
+                    review our Songs table, but this time with a few more songs!</p>
+
+                <table>
+                    <tr>
+                        <th>artist</th>
+                        <th>song_title</th>
+                        <th>genre</th>
+                        <th>year</th>
+                        <th>favorited</th>
+                    </tr>
+                    <tr>
+                        <td>Black Eyed Peas</td>
+                        <td>I Gotta Feeling</td>
+                        <td>pop</td>
+                        <td>2009</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>Black Eyed Peas</td>
+                        <td>Pump It</td>
+                        <td>pop</td>
+                        <td>2005</td>
+                        <td>true</td>
+                    </tr>
+                    <tr>
+                        <td>Black Eyed Peas</td>
+                        <td>Where is the Love?</td>
+                        <td>pop</td>
+                        <td>2006</td>
+                        <td>true</td>
+                    </tr>
+                    <tr>
+                        <td>Black Eyed Peas</td>
+                        <td>Let's Get it Started</td>
+                        <td>pop</td>
+                        <td>2003</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>Linkin Park</td>
+                        <td>Numb</td>
+                        <td>rock</td>
+                        <td>2003</td>
+                        <td>true</td>
+                    </tr>
+                    <tr>
+                        <td>Eminem</td>
+                        <td>Not Afraid</td>
+                        <td>rap</td>
+                        <td>2010</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>Daddy Yankee</td>
+                        <td>Gasolina</td>
+                        <td>latin pop</td>
+                        <td>2004</td>
+                        <td>true</td>
+                    </tr>
+                    <tr>
+                        <td>Linkin Park</td>
+                        <td>In the End</td>
+                        <td>rock</td>
+                        <td>2000</td>
+                        <td>true</td>
+                    </tr>
+                </table>
+
+                <p>Previously, we were only able to get one item from the Songs table using the DynamoDBMapper load()
+                    method, but what if we want to be able to get all of the Black Eyed Peas songs in our table? As
+                    we've briefly mentioned in previous lessons, DynamoDBMapper supports a query method. It's important
+                    to note that the DynamoDBMapper query() method only works for tables that use a composite primary
+                    key (partition + sort key). You cannot query on a table that uses only a partition key, which is one
+                    of the benefits of using a composite primary key.</p>
+
+                <p>A query is a question---it's asking for specific information. Querying a database table means
+                    requesting data from the table---it's like asking the table a question and receiving specific
+                    information in reply. The DynamoDBMapper query() method accepts an annotated class and a
+                    DynamoDBQueryExpression, which includes a condition and a value.</p>
+
+                <p>The code for querying the Songs table for all items of a specific partition key (artist) looks like
+                    the following:</p>
+
+                <pre><code>public List&lt;Song&gt; getSongsByArtist(String artist) {
     Song song = new Song();
     song.setArtist(artist);
 
     DynamoDBQueryExpression&lt;Song&gt; queryExpression = new DynamoDBQueryExpression&lt;Song&gt;()
         .withHashKeyValues(song);
-    
     DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+
     PaginatedQueryList&lt;Song&gt; songList = mapper.query(Song.class, queryExpression);
-    
     return songList;
 }</code></pre>
-            
-            <p>In this example, if we call <code>getSongsByArtist("Black Eyed Peas")</code>, it would return all songs by that artist from our table.</p>
-            
-            <h3>Paginated Queries</h3>
-            <p>For large datasets, DynamoDB uses pagination to divide query results into manageable chunks of up to 1MB each. The <code>query()</code> method handles pagination automatically, but sometimes we need more control.</p>
-            
-            <p>Using <code>queryPage()</code> with limits:</p>
-            
-            <pre><code>public QueryResultPage&lt;Song&gt; getLimitedSongsByArtist(String artist, int limit) {
+
+                <p>Let's break this code snippet down piece by piece. We first declare a method getSongsByArtist() that
+                    takes in artist and returns a List of Songs. Then the next two lines create a new Song instance and
+                    then set the partition key, artist, to the artist passed into the method.</p>
+
+                <pre><code>public List&lt;Song&gt; getSongsByArtist(String artist) {
+    Song song = new Song();
+    song.setArtist("Black Eyed Peas");</code></pre>
+
+                <p>The next section of code is what probably looks unfamiliar to you; the DynamoDBQueryExpression.</p>
+
+                <pre><code>DynamoDBQueryExpression&lt;Song&gt; queryExpression = new DynamoDBQueryExpression&lt;Song&gt;()
+.withHashKeyValues(song);</code></pre>
+
+                <p>We first create a new instance of DynamoDBExpression, queryExpression, which is of type Song, since
+                    that's the annotated class that maps out our table items to Java. There are lots of methods we can
+                    use to filter our expression, but we're going for the bare minimum here, so we're only specifying
+                    our hash key value. If you would like a full list of all the accepted methods, you can look <a
+                        href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/datamodeling/DynamoDBQueryExpression.html"
+                        target="_blank" rel="noopener noreferrer">here</a>. As a reminder, in DynamoDB a hash key is the
+                    same thing as a partition key, and hash key is used in Java when referencing the partition key. The
+                    method withHashKeyValues() accepts an object, which in this case is song. The object that's passed
+                    in must have at least the partition key value set, just like we learned with the DynamoDBMapper
+                    delete() method.</p>
+
+                <p>The next few lines of code set-up the instance of DynamoDBMapper, which you should be familiar with,
+                    and then we call the query() method, passing in the Song class and the newly created
+                    queryExpression.</p>
+
+                <pre><code>DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+PaginatedQueryList&lt;Song&gt; songList = mapper.query(Song.class, queryExpression);
+return songList;</code></pre>
+
+                <p>Note that the query() method returns a PaginatedQueryList, which in this example is of type Song.
+                    PaginatedQueryList implements the List interface, so we can return this list directly in our method.
+                    We'll talk more about what paginated means in the next section of this reading.</p>
+
+                <p>Since the only condition we specified in our DynamoDBExpression was the partition key, this query
+                    will get all the values that have the specified partition key. Remember that even though we gave the
+                    withHashKeyValues() method an object, the method is only looking for the value we set as the
+                    partition key, which is why 'artist' is the only value we set for song.</p>
+
+                <p>If we call getSongsByArtist("Black Eyed Peas") the method will return a PaginatedQueryList of the
+                    following bolded values:</p>
+
+                <table>
+                    <tr>
+                        <th>artist</th>
+                        <th>song_title</th>
+                        <th>genre</th>
+                        <th>year</th>
+                        <th>favorited</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Black Eyed Peas</strong></td>
+                        <td><strong>I Gotta Feeling</strong></td>
+                        <td><strong>pop</strong></td>
+                        <td><strong>2009</strong></td>
+                        <td><strong>false</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Black Eyed Peas</strong></td>
+                        <td><strong>Pump It</strong></td>
+                        <td><strong>pop</strong></td>
+                        <td><strong>2005</strong></td>
+                        <td><strong>true</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Black Eyed Peas</strong></td>
+                        <td><strong>Where is the Love?</strong></td>
+                        <td><strong>pop</strong></td>
+                        <td><strong>2006</strong></td>
+                        <td><strong>true</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Black Eyed Peas</strong></td>
+                        <td><strong>Let's Get it Started</strong></td>
+                        <td><strong>pop</strong></td>
+                        <td><strong>2003</strong></td>
+                        <td><strong>false</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Linkin Park</td>
+                        <td>Numb</td>
+                        <td>rock</td>
+                        <td>2003</td>
+                        <td>true</td>
+                    </tr>
+                    <tr>
+                        <td>Eminem</td>
+                        <td>Not Afraid</td>
+                        <td>rap</td>
+                        <td>2010</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>Daddy Yankee</td>
+                        <td>Gasolina</td>
+                        <td>latin pop</td>
+                        <td>2004</td>
+                        <td>true</td>
+                    </tr>
+                    <tr>
+                        <td>Linkin Park</td>
+                        <td>In the End</td>
+                        <td>rock</td>
+                        <td>2000</td>
+                        <td>true</td>
+                    </tr>
+                </table>
+
+                <h3>Pagination</h3>
+                <p>Our Songs table may be very small, but most tables that you're working with will include hundreds,
+                    thousands, or even millions of items! When dealing with data samples that large, your query request
+                    could return a ton of data, which is difficult to deal with all at once. To help deal with large
+                    data output, most databases use some form of pagination.</p>
+
+                <p>Pagination splits database output into manageable chunks, often referred to as pages. In DynamoDB,
+                    query results are divided into pages of data that are at most 1 MB in size. The query operations are
+                    paginated by default, which is why the query() method returns a PaginatedQueryList. The method
+                    processes the first pages of result and then additional pages (if there are any) as necessary. With
+                    DynamoDB's auto-pagination, you never have to deal with more than 1 MB of data at a time, which
+                    helps ensure you never run out of memory or have to deal with slow query requests.</p>
+
+                <p>The query() method's auto-pagination is very useful, but sometimes we want a bit more control over
+                    the number of items we're returning from a query request. We can gain greater control over
+                    pagination by narrowing the scope of our query results using the withLimit() method in our
+                    DynamoDBExpression.</p>
+
+                <p>The withLimit() method accepts an integer and with each query request made, returns the first 'x'
+                    number of items that matches the query. Since the query() method's auto-pagination makes multiple
+                    requests to retrieve the entire result set, the withLimit() method doesn't work as expected. For
+                    example, if you pass in the limit as 3, but the query() method makes three requests to the table,
+                    then it will end up returning 9 items. This is because the limit is 3 for each request made to the
+                    table. Since we want to specifically limit the number of items that are returned, we need to use the
+                    queryPage() method instead of query().</p>
+
+                <p>The queryPage() method works very similarly to the query() method, but it only retrieves one page of
+                    data. The method defaults to returning the first page of data, but if there is more than one page,
+                    there is a way to get the next page(s), which we'll discuss in the next section of the reading.</p>
+
+                <p>The following code snippet retrieves the first 3 items for the given artist:</p>
+
+                <pre><code>public List&lt;Song&gt; getSongsByArtist(String artist) {
     Song song = new Song();
     song.setArtist(artist);
 
     DynamoDBQueryExpression&lt;Song&gt; queryExpression = new DynamoDBQueryExpression&lt;Song&gt;()
         .withHashKeyValues(song)
-        .withLimit(limit);
-    
-    DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
-    QueryResultPage&lt;Song&gt; queryResultPage = mapper.queryPage(Song.class, queryExpression);
-    
-    return queryResultPage;
-}</code></pre>
-            
-            <p>This method returns only the specified number of items, which is useful for implementing features like "Load More" in user interfaces.</p>
-            
-            <h3>Using Comparison Operators for Sort Keys</h3>
-            <p>We can use comparison operators to create more specific queries based on the sort key. For example, to find songs released after a certain year:</p>
-            
-            <pre><code>public List&lt;Song&gt; getSongsByArtistAfterYear(String artist, int year) {
-    Song song = new Song();
-    song.setArtist(artist);
+        .withLimit(3);
 
-    Map&lt;String, AttributeValue&gt; expressionAttributeValues = new HashMap&lt;&gt;();
-    expressionAttributeValues.put(":year", new AttributeValue().withN(String.valueOf(year)));
-
-    DynamoDBQueryExpression&lt;Song&gt; queryExpression = new DynamoDBQueryExpression&lt;Song&gt;()
-        .withHashKeyValues(song)
-        .withRangeKeyCondition("year", new Condition()
-            .withComparisonOperator(ComparisonOperator.GT)
-            .withAttributeValueList(new AttributeValue().withN(String.valueOf(year))))
-        .withConsistentRead(false);
-    
-    DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
-    PaginatedQueryList&lt;Song&gt; songList = mapper.query(Song.class, queryExpression);
-    
+    DynamoDBMapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+    QueryResultPage&lt;Song&gt; songQueryResults = mapper.queryPage(Song.class, queryExpression);
+    List&lt;Song&gt; songList = songQueryResults.getResults();
     return songList;
 }</code></pre>
-            
-            <h3>Handling Pagination with ExclusiveStartKey</h3>
-            <p>For implementing pagination across multiple requests, we use the <code>ExclusiveStartKey</code> parameter:</p>
-            
-            <pre><code>public QueryResultPage&lt;Song&gt; getNextPageOfSongsByArtist(
-        String artist, 
-        int limit, 
-        Map&lt;String, AttributeValue&gt; lastEvaluatedKey) {
-    
+
+                <p>This code snippet is very similar to the code snippet up above, with two exceptions: the first is
+                    that we've added the withLimit() method to our DynamoDBQueryExpression with a value of 3. The second
+                    is that we're using queryPage() instead of query(), which returns a QueryResultPage, instead of a
+                    PaginatedQueryList. A QueryResultPage is a container for a page of query results. If you're
+                    interested, you can learn more about it <a
+                        href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/datamodeling/QueryResultPage.html"
+                        target="_blank" rel="noopener noreferrer">here</a>. We want to return a list of Songs, which we
+                    can retrieve by calling QueryResultPage's getResults() method.</p>
+
+                <p>Without the use of the withLimit() method, calling getSongsByArtist("Black Eyed Peas") would return
+                    all four Black Eyed Peas songs, which we saw up above. With the withLimit() method, however, this
+                    query returns only the first three Black Eyed Peas songs, which are bolded in the table below.</p>
+
+                <table>
+                    <tr>
+                        <th>artist</th>
+                        <th>song_title</th>
+                        <th>genre</th>
+                        <th>year</th>
+                        <th>favorited</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Black Eyed Peas</strong></td>
+                        <td><strong>I Gotta Feeling</strong></td>
+                        <td><strong>pop</strong></td>
+                        <td><strong>2009</strong></td>
+                        <td><strong>false</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Black Eyed Peas</strong></td>
+                        <td><strong>Pump It</strong></td>
+                        <td><strong>pop</strong></td>
+                        <td><strong>2005</strong></td>
+                        <td><strong>true</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Black Eyed Peas</strong></td>
+                        <td><strong>Where is the Love?</strong></td>
+                        <td><strong>pop</strong></td>
+                        <td><strong>2006</strong></td>
+                        <td><strong>true</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Black Eyed Peas</td>
+                        <td>Let's Get it Started</td>
+                        <td>pop</td>
+                        <td>2003</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>Linkin Park</td>
+                        <td>Numb</td>
+                        <td>rock</td>
+                        <td>2003</td>
+                        <td>true</td>
+                    </tr>
+                    <tr>
+                        <td>Eminem</td>
+                        <td>Not Afraid</td>
+                        <td>rap</td>
+                        <td>2010</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>Daddy Yankee</td>
+                        <td>Gasolina</td>
+                        <td>latin pop</td>
+                        <td>2004</td>
+                        <td>true</td>
+                    </tr>
+                    <tr>
+                        <td>Linkin Park</td>
+                        <td>In the End</td>
+                        <td>rock</td>
+                        <td>2000</td>
+                        <td>true</td>
+                    </tr>
+                </table>
+
+                <h3>Getting the next items</h3>
+                <p>In our previous query, we got the first three out of four Black Eyed Peas songs, but what if we want
+                    to make a request for the next item, as well?</p>
+
+                <p>You can do so by using DynamoDBQueryExpression's withExclusiveStartKey() method.
+                    withExclusiveStartKey() provides a way to pass in the key that refers to an item in a DynamoDB
+                    table, and DynamoDB will retrieve the results of the query that come after that item. We call this
+                    key the exclusiveStartKey because it excludes the item with the provided key from the next page of
+                    results.</p>
+
+                <p>For our previous query, we retrieved the first three Black Eyed Peas songs. To retrieve the next set
+                    of Black Eyed Peas songs, we can set the exclusive start key in our DynamoDBQueryExpression to refer
+                    to the item with the partition key 'Black Eyed Peas' and the sort key 'Where is the Love?'</p>
+
+                <p>The following code will set-up a query request using the withExclusiveStartKey() method.</p>
+
+                <pre><code>public List&lt;Song&gt; getSongsByArtist(String artist, String exclusiveStartSongTitle) {
     Song song = new Song();
     song.setArtist(artist);
 
+     Map&lt;String, AttributeValue&gt; exclusiveStartKey = null;
+     if (exclusiveStartSongTitle != null) {
+         exclusiveStartKey = new HashMap&lt;&gt;();
+         exclusiveStartKey.put("artist", new AttributeValue().withS(artist));
+         exclusiveStartKey.put("song_title", new AttributeValue().withS(exclusiveStartSongTitle));
+     }
+    
     DynamoDBQueryExpression&lt;Song&gt; queryExpression = new DynamoDBQueryExpression&lt;Song&gt;()
         .withHashKeyValues(song)
-        .withLimit(limit);
-    
-    if (lastEvaluatedKey != null) {
-        queryExpression.setExclusiveStartKey(lastEvaluatedKey);
+        .withExclusiveStartKey(exclusiveStartKey)
+        .withLimit(3);
+
+    DynamoDBMapper mapper = new DynamoDBMapper(DynamoDBClientPovider.getDynamoDBClient());
+    QueryResultPage&lt;Song&gt; songQueryResults = mapper.queryPage(Song.class, queryExpression);
+    return songQueryResults.getResults();
+}</code></pre>
+
+                <p>Let's walk through this code snippet. The method signature for getSongsByArtist looks similar to our
+                    previous query methods, except it's now also taking in an exclusiveStartSongTitle, which we'll use
+                    to build our exclusive start key.</p>
+
+                <p>The next two lines are the same as the previous methods, where we create a new Song instance and then
+                    set the partition key, artist, to the artist passed into the method.</p>
+
+                <p>Then the next section is where we build the exclusiveStartKey. The exclusiveStartKey is a
+                    Map&lt;String,AttributeValue&gt;. The keys of this Map refer to names of the keys used in the
+                    DynamoDB table. For our Songs table, the keys are the Strings "artist" and "song_title", the names
+                    of our partition and sort keys. The values of this Map are of type AttributeValue, which is a
+                    DynamoDB type that represents data for an attribute and includes both the data type and the data
+                    itself. The withS method specifies that the attribute value is of type String. (You can review
+                    AttributeValue's <a
+                        href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/model/AttributeValue.html"
+                        target="_blank" rel="noopener noreferrer">Javadoc</a> for more details.) You can see that we're
+                    setting the AttributeValue to the artist and exclusiveStartSongTitle passed into the method.</p>
+
+                <p>In the next section, we're building our DynamoDBQueryExpression, which looks similar to our previous
+                    query method, except we're also calling withExclusiveStartKey() and passing in the exclusive start
+                    key we created above.</p>
+
+                <p>Finally, we're making a call to queryPage() and returning the results as a list of Songs.</p>
+
+                <p>To retrieve the next set of Black Eyed Peas songs after "Where is the Love?", we would call
+                    getSongsByArtist("Black Eyed Peas", "Where is the Love?"). Since there is only one Black Eyes Peas
+                    song after "Where is the Love?" in our table, this method call would return a list of Songs with one
+                    item: Black Eyed Peas' "Let's Get it Started".</p>
+
+                <p>Note that in our code snippet above, we check if exclusiveStartSongTitle is null before setting the
+                    exclusive start key. What happens when exclusiveStartKey is null when we call queryPage()? This is
+                    the default behavior, so the query would return the first set of items in our table that match our
+                    QueryExpression.</p>
+
+                <p>If a client wanted to retrieve the first two pages of Black Eyed Peas songs, they could call our
+                    getSongsByArtist method in our SongDao class with the following code:</p>
+
+                <pre><code>//this call will return the songs "I Gotta Feeling", "Pump It",
+//and "Where is the Love?"
+List&lt;Song&gt; firstPageOfSongs = songDao.getSongsByArtist("Black Eyed Peas", null);
+
+// retrieve title of last song returned on the first page using a helper method (method implementation not shown),
+// which would return "Where is the Love?" in this case and returns null if the provided list is empty
+String lastSongTitle = SongHelper.getLastSongTitle(firstPageOfSongs);
+
+//this call will return the song "Let's Get it Started"
+List&lt;Song&gt; secondPageOfSongs = songDao.getSongsByArtist("Black Eyed Peas", lastSongTitle);</code></pre>
+
+                <p>The first call that's made returns the first three Black Eyed Peas songs (because we set our limit to
+                    3), which are "I Gotta Feeling", "Pump It", and "Where is the Love?". When we made this call, we
+                    passed in a null value, because we want to get the first items that match our query. To retrieve the
+                    next set of items, we now pass in the key value of the last song returned by our first request,
+                    "Where is the Love?". This tells the query to retrieve the items found after the key value given.
+                    This query request retrieves the song "Let's Get it Started", which is the only remaining song that
+                    meets our query criteria.</p>
+
+                <p>There are a few things to point out: the first is that our limit is 3, but the second time we call
+                    getSongsByArtist(), there is only 1 more item that matches our query. When we use the withLimit()
+                    method we're setting an upper limit, which means that the query will return no more than that
+                    number. Since there is only 1 more item that meets our query condition, (artist = "Black Eyed
+                    Peas"), only 1 song (songTitle = "Let's Get it Started") is returned from that query request.</p>
+
+                <h3>Summary</h3>
+                <p>In this reading, we learned about using the DynamoDBMapper query() and queryPage() methods to
+                    retrieve all the items that have the same partition key. We also learned about pagination and how it
+                    splits the data retrieved from a query request into manageable chunks to help deal with large
+                    returns. The withLimit() method gives us even more control over the number of items we retrieve from
+                    a query result and the exclusiveStartKey allows us to retrieve the next page of results. In the next
+                    lesson, we'll learn how to narrow the scope of our query even further by adding additional query
+                    conditions to the sort key!</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Narrowing Your Query</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Sprint 21 DynamoDB Query Video"
+                        src="https://fast.wistia.net/embed/iframe/irvy6gtudu" allow="fullscreen"
+                        allowfullscreen></iframe>
+                </div>
+
+                <p>In the previous reading, you learned how to use the DynamoDBMapper's query() method to return all the
+                    items in a table that have a given partition key. We also discussed how to use the withLimit()
+                    method in conjunction with DynamoDBMapper's queryPage() method to return at most a certain number of
+                    items. By using the withExclusiveStartKey() method, we could then get the next 'x' amount of items
+                    from the table. In this lesson, we're going to learn how to query with comparison operators to
+                    narrow the scope of our query even further and retrieve more specific output than just querying on
+                    the partition key.</p>
+
+                <h3>Querying with Comparison Operators</h3>
+                <p>You're working on a database for an online ordering system. One of the tables, OnlineOrders, keeps
+                    track of each users purchases and the cost of the purchase.</p>
+
+                <table>
+                    <tr>
+                        <th>user_id</th>
+                        <th>order_id</th>
+                        <th>cost</th>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20121207-54297</td>
+                        <td>24.89</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20140425-03576</td>
+                        <td>45.87</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20140425-54879</td>
+                        <td>32.01</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20170923-54129</td>
+                        <td>103.87</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20190305-78159</td>
+                        <td>209.13</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20200105-42158</td>
+                        <td>89.65</td>
+                    </tr>
+                    <tr>
+                        <td>d1a93bea</td>
+                        <td>20091204-78216</td>
+                        <td>34.23</td>
+                    </tr>
+                    <tr>
+                        <td>d1a93bea</td>
+                        <td>20130817-45789</td>
+                        <td>17.03</td>
+                    </tr>
+                </table>
+
+                <p>The OnlineOrders table has three attributes: a user_id, which is the partition key and unique for
+                    each user, an order_id, which is the sort key and made up of the date the product was ordered
+                    combined with a unique product number, and the cost of each order.</p>
+
+                <p>The fully annotated Java class, Order:</p>
+
+                <pre><code>@DynamoDBTable(tableName = "OnlineOrders")
+
+public class Order {
+    private String userId;
+    private String orderId;
+    private Double cost;
+
+    @DynamoDBHashKey(attributeName = "user_id")
+    public String getUserId() {
+        return userId;
     }
-    
-    DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
-    QueryResultPage&lt;Song&gt; queryResultPage = mapper.queryPage(Song.class, queryExpression);
-    
-    // The LastEvaluatedKey can be used for the next page request
-    Map&lt;String, AttributeValue&gt; lastKey = queryResultPage.getLastEvaluatedKey();
-    
-    return queryResultPage;
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+
+    @DynamoDBRangeKey(attributeName = "order_id")
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+
+    @DynamoDBAttribute (attributeName = "cost")
+    public Double getCost() {
+        return cost;
+    }
+
+    public void setCost(Double cost) {
+        this.cost = cost;
+    }
+
 }</code></pre>
-            
-            <p>This approach allows for efficient navigation through large result sets by providing a continuation point for subsequent queries.</p>
-            
-            <h3>Eventual Consistency</h3>
-            <p>DynamoDB provides two consistency options for reads: eventually consistent and strongly consistent. By default, queries use eventually consistent reads, which means you might get slightly outdated data but with higher throughput and lower latency.</p>
-            
-            <p>For cases where you need the most up-to-date data, you can specify consistent reads:</p>
-            
-            <pre><code>queryExpression.setConsistentRead(true);</code></pre>
-            
-            <p>However, consistent reads consume twice the read capacity units and may have higher latency.</p>
-        </section>
 
-        <section class="section">
-            <h2 class="section-title">Best Practices for DynamoDB Queries</h2>
-            <ul>
-                <li><strong>Design for Query Efficiency</strong>: Structure your data model to support common query patterns</li>
-                <li><strong>Use Key Condition Expressions</strong>: Limit queries to specific partition keys to reduce costs</li>
-                <li><strong>Be Careful with Filter Expressions</strong>: Filters are applied after the query and consume read capacity</li>
-                <li><strong>Implement Pagination</strong>: Use LastEvaluatedKey for handling large result sets</li>
-                <li><strong>Choose Projections Wisely</strong>: Only request the attributes you need to reduce data transfer</li>
-                <li><strong>Consider Consistent Reads</strong>: Use consistent reads when data freshness is critical</li>
-                <li><strong>Use Indexes Strategically</strong>: Create and use secondary indexes for alternate access patterns</li>
-            </ul>
-        </section>
+                <p>Using this class, we could query on userId to get all the orders from a specific user like we learned
+                    in the last lesson. What if, however, we want to get all the orders from a user between two dates?
+                    We can do this using the withKeyConditionExpression() method, which accepts a condition that
+                    specifies the key values for the items to be retrieved by the query request. The condition must
+                    specify what the partition key is equal to. The condition can optionally perform a comparison test
+                    on a sort key value to retrieve the items that meet the given comparison condition for the sort key.
+                </p>
 
-        <section class="section">
-            <h2 class="section-title">Resources</h2>
-            <div class="card-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>AWS Documentation: Query</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Official AWS documentation for the Query operation.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html" class="btn" target="_blank" rel="noopener">View Documentation</a>
-                    </div>
+                <p>In the following code snippet, we're using the withKeyConditionExpression() to retrieve all of the
+                    orders made by userId = '62da86ba' between the first day of 2014 ('20140101') and the last day of
+                    2017 ('20171231').</p>
+
+                <pre><code>Map&lt;String, AttributeValue&gt; valueMap = new HashMap&lt;&gt;();
+valueMap.put(":userId", new AttributeValue().withS("62da86ba"));
+valueMap.put(":startDate", new AttributeValue().withS("20140101"));
+valueMap.put(":endDate", new AttributeValue().withS("20171231"));
+
+DynamoDBQueryExpression&lt;Order&gt; queryExpression = new DynamoDBQueryExpression&lt;Order&gt;()
+    .withKeyConditionExpression("user_id = :userId and order_id between :startDate and :endDate")
+    .withExpressionAttributeValues(valueMap);
+DynamoDBMapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+
+PaginatedQueryList&lt;Order&gt; orderList = mapper.query(Order.class, queryExpression);</code></pre>
+
+                <p>This code snippet may look a bit intimidating, so let's break it down piece by piece. The first thing
+                    we're doing is creating a new HashMap, valueMap, to map the attribute values, which is what we did
+                    in the previous lesson with DynamoDBDeleteExpression and in the previous reading with the
+                    exclusiveStartKey.</p>
+
+                <pre><code>Map&lt;String, AttributeValue&gt; valueMap = new HashMap&lt;&gt;();
+valueMap.put(":userId", new AttributeValue().withS("62da86ba"));
+valueMap.put(":startDate", new AttributeValue().withS("20140101"));
+valueMap.put(":endDate", new AttributeValue().withS("20171231"));</code></pre>
+
+                <p>Notice that the key values we add to valueMap start with a ":" --- this is required. The values that
+                    we're defining are Strings, so we use the method withS(). This method changes depending on what your
+                    value type is. If we were using a Boolean value instead of a String, for example, we would use the
+                    method withBOOL(). The values we add to valueMap are the values we are going to use in our
+                    withKeyConditionExpression() method. The user id is our partition key value, ('62da86ba'), the start
+                    date for our condition is the first day of 2014, ('20140101') and the end date for our condition is
+                    the last day of 2017 ('20171231').</p>
+
+                <p>The next piece of code sets up our DynamoDBQueryExpression, which we used in the previous reading
+                    when querying.</p>
+
+                <pre><code>DynamoDBQueryExpression&lt;Order&gt; queryExpression = new DynamoDBQueryExpression&lt;Order&gt;()
+.withKeyConditionExpression("user_id = :userId and order_id between :startDate and :endDate")
+.withExpressionAttributeValues(valueMap);</code></pre>
+
+                <p>The first line should look familiar, but the methods we call on queryExpression are new. The first
+                    one is the withKeyConditionExpression(), which specifies the condition we're querying on. To make
+                    sure you fully understand this condition, we're going to break it down even further.</p>
+
+                <p>("user_id = :userId ...</p>
+
+                <p>This first part of the condition is what our partition key is equal to. This part of the condition is
+                    required. In the previous reading, we used the method withHashKeyValues() to specify the value of
+                    the partition key, but in this example we're using the method withKeyConditionExpression(). You must
+                    use one of these methods in your DynamoDBQueryExpression, but you can't use both. Since we can't
+                    specify the partition key value using the withHashKeyValues() method, we have to make sure we're
+                    specifying the partition key value in the withKeyConditionExpression() method, which is why the
+                    above code is required.</p>
+
+                <p>Notice that the partition key attribute name is 'user_id', which is the name of the attribute in the
+                    table. The withKeyConditionExpression() is looking at the table, not the Order class you set-up, so
+                    the attribute names for the keys must match the ones given in the table. We then use the equals sign
+                    (=) to set the user_id equal to the key variables we declared in valueMap, (':userId'). Notice that
+                    once again we're using the ':' when we call this value, just as we did when we added it to the
+                    valueMap.</p>
+
+                <p>As we said, specifying the partition key value for our query is required, but everything else in the
+                    withKeyConditionExpression() method is optional. So technically we could use the method as an
+                    alternative way of querying on the partition key value like we did in the previous reading. In this
+                    example, however, we want to additionally query on the sort key, so we need to add in an extra part
+                    to our condition.</p>
+
+                <p>... and order_id between :startDate and :endDate")</p>
+
+                <p>The and keyword tells the withKeyConditionExpression() method that there's another part to our query.
+                    The last part of the condition sets up the values for our sort key, which is order_id. Notice that
+                    once again we're using the attribute name from the table, not the class. We then use the comparison
+                    operator between, which tells the method which operation to perform on the following values (there
+                    are several possible comparison operators to use, which we'll discuss more in the next section). The
+                    between operator requires two values so that it can retrieve the items that are found between those
+                    values. In this case, those two values are :startDate and :endDate. Once again, we must use the ":""
+                    when referencing these values from the HashMap. We use the and keyword to specify that there are two
+                    values, the start date and the end date.</p>
+
+                <p>Looking back at the DynamoDBQueryExpression, we can see how the condition fits all together.</p>
+
+                <pre><code>DynamoDBQueryExpression&lt;Order&gt; queryExpression = new DynamoDBQueryExpression&lt;Order&gt;()
+.withKeyConditionExpression("user_id = :userId and order_id between :startDate and :endDate")
+.withExpressionAttributeValues(valueMap);</code></pre>
+
+                <p>The last line of the above code snippet calls the withExpressionAttributeValues() method. This method
+                    passes in valueMap, which is how the withKeyConditionExpression() method knows where to get the
+                    values :userId, :startDate, and :endDate from.</p>
+
+                <p>The final piece of our query request sets up our mapper and uses DynamoDBMapper query() to query the
+                    OnlineOrders table just as we saw in the previous lesson.</p>
+
+                <pre><code>DynamoDBMapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+PaginatedQueryList&lt;Order&gt; orderList = mapper.query(Order.class, queryExpression);</code></pre>
+
+                <p>Now that you have a better understanding of the separate pieces of the query request, we'll show you
+                    the entire code snippet again:</p>
+
+                <pre><code>Map&lt;String, AttributeValue&gt; valueMap = new HashMap&lt;&gt;();
+valueMap.put(":userId", new AttributeValue().withS("62da86ba"));
+valueMap.put(":startDate", new AttributeValue().withS("20140101"));
+valueMap.put(":endDate", new AttributeValue().withS("20171231"));
+
+DynamoDBQueryExpression&lt;Order&gt; queryExpression = new DynamoDBQueryExpression&lt;Order&gt;()
+    .withKeyConditionExpression("user_id = :userId and order_id between :startDate and :endDate")
+    .withExpressionAttributeValues(valueMap);
+DynamoDBMapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+
+PaginatedQueryList&lt;Order&gt; orderList = mapper.query(Order.class, queryExpression);</code></pre>
+
+                <p>This code snippet will return a list of the following italicized, bolded orders, all of which have a
+                    user_id of '62da86ba' and an order_id between the dates '20140101' and '20171231':</p>
+
+                <table>
+                    <tr>
+                        <th>user_id</th>
+                        <th>order_id</th>
+                        <th>cost</th>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20121207-54297</td>
+                        <td>24.89</td>
+                    </tr>
+                    <tr>
+                        <td><em><strong>62da86ba</strong></em></td>
+                        <td><em><strong>20140425-03576</strong></em></td>
+                        <td><em><strong>45.87</strong></em></td>
+                    </tr>
+                    <tr>
+                        <td><em><strong>62da86ba</strong></em></td>
+                        <td><em><strong>20140425-54879</strong></em></td>
+                        <td><em><strong>32.01</strong></em></td>
+                    </tr>
+                    <tr>
+                        <td><em><strong>62da86ba</strong></em></td>
+                        <td><em><strong>20170923-54129</strong></em></td>
+                        <td><em><strong>103.87</strong></em></td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20190305-78159</td>
+                        <td>209.13</td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20200105-42158</td>
+                        <td>89.65</td>
+                    </tr>
+                    <tr>
+                        <td>d1a93bea</td>
+                        <td>20091204-78216</td>
+                        <td>34.23</td>
+                    </tr>
+                    <tr>
+                        <td>d1a93bea</td>
+                        <td>20130817-45789</td>
+                        <td>17.03</td>
+                    </tr>
+                </table>
+
+                <h3>Additional Comparison Operators</h3>
+                <p>Our previous example used the between comparison operator, but as we mentioned, there are other
+                    operators that can be used to query the sort key. If you're interested, you can learn more about
+                    conditions and comparison operators <a
+                        href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Condition.html"
+                        target="_blank" rel="noopener noreferrer">here</a>.</p>
+
+                <p>The following list shows all the available comparison operators that can be used with the sort key
+                    and an example of how they're set-up:</p>
+
+                <ul>
+                    <li>= , < , <=,> , >=<br>order_id >= :startDate</li>
+                    <li>begins_with<br>begins_with(order_id, :startDate)</li>
+                    <li>between<br>order_id between :startDate and :endDate</li>
+                </ul>
+
+                <p>Remember, the partition key can only use the equals (=) operator.</p>
+
+                <h3>Adding a Limit</h3>
+                <p>In the last reading, we learned about using the withLimit() method to limit our query even farther,
+                    and we can do the same thing with condition expressions!</p>
+
+                <p>Just as before, we'll use the queryPage() method instead of the query() method, since query() makes
+                    multiple requests to the table and therefore returns more items than our specified limit. We'll use
+                    the same OrderLimits and Order class as before, but this time we'll make a query request when
+                    user_id = '62da86ba' and order_id > '20140101' with a limit of 4 items.</p>
+
+                <pre><code>Map&lt;String, AttributeValue&gt; valueMap = new HashMap&lt;&gt;();
+valueMap.put(":userId", new AttributeValue().withS("62da86ba"));
+valueMap.put(":startDate", new AttributeValue().withS("20140101"));
+
+DynamoDBQueryExpression&lt;Order&gt; queryExpression = new DynamoDBQueryExpression&lt;Order&gt;()
+    .withKeyConditionExpression("user_id = :userId and order_id > :startDate")
+    .withExpressionAttributeValues(valueMap)
+    .withLimit(4);
+DynamoDBMapper mapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+
+QueryResultPage&lt;Order&gt; orderList = mapper.queryPage(Order.class, queryExpression);</code></pre>
+
+                <p>This code snippet has the same format as the previous example, we've just added the withLimit()
+                    method to queryExpression, and we're using queryPage() instead of query().</p>
+
+                <p>Without setting a limit, this query would retrieve 5 items, but since we set the limit to 4, the
+                    query only retrieves 4 items! You could also use exclusiveStartKey to get the next values through
+                    the same set-up as shown in the previous reading.</p>
+
+                <p>The above query retrieves the following italicized, bolded items:</p>
+
+                <table>
+                    <tr>
+                        <th>user_id</th>
+                        <th>order_id</th>
+                        <th>cost</th>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20121207-54297</td>
+                        <td>24.89</td>
+                    </tr>
+                    <tr>
+                        <td><em><strong>62da86ba</strong></em></td>
+                        <td><em><strong>20140425-03576</strong></em></td>
+                        <td><em><strong>45.87</strong></em></td>
+                    </tr>
+                    <tr>
+                        <td><em><strong>62da86ba</strong></em></td>
+                        <td><em><strong>20140425-54879</strong></em></td>
+                        <td><em><strong>32.01</strong></em></td>
+                    </tr>
+                    <tr>
+                        <td><em><strong>62da86ba</strong></em></td>
+                        <td><em><strong>20170923-54129</strong></em></td>
+                        <td><em><strong>103.87</strong></em></td>
+                    </tr>
+                    <tr>
+                        <td><em><strong>62da86ba</strong></em></td>
+                        <td><em><strong>20190305-78159</strong></em></td>
+                        <td><em><strong>209.13</strong></em></td>
+                    </tr>
+                    <tr>
+                        <td>62da86ba</td>
+                        <td>20200105-42158</td>
+                        <td>89.65</td>
+                    </tr>
+                    <tr>
+                        <td>d1a93bea</td>
+                        <td>20091204-78216</td>
+                        <td>34.23</td>
+                    </tr>
+                    <tr>
+                        <td>d1a93bea</td>
+                        <td>20130817-45789</td>
+                        <td>17.03</td>
+                    </tr>
+                </table>
+
+                <h3>Database Consistency Models</h3>
+                <p>You've now learned a few methods for manipulating and retrieving data in DynamoDB and can see the
+                    power and usefulness of databases. It's important to understand, however, that databases aren't
+                    perfect. Sometimes, there may be inconsistency with the data you're retrieving from a database due
+                    to an update lag across the servers.</p>
+
+                <p>A database consistency model refers to the model the database uses when dealing with consistency in
+                    the data. These models define the rules databases will follow to provide consistent data for the
+                    user.</p>
+
+                <h3>Eventual Consistency</h3>
+                <p>Eventual consistency is DynamoDB's default consistency model and the only model you need to know
+                    right now. As you learned in your introductory lesson on databases, DynamoDB is a distributed
+                    database, which means that the database is spread out across multiple servers. When you write items
+                    to a table (either saving or deleting), that item needs to be updated on multiple servers.
+                    Sometimes, however, you may read data (either loading or querying) before all the servers have a
+                    chance to update the data you recently wrote. This can lead to returning stale (or incorrect) data.
+                </p>
+
+                <p>Why does this happen in the eventual consistency model? When you read data using the eventual
+                    consistency model, it chooses a random server to read from, which may be one that hasn't been
+                    updated yet. You don't need to wait long for the server to update, however. Consistency across all
+                    copies of data (on different servers) is usually reached within a second. If you repeat the read
+                    request after this time, it will return the updated data.</p>
+
+                <p>As we said previously, eventual consistency is the default consistency model in DynamoDB. There is
+                    another consistency model in DynamoDB that you don't need to know about now, but if you're
+                    interested, you can read more about it <a
+                        href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html"
+                        target="_blank" rel="noopener noreferrer">here</a>. You should, however, understand how the
+                    eventual consistency model works in case you ever retrieve stale data from DynamoDB or in case you
+                    have to implement a feature that could involve reading an item in DynamoDB soon after updating it.
+                    Eventual consistency is something you may have to consider when building features. For example, have
+                    you ever updated your account information on a website and seen messaging like "your changes may
+                    take a few minutes to take effect"? The website is addressing its eventual consistency model by
+                    letting its users know why they may still see stale data on their accounts.</p>
+
+                <h3>Summary</h3>
+                <p>In this reading, we learned how to further narrow the scope of your queries using comparison
+                    operators. Comparison operators allow you to retrieve items that equal a given partition key value
+                    and meet the given condition of the sort key. We used the example of finding orders between and then
+                    after a certain date, but there are lots of possibilities of how you could use comparison operators
+                    in your queries!</p>
+
+                <p>We also learned about the eventual consistency database model, which is the default consistency model
+                    for DynamoDB. It's important to understand the limitations of the eventual consistency model so that
+                    you can make informed decisions about your building features and avoid retrieving stale data from
+                    your database.</p>
+            </div>
+
+            <div class="content-box">
+                <h2>Guided Project</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Sprint 21 DynamoDB Query Video"
+                        src="https://fast.wistia.net/embed/iframe/j3zecaqmdh" allow="fullscreen"
+                        allowfullscreen></iframe>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Code-Alongs</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Additional code-along exercises for this sprint.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="../../code-alongs/index.html" class="btn">View Code-Alongs</a>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Sprint Challenge</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Access the sprint challenge for this unit.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="../../sprint-challenge/index.html" class="btn">View Challenge</a>
-                    </div>
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-dynamodb-query-reinvite" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">Re-invite</a>
                 </div>
             </div>
         </section>
-    </div>
+    </main>
 </body>
-</html> 
+
+</html>

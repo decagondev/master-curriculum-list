@@ -3,402 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Module 2 - Server-Side Routing with Express - Web Unit 4 Sprint 13</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23; /* Dark background color */
-            color: #ffffff;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: #222831; /* Darker container background */
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722; /* Orange accent color */
-            padding-bottom: 10px;
-        }
-        h2 {
-            color: #ffffff;
-            margin-top: 30px;
-            margin-bottom: 20px;
-        }
-        h3 {
-            color: #ff5722; /* Orange accent color */
-            margin-top: 0;
-        }
-        h4 {
-            color: #ffffff;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        .section {
-            margin-bottom: 40px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            padding: 20px;
-            border: 1px solid #333a47;
-        }
-        .section p, .section li {
-            color: #b3b3b3;
-        }
-        ul, ol {
-            color: #b3b3b3;
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 10px;
-        }
-        .button {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #ff5722; /* Orange accent color */
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .button:hover {
-            background-color: #ff7043; /* Lighter orange on hover */
-            box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
-        }
-        
-        /* Navigation styling */
-        nav {
-            margin-bottom: 30px;
-        }
-        nav ul {
-            list-style: none;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            padding: 0;
-            margin-top: 20px;
-        }
-        nav a {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #333a47;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        nav a:hover {
-            background-color: #ff5722;
-            box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
-        }
-        
-        /* Video container */
-        .video-container {
-            margin: 20px 0;
-            position: relative;
-            overflow: hidden;
-            padding-top: 56.25%; /* 16:9 aspect ratio */
-            border-radius: 8px;
-        }
-        
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 8px;
-        }
-        
-        /* Info boxes */
-        .info-box {
-            background-color: #333a47;
-            border-radius: 6px;
-            padding: 20px;
-            border: 1px solid #444c5c;
-            margin: 20px 0;
-        }
-        
-        .info-box h3 {
-            margin-top: 0;
-            color: #ff5722;
-        }
-        
-        .info-box p, .info-box li {
-            color: #b3b3b3;
-        }
-        
-        /* Code styling */
-        pre {
-            background-color: #161b22;
-            border-radius: 4px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 20px 0;
-        }
-        
-        code {
-            font-family: 'Courier New', Courier, monospace;
-            color: #e6e6e6;
-            background-color: #161b22;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        
-        pre code {
-            padding: 0;
-            background-color: transparent;
-        }
-        
-        /* Resources section */
-        .resource-section {
-            margin: 20px 0;
-        }
-        
-        .resource-links {
-            background-color: #333a47;
-            border-radius: 6px;
-            padding: 20px;
-            border: 1px solid #444c5c;
-        }
-        
-        .resource-links h4 {
-            color: #e6e6e6;
-            margin-top: 10px;
-            margin-bottom: 5px;
-        }
-        
-        .resource-links a {
-            color: #ff5722;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        
-        .resource-links a:hover {
-            text-decoration: underline;
-            color: #ff7043;
-        }
-        
-        /* Challenge section */
-        .challenge {
-            background-color: #2d3648;
-            border-radius: 6px;
-            padding: 20px;
-            border-left: 4px solid #ff5722;
-            margin: 20px 0;
-        }
-        
-        .challenge h3 {
-            margin-top: 0;
-            color: #ff5722;
-        }
-        
-        /* Follow-along section */
-        .follow-along {
-            background-color: #2d3648;
-            border-radius: 6px;
-            padding: 20px;
-            border-left: 4px solid #4caf50;
-            margin: 20px 0;
-        }
-        
-        .follow-along h3 {
-            margin-top: 0;
-            color: #4caf50;
-        }
-        
-        /* Media queries */
-        @media (max-width: 768px) {
-            nav ul {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-        }
-    </style>
+    <title>Module 2 - Server-Side Routing - Web Unit 4 Sprint 13</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Module 2 - Server-Side Routing with Express</h1>
+    <header>
+        <nav>
+            <div class="logo">Web Unit 4 Sprint 13</div>
+            <ul>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module-1/index.html">Module 1: Node.js & Express Basics</a>
+                        <a href="../module-2/index.html" class="active">Module 2: Server-Side Routing</a>
+                        <a href="../module-3/index.html">Module 3: Express Middleware</a>
+                        <a href="../module-4/index.html">Module 4: Deployment & Best Practices</a>
+                    </div>
+                </li>
+                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
+                <li class="dropdown">
+                    <a href="#">Resources</a>
+                    <div class="dropdown-content">
+                        <a href="../../learning-resources/important-info.html">Important Info</a>
+                        <a href="../../learning-resources/academic-support.html">Academic Support</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
 
-        <div class="section" id="objectives">
-            <h2>Objectives</h2>
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Server-Side Routing with Express Video" src="https://fast.wistia.net/embed/iframe/ievzjyq62a" width="640" height="360" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 2 - Server-Side Routing</h1>
 
-            <div class="info-box">
-                <h3>Understanding Express Routing</h3>
-                <p>Routing refers to determining how an application responds to a client request to a particular endpoint, which is a URI (or path) and a specific HTTP request method (GET, POST, etc.). Each route can have one or more handler functions, which are executed when the route is matched.</p>
-                <p>Express routing enables us to:</p>
-                <ul>
-                    <li>Organize our application based on URL paths and HTTP methods</li>
-                    <li>Execute specific code based on the client's request</li>
-                    <li>Separate concerns by breaking the application into smaller, more manageable parts</li>
-                    <li>Create a modular API with clear, predictable endpoints</li>
-                </ul>
-            </div>
+            <div class="content-box module2-accent" id="objectives">
+                <h2>Objectives</h2>
 
-            <div class="info-box">
-                <h3>Route Methods in Express</h3>
-                <p>Express provides methods that correspond to HTTP methods. The most common ones are:</p>
-                <ul>
-                    <li><code>server.get()</code> - Handle GET requests (retrieve data)</li>
-                    <li><code>server.post()</code> - Handle POST requests (create new data)</li>
-                    <li><code>server.put()</code> - Handle PUT requests (update existing data)</li>
-                    <li><code>server.delete()</code> - Handle DELETE requests (remove data)</li>
-                </ul>
-                <p>Each method takes two arguments: the route path and the callback function(s) that handle the request and response.</p>
-            </div>
+                <p>In this module, you'll learn about server-side routing in Express. Routing is a fundamental concept in web development, especially when building RESTful APIs. Proper routing helps structure your application and ensures that client requests are directed to the appropriate handlers.</p>
 
-            <div class="info-box">
-                <h3>Basic Routing Example</h3>
-                <p>Let's look at a basic example of routing in action. First, to make our Express application respond to <code>GET</code> requests on different URLs, add the following endpoints:</p>
-
-                <pre><code>// this request handler executes when making a GET request to /about
-server.get('/about', (req, res) => {
-    res.status(200).send('&lt;h1&gt;About Us&lt;/h1&gt;');
-});
-
-// this request handler executes when making a GET request to /contact
-server.get('/contact', (req, res) => {
-    res.status(200).send('&lt;h1&gt;Contact Form&lt;/h1&gt;');
-});</code></pre>
-
-                <p>Two things to note:</p>
-                <ul>
-                    <li>We use the same HTTP Method on both endpoints, but Express looks at the URL and executes the corresponding request handler.</li>
-                    <li>We can return a string with valid HTML!</li>
-                </ul>
-                <p>Open a browser and navigate to the <code>/about</code> and <code>/contact</code> routes. The appropriate route handler will execute.</p>
-            </div>
-
-            <div class="info-box">
-                <h3>HTTP Status Codes</h3>
-                <p>When responding to requests, it's important to use the appropriate HTTP status codes:</p>
-                <ul>
-                    <li><strong>200 (OK)</strong> - Standard response for successful HTTP requests, typically used for GET and PUT</li>
-                    <li><strong>201 (Created)</strong> - The request has been fulfilled and resulted in a new resource being created, typically used for POST</li>
-                    <li><strong>204 (No Content)</strong> - The server successfully processed the request, but is not returning any content, typically used for DELETE</li>
-                    <li><strong>400 (Bad Request)</strong> - The server cannot process the request due to a client error</li>
-                    <li><strong>404 (Not Found)</strong> - The requested resource could not be found</li>
-                    <li><strong>500 (Internal Server Error)</strong> - A generic error message when the server encounters an unexpected condition</li>
-                </ul>
-            </div>
-
-            <div class="follow-along">
-                <h3>Follow Along</h3>
-                <p>Let's write endpoints that execute different request handlers on the same URL by changing the HTTP method.</p>
-
-                <p>First, add a POST endpoint:</p>
-                <pre><code>// this request handler executes when making a POST request to /hobbits
-server.post('/hobbits', (req, res) => {
-    res.status(201).json({ url: '/hobbits', operation: 'POST' });
-});</code></pre>
-
-                <p>Next, add a PUT endpoint:</p>
-                <pre><code>// this request handler executes when making a PUT request to /hobbits
-server.put('/hobbits', (req, res) => {
-    res.status(200).json({ url: '/hobbits', operation: 'PUT' });
-});</code></pre>
-
-                <p>Finally, add a DELETE endpoint:</p>
-                <pre><code>// this request handler executes when making a DELETE request to /hobbits
-server.delete('/hobbits', (req, res) => {
-    res.status(204);
-});</code></pre>
-
-                <p>Note the different HTTP status codes we're using:</p>
-                <ul>
-                    <li>201 (Created) for successful POST operations</li>
-                    <li>200 (OK) for successful PUT operations</li>
-                    <li>204 (No Content) for successful DELETE operations</li>
-                </ul>
-                <p>You may have noticed that we are not reading any data from the request, as that is something we'll learn later in the module. We are about to learn how to use a tool called <code>Postman</code> to test our <code>POST</code>, <code>PUT</code>, and <code>DELETE</code> endpoints.</p>
-            </div>
-
-            <div class="info-box">
-                <h3>Testing API Endpoints</h3>
-                <p>While you can test GET requests easily in a browser, other HTTP methods (POST, PUT, DELETE) require specialized tools. Some popular options include:</p>
-                <ul>
-                    <li><strong>Postman</strong> - A powerful GUI tool for API testing</li>
-                    <li><strong>Insomnia</strong> - Another GUI-based REST client</li>
-                    <li><strong>curl</strong> - Command-line tool for transferring data with URLs</li>
-                    <li><strong>HTTPie</strong> - Human-friendly command-line HTTP client</li>
-                </ul>
-                <p>These tools allow you to craft custom HTTP requests with specific headers, body content, and parameters.</p>
-            </div>
-
-            <div class="challenge">
-                <h3>Challenge</h3>
-                <p>Add endpoints to handle <code>POST</code>, <code>PUT</code>, and <code>DELETE</code> for the <code>/users</code> route. Return a JSON response similar to what we did in the code-along.</p>
-                <p>Try implementing the following functionality:</p>
-                <ul>
-                    <li>POST to /users - Return a 201 status code and a JSON object with information about the operation</li>
-                    <li>PUT to /users - Return a 200 status code and relevant information about the update</li>
-                    <li>DELETE to /users - Return a 204 status code to indicate successful deletion with no content</li>
-                </ul>
-                <p>Test your endpoints using Postman or another API testing tool.</p>
-            </div>
-        </div>
-
-        <div class="section" id="guided-project">
-            <h2>Guided Project</h2>
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Sprint 13 Server-Side Routing with Express Video" src="https://fast.wistia.net/embed/iframe/ievzjyq62a" width="640" height="360" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-
-            <div class="resource-section">
-                <h3>Project Resources</h3>
-                <div class="resource-links">
-                    <h4>Starter Repository</h4>
-                    <p><a href="https://github.com/bloominstituteoftechnology/node-api2-guided" target="_blank" rel="noopener noreferrer">Server-Side Routing with Express</a></p>
-
-                    <h4>Solution Repository</h4>
-                    <p><a href="https://github.com/bloominstituteoftechnology/node-api2-guided-solution" target="_blank" rel="noopener noreferrer">Server-Side Routing with Express Solution</a></p>
-
-                    <h4>Optional Tools</h4>
+                <div class="note-box">
+                    <h3>Express Routing Fundamentals</h3>
                     <ul>
-                        <li><a href="https://httpie.io/" target="_blank" rel="noopener noreferrer">HTTPie</a></li>
-                        <li><a href="https://sqlitestudio.pl/" target="_blank" rel="noopener noreferrer">SQLite Studio</a></li>
+                        <li>Routing refers to how an application's endpoints (URIs) respond to client requests</li>
+                        <li>Express provides mechanisms to define routes based on HTTP methods and URL patterns</li>
+                        <li>Route handlers can perform operations and send appropriate responses</li>
+                        <li>Express allows for modular routing through the Router class</li>
                     </ul>
                 </div>
             </div>
 
-            <div class="info-box">
-                <h3>Important Notes</h3>
-                <p>The versions of project dependencies used in the recording are slightly different from the ones used in the starter and solution repositories, but this should not affect the relevant code of the Guided Project.</p>
-                <p>The versions used in the repositories are more recent, and thus more similar to the versions you will install if you create a project from scratch.</p>
-            </div>
-        </div>
+            <div class="module-cards">
+                <div class="module-card module2-accent">
+                    <h3>Guided Project</h3>
+                    <p>Learn how to implement server-side routing with Express.</p>
+                    <a href="guided-project.html" class="btn">View Guided Project</a>
+                </div>
 
-        <div class="section" id="assignment">
-            <h2>Assignment</h2>
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Module 2 Project Solution Video" src="https://fast.wistia.net/embed/iframe/ppql0uuoxi" width="640" height="360" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
+                <div class="module-card module2-accent">
+                    <h3>Assignment</h3>
+                    <p>Practice creating RESTful routes for a data-driven API.</p>
+                    <a href="assignment.html" class="btn">View Assignment</a>
+                </div>
 
-            <div class="resource-section">
-                <h3>Project Resources</h3>
-                <div class="resource-links">
-                    <h4>Starter Repository</h4>
-                    <p><a href="https://github.com/bloominstituteoftechnology/node-api2-guided" target="_blank" rel="noopener noreferrer">Server-Side Routing with Express</a></p>
-
-                    <h4>Solution Repository</h4>
-                    <p><a href="https://github.com/bloominstituteoftechnology/node-api2-guided-solution" target="_blank" rel="noopener noreferrer">Server-Side Routing with Express Solution</a></p>
+                <div class="module-card module2-accent">
+                    <h3>Objectives</h3>
+                    <p>Review the learning objectives for this module.</p>
+                    <a href="objectives.html" class="btn">View Objectives</a>
                 </div>
             </div>
-        </div>
-    </div>
+
+            <section class="resource-section">
+                <h2 class="resource-section-title">Additional Resources</h2>
+                <div class="resource-links">
+                    <a href="../../index.html" class="resource-link">
+                        Return to Home
+                    </a>
+                    <a href="https://expressjs.com/en/guide/routing.html" target="_blank" rel="noopener noreferrer" class="resource-link">
+                        Express Routing Guide
+                    </a>
+                    <a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/routes" target="_blank" rel="noopener noreferrer" class="resource-link">
+                        MDN: Express Routes
+                    </a>
+                    <a href="https://restfulapi.net/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                        RESTful API Guidelines
+                    </a>
+                </div>
+            </section>
+        </section>
+    </main>
 </body>
 </html> 

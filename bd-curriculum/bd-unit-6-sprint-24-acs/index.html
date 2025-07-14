@@ -1,287 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/style.css">
     <title>BD Unit 6 Sprint 24 - Applied Computer Science</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23;
-            color: #ffffff;
-            transition: background-color 0.3s;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: #222831;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722;
-            padding-bottom: 10px;
-            position: relative;
-        }
-        h1:after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 50px;
-            height: 2px;
-            background-color: #ff5722;
-            animation: expandWidth 1.5s ease-in-out forwards;
-        }
-        @keyframes expandWidth {
-            from { width: 50px; }
-            to { width: 100%; }
-        }
-        .tab-navigation {
-            display: flex;
-            border-bottom: 1px solid #333a47;
-            margin-bottom: 20px;
-            position: relative;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .tab-navigation::-webkit-scrollbar {
-            display: none;
-        }
-        .tab-button {
-            padding: 10px 15px;
-            background-color: transparent;
-            border: none;
-            color: #b3b3b3;
-            cursor: pointer;
-            font-size: 16px;
-            position: relative;
-            margin-right: 10px;
-            transition: color 0.3s;
-            outline: none;
-            white-space: nowrap;
-        }
-        .tab-button:hover {
-            color: #ffffff;
-        }
-        .tab-button.active {
-            color: #ff5722;
-            font-weight: 500;
-        }
-        .tab-button.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: #ff5722;
-            animation: slideIn 0.3s ease-in-out;
-        }
-        @keyframes slideIn {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-        .tab-content {
-            display: none;
-            animation: fadeContent 0.4s ease-in-out;
-        }
-        @keyframes fadeContent {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .tab-content.active {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .card {
-            margin-bottom: 20px;
-            padding: 20px;
-            border: 1px solid #333a47;
-            background-color: #2a303c;
-            border-radius: 8px;
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
-        .card:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, #ff5722, #ff9800);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-        .card:hover:after {
-            transform: scaleX(1);
-        }
-        .card h3 {
-            color: #ffffff;
-            margin-top: 0;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #333a47;
-            display: flex;
-            align-items: center;
-        }
-        .card h3::before {
-            content: '●';
-            color: #ff5722;
-            margin-right: 8px;
-            font-size: 10px;
-        }
-        .card ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .card li {
-            margin-bottom: 10px;
-        }
-        .card a {
-            color: #b3b3b3;
-            text-decoration: none;
-            display: block;
-            padding: 8px 10px;
-            border-radius: 4px;
-            transition: all 0.2s;
-            position: relative;
-            z-index: 1;
-            overflow: hidden;
-        }
-        .card a:before {
-            content: "";
-            position: absolute;
-            z-index: -1;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #333a47;
-            transform: scaleX(0);
-            transform-origin: 0 50%;
-            transition: transform 0.3s ease-out;
-            border-radius: 4px;
-        }
-        .card a:hover:before {
-            transform: scaleX(1);
-        }
-        .card a:hover {
-            color: #ff5722;
-            padding-left: 15px;
-        }
-        .resources {
-            margin-top: 40px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 8px;
-            border-left: 4px solid #ff5722;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .resources:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-        }
-        .resources h2 {
-            color: #ffffff;
-            margin-top: 0;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        .resources h2::before {
-            content: '★';
-            color: #ff5722;
-            margin-right: 10px;
-        }
-        .resources ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .resources li {
-            margin-bottom: 10px;
-            position: relative;
-            padding-left: 20px;
-        }
-        .resources li:before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: #ff5722;
-        }
-        .resources a {
-            color: #ff5722;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        .resources a:hover {
-            color: #ff7043;
-            text-decoration: underline;
-        }
-        .theme-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #ff5722;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            z-index: 10;
-            transition: transform 0.2s;
-        }
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-    </style>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Set initial active tab
             showTab('getting-started');
-            
+
             // Add event listeners to tab buttons
             document.querySelectorAll('.tab-button').forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     const tabId = this.getAttribute('data-tab');
                     showTab(tabId);
                 });
             });
-            
+
             // Add scroll to tab navigation
             const tabNav = document.querySelector('.tab-navigation');
             if (tabNav) {
-                tabNav.addEventListener('wheel', function(e) {
+                tabNav.addEventListener('wheel', function (e) {
                     if (e.deltaY !== 0) {
                         e.preventDefault();
                         this.scrollLeft += e.deltaY;
@@ -289,24 +30,24 @@
                 });
             }
         });
-        
+
         function showTab(tabId) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
-            
+
             // Remove active state from all tabs
             document.querySelectorAll('.tab-button').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
+
             // Show selected tab content
             document.querySelector(`#${tabId}`).classList.add('active');
-            
+
             // Set active state on selected tab
             document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-            
+
             // Animate cards entry
             setTimeout(() => {
                 const cards = document.querySelectorAll(`#${tabId} .card`);
@@ -323,10 +64,28 @@
         }
     </script>
 </head>
+
 <body>
+    <header>
+        <nav>
+            <div class="logo">ACS</div>
+            <ul>
+                <li><a href="#" class="active">Home</a></li>
+                <li class="dropdown">
+                    <a href="#">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="modules/module-1.html">Module 1</a>
+                        <a href="modules/module-2.html">Module 2</a>
+                        <a href="modules/module-3.html">Module 3</a>
+                        <a href="modules/module-4.html">Module 4</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
     <div class="container">
         <h1>BD Unit 6 Sprint 24 - Applied Computer Science</h1>
-        
+
         <!-- Tab Navigation -->
         <div class="tab-navigation">
             <button class="tab-button" data-tab="getting-started">Getting Started</button>
@@ -334,19 +93,19 @@
             <button class="tab-button" data-tab="career">Career Preparation</button>
             <button class="tab-button" data-tab="practice">Practice & Review</button>
         </div>
-        
+
         <!-- Getting Started Tab -->
         <div id="getting-started" class="tab-content">
             <div class="card">
                 <h3>Welcome & Overview</h3>
                 <ul>
-                    <li><a href="welcome.html">Welcome</a></li>
+                    <li><a href="./welcome.html">Welcome</a></li>
                     <li><a href="unit-overview.html">Unit Overview</a></li>
                     <li><a href="tech-requirements.html">Technical Requirements</a></li>
                     <li><a href="important-info.html">Important Information</a></li>
                 </ul>
             </div>
-            
+
             <div class="card">
                 <h3>Academic Support</h3>
                 <ul>
@@ -357,7 +116,7 @@
                 </ul>
             </div>
         </div>
-        
+
         <!-- DSA Tab -->
         <div id="dsa" class="tab-content">
             <div class="card">
@@ -365,11 +124,13 @@
                 <ul>
                     <li><a href="modules/module-1-binary-trees-i.html">Binary Trees I</a></li>
                     <li><a href="modules/module-2-binary-trees-ii.html">Binary Trees II</a></li>
-                    <li><a href="guided_projects/guided-project-binary-trees-i.html">Guided Project: Binary Trees I</a></li>
-                    <li><a href="guided_projects/guided-project-binary-trees-ii.html">Guided Project: Binary Trees II</a></li>
+                    <li><a href="guided_projects/guided-project-binary-trees-i.html">Guided Project: Binary Trees I</a>
+                    </li>
+                    <li><a href="guided_projects/guided-project-binary-trees-ii.html">Guided Project: Binary Trees
+                            II</a></li>
                 </ul>
             </div>
-            
+
             <div class="card">
                 <h3>Graphs</h3>
                 <ul>
@@ -382,19 +143,22 @@
                     <li><a href="guided_projects/guided-project-graphs-iii.html">Guided Project: Graphs III</a></li>
                 </ul>
             </div>
-            
+
             <div class="card">
                 <h3>Other Data Structures</h3>
                 <ul>
                     <li><a href="modules/module-2-stacks-and-queues.html">Stacks and Queues</a></li>
                     <li><a href="modules/module-1-linked-lists-ii.html">Linked Lists II</a></li>
                     <li><a href="modules/module-3-hash-tables-ii.html">Hash Tables II</a></li>
-                    <li><a href="guided_projects/guided-project-stacks-and-queues.html">Guided Project: Stacks & Queues</a></li>
-                    <li><a href="guided_projects/guided-project-linked-lists-ii.html">Guided Project: Linked Lists II</a></li>
-                    <li><a href="guided_projects/guided-project-hash-tables-ii.html">Guided Project: Hash Tables II</a></li>
+                    <li><a href="guided_projects/guided-project-stacks-and-queues.html">Guided Project: Stacks &
+                            Queues</a></li>
+                    <li><a href="guided_projects/guided-project-linked-lists-ii.html">Guided Project: Linked Lists
+                            II</a></li>
+                    <li><a href="guided_projects/guided-project-hash-tables-ii.html">Guided Project: Hash Tables II</a>
+                    </li>
                 </ul>
             </div>
-            
+
             <div class="card">
                 <h3>Algorithms</h3>
                 <ul>
@@ -405,11 +169,12 @@
                     <li><a href="guided_projects/guided-project-sorting-i.html">Guided Project: Sorting I</a></li>
                     <li><a href="guided_projects/guided-project-sorting-ii.html">Guided Project: Sorting II</a></li>
                     <li><a href="guided_projects/guided-project-searching.html">Guided Project: Searching</a></li>
-                    <li><a href="guided_projects/guided-project-introduction-to-recursion.html">Guided Project: Recursion</a></li>
+                    <li><a href="guided_projects/guided-project-introduction-to-recursion.html">Guided Project:
+                            Recursion</a></li>
                 </ul>
             </div>
         </div>
-        
+
         <!-- Career Tab -->
         <div id="career" class="tab-content">
             <div class="card">
@@ -421,7 +186,7 @@
                     <li><a href="career-artifacts-submission-process.html">Career Artifacts Submission</a></li>
                 </ul>
             </div>
-            
+
             <div class="card">
                 <h3>Technical Interview Prep</h3>
                 <ul>
@@ -432,7 +197,7 @@
                 </ul>
             </div>
         </div>
-        
+
         <!-- Practice Tab -->
         <div id="practice" class="tab-content">
             <div class="card">
@@ -441,10 +206,11 @@
                     <li><a href="practice/practice-binary-trees-and-searching.html">Binary Trees & Searching</a></li>
                     <li><a href="practice/practice-graphs.html">Graphs</a></li>
                     <li><a href="practice/practice-sorting-and-hash-tables.html">Sorting & Hash Tables</a></li>
-                    <li><a href="practice/practice-linked-lists-stacks-and-queues-recursion.html">Linked Lists, Stacks, Queues & Recursion</a></li>
+                    <li><a href="practice/practice-linked-lists-stacks-and-queues-recursion.html">Linked Lists, Stacks,
+                            Queues & Recursion</a></li>
                 </ul>
             </div>
-            
+
             <div class="card">
                 <h3>GCA Practice Tests</h3>
                 <ul>
@@ -454,7 +220,7 @@
                     <li><a href="sprint-32-take-practice-gca-test.html">Sprint 32 Practice GCA</a></li>
                 </ul>
             </div>
-            
+
             <div class="card">
                 <h3>Technical Reviews</h3>
                 <ul>
@@ -464,16 +230,37 @@
                 </ul>
             </div>
         </div>
-        
+
+        <div class="card">
+            <h2>Welcome to ACS 3!</h2>
+            <p>In this sprint, you will continue to improve upon your programming and problem-solving skills.</p>
+
+            <p>You are one step closer to being career ready! In this sprint, the career artifact focus is on building
+                your resume. Even if you already have a resume, it is critical that you re-create it using the resume
+                template provided.</p>
+
+            <h3>Tips on how to succeed in this sprint:</h3>
+            <ul>
+                <li>Watch all the lessons and guided projects</li>
+                <li>Attend ACS Live Classes</li>
+                <li>Complete all practice activities in each module</li>
+                <li>Take the official General Code Assessment (GCA)</li>
+                <li>Build your resume using the BloomTech resume template</li>
+            </ul>
+        </div>
+
         <div class="resources">
             <h2>Additional Resources</h2>
             <ul>
-                <li><a href="what-is-codesignal-and-how-to-create-your-account.html">What is CodeSignal and How to Create Your Account</a></li>
-                <li><a href="https://app.codesignal.com/" target="_blank" rel="noopener">CodeSignal Platform</a></li>
-                <li><a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a></li>
+                <li><a href="what-is-codesignal-and-how-to-create-your-account.html">What is CodeSignal and How to
+                        Create Your Account</a></li>
+                <li><a href="https://app.codesignal.com/" target="_blank" rel="noopener noreferrer">CodeSignal
+                        Platform</a></li>
+                <li><a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
                 <li><a href="next-step.html">Next Steps</a></li>
             </ul>
         </div>
     </div>
 </body>
-</html> 
+
+</html>

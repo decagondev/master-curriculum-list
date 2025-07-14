@@ -1,243 +1,432 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3: Static Methods - BD Unit 3 Sprint 11</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1d23;
-            color: #ffffff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #222831;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            margin: 0;
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff5722;
-            padding-bottom: 10px;
-        }
-        .module {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #333a47;
-            background-color: #2a303c;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-        }
-        .module h2 {
-            color: #ffffff;
-            margin-top: 0;
-        }
-        .module p {
-            color: #b3b3b3;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
-        .video-container {
-            margin: 20px 0;
-        }
-        .video-container iframe {
-            max-width: 100%;
-            border-radius: 4px;
-            width: 100%;
-            height: 360px;
-        }
-        .resources {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #2a303c;
-            border-radius: 4px;
-            border-left: 4px solid #ff5722;
-        }
-        .resources h2, .resources h3 {
-            color: #ffffff;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .resources ul {
-            list-style-type: none;
-            padding: 0;
-            color: #b3b3b3;
-        }
-        .resources li {
-            margin-bottom: 10px;
-        }
-        .resources a {
-            color: #ff5722;
-            text-decoration: none;
-        }
-        .resources a:hover {
-            text-decoration: underline;
-            color: #ff7043;
-        }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background-color: #2a303c;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .back-button:hover {
-            background-color: #333a47;
-        }
-        section {
-            margin-bottom: 30px;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
-    <div class="container">
-        <a href="../../index.html" class="back-button">← Back to Home</a>
-        
-        <h1>Module 3: Static Methods</h1>
-        
-        <div class="module">
-            <h2>Module Overview</h2>
-            <p>Understand static methods, when to use them, and how to properly test code that uses static methods.</p>
-        </div>
-        
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Sprint 11 Statics Video" src="https://fast.wistia.net/embed/iframe/hor8ldlfvz" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-        </div>
-
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Introduction to Lists Video" src="https://fast.wistia.net/embed/iframe/k0a1uhmsli" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
-        </div>
-
-        <div class="video-container">
-            <iframe class="wistia_embed" title="Static Variables and Constants Video" src="https://fast.wistia.net/embed/iframe/2uh09yudsa" width="100%" height="360" name="wistia_embed" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" loading="lazy"></iframe>
-        </div>
-
-        <section>
-            <div class="content-explanation">
-                <h3>Understanding Static Methods and Testing</h3>
-                <p>Static methods in Java belong to the class rather than instances of the class. They can be called directly on the class without creating an object. While convenient, static methods present unique challenges for testing.</p>
-                <p>This module explores the proper use of static methods, static variables, and how to test code that relies on static functionality.</p>
-                <pre><code>// Example of a static utility method
-public class MathUtils {
-    public static int add(int a, int b) {
-        return a + b;
-    }
-}
-
-// Using the static method
-int sum = MathUtils.add(5, 3); // Returns 8
-</code></pre>
-            </div>
-        </section>
-
-        <section>
-            <h2>Learning Objectives</h2>
-            <ul style="color: #b3b3b3; padding-left: 20px;">
-                <li>Understand the purpose and use cases for static methods</li>
-                <li>Learn the differences between static and instance methods</li>
-                <li>Master static variable usage and lifecycle</li>
-                <li>Practice testing code that contains static methods</li>
-                <li>Implement effective strategies for mocking static methods</li>
-                <li>Use static methods from other classes to implement solutions</li>
-                <li>Design and implement classes with constants</li>
-                <li>Understand the limitations and advantages of static methods</li>
-                <li>Learn when to use static methods versus instance methods</li>
-                <li>Apply best practices for testing code with static dependencies</li>
-            </ul>
-        </section>
-
-        <section>
-            <div class="content-explanation">
-                <h3>Testing Static Methods</h3>
-                <p>Testing code that uses static methods requires special techniques:</p>
-                <ul>
-                    <li><strong>Mockito (newer versions):</strong> Can mock static methods with the MockedStatic feature</li>
-                    <li><strong>PowerMock:</strong> Used with older Mockito versions to mock static methods</li>
-                    <li><strong>Refactoring:</strong> Sometimes the best approach is to change the design to avoid static dependencies</li>
-                </ul>
-                <pre><code>// Example of testing with static mocking (Mockito 3.4.0+)
-@Test
-public void testStaticMethod() {
-    // Given
-    try (MockedStatic&lt;DateUtils&gt; mockedStatic = mockStatic(DateUtils.class)) {
-        // Setup static mock behavior
-        mockedStatic.when(() -> DateUtils.getCurrentDate()).thenReturn("2023-04-15");
-        
-        // When
-        String result = myService.getFormattedCurrentDate();
-        
-        // Then
-        assertEquals("Current date: 2023-04-15", result);
-        
-        // Verify static method was called
-        mockedStatic.verify(() -> DateUtils.getCurrentDate());
-    }
-}</code></pre>
-            </div>
-        </section>
-
-        <section>
-            <div class="content-explanation">
-                <h3>Constants and Refactoring</h3>
-                <p>Static final fields (constants) provide a way to share immutable values across your application:</p>
-                <pre><code>public class AppConstants {
-    // Constants are typically uppercase with underscores
-    public static final int MAX_LOGIN_ATTEMPTS = 5;
-    public static final String API_VERSION = "v1.2";
-    public static final double TAX_RATE = 0.07;
-}
-
-// Using constants
-if (loginAttempts >= AppConstants.MAX_LOGIN_ATTEMPTS) {
-    lockAccount();
-}</code></pre>
-                <p>When refactoring to improve testability, consider dependency injection to replace static dependencies:</p>
-                <pre><code>// Before refactoring
-public class WeatherService {
-    public String getTemperature(String city) {
-        return WeatherAPI.getCurrentTemperature(city);
-    }
-}
-
-// After refactoring
-public class WeatherService {
-    private final WeatherAPI weatherAPI;
-    
-    public WeatherService(WeatherAPI weatherAPI) {
-        this.weatherAPI = weatherAPI;
-    }
-    
-    public String getTemperature(String city) {
-        return weatherAPI.getCurrentTemperature(city);
-    }
-}</code></pre>
-            </div>
-        </section>
-
-        <div class="resources">
-            <h2>Resources</h2>
+    <header>
+        <nav>
+            <div class="logo">BD Unit 3 Sprint 11</div>
             <ul>
-                <li><a href="https://github.com/BloomTechBackend/bd-static-methods-example" target="_blank" rel="noopener">Static Methods Repository</a></li>
-                <li><a href="https://www.baeldung.com/mockito-mock-static-methods" target="_blank" rel="noopener">Mocking Static Methods with Mockito - Baeldung</a></li>
-                <li><a href="https://javarevisited.blogspot.com/2011/12/static-keyword-method-variable-java.html" target="_blank" rel="noopener">Understanding static keyword in Java</a></li>
-                <li><a href="https://github.com/powermock/powermock" target="_blank" rel="noopener">PowerMock Documentation</a></li>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="active">Modules</a>
+                    <div class="dropdown-content">
+                        <a href="../module1/index.html">Module 1: Mocking 1</a>
+                        <a href="../module2/index.html">Module 2: Mocking 2</a>
+                        <a href="../module3/index.html" class="active">Module 3: Static Methods</a>
+                        <a href="../module4/index.html">Module 4: AWS Lambda</a>
+                    </div>
+                </li>
+                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
-        </div>
-    </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="welcome">
+            <h1>Module 3: Static Methods</h1>
+
+            <div class="content-box">
+                <h2>Module Overview</h2>
+                <p>Understand static methods, when to use them, and how to properly test code that uses static methods.
+                </p>
+            </div>
+
+            <div class="video-container">
+                <iframe class="wistia_embed" title="Sprint 11 Static Methods Video"
+                    src="https://fast.wistia.net/embed/iframe/k0a1uhmsli" width="100%" height="360" name="wistia_embed"
+                    allow="fullscreen" loading="lazy"></iframe>
+            </div>
+
+            <div class="content-box">
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Understand static methods and their use cases</li>
+                    <li>Learn when static methods are appropriate and when to avoid them</li>
+                    <li>Recognize the testing challenges presented by static methods</li>
+                    <li>Explore techniques for testing code that uses static methods</li>
+                    <li>Master PowerMock for mocking static methods in tests</li>
+                    <li>Refactor code to improve testability by reducing static method dependencies</li>
+                    <li>Learn to use dependency injection to make code with static dependencies more testable</li>
+                    <li>Understand testing strategies for wrapper classes around static methods</li>
+                    <li>Apply best practices for testing date/time and random number utilities</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h2>Introduction to Static Methods</h2>
+
+                <p>In this reading, we'll review instance methods and introduce static methods, which are declared using
+                    the keyword, static. We'll also go over common uses of static methods and potential tradeoffs.</p>
+
+                <h3>Instance methods</h3>
+                <p>As you've previously learned, a class can be thought of as a blueprint from which individual objects
+                    are created. Each object is an instance of that class in memory.</p>
+
+                <p>A class defines the type of attributes each object will have. An Employee class might contain
+                    attributes such as jobTitle and level. Each object will contain values for these attributes. An SDE
+                    at Amazon might have the values "SDE I" and 4 set as their job title and level, while a product
+                    manager might have the values "Project Manager" and 5 set as their job title and level. We often
+                    refer to these as instance variables, as each instance of a class will have these variables.</p>
+
+                <p>A class also defines the behaviors each object will have. We call these methods. The methods of a
+                    class typically update, return, or act upon the instance variables we described above. Let's
+                    consider a getter method in our Employee class, getLevel(). Each instance of a class will return a
+                    value unique to its instance variable, level. So, these methods are often referred to as instance
+                    methods.</p>
+
+                <p>Consider the code below that updates the levels of two Employee objects.</p>
+
+                <pre><code>Employee sdeI = new Employee("SDE I", 4);
+sdeI.setLevel(5);
+
+Employee productManager = new Employee("Project", 6);
+productManager.setLevel(7);</code></pre>
+
+                <p>Each object is updated using the instance method setLevel(). Each Employee's level instance variable
+                    will be updated in memory.</p>
+
+                <h3>Static methods</h3>
+                <p>A static method is a class method that does not update, return, or act upon instance variables. It
+                    contains logic that is common to all instances of a class. For example, you may have methods that
+                    accept an argument and return a result but do not change the value of any instance variables. These
+                    types of methods are known as utility or conversion methods. These are often referred to as being
+                    stateless, meaning that they don't change or rely on any internal state.</p>
+
+                <p>Static methods can be identified by looking for the keyword static in their method headers. A static
+                    method you may have seen before is String's valueOf() method, which returns the string
+                    representation of the argument passed in. Its method header looks like this:</p>
+
+                <pre><code>public static String valueOf(int i)</code></pre>
+
+                <h4>Calling a static method</h4>
+                <p>A static method is invoked by calling the method on the class rather than on an object of the class.
+                    For example, the call to String's valueOf() below is called on the class, String, rather than on a
+                    particular instance:</p>
+
+                <pre><code>int intVersion = 24;
+String stringVersion = String.valueOf(intVersion);</code></pre>
+
+                <p>In comparison, the call to String's length() instance method is called on an object of type String:
+                </p>
+
+                <pre><code>int intVersion = 24;
+String stringVersion = String.valueOf(intVersion);
+int stringLength = stringVersion.length();</code></pre>
+
+                <p>This is because length() needs information specific to the stringVersion object.</p>
+
+                <h4>Uses of static methods</h4>
+                <p>What's the benefit of using a static method instead of an instance method? First, many methods that
+                    you'd like to use are defined as static methods. Take a look at the Java Collections utility class,
+                    for example. It has a bunch of useful utility methods that are all declared static. (You can't
+                    instantiate a Collections object even if you wanted to!) You can call a static method even when no
+                    instance exists.</p>
+
+                <p>In your own code, if a method doesn't make use of any instance members of a class (i.e. mutating the
+                    state of the instance), ask yourself:</p>
+
+                <ul>
+                    <li>Does it make sense for the method to be part of this class?</li>
+                    <li>Does it relate very specifically to this class?</li>
+                    <li>Does it provide a tool that's important to have available when working with this class?</li>
+                </ul>
+
+                <p>If the answers are "yes", then you might consider making that method a static method.</p>
+
+                <h4>Utility methods</h4>
+                <p>Utility methods, which we described above as methods that take an argument and return a result but do
+                    not change the internal state of any instance, are the most common usage of static methods. You've
+                    probably seen some of them before, such as Math.random() and Integer.toString(int j). Math is an
+                    example of a utility class, which is a class that contains related static methods (like
+                    Math.random()) that can be reused across the application. These utility methods perform an operation
+                    that is related to the class and provide necessary functionality, but don't specifically require an
+                    instance of the class.</p>
+
+                <h4>Alternative constructors</h4>
+                <p>Static methods can also be used as an alternative to constructors. These static methods return a new
+                    object of the same type as the class they are defined in. For example, String.valueOf(int i), is a
+                    way of creating a new String object.</p>
+
+                <p>Unlike constructors, these methods have names. We can tell from the method name, that the valueOf(int
+                    i) method is going to parse its parameter and create a new String object with the value.</p>
+
+                <h4>Tradeoffs of static methods</h4>
+                <p>There are also some tradeoffs and potentially incorrect situations to use static methods.</p>
+
+                <p>Static methods can access other static methods directly, but static methods cannot access instance
+                    methods or instance variables. If you attempt to, the Java compiler will generate the error:
+                    "non-static variable [variable name] cannot be referenced from a static context."</p>
+
+                <p>It's also important to understand the structure of your classes before creating a static method.
+                    Static methods can't be overridden by subclasses, so they can't be called polymorphically -- you'll
+                    learn about subclasses and polymorphism in a future lesson.</p>
+
+                <p>Static methods can create issues with testing. It's possible to mock out a static method call, but
+                    the associated tools are fragile and updates to Java can break these tests. So, we won't typically
+                    mock static method calls. You'll learn more about mocking in tests in a later unit.</p>
+
+                <h4>Our recommendations</h4>
+                <p>We recommend going ahead and calling static methods that are useful to you, particularly factory
+                    methods and utility class methods. Often a library you are using only exposes static methods, so go
+                    ahead and use them in that case as well. Outside these cases, don't go out of your way to use static
+                    methods, especially if you might want to mock that method's behavior in your tests.</p>
+
+                <p>Similarly, we only recommend creating a static method if you're implementing the factory pattern or
+                    creating a utility class. In those cases, the classes should only have static methods and should be
+                    declared final (this means they can't be subclassed---more in a future lesson).</p>
+            </div>
+
+            <div class="content-box">
+                <h3>Static Variables and Constants</h3>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Sprint 11 Static Methods Video"
+                        src="https://fast.wistia.net/embed/iframe/2uh09yudsa" width="100%" height="360"
+                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
+                </div>
+
+                <p>In the previous reading, you learned about static methods and their uses. In this reading, you will
+                    learn how the static keyword applies to variables, especially for creating constants.</p>
+
+                <h4>Static variables</h4>
+                <p>Static methods are methods that are associated with a class rather than an object instance. Can we do
+                    something similar with a variable, associate it with a class rather than an instance? Yes, we can!
+                    This is called a static variable. A static variable is associated with a class and shared by all
+                    instances of a class. The value can be used by any instance of the class.</p>
+
+                <p>Like instance variables, static variables can be initialized either in the declaration or later in
+                    the class. A static variable is declared in the following way:</p>
+
+                <pre><code>private static long employeeCount = 0;</code></pre>
+
+                <p>A static variable contains a single value across all instances so modifying its value affects every
+                    instance. Each time we create a new Employee object the constructor might increment this value.</p>
+
+                <p>We can run into trouble sharing a modifiable variable like this. We'll cover this more when we get to
+                    concurrency in a later unit. For now, we'll show you a way to share an unmodifiable shared variable.
+                </p>
+
+                <h4>Static final variables (constants)</h4>
+                <p>A common use of a static variable is as a constant. A constant is a variable whose value should not
+                    and cannot be reassigned during the program execution. Constants should be immutable objects,
+                    meaning that the objects' data cannot change after construction, but they aren't guaranteed to be. A
+                    static final variable that points to a mutable object is almost always a bad design decision and
+                    should be avoided. You'll typically see constants that are Strings or primitive data types. The
+                    exception to this is in unit test classes. SDEs often create constants of complex types to be shared
+                    in the test methods.</p>
+
+                <p>Constants are declared in Java using the keywords static and final:</p>
+
+                <pre><code>private static final int MIMIMUM_REQUIRED_CHOCOLATE_CHIPS = 5;</code></pre>
+
+                <p>The final keyword means that we can never assign a new value to the variable during the program
+                    execution. It is a common convention that the variable name for constants is in all caps with words
+                    separated by underscores. This naming format is enforced by ATA's checkstyle and is a best practice,
+                    but it is not actually enforced by the Java compiler itself.</p>
+
+                <p>Constants are meant to represent variables that universally have one value that won't change, such as
+                    scientific constants (i.e. earth's gravity = 9.81 meters per second) or the maximum value of
+                    resources available during execution (e.g. max open files = 50). Java, for example, provides the
+                    value of pi in the Math utility class which can be accessed with Math.PI.</p>
+
+                <h4>Public vs. private</h4>
+                <p>Like any other variable in Java, a static constant can be declared as public or private. Private
+                    constants are accessible only by the class they're declared in. This is a safe usage of constants
+                    because the scope of its usage is very narrow.</p>
+
+                <p>Public constants should be used carefully. A public static constant can be referenced by any class
+                    throughout the entire program, just like a public instance variable. If the value is updated it
+                    could have far reaching and unexpected repercussions in the classes using it. If you're declaring a
+                    public static constant, be careful to only declare values that would never change, such as
+                    scientific/mathematic constants that you know will always have the same value.</p>
+
+                <h4>Our recommendations</h4>
+                <ul>
+                    <li>Try not to create (non-final) static variables if you can avoid them. If you have a compelling
+                        use case for it, make them private.</li>
+                    <li>Create constants as you wish. Determine if they need to be accessed from outside the class and
+                        if not make them private.</li>
+                    <li>Think twice about using a mutable object as a static final constant. This goes against the
+                        definition of a constant.</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h3>Understanding Static Methods</h3>
+                <p>Static methods belong to a class, not to instances of that class. They can be called without creating
+                    an object of the class and are commonly used for utility functions or operations that don't require
+                    object state.</p>
+                <p>While static methods are useful in many scenarios, they present unique challenges for testing
+                    because:</p>
+                <ul>
+                    <li>They cannot be overridden like instance methods</li>
+                    <li>Dependencies are typically hard-coded within the method</li>
+                    <li>Standard mocking frameworks don't work with static methods by default</li>
+                </ul>
+                <pre><code>// Example of a static method
+public class DateUtils {
+    public static LocalDate getCurrentDate() {
+        return LocalDate.now();
+    }
+    
+    public static boolean isWeekend(LocalDate date) {
+        DayOfWeek day = date.getDayOfWeek();
+        return day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY;
+    }
+}</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h3>Testing Static Methods</h3>
+                <p>There are several approaches to testing code that uses static methods:</p>
+                <ol>
+                    <li><strong>Using PowerMock:</strong> Directly mock static method calls (more complex setup)</li>
+                    <li><strong>Wrapper Classes:</strong> Create instance-based wrappers around static utilities</li>
+                    <li><strong>Dependency Injection:</strong> Pass in utilities as dependencies</li>
+                    <li><strong>Design for Testability:</strong> Refactor to avoid direct static dependencies</li>
+                </ol>
+                <pre><code>// Example using PowerMock to mock a static method
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(DateUtils.class)
+public class WeekendPricingTest {
+
+    @Test
+    public void calculatePrice_onWeekend_appliesWeekendSurcharge() {
+        // GIVEN
+        LocalDate saturday = LocalDate.of(2023, 7, 15);
+        PowerMockito.mockStatic(DateUtils.class);
+        when(DateUtils.getCurrentDate()).thenReturn(saturday);
+        when(DateUtils.isWeekend(saturday)).thenReturn(true);
+        
+        WeekendPricing pricing = new WeekendPricing();
+        
+        // WHEN
+        double price = pricing.calculatePrice(100);
+        
+        // THEN
+        assertEquals(120, price, 0.01); // Expecting 20% weekend surcharge
+    }
+}</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h3>Designing for Testability</h3>
+                <p>The most maintainable solution is often to design your code to minimize direct static dependencies:
+                </p>
+                <pre><code>// Before: Hard to test due to static dependency
+public class WeekendPricing {
+    public double calculatePrice(double basePrice) {
+        if (DateUtils.isWeekend(DateUtils.getCurrentDate())) {
+            return basePrice * 1.2; // 20% weekend surcharge
+        }
+        return basePrice;
+    }
+}
+
+// After: Improved testability with dependency injection
+public class WeekendPricing {
+    private final DateProvider dateProvider;
+    
+    public WeekendPricing(DateProvider dateProvider) {
+        this.dateProvider = dateProvider;
+    }
+    
+    public double calculatePrice(double basePrice) {
+        if (dateProvider.isWeekend(dateProvider.getCurrentDate())) {
+            return basePrice * 1.2; // 20% weekend surcharge
+        }
+        return basePrice;
+    }
+}
+
+// Simple interface that can be mocked
+public interface DateProvider {
+    LocalDate getCurrentDate();
+    boolean isWeekend(LocalDate date);
+}
+
+// Default implementation uses static methods
+public class DefaultDateProvider implements DateProvider {
+    @Override
+    public LocalDate getCurrentDate() {
+        return LocalDate.now();
+    }
+    
+    @Override
+    public boolean isWeekend(LocalDate date) {
+        DayOfWeek day = date.getDayOfWeek();
+        return day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY;
+    }
+}</code></pre>
+            </div>
+
+            <div class="content-box">
+                <h2>Practice</h2>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-statics-shipping" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
+                        Shipping
+                    </a>
+                    <a href="https://github.com/BloomTechBackend/bd-statics-restaurant" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
+                        Restaurant
+                    </a>
+                    <a href="https://github.com/BloomTechBackend/bd-statics-fulfillment" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
+                        Fulfillment
+                    </a>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <h2>Guided Project</h2>
+
+                <div class="video-container">
+                    <iframe class="wistia_embed" title="Guided Project Video"
+                        src="https://fast.wistia.net/embed/iframe/hor8ldlfvz" width="100%" height="360"
+                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
+                </div>
+
+                <div class="resource-links">
+                    <a href="https://github.com/BloomTechBackend/bd-playing-cards-redux" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
+                        Playing Card
+                    </a>
+                </div>
+            </div>
+
+            <section class="resource-section">
+                <h2 class="resource-section-title">Resources</h2>
+                <div class="resource-links">
+                    <a href="https://github.com/powermock/powermock" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
+                        PowerMock GitHub Repository
+                    </a>
+                    <a href="https://www.baeldung.com/intro-to-powermock" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
+                        Introduction to PowerMock - Baeldung
+                    </a>
+                    <a href="https://www.baeldung.com/mockito-mock-static-methods" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
+                        Mocking Static Methods with Mockito - Baeldung
+                    </a>
+                    <a href="https://martinfowler.com/articles/mocksArentStubs.html" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
+                        Mocks Aren't Stubs - Martin Fowler
+                    </a>
+                </div>
+            </section>
+        </section>
+    </main>
 </body>
-</html> 
+
+</html>
