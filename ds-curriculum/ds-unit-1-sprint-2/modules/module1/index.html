@@ -58,6 +58,166 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - Explain the Purpose of a t-test and Identify Applications</h2>
+            <h3>Overview</h3>
+            <p>
+                Before we learn about t-tests, we should cover some more basic information about the concept of
+                hypothesis testing first. When interpreting our data or results, we want to confirm or reject an
+                assumption about that data or result. This assumption can also be called a hypothesis. So, before we
+                interpret our results (hopefully), we will have stated our hypothesis. Then, we need to test it to
+                determine at what confidence level we know our results. Hypothesis tests are also known as significance
+                tests, meaning we want to know how significant our result is.
+            </p>
+            <p>
+                When we use statistical methods to test our hypothesis, we're conducting a statistical hypothesis test.
+                There are several different statistical tests we can do. For this objective, we're going to be focusing
+                on t-tests. They make use of a statistical distribution called the Student's t-distribution.
+            </p>
+            <p>
+                But, before we get into the t-distribution, a refresher of the normal distribution will be helpful.
+            </p>
+
+            <h3>Normal distribution</h3>
+            <p>
+                The normal probability distribution comes up very frequently in the study of probability and statistics.
+                A variable that has a normal distribution is one where the mean = median = mode. A normal distribution
+                is theoretical, which means that in nature, nothing will strictly follow this distribution. But many
+                variables approximate to it, such as the height of adult humans, birth weight of human babies, height of
+                the same variety of pine trees.
+            </p>
+            <p>
+                The normal distribution is known as a bell curve because it has the shape of a bell. Using the numpy
+                normal distribution, we can draw a sample population with a specified mean (center point of the "bell")
+                and standard deviation (width or "spread" of the curve), and plot it.
+            </p>
+            <pre><code>import seaborn as sns
+import matplotlib.pyplot as plt
+
+# The mean of a normal distribution can be any value
+# (we're using 0 for plotting nicely and to see the symmetry)
+mean = 0
+
+# The width of the normal distribution is set by the standard deviation
+sigma = 1
+
+# Create a sample drawn from the normal distribution
+sample = np.random.normal(loc=mean, scale=sigma, size=1000)
+
+# Create the fig and axes object and plot
+fig, ax = plt.subplots(figsize=(8,8))
+ax = sns.displot(sample)
+ax.set_titles('The normal distribution', fontsize=16)
+
+fig.clf()
+</code></pre>
+            <img src="download.png" alt="Normal distribution plot" loading="lazy">
+            <p>
+                In the plot, we can see a nice bell shape, centered on the mean we specified as 0 and with a standard
+                deviation of the sample equal to 1.
+            </p>
+
+            <h3>The z-score</h3>
+            <p>
+                In statistics, we also use something called the z-score. Say, for example, you take a value at random
+                from the distribution above. We can calculate a z-score for that value which describes its position in
+                terms of the distance from the mean when measured in standard deviation units. Z-scores may be positive
+                or negative, with a positive value indicating the score is above the mean and a negative score below the
+                mean. For example, a z-score of 1 means the value you chose is one standard deviation from the mean.
+            </p>
+
+            <h3>The t-values and t-tests</h3>
+            <p>
+                In some situations, we have to draw a sample from a population whose mean is unknown. What if for the
+                normal distribution plotted above, and we had set the mean equal to one?
+            </p>
+            <p>
+                In such scenarios, we use the sample's mean instead. When we use the mean of the sample and not the mean
+                of the population from which we drew the sample, we calculate the t-value. This value is similar to the
+                z-score but we use the mean of the sample instead of the population to calculate it.
+            </p>
+            <p>
+                A t-test is based on a t-value. When you perform a t-test for a single study, you obtain a single
+                t-value. If you drew lots of random samples of the same size from the same population, performed a
+                t-test each time (to obtain a t-value), you could then plot a distribution of all the t-values. This
+                type of distribution is called a sampling distribution and, in this case, a t-distribution.
+            </p>
+            <p>
+                Thanks to math and statisticians, the properties of t-distributions are well understood, so we can plot
+                them without having to draw samples, calculate the t-value, etc. A specific t-distribution is defined by
+                its degrees of freedom (dof), with a sample size-1. So there is a whole "family" of t-distributions for
+                every sample size. For large samples size (n &gt; 120), the shape of the t-distribution is almost
+                identical to the normal distribution. For smaller sample sizes, the t-distribution is much flatter in
+                the middle. In the next section, we'll look at the t-distribution graphically.
+            </p>
+
+            <h3>When to use a t-test?</h3>
+            <p>
+                There are a few situations where using a t-test is useful. In this lesson, we will be focusing on two:
+            </p>
+            <h4>One-sample t-test</h4>
+            <p>
+                One of the most common one-sample t-tests is to determine the statistical difference between a sample
+                mean and a known or hypothesized value of the mean in the population. For example, say we want to
+                compare the average Netflix watching time for a specific group of viewers, such as ages 5-12 (mean value
+                of the sample), and compare it to the average Netflix time for the US population (mean value for the
+                population from the sample ). Then, we perform a t-test to determine how effective the mean of the
+                sample is in comparison to the general population - does this age group watch significantly more or less
+                Netflix? Or is it not statistically different?
+            </p>
+            <h4>Two-sample t-test (also called an independent t-test)</h4>
+            <p>
+                A two-sample t-test is helpful if we want to compare the mean of two samples and determine if a property
+                is true. example, say you want to know if the mean petal length of iris flowers differs according to
+                their species. So you measure 25 petals of each species and then test the difference between these two
+                groups using a t-test.
+            </p>
+
+            <h3>Follow Along</h3>
+            <p>
+                We've covered the concepts of distributions and t-values. Now, we can look at some graphical
+                representations of these distributions. In the following plot, we created t-distributions with varying
+                degrees of freedom. We can see that the t-distribution with the smallest number of degrees of freedom is
+                flatter in the middle and "wider" on the sides. As the sample size increases (degrees of freedom
+                increase), the t-distribution approaches the normal distribution (plotted in black).
+            </p>
+            <pre><code># Import the libraries
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create the t-distributions
+t_df10 = np.random.standard_t(df=10, size=100)
+t_df100 = np.random.standard_t(df=100, size=1000)
+t_df1000 = np.random.standard_t(df=1000, size=10000)
+
+# Create the normal distribution
+s = np.random.normal(size=10000)
+
+# Create the figure and axes objects and plots
+fig, ax = plt.subplots(1)
+
+# Plot t-distributions
+ax = sns.kdeplot(t_df10, color='r');
+ax = sns.kdeplot(t_df100, color='y');
+ax = sns.kdeplot(t_df1000, color='b');
+
+# Plot normal distributions
+sns.kdeplot(s, color='k');
+</code></pre>
+            <img src="download (1)-1.png" alt="t-distribution plot" loading="lazy">
+
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.standard_t.html"
+                        target="_blank" rel="noopener noreferrer">NumPy Standard t-distribution</a></li>
+                <li><a href="https://blog.minitab.com/blog/adventures-in-statistics-2/understanding-t-tests-t-values-and-t-distributions"
+                        target="_blank" rel="noopener noreferrer">Understanding t-Tests: t-values and
+                        t-distributions</a></li>
+            </ul>
+        </section>
+
+        <!-- Guided Project -->
+        <section class="content-box">
             <h2>Guided Project</h2>
             <p>Open <strong>DS_121_ttests_confidence_intervals.ipynb</strong> in the GitHub repository below to follow
                 along with the guided project:</p>
