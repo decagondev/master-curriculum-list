@@ -363,33 +363,27 @@ Level 2:   E      F    G
                         <div class="space-y-4">
                             <h3 class="text-xl font-medium text-primary">Basic BFS Implementation</h3>
                             <div class="code-block">
-                                <pre><code>/**
- * Performs a breadth-first search on a graph starting from a given vertex
- * @param {Object} graph - Adjacency list representation of the graph
- * @param {string|number} start - The starting vertex
- * @returns {Object} - Contains parent pointers and distances from start
- */
-function bfs(graph, start) {
-    const queue = [start];
-    const visited = new Set([start]);
-    const parent = new Map();
-    const distance = new Map([[start, 0]]);
-
-    while (queue.length > 0) {
-        const vertex = queue.shift();
-        
-        for (let neighbor of graph[vertex]) {
-            if (!visited.has(neighbor)) {
-                visited.add(neighbor);
-                queue.push(neighbor);
-                parent.set(neighbor, vertex);
-                distance.set(neighbor, distance.get(vertex) + 1);
-            }
-        }
-    }
-
-    return { parent, distance, visited };
-}</code></pre>
+                                <pre><code>"""
+Performs a breadth-first search on a graph starting from a given vertex
+:param graph: dict, adjacency list representation of the graph
+:param start: starting vertex
+:return: dict with parent pointers, distances, and visited set
+"""
+def bfs(graph, start):
+    from collections import deque
+    queue = deque([start])
+    visited = set([start])
+    parent = {}
+    distance = {start: 0}
+    while queue:
+        vertex = queue.popleft()
+        for neighbor in graph[vertex]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+                parent[neighbor] = vertex
+                distance[neighbor] = distance[vertex] + 1
+    return { 'parent': parent, 'distance': distance, 'visited': visited }</code></pre>
                             </div>
 
                             <div class="bg-darkgray p-4 rounded-lg mt-4">
@@ -411,45 +405,34 @@ function bfs(graph, start) {
                         <div class="space-y-4">
                             <h3 class="text-xl font-medium text-primary">Shortest Path Finding</h3>
                             <div class="code-block">
-                                <pre><code>/**
- * Finds the shortest path between two vertices in an unweighted graph
- * @param {Object} graph - Adjacency list representation of the graph
- * @param {string|number} start - The starting vertex
- * @param {string|number} end - The target vertex
- * @returns {Array|null} - Array of vertices forming the path, or null if no path exists
- */
-function findShortestPath(graph, start, end) {
-    // If start and end are the same, return a single-element path
-    if (start === end) {
-        return [start];
-    }
-
-    const { parent } = bfs(graph, start);
-    
-    // If end vertex was not reached, return null
-    if (!parent.has(end)) {
-        return null;
-    }
-
-    // Reconstruct the path by following parent pointers backwards
-    const path = [];
-    let current = end;
-
-    while (current !== undefined) {
-        path.unshift(current);
-        current = parent.get(current);
-    }
-
-    return path;
-}</code></pre>
+                                <pre><code>"""
+Finds the shortest path between two vertices in an unweighted graph
+:param graph: dict, adjacency list representation of the graph
+:param start: starting vertex
+:param end: target vertex
+:return: list of vertices forming the path, or None if no path exists
+"""
+def find_shortest_path(graph, start, end):
+    if start == end:
+        return [start]
+    result = bfs(graph, start)
+    parent = result['parent']
+    if end not in parent:
+        return None
+    path = []
+    current = end
+    while current is not None:
+        path.insert(0, current)
+        current = parent.get(current)
+    return path</code></pre>
                             </div>
                         </div>
 
                         <div class="bg-darkgray p-4 rounded-lg mt-6">
                             <h4 class="text-lg font-medium text-lighttext mb-2">Example Usage:</h4>
                             <div class="code-block">
-                                <pre><code>// Sample graph (adjacency list representation)
-const graph = {
+                                <pre><code># Sample graph (adjacency list representation)
+graph = {
     'A': ['B', 'C', 'D'],
     'B': ['A', 'E'],
     'C': ['A', 'F'],
@@ -457,22 +440,19 @@ const graph = {
     'E': ['B'],
     'F': ['C'],
     'G': ['D']
-};
+}
 
-// Basic BFS traversal
-const { visited } = bfs(graph, 'A');
-console.log('BFS traversal:', Array.from(visited)); 
-// Output: ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+# Basic BFS traversal
+visited = bfs(graph, 'A')['visited']
+print('BFS traversal:', list(visited))  # Output: ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
-// Find shortest path from 'A' to 'F'
-const path = findShortestPath(graph, 'A', 'F');
-console.log('Shortest path from A to F:', path);
-// Output: ['A', 'C', 'F']
+# Find shortest path from 'A' to 'F'
+path = find_shortest_path(graph, 'A', 'F')
+print('Shortest path from A to F:', path)  # Output: ['A', 'C', 'F']
 
-// Find shortest path from 'E' to 'G'
-const anotherPath = findShortestPath(graph, 'E', 'G');
-console.log('Shortest path from E to G:', anotherPath);
-// Output: ['E', 'B', 'A', 'D', 'G']</code></pre>
+# Find shortest path from 'E' to 'G'
+another_path = find_shortest_path(graph, 'E', 'G')
+print('Shortest path from E to G:', another_path)  # Output: ['E', 'B', 'A', 'D', 'G']</code></pre>
                             </div>
                         </div>
                     </div>
@@ -501,28 +481,19 @@ console.log('Shortest path from E to G:', anotherPath);
                             </div>
 
                             <div class="code-block">
-                                <pre><code>function multiSourceBFS(graph, sources) {
-    const queue = [...sources];
-    const visited = new Set(sources);
-    const distance = new Map();
-    
-    // Initialize distances for all source nodes
-    sources.forEach(source => distance.set(source, 0));
-    
-    while (queue.length > 0) {
-        const vertex = queue.shift();
-        
-        for (let neighbor of graph[vertex] || []) {
-            if (!visited.has(neighbor)) {
-                visited.add(neighbor);
-                queue.push(neighbor);
-                distance.set(neighbor, distance.get(vertex) + 1);
-            }
-        }
-    }
-    
-    return { distance, visited };
-}</code></pre>
+                                <pre><code>def multi_source_bfs(graph, sources):
+    from collections import deque
+    queue = deque(sources)
+    visited = set(sources)
+    distance = {source: 0 for source in sources}
+    while queue:
+        vertex = queue.popleft()
+        for neighbor in graph.get(vertex, []):
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+                distance[neighbor] = distance[vertex] + 1
+    return { 'distance': distance, 'visited': visited }</code></pre>
                             </div>
                         </div>
 
@@ -533,18 +504,26 @@ console.log('Shortest path from E to G:', anotherPath);
 
                             <div class="bg-darkgray p-4 rounded-lg">
                                 <h4 class="text-lg font-medium text-lighttext mb-2">Example:</h4>
-                                <pre class="bg-darkgray p-2 rounded"><code>const graph = {
+                                <pre class="bg-darkgray p-2 rounded"><code>graph = {
     'A': ['B', 'C'],
     'B': ['A', 'D', 'E'],
     'C': ['A', 'F'],
     'D': ['B'],
     'E': ['B', 'F'],
     'F': ['C', 'E']
-};
+}
 
-// Find path from A to F that passes through E
-console.log(findPathThroughNode(graph, 'A', 'F', 'E'));
-// Output: ['A', 'B', 'E', 'F']</code></pre>
+# Find path from A to F that passes through E
+def find_path_through_node(graph, start, end, must_pass):
+    # Find path from start to must_pass
+    path1 = find_shortest_path(graph, start, must_pass)
+    # Find path from must_pass to end (excluding must_pass itself)
+    path2 = find_shortest_path(graph, must_pass, end)
+    if path1 is None or path2 is None:
+        return None
+    return path1 + path2[1:]
+
+print(find_path_through_node(graph, 'A', 'F', 'E'))  # Output: ['A', 'B', 'E', 'F']</code></pre>
                             </div>
                         </div>
 
