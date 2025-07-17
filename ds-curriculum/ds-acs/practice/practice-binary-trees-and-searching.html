@@ -140,23 +140,19 @@
       </ul>
 
       <div class="code-block">
-        // Binary Tree Node
-        class Node {
-        constructor(value) {
-        this.value = value;
-        this.left = null;
-        this.right = null;
-        }
-        }
+        # Binary Tree Node
+        class Node:
+        def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
 
-        // Binary Search Tree implementation
-        class BinarySearchTree {
-        constructor() {
-        this.root = null;
-        }
+        # Binary Search Tree implementation
+        class BinarySearchTree:
+        def __init__(self):
+        self.root = None
 
-        // Other methods will be implemented below
-        }
+        # Other methods will be implemented below
       </div>
     </div>
 
@@ -171,40 +167,37 @@
 
       <h4 class="text-lg font-medium text-secondary">BST Search Implementation:</h4>
       <div class="code-block">
-        // Search for a value in BST
-        search(value) {
-        return this._searchNode(this.root, value);
-        }
+        # Search for a value in BST
+        def search(self, value):
+        return self._searchNode(self.root, value)
 
-        _searchNode(node, value) {
-        // Base cases: empty tree or found the value
-        if (node === null) return null;
-        if (node.value === value) return node;
+        def _searchNode(self, node, value):
+        # Base cases: empty tree or found the value
+        if node is None:
+        return None
+        if node.value == value:
+        return node
 
-        // Recursive cases
-        if (value < node.value) { return this._searchNode(node.left, value); } else { return
-          this._searchNode(node.right, value); } } </div>
+        # Recursive cases
+        if value < node.value: return self._searchNode(node.left, value) else: return self._searchNode(node.right,
+          value) </div>
 
           <h4 class="text-lg font-medium text-secondary mt-6">BST Insert Implementation:</h4>
           <div class="code-block">
-            // Insert a value into BST
-            insert(value) {
-            const newNode = new Node(value);
+            # Insert a value into BST
+            def insert(self, value):
+            newNode = Node(value)
+            if self.root is None:
+            self.root = newNode
+            return self
+            self._insertNode(self.root, newNode)
+            return self
 
-            if (this.root === null) {
-            this.root = newNode;
-            return this;
-            }
-
-            this._insertNode(this.root, newNode);
-            return this;
-            }
-
-            _insertNode(node, newNode) {
-            // If value is less than node's value, go left
-            if (newNode.value < node.value) { if (node.left===null) { node.left=newNode; } else {
-              this._insertNode(node.left, newNode); } } // If value is greater than node's value, go right else { if
-              (node.right===null) { node.right=newNode; } else { this._insertNode(node.right, newNode); } } } </div>
+            def _insertNode(self, node, newNode):
+            # If value is less than node's value, go left
+            if newNode.value < node.value: if node.left is None: node.left=newNode else: self._insertNode(node.left,
+              newNode) # If value is greater than node's value, go right else: if node.right is None: node.right=newNode
+              else: self._insertNode(node.right, newNode) </div>
           </div>
 
           <div class="content-section">
@@ -215,90 +208,88 @@
               by one until the target is found or the array is exhausted.</p>
 
             <div class="code-block">
-              // Linear Search implementation
-              function linearSearch(arr, target) {
-              for (let i = 0; i < arr.length; i++) { if (arr[i]===target) { return i; // Return index if found } }
-                return -1; // Return -1 if not found } // Time Complexity: O(n) // Space Complexity: O(1) </div>
+              # Linear Search implementation
+              def linear_search(arr, target):
+              for i in range(len(arr)):
+              if arr[i] == target:
+              return i # Return index if found
+              return -1 # Return -1 if not found
+              # Time Complexity: O(n)
+              # Space Complexity: O(1)
+            </div>
 
-                <h4 class="text-lg font-medium text-secondary mt-6">Binary Search</h4>
-                <p class="mb-4">Binary search is a divide-and-conquer algorithm that works on sorted arrays by
-                  repeatedly dividing the search interval in half.</p>
+            <h4 class="text-lg font-medium text-secondary mt-6">Binary Search</h4>
+            <p class="mb-4">Binary search is a divide-and-conquer algorithm that works on sorted arrays by
+              repeatedly dividing the search interval in half.</p>
 
+            <div class="code-block">
+              # Binary Search implementation (iterative)
+              def binary_search(arr, target):
+              left = 0
+              right = len(arr) - 1
+              while left <= right: mid=(left + right) // 2 # Check if target is at mid if arr[mid]==target: return mid #
+                If target is greater, ignore left half if arr[mid] < target: left=mid + 1 # If target is smaller, ignore
+                right half else: right=mid - 1 # Target not found return -1 # Time Complexity: O(log n) # Space
+                Complexity: O(1) </div>
+
+                <h4 class="text-lg font-medium text-secondary mt-6">Recursive Binary Search</h4>
                 <div class="code-block">
-                  // Binary Search implementation (iterative)
-                  function binarySearch(arr, target) {
-                  let left = 0;
-                  let right = arr.length - 1;
-
-                  while (left <= right) { const mid=Math.floor((left + right) / 2); // Check if target is at mid if
-                    (arr[mid]===target) { return mid; } // If target is greater, ignore left half if (arr[mid] < target)
-                    { left=mid + 1; } // If target is smaller, ignore right half else { right=mid - 1; } } // Target not
-                    found return -1; } // Time Complexity: O(log n) // Space Complexity: O(1) </div>
-
-                    <h4 class="text-lg font-medium text-secondary mt-6">Recursive Binary Search</h4>
-                    <div class="code-block">
-                      // Binary Search implementation (recursive)
-                      function binarySearchRecursive(arr, target, left = 0, right = arr.length - 1) {
-                      // Base case: element not found
-                      if (left > right) {
-                      return -1;
-                      }
-
-                      const mid = Math.floor((left + right) / 2);
-
-                      // Found the target
-                      if (arr[mid] === target) {
-                      return mid;
-                      }
-
-                      // Recursive cases
-                      if (arr[mid] > target) {
-                      return binarySearchRecursive(arr, target, left, mid - 1);
-                      } else {
-                      return binarySearchRecursive(arr, target, mid + 1, right);
-                      }
-                      }
-                    </div>
-                </div>
-
-                <div class="content-section">
-                  <h3 class="text-lg font-medium text-secondary">Practice Exercises</h3>
-                  <p class="mb-4"><strong>Now it's time to practice what you learned!</strong></p>
-                  <p class="mb-4">You should have already created your Code Signal account. If you have not done so yet,
-                    please follow these instructions <a title="What is CodeSignal and How to Create Your Account"
-                      href="$WIKI_REFERENCE$/pages/g0f9edee9d9bad727f053555cc74965dd"
-                      data-api-endpoint="https://bloomtech.instructure.com/api/v1/courses/2482/pages/what-is-codesignal-and-how-to-create-your-account"
-                      data-api-returntype="Page">What is CodeSignal and How to Create Your Account</a>.</p>
-                  <p class="mb-4"><em>Tip:&nbsp; Before you dive into the practice tasks, revisit the core competency
-                      and guided project videos in this sprint.</em></p>
-                  <hr>
-                  <p class="my-4">Complete these tasks in CodeSignal:</p>
-                  <p class="mb-2"><a class="leetcode-link"
-                      href="https://app.codesignal.com/public-test/azqEu2QDZfBwsuakz/EJsRhkstAmZuDQ" target="_blank"
-                      rel="noopener noreferrer">ACS2M4</a></p>
-                  <p class="mb-2"><a class="leetcode-link"
-                      href="https://app.codesignal.com/public-test/dfGtZxm6289jjD8ns/snHo2H5N2PMKi8" target="_blank"
-                      rel="noopener noreferrer">ACS2M5</a></p>
-                  <p class="mb-2"><a class="leetcode-link"
-                      href="https://app.codesignal.com/public-test/d8ZaBTiF7PPmG8oNB/Spk5zCuFnKN3Kh" target="_blank"
-                      rel="noopener noreferrer">ACS2M6</a></p>
-                  <p class="mb-4">Bonus - Once you have finished the above tasks, here is an extra <a
-                      class="leetcode-link"
-                      href="https://app.codesignal.com/public-test/cMQgEKEDbDZeCBaac/M9XsxhgMiQ7Eiv" target="_blank"
-                      rel="noopener noreferrer">challenge</a>!</p>
-                  <hr>
-                  <ol class="list-decimal list-outside text-lighttext space-y-2 pl-5 mt-4 mb-4">
-                    <li>Login to CodeSignal</li>
-                    <li>Click on the task links above</li>
-                    <li>Select your preferred language</li>
-                    <li>Click on NEXT to begin</li>
-                    <li>Agree with the Terms and Pledges and click START</li>
-                  </ol>
-                  <hr>
-                  <p class="mt-4">Once all the questions for each task are completed in Code Signal, click
-                    on&nbsp;<strong>Finish the Test</strong>.</p>
+                  # Binary Search implementation (recursive)
+                  def binary_search_recursive(arr, target, left=0, right=None):
+                  if right is None:
+                  right = len(arr) - 1
+                  # Base case: element not found
+                  if left > right:
+                  return -1
+                  mid = (left + right) // 2
+                  # Found the target
+                  if arr[mid] == target:
+                  return mid
+                  # Recursive cases
+                  if arr[mid] > target:
+                  return binary_search_recursive(arr, target, left, mid - 1)
+                  else:
+                  return binary_search_recursive(arr, target, mid + 1, right)
                 </div>
             </div>
+
+            <div class="content-section">
+              <h3 class="text-lg font-medium text-secondary">Practice Exercises</h3>
+              <p class="mb-4"><strong>Now it's time to practice what you learned!</strong></p>
+              <p class="mb-4">You should have already created your Code Signal account. If you have not done so yet,
+                please follow these instructions <a title="What is CodeSignal and How to Create Your Account"
+                  href="$WIKI_REFERENCE$/pages/g0f9edee9d9bad727f053555cc74965dd"
+                  data-api-endpoint="https://bloomtech.instructure.com/api/v1/courses/2482/pages/what-is-codesignal-and-how-to-create-your-account"
+                  data-api-returntype="Page">What is CodeSignal and How to Create Your Account</a>.</p>
+              <p class="mb-4"><em>Tip:&nbsp; Before you dive into the practice tasks, revisit the core competency
+                  and guided project videos in this sprint.</em></p>
+              <hr>
+              <p class="my-4">Complete these tasks in CodeSignal:</p>
+              <p class="mb-2"><a class="leetcode-link"
+                  href="https://app.codesignal.com/public-test/azqEu2QDZfBwsuakz/EJsRhkstAmZuDQ" target="_blank"
+                  rel="noopener noreferrer">ACS2M4</a></p>
+              <p class="mb-2"><a class="leetcode-link"
+                  href="https://app.codesignal.com/public-test/dfGtZxm6289jjD8ns/snHo2H5N2PMKi8" target="_blank"
+                  rel="noopener noreferrer">ACS2M5</a></p>
+              <p class="mb-2"><a class="leetcode-link"
+                  href="https://app.codesignal.com/public-test/d8ZaBTiF7PPmG8oNB/Spk5zCuFnKN3Kh" target="_blank"
+                  rel="noopener noreferrer">ACS2M6</a></p>
+              <p class="mb-4">Bonus - Once you have finished the above tasks, here is an extra <a class="leetcode-link"
+                  href="https://app.codesignal.com/public-test/cMQgEKEDbDZeCBaac/M9XsxhgMiQ7Eiv" target="_blank"
+                  rel="noopener noreferrer">challenge</a>!</p>
+              <hr>
+              <ol class="list-decimal list-outside text-lighttext space-y-2 pl-5 mt-4 mb-4">
+                <li>Login to CodeSignal</li>
+                <li>Click on the task links above</li>
+                <li>Select your preferred language</li>
+                <li>Click on NEXT to begin</li>
+                <li>Agree with the Terms and Pledges and click START</li>
+              </ol>
+              <hr>
+              <p class="mt-4">Once all the questions for each task are completed in Code Signal, click
+                on&nbsp;<strong>Finish the Test</strong>.</p>
+            </div>
+          </div>
 </body>
 
 </html>
