@@ -280,39 +280,32 @@
                     <h3>Example Implementation</h3>
 
                     <div class="code-block">
-                        <code>function mergeSort(arr) {
-    // Base case: arrays with 0 or 1 element are already sorted
-    if (arr.length <= 1) {
+                        <code>public static int[] mergeSort(int[] arr) {
+    if (arr.length &lt;= 1) {
         return arr;
     }
-    
-    // Split array into two halves
-    const mid = Math.floor(arr.length / 2);
-    const left = arr.slice(0, mid);
-    const right = arr.slice(mid);
-    
-    // Recursively sort both halves
+    int mid = arr.length / 2;
+    int[] left = Arrays.copyOfRange(arr, 0, mid);
+    int[] right = Arrays.copyOfRange(arr, mid, arr.length);
     return merge(mergeSort(left), mergeSort(right));
 }
-
-function merge(left, right) {
-    const result = [];
-    let leftIndex = 0;
-    let rightIndex = 0;
-    
-    // Compare elements from both arrays and merge them in sorted order
-    while (leftIndex < left.length && rightIndex < right.length) {
-        if (left[leftIndex] < right[rightIndex]) {
-            result.push(left[leftIndex]);
-            leftIndex++;
+public static int[] merge(int[] left, int[] right) {
+    int[] result = new int[left.length + right.length];
+    int i = 0, j = 0, k = 0;
+    while (i &lt; left.length &amp;&amp; j &lt; right.length) {
+        if (left[i] &lt; right[j]) {
+            result[k++] = left[i++];
         } else {
-            result.push(right[rightIndex]);
-            rightIndex++;
+            result[k++] = right[j++];
         }
     }
-    
-    // Add remaining elements (if any)
-    return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
+    while (i &lt; left.length) {
+        result[k++] = left[i++];
+    }
+    while (j &lt; right.length) {
+        result[k++] = right[j++];
+    }
+    return result;
 }</code>
                     </div>
 
@@ -328,8 +321,8 @@ function merge(left, right) {
 
                     <div class="info-box">
                         <h4>Example Usage:</h4>
-                        <code>const numbers = [38, 27, 43, 3, 9, 82, 10];
-console.log(mergeSort(numbers)); // [3, 9, 10, 27, 38, 43, 82]</code>
+                        <code>int[] numbers = {38, 27, 43, 3, 9, 82, 10};
+System.out.println(Arrays.toString(mergeSort(numbers))); // [3, 9, 10, 27, 38, 43, 82]</code>
                     </div>
                 </div>
             </div>
@@ -353,34 +346,29 @@ console.log(mergeSort(numbers)); // [3, 9, 10, 27, 38, 43, 82]</code>
                     <h3>Example Implementation</h3>
 
                     <div class="code-block">
-                        <code>function quickSort(arr, left = 0, right = arr.length - 1) {
-    if (left < right) {
-        // Partition array and get pivot index
-        const pivotIndex = partition(arr, left, right);
-        
-        // Recursively sort elements before and after pivot
+                        <code>public static int[] quickSort(int[] arr, int left, int right) {
+    if (left &lt; right) {
+        int pivotIndex = partition(arr, left, right);
         quickSort(arr, left, pivotIndex - 1);
         quickSort(arr, pivotIndex + 1, right);
     }
     return arr;
 }
-
-function partition(arr, left, right) {
-    // Choose the rightmost element as the pivot
-    const pivot = arr[right];
-    let i = left - 1;
-    
-    // Move all elements smaller than pivot to the left
-    for (let j = left; j < right; j++) {
-        if (arr[j] <= pivot) {
+public static int partition(int[] arr, int left, int right) {
+    int pivot = arr[right];
+    int i = left - 1;
+    for (int j = left; j &lt; right; j++) {
+        if (arr[j] &lt;= pivot) {
             i++;
-            [arr[i], arr[j]] = [arr[j], arr[i]]; // Swap elements
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
         }
     }
-    
-    // Place pivot in its correct position
-    [arr[i + 1], arr[right]] = [arr[right], arr[i + 1]];
-    return i + 1; // Return pivot index
+    int temp = arr[i + 1];
+    arr[i + 1] = arr[right];
+    arr[right] = temp;
+    return i + 1;
 }</code>
                     </div>
 
@@ -395,8 +383,8 @@ function partition(arr, left, right) {
 
                     <div class="info-box">
                         <h4>Example Usage:</h4>
-                        <code>const numbers = [10, 7, 8, 9, 1, 5];
-console.log(quickSort(numbers)); // [1, 5, 7, 8, 9, 10]</code>
+                        <code>int[] numbers = {10, 7, 8, 9, 1, 5};
+System.out.println(Arrays.toString(quickSort(numbers, 0, numbers.length - 1))); // [1, 5, 7, 8, 9, 10]</code>
                     </div>
                 </div>
             </div>
@@ -461,5 +449,7 @@ console.log(quickSort(numbers)); // [1, 5, 7, 8, 9, 10]</code>
         </div>
     </div>
 </body>
+
+</html>
 
 </html>
