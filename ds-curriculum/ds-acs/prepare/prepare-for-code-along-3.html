@@ -124,202 +124,173 @@
     </ul>
 
     <div class="code-block">
-      // Binary Tree Node implementation
-      class TreeNode {
-      constructor(value) {
-      this.value = value;
-      this.left = null;
-      this.right = null;
-      }
-      }
+      # Binary Tree Node implementation
+      class TreeNode:
+      def __init__(self, value):
+      self.value = value
+      self.left = None
+      self.right = None
 
-      // Binary Search Tree implementation
-      class BinarySearchTree {
-      constructor() {
-      this.root = null;
-      }
+      # Binary Search Tree implementation
+      class BinarySearchTree:
+      def __init__(self):
+      self.root = None
 
-      insert(value) {
-      const newNode = new TreeNode(value);
-
-      if (this.root === null) {
-      this.root = newNode;
-      return this;
-      }
-
-      let current = this.root;
-
-      while (true) {
-      if (value === current.value) return this; // Duplicate value
-
-      if (value &lt; current.value) {
-      if (current.left === null) {
-      current.left = newNode;
-      return this;
-      }
-      current = current.left;
-      } else {
-      if (current.right === null) {
-      current.right = newNode;
-      return this;
-      }
-      current = current.right;
-      }
-      }
-      }
-      }
+      def insert(self, value):
+      new_node = TreeNode(value)
+      if self.root is None:
+      self.root = new_node
+      return self
+      current = self.root
+      while True:
+      if value == current.value:
+      return self # Duplicate value
+      if value < current.value: if current.left is None: current.left=new_node return self current=current.left else: if
+        current.right is None: current.right=new_node return self current=current.right </div>
     </div>
-  </div>
 
-  <div class="content-section">
-    <h2>Tree Traversal Techniques</h2>
-    <p>Understanding different traversal methods is crucial for working with tree structures. There are two main
-      categories:</p>
+    <div class="content-section">
+      <h2>Tree Traversal Techniques</h2>
+      <p>Understanding different traversal methods is crucial for working with tree structures. There are two main
+        categories:</p>
 
-    <h3>1. Depth-First Traversals</h3>
-    <ul>
-      <li><strong>Pre-order (Root, Left, Right):</strong> Visit the current node, then traverse the left subtree, then
-        traverse the right subtree</li>
-      <li><strong>In-order (Left, Root, Right):</strong> Traverse the left subtree, visit the current node, then
-        traverse the right subtree</li>
-      <li><strong>Post-order (Left, Right, Root):</strong> Traverse the left subtree, traverse the right subtree, then
-        visit the current node</li>
+      <h3>1. Depth-First Traversals</h3>
+      <ul>
+        <li><strong>Pre-order (Root, Left, Right):</strong> Visit the current node, then traverse the left subtree, then
+          traverse the right subtree</li>
+        <li><strong>In-order (Left, Root, Right):</strong> Traverse the left subtree, visit the current node, then
+          traverse the right subtree</li>
+        <li><strong>Post-order (Left, Right, Root):</strong> Traverse the left subtree, traverse the right subtree, then
+          visit the current node</li>
+      </ul>
+
+      <div class="code-block">
+        # Depth-First Traversal implementations
+        def pre_order_traversal(node, result=None):
+        if result is None:
+        result = []
+        if node is None:
+        return result
+        # Root, Left, Right
+        result.append(node.value)
+        pre_order_traversal(node.left, result)
+        pre_order_traversal(node.right, result)
+        return result
+
+        def in_order_traversal(node, result=None):
+        if result is None:
+        result = []
+        if node is None:
+        return result
+        # Left, Root, Right
+        in_order_traversal(node.left, result)
+        result.append(node.value)
+        in_order_traversal(node.right, result)
+        return result
+
+        def post_order_traversal(node, result=None):
+        if result is None:
+        result = []
+        if node is None:
+        return result
+        # Left, Right, Root
+        post_order_traversal(node.left, result)
+        post_order_traversal(node.right, result)
+        result.append(node.value)
+        return result
+      </div>
+
+      <h3>2. Breadth-First (Level Order) Traversal</h3>
+      <p>Visit all nodes at the current level before moving to the next level, typically implemented using a queue.</p>
+
+      <div class="code-block">
+        # Breadth-First (Level Order) Traversal implementation
+        from collections import deque
+        def level_order_traversal(root):
+        if root is None:
+        return []
+        result = []
+        queue = deque([root])
+        while queue:
+        current_node = queue.popleft()
+        result.append(current_node.value)
+        if current_node.left:
+        queue.append(current_node.left)
+        if current_node.right:
+        queue.append(current_node.right)
+        return result
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Recursion in Tree Operations</h2>
+      <p>Recursion is a natural fit for tree operations due to the hierarchical nature of tree structures.</p>
+
+      <h3>Common Recursive Tree Operations:</h3>
+
+      <div class="code-block">
+        # Find height of a binary tree
+        def find_height(node):
+        if node is None:
+        return -1
+        left_height = find_height(node.left)
+        right_height = find_height(node.right)
+        return max(left_height, right_height) + 1
+
+        # Check if a binary tree is balanced
+        def is_balanced(node):
+        if node is None:
+        return True
+        left_height = find_height(node.left)
+        right_height = find_height(node.right)
+        # Height difference should not exceed 1
+        if abs(left_height - right_height) > 1:
+        return False
+        # Recursively check if both subtrees are balanced
+        return is_balanced(node.left) and is_balanced(node.right)
+
+        # Check if a binary tree is a valid BST
+        def is_valid_bst(node, min_val=float('-inf'), max_val=float('inf')):
+        if node is None:
+        return True
+        # Current node's value must be within valid range
+        if node.value <= min_val or node.value>= max_val:
+          return False
+          # Recursively validate left and right subtrees
+          return is_valid_bst(node.left, min_val, node.value) and \
+          is_valid_bst(node.right, node.value, max_val)
+      </div>
+    </div>
+
+    <h2>Prepare For Success</h2>
+    <p><iframe class="wistia_embed" title="Code-Along Learner Facing Walkthrough Video"
+        src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" width="640" height="360" name="wistia_embed"
+        allow="fullscreen" loading="lazy"></iframe></p>
+    <p>The best Code-Along experiences happen when you are ready before coming to class. Your instructors created a
+      starting point and a solution for each of your Code-Alongs to ensure you have what you need to succeed.</p>
+    <hr>
+
+    <h2>Ideal Code-Along Preparation Checklist:</h2>
+    <ul class="checklist">
+      <li>Review the core concepts of binary trees and recursion</li>
+      <li>Watch the guided projects covering tree implementations</li>
+      <li>Practice implementing basic tree operations</li>
+      <li>Complete the module projects related to data structures</li>
+      <li>Set up your development environment with the starter code</li>
     </ul>
 
-    <div class="code-block">
-      // Depth-First Traversal implementations
-      function preOrderTraversal(node, result = []) {
-      if (node === null) return result;
-
-      // Root, Left, Right
-      result.push(node.value);
-      preOrderTraversal(node.left, result);
-      preOrderTraversal(node.right, result);
-
-      return result;
-      }
-
-      function inOrderTraversal(node, result = []) {
-      if (node === null) return result;
-
-      // Left, Root, Right
-      inOrderTraversal(node.left, result);
-      result.push(node.value);
-      inOrderTraversal(node.right, result);
-
-      return result;
-      }
-
-      function postOrderTraversal(node, result = []) {
-      if (node === null) return result;
-
-      // Left, Right, Root
-      postOrderTraversal(node.left, result);
-      postOrderTraversal(node.right, result);
-      result.push(node.value);
-
-      return result;
-      }
-    </div>
-
-    <h3>2. Breadth-First (Level Order) Traversal</h3>
-    <p>Visit all nodes at the current level before moving to the next level, typically implemented using a queue.</p>
-
-    <div class="code-block">
-      // Breadth-First Traversal implementation
-      function levelOrderTraversal(root) {
-      if (root === null) return [];
-
-      const result = [];
-      const queue = [root];
-
-      while (queue.length > 0) {
-      const currentNode = queue.shift();
-      result.push(currentNode.value);
-
-      if (currentNode.left) queue.push(currentNode.left);
-      if (currentNode.right) queue.push(currentNode.right);
-      }
-
-      return result;
-      }
-    </div>
-  </div>
-
-  <div class="content-section">
-    <h2>Recursion in Tree Operations</h2>
-    <p>Recursion is a natural fit for tree operations due to the hierarchical nature of tree structures.</p>
-
-    <h3>Common Recursive Tree Operations:</h3>
-
-    <div class="code-block">
-      // Find height of a binary tree
-      function findHeight(node) {
-      if (node === null) return -1;
-
-      const leftHeight = findHeight(node.left);
-      const rightHeight = findHeight(node.right);
-
-      return Math.max(leftHeight, rightHeight) + 1;
-      }
-
-      // Check if a binary tree is balanced
-      function isBalanced(node) {
-      if (node === null) return true;
-
-      const leftHeight = findHeight(node.left);
-      const rightHeight = findHeight(node.right);
-
-      // Height difference should not exceed 1
-      if (Math.abs(leftHeight - rightHeight) > 1) return false;
-
-      // Recursively check if both subtrees are balanced
-      return isBalanced(node.left) && isBalanced(node.right);
-      }
-
-      // Check if a binary tree is a valid BST
-      function isValidBST(node, min = -Infinity, max = Infinity) {
-      if (node === null) return true;
-
-      // Current node's value must be within valid range
-      if (node.value &lt;= min || node.value >= max) return false;
-
-      // Recursively validate left and right subtrees
-      return isValidBST(node.left, min, node.value) &&
-      isValidBST(node.right, node.value, max);
-      }
-    </div>
-  </div>
-
-  <h2>Prepare For Success</h2>
-  <p><iframe class="wistia_embed" title="Code-Along Learner Facing Walkthrough Video"
-      src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" width="640" height="360" name="wistia_embed"
-      allow="fullscreen" loading="lazy"></iframe></p>
-  <p>The best Code-Along experiences happen when you are ready before coming to class. Your instructors created a
-    starting point and a solution for each of your Code-Alongs to ensure you have what you need to succeed.</p>
-  <hr>
-
-  <h2>Ideal Code-Along Preparation Checklist:</h2>
-  <ul class="checklist">
-    <li>Review the core concepts of binary trees and recursion</li>
-    <li>Watch the guided projects covering tree implementations</li>
-    <li>Practice implementing basic tree operations</li>
-    <li>Complete the module projects related to data structures</li>
-    <li>Set up your development environment with the starter code</li>
-  </ul>
-
-  <h2>Practice Problems to Try Before the Code-Along</h2>
-  <p>To get the most out of this Code-Along, try solving these tree-related problems:</p>
-  <ul>
-    <li><a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" class="resource-link" target="_blank"
-        rel="noopener noreferrer">Maximum Depth of Binary Tree</a></li>
-    <li><a href="https://leetcode.com/problems/validate-binary-search-tree/" class="resource-link" target="_blank"
-        rel="noopener noreferrer">Validate Binary Search Tree</a></li>
-    <li><a href="https://leetcode.com/problems/symmetric-tree/" class="resource-link" target="_blank"
-        rel="noopener noreferrer">Symmetric Tree</a></li>
-    <li><a href="https://leetcode.com/problems/path-sum/" class="resource-link" target="_blank"
-        rel="noopener noreferrer">Path Sum</a></li>
-  </ul>
+    <h2>Practice Problems to Try Before the Code-Along</h2>
+    <p>To get the most out of this Code-Along, try solving these tree-related problems:</p>
+    <ul>
+      <li><a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" class="resource-link" target="_blank"
+          rel="noopener noreferrer">Maximum Depth of Binary Tree</a></li>
+      <li><a href="https://leetcode.com/problems/validate-binary-search-tree/" class="resource-link" target="_blank"
+          rel="noopener noreferrer">Validate Binary Search Tree</a></li>
+      <li><a href="https://leetcode.com/problems/symmetric-tree/" class="resource-link" target="_blank"
+          rel="noopener noreferrer">Symmetric Tree</a></li>
+      <li><a href="https://leetcode.com/problems/path-sum/" class="resource-link" target="_blank"
+          rel="noopener noreferrer">Path Sum</a></li>
+    </ul>
 
 </body>
 
