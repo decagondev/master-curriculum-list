@@ -300,67 +300,59 @@
                         <div>
                             <h3 class="text-xl font-medium text-primary mb-4">Quicksort Implementation</h3>
                             <div class="bg-darkgray rounded-lg p-4">
-                                <pre class="text-lighttext"><code>function quickSort(arr, left = 0, right = arr.length - 1) {
-    if (left < right) {
-        const pivotIndex = partition(arr, left, right);
-        quickSort(arr, left, pivotIndex - 1);
-        quickSort(arr, pivotIndex + 1, right);
-    }
-    return arr;
-}
+                                <pre class="text-lighttext"><code>def quick_sort(arr, left=0, right=None):
+    if right is None:
+        right = len(arr) - 1
+    if left < right:
+        pivot_index = partition(arr, left, right)
+        quick_sort(arr, left, pivot_index - 1)
+        quick_sort(arr, pivot_index + 1, right)
+    return arr
 
-function partition(arr, left, right) {
-    const pivot = arr[right];
-    let i = left - 1;
-
-    for (let j = left; j < right; j++) {
-        if (arr[j] <= pivot) {
-            i++;
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-    }
-
-    [arr[i + 1], arr[right]] = [arr[right], arr[i + 1]];
-    return i + 1;
-}</code></pre>
+def partition(arr, left, right):
+    pivot = arr[right]
+    i = left - 1
+    for j in range(left, right):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[right] = arr[right], arr[i + 1]
+    return i + 1</code></pre>
                             </div>
                         </div>
 
                         <div>
                             <h3 class="text-xl font-medium text-primary mb-4">Merge Sort Implementation</h3>
                             <div class="bg-darkgray rounded-lg p-4">
-                                <pre class="text-lighttext"><code>function mergeSort(arr) {
-    if (arr.length <= 1) return arr;
+                                <pre class="text-lighttext"><code>def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)
 
-    const mid = Math.floor(arr.length / 2);
-    const left = mergeSort(arr.slice(0, mid));
-    const right = mergeSort(arr.slice(mid));
-
-    return merge(left, right);
-}
-
-function merge(left, right) {
-    const result = [];
-    let i = 0, j = 0;
-
-    while (i < left.length && j < right.length) {
-        if (left[i] <= right[j]) {
-            result.push(left[i++]);
-        } else {
-            result.push(right[j++]);
-        }
-    }
-
-    return result.concat(left.slice(i)).concat(right.slice(j));
-}</code></pre>
+def merge(left, right):
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result</code></pre>
                             </div>
                         </div>
 
                         <div class="bg-darkgray p-4 rounded-lg">
                             <h4 class="text-lg font-medium text-white mb-2">Usage Example:</h4>
-                            <pre class="bg-darkgray p-2 rounded"><code>const arr1 = [64, 34, 25, 12, 22, 11, 90];
-console.log('Quicksort:', quickSort([...arr1]));
-console.log('Merge sort:', mergeSort([...arr1]));</code></pre>
+                            <pre class="bg-darkgray p-2 rounded"><code>arr1 = [64, 34, 25, 12, 22, 11, 90]
+print('Quicksort:', quick_sort(arr1.copy()))
+print('Merge sort:', merge_sort(arr1.copy()))</code></pre>
                         </div>
                     </div>
                 </div>
@@ -395,14 +387,28 @@ console.log('Merge sort:', mergeSort([...arr1]));</code></pre>
 
                             <div class="bg-darkgray p-4 rounded-lg">
                                 <h4 class="text-lg font-medium text-white mb-2">Example:</h4>
-                                <pre class="bg-darkgray p-2 rounded"><code>const arrays = [
+                                <pre class="bg-darkgray p-2 rounded"><code>arrays = [
     [1, 4, 7],
     [2, 5, 8],
     [3, 6, 9]
-];
+]
 
-console.log(kWayMerge(arrays));
-// Output: [1, 2, 3, 4, 5, 6, 7, 8, 9]</code></pre>
+def k_way_merge(arrays):
+    import heapq
+    result = []
+    heap = []
+    for i, arr in enumerate(arrays):
+        if arr:
+            heapq.heappush(heap, (arr[0], i, 0))
+    while heap:
+        val, arr_idx, elem_idx = heapq.heappop(heap)
+        result.append(val)
+        if elem_idx + 1 < len(arrays[arr_idx]):
+            next_tuple = (arrays[arr_idx][elem_idx + 1], arr_idx, elem_idx + 1)
+            heapq.heappush(heap, next_tuple)
+    return result
+
+print(k_way_merge(arrays))  # Output: [1, 2, 3, 4, 5, 6, 7, 8, 9]</code></pre>
                             </div>
                         </div>
 
@@ -413,17 +419,17 @@ console.log(kWayMerge(arrays));
 
                             <div class="bg-darkgray p-4 rounded-lg">
                                 <h4 class="text-lg font-medium text-white mb-2">Example Usage:</h4>
-                                <pre class="bg-darkgray p-2 rounded"><code>const people = [
-    { name: 'Alice', age: 30 },
-    { name: 'Bob', age: 25 },
-    { name: 'Charlie', age: 35 }
-];
+                                <pre class="bg-darkgray p-2 rounded"><code>people = [
+    { 'name': 'Alice', 'age': 30 },
+    { 'name': 'Bob', 'age': 25 },
+    { 'name': 'Charlie', 'age': 35 }
+]
 
-// Sort by age
-quickSort(people, (a, b) => a.age - b.age);
+# Sort by age
+people_sorted_by_age = sorted(people, key=lambda x: x['age'])
 
-// Sort by name
-mergeSort(people, (a, b) => a.name.localeCompare(b.name));</code></pre>
+# Sort by name
+people_sorted_by_name = sorted(people, key=lambda x: x['name'])</code></pre>
                             </div>
                         </div>
                     </div>

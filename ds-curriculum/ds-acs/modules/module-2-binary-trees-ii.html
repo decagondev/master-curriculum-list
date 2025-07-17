@@ -284,23 +284,25 @@
                     <div class="space-y-6 mb-8">
                         <h3 class="text-xl font-medium text-primary">Recursive Search</h3>
                         <div class="bg-gray-800 rounded-lg p-4">
-                            <pre class="text-gray-100"><code>class BinaryTree {
-    search(value) {
-        return this._searchRecursive(this.root, value);
-    }
+                            <pre class="text-gray-100"><code>class BinaryTree:
+    def __init__(self, root=None):
+        self.root = root
 
-    _searchRecursive(node, value) {
-        // Base cases
-        if (node === null) return null;
-        if (node.value === value) return node;
+    def search(self, value):
+        return self._search_recursive(self.root, value)
 
-        // Recursive cases
-        const left = this._searchRecursive(node.left, value);
-        if (left) return left;
-
-        return this._searchRecursive(node.right, value);
-    }
-}</code></pre>
+    def _search_recursive(self, node, value):
+        # Base cases
+        if node is None:
+            return None
+        if node.value == value:
+            return node
+        # Recursive cases
+        left = self._search_recursive(node.left, value)
+        if left:
+            return left
+        return self._search_recursive(node.right, value)
+</code></pre>
                         </div>
                     </div>
 
@@ -308,22 +310,20 @@
                     <div class="space-y-6 mb-8">
                         <h3 class="text-xl font-medium text-primary">Level-First Traversal</h3>
                         <div class="bg-gray-800 rounded-lg p-4">
-                            <pre class="text-gray-100"><code>levelOrderTraversal() {
-    if (!this.root) return [];
-    
-    const result = [];
-    const queue = [this.root];
-    
-    while (queue.length > 0) {
-        const node = queue.shift();
-        result.push(node.value);
-        
-        if (node.left) queue.push(node.left);
-        if (node.right) queue.push(node.right);
-    }
-    
-    return result;
-}</code></pre>
+                            <pre class="text-gray-100"><code>def level_order_traversal(root):
+    if not root:
+        return []
+    result = []
+    queue = [root]
+    while queue:
+        node = queue.pop(0)
+        result.append(node.value)
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+    return result
+</code></pre>
                         </div>
                     </div>
 
@@ -331,37 +331,34 @@
                     <div class="space-y-6">
                         <h3 class="text-xl font-medium text-primary">Depth-First Traversal</h3>
                         <div class="bg-gray-800 rounded-lg p-4">
-                            <pre class="text-gray-100"><code>class BinaryTree {
-    // In-order traversal
-    inOrder() {
-        const result = [];
-        this._inOrderRecursive(this.root, result);
-        return result;
-    }
+                            <pre class="text-gray-100"><code>class BinaryTree:
+    def __init__(self, root=None):
+        self.root = root
 
-    _inOrderRecursive(node, result) {
-        if (node) {
-            this._inOrderRecursive(node.left, result);
-            result.push(node.value);
-            this._inOrderRecursive(node.right, result);
-        }
-    }
+    # In-order traversal
+    def in_order(self):
+        result = []
+        self._in_order_recursive(self.root, result)
+        return result
 
-    // Pre-order traversal
-    preOrder() {
-        const result = [];
-        this._preOrderRecursive(this.root, result);
-        return result;
-    }
+    def _in_order_recursive(self, node, result):
+        if node:
+            self._in_order_recursive(node.left, result)
+            result.append(node.value)
+            self._in_order_recursive(node.right, result)
 
-    _preOrderRecursive(node, result) {
-        if (node) {
-            result.push(node.value);
-            this._preOrderRecursive(node.left, result);
-            this._preOrderRecursive(node.right, result);
-        }
-    }
-}</code></pre>
+    # Pre-order traversal
+    def pre_order(self):
+        result = []
+        self._pre_order_recursive(self.root, result)
+        return result
+
+    def _pre_order_recursive(self, node, result):
+        if node:
+            result.append(node.value)
+            self._pre_order_recursive(node.left, result)
+            self._pre_order_recursive(node.right, result)
+</code></pre>
                         </div>
                     </div>
                 </div>
