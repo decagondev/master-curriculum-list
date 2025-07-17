@@ -380,7 +380,11 @@
                                 <h4>Step 1: Node Class</h4>
                                 <div class="code-block">
                                     <code>class BSTNode {
-    constructor(value) {
+    int value;
+    BSTNode left;
+    BSTNode right;
+
+    BSTNode(int value) {
         this.value = value;
         this.left = null;
         this.right = null;
@@ -392,8 +396,8 @@
                             <div>
                                 <h4>Step 2: Search Method</h4>
                                 <div class="code-block">
-                                    <code>search(value) {
-    return this._searchRecursive(this.root, value);
+                                    <code>public BSTNode search(int value) {
+    return searchRecursive(root, value);
 }</code>
                                 </div>
                             </div>
@@ -403,14 +407,14 @@
                             <div>
                                 <h4>Step 3: Base Cases</h4>
                                 <div class="code-block">
-                                    <code>_searchRecursive(node, value) {
+                                    <code>private BSTNode searchRecursive(BSTNode node, int value) {
     // Base case 1: Empty tree or not found
-    if (node === null) {
+    if (node == null) {
         return null;
     }
     
     // Base case 2: Value found
-    if (node.value === value) {
+    if (node.value == value) {
         return node;
     }
     
@@ -423,12 +427,12 @@
                                 <h4>Step 4: Recursive Cases</h4>
                                 <div class="code-block">
                                     <code>// Inside _searchRecursive after base cases
-if (value < node.value) {
+if (value &lt; node.value) {
     // Search left subtree (smaller values)
-    return this._searchRecursive(node.left, value);
+    return searchRecursive(node.left, value);
 } else {
     // Search right subtree (larger values)
-    return this._searchRecursive(node.right, value);
+    return searchRecursive(node.right, value);
 }</code>
                                 </div>
                             </div>
@@ -438,32 +442,27 @@ if (value < node.value) {
                             <h4>Step 5: Complete Implementation</h4>
                             <div class="code-block">
                                 <code>class BST {
-    constructor() {
+    BSTNode root;
+
+    public BST() {
         this.root = null;
     }
-    
-    search(value) {
-        return this._searchRecursive(this.root, value);
+
+    public BSTNode search(int value) {
+        return searchRecursive(root, value);
     }
-    
-    _searchRecursive(node, value) {
-        // Base case 1: Empty tree or not found
-        if (node === null) {
+
+    private BSTNode searchRecursive(BSTNode node, int value) {
+        if (node == null) {
             return null;
         }
-        
-        // Base case 2: Value found
-        if (node.value === value) {
+        if (node.value == value) {
             return node;
         }
-        
-        // Recursive cases
-        if (value < node.value) {
-            // Search left subtree (smaller values)
-            return this._searchRecursive(node.left, value);
+        if (value &lt; node.value) {
+            return searchRecursive(node.left, value);
         } else {
-            // Search right subtree (larger values)
-            return this._searchRecursive(node.right, value);
+            return searchRecursive(node.right, value);
         }
     }
 }</code>
@@ -503,20 +502,26 @@ if (value < node.value) {
                             <code>class BST {
     // ... existing implementation
     
-    findMin() {
-        // Your code here
+    public BSTNode findMin() {
+        return findMinRecursive(root);
     }
     
-    _findMinRecursive(node) {
-        // Your code here
+    private BSTNode findMinRecursive(BSTNode node) {
+        if (node == null || node.left == null) {
+            return node;
+        }
+        return findMinRecursive(node.left);
     }
     
-    findMax() {
-        // Your code here
+    public BSTNode findMax() {
+        return findMaxRecursive(root);
     }
     
-    _findMaxRecursive(node) {
-        // Your code here
+    private BSTNode findMaxRecursive(BSTNode node) {
+        if (node == null || node.right == null) {
+            return node;
+        }
+        return findMaxRecursive(node.right);
     }
 }</code>
                         </div>
@@ -543,12 +548,21 @@ if (value < node.value) {
                             <code>class BST {
     // ... existing implementation
     
-    countNodesInRange(min, max) {
-        return this._countNodesInRangeRecursive(this.root, min, max);
+    public int countNodesInRange(int min, int max) {
+        return countNodesInRangeRecursive(root, min, max);
     }
     
-    _countNodesInRangeRecursive(node, min, max) {
-        // Your code here
+    private int countNodesInRangeRecursive(BSTNode node, int min, int max) {
+        if (node == null) {
+            return 0;
+        }
+        if (node.value &lt; min) {
+            return countNodesInRangeRecursive(node.right, min, max);
+        } else if (node.value &gt; max) {
+            return countNodesInRangeRecursive(node.left, min, max);
+        } else {
+            return 1 + countNodesInRangeRecursive(node.left, min, max) + countNodesInRangeRecursive(node.right, min, max);
+        }
     }
 }</code>
                         </div>

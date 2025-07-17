@@ -422,20 +422,16 @@
                                     <h4>Step 1: Graph Setup</h4>
                                     <div class="code-block">
                                         <code>class Graph {
-    constructor() {
-        this.adjacencyList = {};
+    private Map&lt;String, List&lt;String&gt;&gt; adjacencyList = new HashMap&lt;&gt;();
+
+    public void addVertex(String vertex) {
+        adjacencyList.putIfAbsent(vertex, new ArrayList&lt;&gt;());
     }
 
-    addVertex(vertex) {
-        if (!this.adjacencyList[vertex]) {
-            this.adjacencyList[vertex] = [];
-        }
-    }
-
-    addEdge(v1, v2) {
-        this.adjacencyList[v1].push(v2);
+    public void addEdge(String v1, String v2) {
+        adjacencyList.get(v1).add(v2);
         // For undirected graphs, add:
-        // this.adjacencyList[v2].push(v1);
+        // adjacencyList.get(v2).add(v1);
     }
 }</code>
                                     </div>
@@ -444,13 +440,13 @@
                                 <div class="space-y">
                                     <h4>Step 2: Cycle Detection Method</h4>
                                     <div class="code-block">
-                                        <code>hasCycle() {
-    const visited = {};
-    const recStack = {};
+                                        <code>public boolean hasCycle() {
+    Set&lt;String&gt; visited = new HashSet&lt;&gt;();
+    Set&lt;String&gt; recStack = new HashSet&lt;&gt;();
 
     // Check all vertices (for disconnected graphs)
-    for (let vertex in this.adjacencyList) {
-        if (this.hasCycleUtil(vertex, visited, recStack)) {
+    for (String vertex : adjacencyList.keySet()) {
+        if (hasCycleUtil(vertex, visited, recStack)) {
             return true;
         }
     }
@@ -463,28 +459,26 @@
                             <div class="space-y">
                                 <h4>Step 3: Helper Method for Cycle Detection</h4>
                                 <div class="code-block">
-                                    <code>hasCycleUtil(vertex, visited, recStack) {
+                                    <code>private boolean hasCycleUtil(String vertex, Set&lt;String&gt; visited, Set&lt;String&gt; recStack) {
     // If not visited, mark as visited
-    if (!visited[vertex]) {
-        visited[vertex] = true;
-        recStack[vertex] = true;  // Add to recursion stack
+    if (!visited.contains(vertex)) {
+        visited.add(vertex);
+        recStack.add(vertex);  // Add to recursion stack
 
         // Check all neighbors
-        for (let neighbor of this.adjacencyList[vertex]) {
+        for (String neighbor : adjacencyList.get(vertex)) {
             // If neighbor not visited and has cycle
-            if (!visited[neighbor] && 
-                this.hasCycleUtil(neighbor, visited, recStack)) {
+            if (!visited.contains(neighbor) &amp;&amp; hasCycleUtil(neighbor, visited, recStack)) {
                 return true;
-            } 
+            }
             // If neighbor is in recursion stack, cycle found
-            else if (recStack[neighbor]) {
+            else if (recStack.contains(neighbor)) {
                 return true;
             }
         }
     }
-    
     // Remove from recursion stack when backtracking
-    recStack[vertex] = false;
+    recStack.remove(vertex);
     return false;
 }</code>
                                 </div>
@@ -494,40 +488,33 @@
                             <div class="space-y">
                                 <h4>Cycle Detection for Undirected Graphs</h4>
                                 <div class="code-block">
-                                    <code>hasCycleUndirected() {
-    const visited = {};
-    
+                                    <code>public boolean hasCycleUndirected() {
+    Set&lt;String&gt; visited = new HashSet&lt;&gt;();
+
     // Helper function
-    const hasCycleUtil = (vertex, parent) => {
-        // Mark current node as visited
-        visited[vertex] = true;
-        
-        // Visit all adjacent vertices
-        for (let neighbor of this.adjacencyList[vertex]) {
-            // If neighbor is not visited, recursively check
-            if (!visited[neighbor]) {
-                if (hasCycleUtil(neighbor, vertex)) {
+    class Helper {
+        boolean hasCycleUtil(String vertex, String parent) {
+            visited.add(vertex);
+            for (String neighbor : adjacencyList.get(vertex)) {
+                if (!visited.contains(neighbor)) {
+                    if (hasCycleUtil(neighbor, vertex)) {
+                        return true;
+                    }
+                } else if (!neighbor.equals(parent)) {
                     return true;
                 }
-            } 
-            // If neighbor is visited and not the parent,
-            // then there is a cycle
-            else if (neighbor !== parent) {
-                return true;
             }
+            return false;
         }
-        return false;
-    };
-    
-    // Check all vertices (for disconnected graphs)
-    for (let vertex in this.adjacencyList) {
-        if (!visited[vertex]) {
-            if (hasCycleUtil(vertex, null)) {
+    }
+    Helper helper = new Helper();
+    for (String vertex : adjacencyList.keySet()) {
+        if (!visited.contains(vertex)) {
+            if (helper.hasCycleUtil(vertex, null)) {
                 return true;
             }
         }
     }
-    
     return false;
 }</code>
                                 </div>
@@ -539,7 +526,7 @@
                             <h3>Example Usage</h3>
                             <div class="code-block">
                                 <code>// Create a directed graph
-const graph = new Graph();
+Graph graph = new Graph();
 
 // Add vertices
 graph.addVertex("A");
@@ -550,20 +537,20 @@ graph.addVertex("D");
 // Add edges (directed)
 graph.addEdge("A", "B");
 graph.addEdge("B", "C");
-graph.addEdge("C", "A");  // Creates a cycle A -> B -> C -> A
+graph.addEdge("C", "A");  // Creates a cycle A -&gt; B -&gt; C -&gt; A
 graph.addEdge("D", "C");
 
 // Check for cycles
-console.log(graph.hasCycle());  // Output: true
+System.out.println(graph.hasCycle());  // Output: true
 
 // Visualize the graph structure
-console.log(graph.adjacencyList);
+System.out.println(graph.adjacencyList);
 /*
 {
-  A: ["B"],
-  B: ["C"],
-  C: ["A"],
-  D: ["C"]
+  A: [B],
+  B: [C],
+  C: [A],
+  D: [C]
 }
 */</code>
                             </div>
@@ -629,31 +616,27 @@ console.log(graph.adjacencyList);
                             <h3>Code Starting Point</h3>
                             <div class="code-block">
                                 <code>class Graph {
-    constructor() {
-        this.adjacencyList = {};
+    private Map&lt;String, List&lt;String&gt;&gt; adjacencyList = new HashMap&lt;&gt;();
+
+    public void addVertex(String vertex) {
+        adjacencyList.putIfAbsent(vertex, new ArrayList&lt;&gt;());
     }
 
-    addVertex(vertex) {
-        if (!this.adjacencyList[vertex]) {
-            this.adjacencyList[vertex] = [];
-        }
-    }
-
-    addEdge(v1, v2, directed = true) {
-        this.adjacencyList[v1].push(v2);
+    public void addEdge(String v1, String v2, boolean directed) {
+        adjacencyList.get(v1).add(v2);
         if (!directed) {
-            this.adjacencyList[v2].push(v1);
+            adjacencyList.get(v2).add(v1);
         }
     }
-    
     // Implement cycle detection for directed graphs
-    hasCycleDirected() {
+    public boolean hasCycleDirected() {
         // Your code here
+        return false;
     }
-    
     // Implement cycle detection for undirected graphs
-    hasCycleUndirected() {
+    public boolean hasCycleUndirected() {
         // Your code here
+        return false;
     }
 }</code>
                             </div>
@@ -663,26 +646,26 @@ console.log(graph.adjacencyList);
                             <h3>Testing Your Solution</h3>
                             <div class="code-block">
                                 <code>// Create a directed graph with a cycle
-const directedGraph = new Graph();
-directedGraph.addVertex('A');
-directedGraph.addVertex('B');
-directedGraph.addVertex('C');
-directedGraph.addVertex('D');
-directedGraph.addEdge('A', 'B');
-directedGraph.addEdge('B', 'C');
-directedGraph.addEdge('C', 'D');
-directedGraph.addEdge('D', 'B'); // Creates a cycle B → C → D → B
-console.log(directedGraph.hasCycleDirected()); // Should return true
+Graph directedGraph = new Graph();
+directedGraph.addVertex("A");
+directedGraph.addVertex("B");
+directedGraph.addVertex("C");
+directedGraph.addVertex("D");
+directedGraph.addEdge("A", "B", true);
+directedGraph.addEdge("B", "C", true);
+directedGraph.addEdge("C", "D", true);
+directedGraph.addEdge("D", "B", true); // Creates a cycle B -&gt; C -&gt; D -&gt; B
+System.out.println(directedGraph.hasCycleDirected()); // Should return true
 
 // Create an undirected graph with a cycle
-const undirectedGraph = new Graph();
-undirectedGraph.addVertex('A');
-undirectedGraph.addVertex('B');
-undirectedGraph.addVertex('C');
-undirectedGraph.addEdge('A', 'B', false);
-undirectedGraph.addEdge('B', 'C', false);
-undirectedGraph.addEdge('C', 'A', false); // Creates a cycle A — B — C — A
-console.log(undirectedGraph.hasCycleUndirected()); // Should return true</code>
+Graph undirectedGraph = new Graph();
+undirectedGraph.addVertex("A");
+undirectedGraph.addVertex("B");
+undirectedGraph.addVertex("C");
+undirectedGraph.addEdge("A", "B", false);
+undirectedGraph.addEdge("B", "C", false);
+undirectedGraph.addEdge("C", "A", false); // Creates a cycle A - B - C - A
+System.out.println(undirectedGraph.hasCycleUndirected()); // Should return true</code>
                             </div>
                         </div>
                     </div>

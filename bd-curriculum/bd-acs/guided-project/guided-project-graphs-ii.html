@@ -399,19 +399,15 @@
                                     <h4>Step 1: Graph Setup</h4>
                                     <div class="code-block">
                                         <code>class Graph {
-    constructor() {
-        this.adjacencyList = {};
+    private Map&lt;String, List&lt;String&gt;&gt; adjacencyList = new HashMap&lt;&gt;();
+
+    public void addVertex(String vertex) {
+        adjacencyList.putIfAbsent(vertex, new ArrayList&lt;&gt;());
     }
 
-    addVertex(vertex) {
-        if (!this.adjacencyList[vertex]) {
-            this.adjacencyList[vertex] = [];
-        }
-    }
-
-    addEdge(v1, v2) {
-        this.adjacencyList[v1].push(v2);
-        this.adjacencyList[v2].push(v1);
+    public void addEdge(String v1, String v2) {
+        adjacencyList.get(v1).add(v2);
+        adjacencyList.get(v2).add(v1);
     }
 }</code>
                                     </div>
@@ -420,25 +416,22 @@
                                 <div class="space-y">
                                     <h4>Step 2: Implementing Iterative DFS</h4>
                                     <div class="code-block">
-                                        <code>depthFirstIterative(start) {
-    const stack = [start];
-    const result = [];
-    const visited = {};
-    visited[start] = true;
-    
-    while (stack.length) {
-        const currentVertex = stack.pop();
-        result.push(currentVertex);
-        
-        // Visit all unvisited neighbors
-        this.adjacencyList[currentVertex].forEach(neighbor => {
-            if (!visited[neighbor]) {
-                visited[neighbor] = true;
+                                        <code>public List&lt;String&gt; depthFirstIterative(String start) {
+    Stack&lt;String&gt; stack = new Stack&lt;&gt;();
+    List&lt;String&gt; result = new ArrayList&lt;&gt;();
+    Set&lt;String&gt; visited = new HashSet&lt;&gt;();
+    stack.push(start);
+    visited.add(start);
+    while (!stack.isEmpty()) {
+        String currentVertex = stack.pop();
+        result.add(currentVertex);
+        for (String neighbor : adjacencyList.get(currentVertex)) {
+            if (!visited.contains(neighbor)) {
+                visited.add(neighbor);
                 stack.push(neighbor);
             }
-        });
+        }
     }
-    
     return result;
 }</code>
                                     </div>
@@ -453,25 +446,22 @@
                                     <div class="space-y">
                                         <h4>Recursive DFS (for comparison)</h4>
                                         <div class="code-block">
-                                            <code>depthFirstRecursive(start) {
-    const result = [];
-    const visited = {};
-    const adjacencyList = this.adjacencyList;
-    
-    function dfs(vertex) {
-        if (!vertex) return;
-        visited[vertex] = true;
-        result.push(vertex);
-        
-        adjacencyList[vertex].forEach(neighbor => {
-            if (!visited[neighbor]) {
-                dfs(neighbor);
-            }
-        });
-    }
-    
-    dfs(start);
+                                            <code>public List&lt;String&gt; depthFirstRecursive(String start) {
+    List&lt;String&gt; result = new ArrayList&lt;&gt;();
+    Set&lt;String&gt; visited = new HashSet&lt;&gt;();
+    Map&lt;String, List&lt;String&gt;&gt; adj = adjacencyList;
+    dfs(start, visited, result, adj);
     return result;
+}
+private void dfs(String vertex, Set&lt;String&gt; visited, List&lt;String&gt; result, Map&lt;String, List&lt;String&gt;&gt; adj) {
+    if (vertex == null) return;
+    visited.add(vertex);
+    result.add(vertex);
+    for (String neighbor : adj.get(vertex)) {
+        if (!visited.contains(neighbor)) {
+            dfs(neighbor, visited, result, adj);
+        }
+    }
 }</code>
                                         </div>
                                     </div>
