@@ -421,41 +421,34 @@
                                 <div class="space-y">
                                     <h4>Step 1: Graph Setup</h4>
                                     <div class="code-block">
-                                        <code>class Graph {
-    constructor() {
-        this.adjacencyList = {};
-    }
+                                        <code>class Graph:
+    def __init__(self):
+        self.adjacency_list = {}
 
-    addVertex(vertex) {
-        if (!this.adjacencyList[vertex]) {
-            this.adjacencyList[vertex] = [];
-        }
-    }
+    def add_vertex(self, vertex):
+        if vertex not in self.adjacency_list:
+            self.adjacency_list[vertex] = []
 
-    addEdge(v1, v2) {
-        this.adjacencyList[v1].push(v2);
-        // For undirected graphs, add:
-        // this.adjacencyList[v2].push(v1);
-    }
-}</code>
+    def add_edge(self, v1, v2):
+        self.adjacency_list[v1].append(v2)
+        # For undirected graphs, add:
+        # self.adjacency_list[v2].append(v1)
+</code>
                                     </div>
                                 </div>
 
                                 <div class="space-y">
                                     <h4>Step 2: Cycle Detection Method</h4>
                                     <div class="code-block">
-                                        <code>hasCycle() {
-    const visited = {};
-    const recStack = {};
+                                        <code>def has_cycle(self):
+    visited = {}
+    rec_stack = {}
 
-    // Check all vertices (for disconnected graphs)
-    for (let vertex in this.adjacencyList) {
-        if (this.hasCycleUtil(vertex, visited, recStack)) {
-            return true;
-        }
-    }
-    return false;
-}</code>
+    # Check all vertices (for disconnected graphs)
+    for vertex in self.adjacency_list:
+        if self.has_cycle_util(vertex, visited, rec_stack):
+            return True
+    return False</code>
                                     </div>
                                 </div>
                             </div>
@@ -463,30 +456,24 @@
                             <div class="space-y">
                                 <h4>Step 3: Helper Method for Cycle Detection</h4>
                                 <div class="code-block">
-                                    <code>hasCycleUtil(vertex, visited, recStack) {
-    // If not visited, mark as visited
-    if (!visited[vertex]) {
-        visited[vertex] = true;
-        recStack[vertex] = true;  // Add to recursion stack
+                                    <code>def has_cycle_util(self, vertex, visited, rec_stack):
+    # If not visited, mark as visited
+    if vertex not in visited:
+        visited[vertex] = True
+        rec_stack[vertex] = True  # Add to recursion stack
 
-        // Check all neighbors
-        for (let neighbor of this.adjacencyList[vertex]) {
-            // If neighbor not visited and has cycle
-            if (!visited[neighbor] && 
-                this.hasCycleUtil(neighbor, visited, recStack)) {
-                return true;
-            } 
-            // If neighbor is in recursion stack, cycle found
-            else if (recStack[neighbor]) {
-                return true;
-            }
-        }
-    }
+        # Check all neighbors
+        for neighbor in self.adjacency_list[vertex]:
+            # If neighbor not visited and has cycle
+            if neighbor not in visited and self.has_cycle_util(neighbor, visited, rec_stack):
+                return True
+            # If neighbor is in recursion stack, cycle found
+            elif neighbor in rec_stack and rec_stack[neighbor]:
+                return True
     
-    // Remove from recursion stack when backtracking
-    recStack[vertex] = false;
-    return false;
-}</code>
+    # Remove from recursion stack when backtracking
+    rec_stack[vertex] = False
+    return False</code>
                                 </div>
                             </div>
 
@@ -494,42 +481,33 @@
                             <div class="space-y">
                                 <h4>Cycle Detection for Undirected Graphs</h4>
                                 <div class="code-block">
-                                    <code>hasCycleUndirected() {
-    const visited = {};
+                                    <code>def has_cycle_undirected(self):
+    visited = {}
     
-    // Helper function
-    const hasCycleUtil = (vertex, parent) => {
-        // Mark current node as visited
-        visited[vertex] = true;
+    # Helper function
+    def has_cycle_util(vertex, parent):
+        # Mark current node as visited
+        visited[vertex] = True
         
-        // Visit all adjacent vertices
-        for (let neighbor of this.adjacencyList[vertex]) {
-            // If neighbor is not visited, recursively check
-            if (!visited[neighbor]) {
-                if (hasCycleUtil(neighbor, vertex)) {
-                    return true;
-                }
-            } 
-            // If neighbor is visited and not the parent,
-            // then there is a cycle
-            else if (neighbor !== parent) {
-                return true;
-            }
-        }
-        return false;
-    };
+        # Visit all adjacent vertices
+        for neighbor in self.adjacency_list[vertex]:
+            # If neighbor is not visited, recursively check
+            if neighbor not in visited:
+                if has_cycle_util(neighbor, vertex):
+                    return True
+            # If neighbor is visited and not the parent,
+            # then there is a cycle
+            elif neighbor != parent:
+                return True
+        return False
     
-    // Check all vertices (for disconnected graphs)
-    for (let vertex in this.adjacencyList) {
-        if (!visited[vertex]) {
-            if (hasCycleUtil(vertex, null)) {
-                return true;
-            }
-        }
-    }
+    # Check all vertices (for disconnected graphs)
+    for vertex in self.adjacency_list:
+        if vertex not in visited:
+            if has_cycle_util(vertex, None):
+                return True
     
-    return false;
-}</code>
+    return False</code>
                                 </div>
                             </div>
                         </div>
@@ -538,34 +516,30 @@
                         <div class="space-y">
                             <h3>Example Usage</h3>
                             <div class="code-block">
-                                <code>// Create a directed graph
-const graph = new Graph();
+                                <code># Create a directed graph
+graph = Graph()
 
-// Add vertices
-graph.addVertex("A");
-graph.addVertex("B");
-graph.addVertex("C");
-graph.addVertex("D");
+# Add vertices
+graph.add_vertex("A")
+graph.add_vertex("B")
+graph.add_vertex("C")
+graph.add_vertex("D")
 
-// Add edges (directed)
-graph.addEdge("A", "B");
-graph.addEdge("B", "C");
-graph.addEdge("C", "A");  // Creates a cycle A -> B -> C -> A
-graph.addEdge("D", "C");
+# Add edges (directed)
+graph.add_edge("A", "B")
+graph.add_edge("B", "C")
+graph.add_edge("C", "A") # Creates a cycle A -> B -> C -> A
+graph.add_edge("D", "C")
+# Check for cycles
+print(graph.has_cycle())  # Output: True
 
-// Check for cycles
-console.log(graph.hasCycle());  // Output: true
-
-// Visualize the graph structure
-console.log(graph.adjacencyList);
-/*
-{
-  A: ["B"],
-  B: ["C"],
-  C: ["A"],
-  D: ["C"]
-}
-*/</code>
+# Visualize the graph structure
+print(graph.adjacency_list)
+#   A: [B],
+#   B: [C],
+#   C: [A],
+#   D: [C]
+</code>
                             </div>
                         </div>
 
@@ -628,61 +602,56 @@ console.log(graph.adjacencyList);
                         <div class="space-y">
                             <h3>Code Starting Point</h3>
                             <div class="code-block">
-                                <code>class Graph {
-    constructor() {
-        this.adjacencyList = {};
-    }
+                                <code>class Graph:
+    def __init__(self):
+        self.adjacency_list = {}
 
-    addVertex(vertex) {
-        if (!this.adjacencyList[vertex]) {
-            this.adjacencyList[vertex] = [];
-        }
-    }
+    def add_vertex(self, vertex):
+        if vertex not in self.adjacency_list:
+            self.adjacency_list[vertex] = []
 
-    addEdge(v1, v2, directed = true) {
-        this.adjacencyList[v1].push(v2);
-        if (!directed) {
-            this.adjacencyList[v2].push(v1);
-        }
-    }
+    def add_edge(self, v1, v2, directed=True):
+        self.adjacency_list[v1].append(v2)
+        if not directed:
+            self.adjacency_list[v2].append(v1)
     
-    // Implement cycle detection for directed graphs
-    hasCycleDirected() {
-        // Your code here
-    }
+    # Implement cycle detection for directed graphs
+    def has_cycle_directed(self):
+        # Your code here
+        pass
     
-    // Implement cycle detection for undirected graphs
-    hasCycleUndirected() {
-        // Your code here
-    }
-}</code>
+    # Implement cycle detection for undirected graphs
+    def has_cycle_undirected(self):
+        # Your code here
+        pass
+</code>
                             </div>
                         </div>
 
                         <div class="space-y">
                             <h3>Testing Your Solution</h3>
                             <div class="code-block">
-                                <code>// Create a directed graph with a cycle
-const directedGraph = new Graph();
-directedGraph.addVertex('A');
-directedGraph.addVertex('B');
-directedGraph.addVertex('C');
-directedGraph.addVertex('D');
-directedGraph.addEdge('A', 'B');
-directedGraph.addEdge('B', 'C');
-directedGraph.addEdge('C', 'D');
-directedGraph.addEdge('D', 'B'); // Creates a cycle B → C → D → B
-console.log(directedGraph.hasCycleDirected()); // Should return true
+                                <code># Create a directed graph with a cycle
+directed_graph = Graph()
+directed_graph.add_vertex('A')
+directed_graph.add_vertex('B')
+directed_graph.add_vertex('C')
+directed_graph.add_vertex('D')
+directed_graph.add_edge('A', 'B')
+directed_graph.add_edge('B', 'C')
+directed_graph.add_edge('C', 'D')
+directed_graph.add_edge('D', 'B') # Creates a cycle B → C → D → B
+print(directed_graph.has_cycle_directed()) # Should return True
 
-// Create an undirected graph with a cycle
-const undirectedGraph = new Graph();
-undirectedGraph.addVertex('A');
-undirectedGraph.addVertex('B');
-undirectedGraph.addVertex('C');
-undirectedGraph.addEdge('A', 'B', false);
-undirectedGraph.addEdge('B', 'C', false);
-undirectedGraph.addEdge('C', 'A', false); // Creates a cycle A — B — C — A
-console.log(undirectedGraph.hasCycleUndirected()); // Should return true</code>
+# Create an undirected graph with a cycle
+undirected_graph = Graph()
+undirected_graph.add_vertex('A')
+undirected_graph.add_vertex('B')
+undirected_graph.add_vertex('C')
+undirected_graph.add_edge('A', 'B', False)
+undirected_graph.add_edge('B', 'C', False)
+undirected_graph.add_edge('C', 'A', False) # Creates a cycle A — B — C — A
+print(undirected_graph.has_cycle_undirected()) # Should return True</code>
                             </div>
                         </div>
                     </div>
