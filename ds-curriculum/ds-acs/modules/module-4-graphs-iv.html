@@ -186,24 +186,19 @@
         include:</p>
 
       <div class="code-block">
-        // Adjacency List representation
-        class Graph {
-        constructor() {
-        this.adjacencyList = {};
-        }
+        # Adjacency List representation
+        class Graph:
+        def __init__(self):
+        self.adjacency_list = {}
 
-        addVertex(vertex) {
-        if (!this.adjacencyList[vertex]) {
-        this.adjacencyList[vertex] = [];
-        }
-        }
+        def add_vertex(self, vertex):
+        if vertex not in self.adjacency_list:
+        self.adjacency_list[vertex] = []
 
-        addEdge(vertex1, vertex2) {
-        this.adjacencyList[vertex1].push(vertex2);
-        // For undirected graph, add the reverse edge too
-        // this.adjacencyList[vertex2].push(vertex1);
-        }
-        }
+        def add_edge(self, vertex1, vertex2):
+        self.adjacency_list[vertex1].append(vertex2)
+        # For undirected graph, add the reverse edge too
+        # self.adjacency_list[vertex2].append(vertex1)
       </div>
     </div>
 
@@ -213,57 +208,42 @@
         visit:</p>
 
       <div class="code-block">
-        // Recursive DFT implementation
-        class Graph {
-        // ... previous methods from above ...
+        # Recursive DFT implementation
+        class Graph:
+        # ... previous methods from above ...
 
-        depthFirstTraversalRecursive(startVertex) {
-        const result = [];
-        const visited = {};
-        const adjacencyList = this.adjacencyList;
+        def depth_first_traversal_recursive(self, start_vertex):
+        result = []
+        visited = set()
+        adjacency_list = self.adjacency_list
 
-        // Helper function to conduct DFT recursively
-        function dfs(vertex) {
-        if (!vertex) return null;
+        def dfs(vertex):
+        if not vertex:
+        return None
+        visited.add(vertex)
+        result.append(vertex)
+        for neighbor in adjacency_list[vertex]:
+        if neighbor not in visited:
+        dfs(neighbor)
+        dfs(start_vertex)
+        return result
 
-        // Mark vertex as visited
-        visited[vertex] = true;
-        // Add vertex to result
-        result.push(vertex);
-
-        // Visit each neighbor
-        adjacencyList[vertex].forEach(neighbor => {
-        if (!visited[neighbor]) {
-        return dfs(neighbor);
-        }
-        });
-        }
-
-        // Start DFT from startVertex
-        dfs(startVertex);
-
-        return result;
-        }
-        }
-
-        // Example usage
-        const g = new Graph();
-        g.addVertex("A");
-        g.addVertex("B");
-        g.addVertex("C");
-        g.addVertex("D");
-        g.addVertex("E");
-        g.addVertex("F");
-
-        g.addEdge("A", "B");
-        g.addEdge("A", "C");
-        g.addEdge("B", "D");
-        g.addEdge("C", "E");
-        g.addEdge("D", "E");
-        g.addEdge("D", "F");
-        g.addEdge("E", "F");
-
-        console.log(g.depthFirstTraversalRecursive("A")); // ["A", "B", "D", "E", "F", "C"]
+        # Example usage
+        g = Graph()
+        g.add_vertex("A")
+        g.add_vertex("B")
+        g.add_vertex("C")
+        g.add_vertex("D")
+        g.add_vertex("E")
+        g.add_vertex("F")
+        g.add_edge("A", "B")
+        g.add_edge("A", "C")
+        g.add_edge("B", "D")
+        g.add_edge("C", "E")
+        g.add_edge("D", "E")
+        g.add_edge("D", "F")
+        g.add_edge("E", "F")
+        print(g.depth_first_traversal_recursive("A")) # ["A", "B", "D", "E", "F", "C"]
       </div>
     </div>
 
@@ -272,34 +252,26 @@
       <p class="text-lighttext">The iterative approach uses an explicit stack to keep track of vertices to visit:</p>
 
       <div class="code-block">
-        // Iterative DFT implementation
-        class Graph {
-        // ... previous methods ...
+        # Iterative DFT implementation
+        class Graph:
+        # ... previous methods ...
 
-        depthFirstTraversalIterative(startVertex) {
-        const stack = [startVertex];
-        const result = [];
-        const visited = {};
-        visited[startVertex] = true;
+        def depth_first_traversal_iterative(self, start_vertex):
+        stack = [start_vertex]
+        result = []
+        visited = set()
+        visited.add(start_vertex)
+        while stack:
+        current_vertex = stack.pop()
+        result.append(current_vertex)
+        for neighbor in self.adjacency_list[current_vertex]:
+        if neighbor not in visited:
+        visited.add(neighbor)
+        stack.append(neighbor)
+        return result
 
-        while (stack.length) {
-        const currentVertex = stack.pop();
-        result.push(currentVertex);
-
-        this.adjacencyList[currentVertex].forEach(neighbor => {
-        if (!visited[neighbor]) {
-        visited[neighbor] = true;
-        stack.push(neighbor);
-        }
-        });
-        }
-
-        return result;
-        }
-        }
-
-        // Example usage
-        console.log(g.depthFirstTraversalIterative("A")); // May produce different order than recursive version
+        # Example usage
+        print(g.depth_first_traversal_iterative("A")) # May produce different order than recursive version
       </div>
 
       <p class="text-lighttext"><strong>Time Complexity:</strong> O(V + E) where V is the number of vertices and E is
