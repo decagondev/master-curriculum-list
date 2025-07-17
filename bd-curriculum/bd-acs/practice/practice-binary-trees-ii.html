@@ -112,14 +112,14 @@
 
     <div class="code-block">
       // Recursive search implementation
-      function search(root, value) {
+      public Node search(Node root, int value) {
       // Base cases
-      if (root === null) return null;
-      if (root.value === value) return root;
+      if (root == null) return null;
+      if (root.value == value) return root;
 
       // Recursive search in subtrees
-      const leftResult = search(root.left, value);
-      if (leftResult) return leftResult;
+      Node leftResult = search(root.left, value);
+      if (leftResult != null) return leftResult;
 
       return search(root.right, value);
       }
@@ -133,18 +133,19 @@
 
     <div class="code-block">
       // Level-first traversal using a queue
-      function levelOrderTraversal(root) {
-      if (!root) return [];
+      public List&lt;Integer&gt; levelOrderTraversal(Node root) {
+      List&lt;Integer&gt; result = new ArrayList&lt;&gt;();
+      if (root == null) return result;
 
-      const result = [];
-      const queue = [root];
+      Queue&lt;Node&gt; queue = new LinkedList&lt;&gt;();
+      queue.add(root);
 
-      while (queue.length &gt; 0) {
-      const current = queue.shift();
-      result.push(current.value);
+      while (!queue.isEmpty()) {
+      Node current = queue.poll();
+      result.add(current.value);
 
-      if (current.left) queue.push(current.left);
-      if (current.right) queue.push(current.right);
+      if (current.left != null) queue.add(current.left);
+      if (current.right != null) queue.add(current.right);
       }
 
       return result;
@@ -158,10 +159,10 @@
 
     <div class="code-block">
       // Pre-order traversal (Root, Left, Right)
-      function preOrder(root, result = []) {
-      if (!root) return result;
+      public List&lt;Integer&gt; preOrder(Node root, List&lt;Integer&gt; result) {
+      if (root == null) return result;
 
-      result.push(root.value);
+      result.add(root.value);
       preOrder(root.left, result);
       preOrder(root.right, result);
 
@@ -169,23 +170,23 @@
       }
 
       // In-order traversal (Left, Root, Right)
-      function inOrder(root, result = []) {
-      if (!root) return result;
+      public List&lt;Integer&gt; inOrder(Node root, List&lt;Integer&gt; result) {
+      if (root == null) return result;
 
       inOrder(root.left, result);
-      result.push(root.value);
+      result.add(root.value);
       inOrder(root.right, result);
 
       return result;
       }
 
       // Post-order traversal (Left, Right, Root)
-      function postOrder(root, result = []) {
-      if (!root) return result;
+      public List&lt;Integer&gt; postOrder(Node root, List&lt;Integer&gt; result) {
+      if (root == null) return result;
 
       postOrder(root.left, result);
       postOrder(root.right, result);
-      result.push(root.value);
+      result.add(root.value);
 
       return result;
       }

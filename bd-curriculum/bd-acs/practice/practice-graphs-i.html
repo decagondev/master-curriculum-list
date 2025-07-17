@@ -131,24 +131,24 @@
     <div class="code-block">
       // Adjacency List implementation
       class Graph {
-      constructor() {
-      this.adjacencyList = {};
+      private Map&lt;String, List&lt;String&gt;&gt; adjacencyList;
+
+      public Graph() {
+      adjacencyList = new HashMap&lt;&gt;();
       }
 
-      addVertex(vertex) {
-      if (!this.adjacencyList[vertex]) {
-      this.adjacencyList[vertex] = [];
-      }
+      public void addVertex(String vertex) {
+      adjacencyList.putIfAbsent(vertex, new ArrayList&lt;&gt;());
       }
 
-      addEdge(vertex1, vertex2) {
-      this.adjacencyList[vertex1].push(vertex2);
-      this.adjacencyList[vertex2].push(vertex1); // For undirected graph
+      public void addEdge(String vertex1, String vertex2) {
+      adjacencyList.get(vertex1).add(vertex2);
+      adjacencyList.get(vertex2).add(vertex1); // For undirected graph
       }
       }
 
       // Example
-      const graph = new Graph();
+      Graph graph = new Graph();
       graph.addVertex("A");
       graph.addVertex("B");
       graph.addVertex("C");
@@ -170,11 +170,11 @@
     <div class="code-block">
       // Adjacency Matrix representation
       // For the same graph as above:
-      const matrix = [
-      [0, 1, 0], // A's connections (to B)
-      [1, 0, 1], // B's connections (to A and C)
-      [0, 1, 0] // C's connections (to B)
-      ];
+      int[][] matrix = {
+      {0, 1, 0}, // A's connections (to B)
+      {1, 0, 1}, // B's connections (to A and C)
+      {0, 1, 0} // C's connections (to B)
+      };
 
       // In a weighted graph, instead of 0/1, we'd use the weight value
     </div>
@@ -190,32 +190,32 @@
       class Graph {
       // ... other methods
 
-      depthFirstTraversal(startVertex) {
-      const result = [];
-      const visited = {};
+      public List&lt;String&gt; depthFirstTraversal(String startVertex) {
+      List&lt;String&gt; result = new ArrayList&lt;&gt;();
+      Set&lt;String&gt; visited = new HashSet&lt;&gt;();
 
-      const dfs = (vertex) => {
-      if (!vertex) return null;
-
-      visited[vertex] = true;
-      result.push(vertex);
-
-      this.adjacencyList[vertex].forEach(neighbor => {
-      if (!visited[neighbor]) {
-      return dfs(neighbor);
-      }
-      });
-      };
-
-      dfs(startVertex);
+      dfs(startVertex, visited, result);
       return result;
+      }
+
+      private void dfs(String vertex, Set&lt;String&gt; visited, List&lt;String&gt; result) {
+      if (vertex == null || visited.contains(vertex)) return;
+
+      visited.add(vertex);
+      result.add(vertex);
+
+      for (String neighbor : adjacencyList.get(vertex)) {
+      if (!visited.contains(neighbor)) {
+      dfs(neighbor, visited, result);
+      }
+      }
       }
       }
 
       // Example usage
-      const graph = new Graph();
+      Graph graph = new Graph();
       // ... add vertices and edges
-      console.log(graph.depthFirstTraversal("A")); // ["A", "B", "C", ...]
+      System.out.println(graph.depthFirstTraversal("A")); // [A, B, C, ...]
     </div>
   </div>
 
