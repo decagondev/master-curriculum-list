@@ -393,36 +393,38 @@
                             <div>
                                 <h4>Step 1: Setup Bracket Maps</h4>
                                 <div class="code-block">
-                                    <code>const bracketPairs = {
-    '(': ')',
-    '{': '}',
-    '[': ']'
-};
-
-const openBrackets = new Set(['(', '{', '[']);
-const closeBrackets = new Set([')', '}', ']']);</code>
+                                    <code>Map&lt;Character, Character&gt; bracketPairs = new HashMap&lt;&gt;();
+bracketPairs.put('(', ')');
+bracketPairs.put('{', '}');
+bracketPairs.put('[', ']');
+Set&lt;Character&gt; openBrackets = new HashSet&lt;&gt;(Arrays.asList('(', '{', '['));
+Set&lt;Character&gt; closeBrackets = new HashSet&lt;&gt;(Arrays.asList(')', '}', ']'));</code>
                                 </div>
                             </div>
 
                             <div>
                                 <h4>Step 2: Validation Function</h4>
                                 <div class="code-block">
-                                    <code>function isValidBracketSequence(sequence) {
-    const stack = [];
-    
-    for (let i = 0; i < sequence.length; i++) {
-        const char = sequence[i];
-        
-        // Skip non-bracket characters
-        if (!openBrackets.has(char) && 
-            !closeBrackets.has(char)) {
+                                    <code>public static boolean isValidBracketSequence(String sequence) {
+    Stack&lt;Character&gt; stack = new Stack&lt;&gt;();
+    for (int i = 0; i &lt; sequence.length(); i++) {
+        char ch = sequence.charAt(i);
+        if (!openBrackets.contains(ch) &amp;&amp; !closeBrackets.contains(ch)) {
             continue;
         }
-        
-        // Handle logic here
+        if (openBrackets.contains(ch)) {
+            stack.push(ch);
+        } else {
+            if (stack.isEmpty()) {
+                return false;
+            }
+            char lastOpen = stack.pop();
+            if (bracketPairs.get(lastOpen) != ch) {
+                return false;
+            }
+        }
     }
-    
-    return stack.length === 0;
+    return stack.isEmpty();
 }</code>
                                 </div>
                             </div>
@@ -465,39 +467,26 @@ if (bracketPairs[lastOpen] !== char) {
                         <div>
                             <h4>Step 5: Complete Implementation</h4>
                             <div class="code-block">
-                                <code>function isValidBracketSequence(sequence) {
-    const stack = [];
-    
-    for (let i = 0; i < sequence.length; i++) {
-        const char = sequence[i];
-        
-        // Skip non-bracket characters
-        if (!openBrackets.has(char) && 
-            !closeBrackets.has(char)) {
+                                <code>public static boolean isValidBracketSequence(String sequence) {
+    Stack&lt;Character&gt; stack = new Stack&lt;&gt;();
+    for (int i = 0; i &lt; sequence.length(); i++) {
+        char ch = sequence.charAt(i);
+        if (!openBrackets.contains(ch) &amp;&amp; !closeBrackets.contains(ch)) {
             continue;
         }
-        
-        if (openBrackets.has(char)) {
-            // If it's an opening bracket, push to stack
-            stack.push(char);
+        if (openBrackets.contains(ch)) {
+            stack.push(ch);
         } else {
-            // If stack is empty, no matching open bracket
-            if (stack.length === 0) {
+            if (stack.isEmpty()) {
                 return false;
             }
-            
-            // Get the last open bracket
-            const lastOpen = stack.pop();
-            
-            // Check if brackets match
-            if (bracketPairs[lastOpen] !== char) {
+            char lastOpen = stack.pop();
+            if (bracketPairs.get(lastOpen) != ch) {
                 return false;
             }
         }
     }
-    
-    // Valid only if all brackets were matched
-    return stack.length === 0;
+    return stack.isEmpty();
 }</code>
                             </div>
                         </div>
