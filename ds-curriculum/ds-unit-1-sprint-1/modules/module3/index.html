@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3: Join and Reshape Data - Data Science Sprint 1</title>
-    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../../css/style.css">
 </head>
 
 <body>
@@ -47,6 +47,1967 @@
                 <li>Explore and analyze data using Group By operations</li>
                 <li>Understand and implement the principles of tidy data</li>
                 <li>Transform data structures using melt and pivot functions</li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Warm Up- Work With Dates and Times in Pandas</h2>
+            <h3>Overview</h3>
+            <p>
+                Working with data that contains dates and times is something that you will come across often. The two
+                values, dates and times, are often combined into a single object called a <code>datetime</code> (in
+                general).
+            </p>
+            <p>
+                In Python, there are two separate collections of tools or objects specifically for working with data in
+                a datetime format: the built-in Python <code>DateTime</code> module and the pandas Timestamp
+                object.
+            </p>
+            <h3>Python Datetime</h3>
+            <p>
+                Even though we'll work primarily with the pandas objects, it's essential to understand how the Python
+                built-in one works. The <code>datetime</code> module is straightforward to use. We'll use the built-in
+                <code>datetime</code> object to assign the year, month, and day values here.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python">from datetime import datetime  
+
+date = datetime(year=2017, month=8, day=21, hour=13, minute=23, second=30)  
+print(date)</code></pre>
+            </div>
+            <pre>2017-08-21 13:23:30</pre>
+            <h3>Pandas Timestamp</h3>
+            <p>
+                The pandas Timestamp object builds on the datetime module and also incorporates the NumPy datetime64
+                dtype. In pandas, a Timestamp object is created by using the pandas to_datetime method.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python">import pandas as pd
+
+date = pd.to_datetime("21st of August, 2017")
+print(date)</code></pre>
+            </div>
+            <pre>Timestamp('2017-08-21 00:00:00')</pre>
+            <p>
+                Using the 'date' example from above, let's select the year, month, and day separately.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python">import pandas as pd
+
+date = pd.to_datetime("21st of August, 2017")
+print("Year:", date.year)
+print("Month:", date.month)
+print("Day:", date.day)</code></pre>
+            </div>
+            <pre>2017
+8
+21</pre>
+            <h3>Follow Along</h3>
+            <p>
+                Let's revisit the UFO data set and convert the time column to a pandas Timestamp object. We'll read in
+                the data and look at the first few rows.
+            </p>
+            <p>
+                <a href="https://www.kaggle.com/datasets/NUFORC/ufo-sightings/download?datasetVersionNumber=2"
+                    target="_blank" rel="noopener noreferrer">Kaggle UFO Data<span class="sr-only"></span></a>
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python">import pandas as pd
+
+ufo_df = pd.read_csv('scrubbed.csv')
+ufo_df.head(5)</code></pre>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th> </th>
+                            <th>datetime</th>
+                            <th>city</th>
+                            <th>state</th>
+                            <th>country</th>
+                            <th>shape</th>
+                            <th>duration (seconds)</th>
+                            <th>comments</th>
+                            <th>latitude</th>
+                            <th>longitude</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>10/10/1970 16:00</td>
+                            <td>bellmore</td>
+                            <td>ny</td>
+                            <td>us</td>
+                            <td>disk</td>
+                            <td>1800</td>
+                            <td>silver disc seen by family and neighbors</td>
+                            <td>40.668611</td>
+                            <td>-73.527500</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>10/10/1971 21:00</td>
+                            <td>lexington</td>
+                            <td>nc</td>
+                            <td>us</td>
+                            <td>oval</td>
+                            <td>30</td>
+                            <td>green oval shaped light over my local church p...</td>
+                            <td>35.823889</td>
+                            <td>-80.253611</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>10/10/1974 23:00</td>
+                            <td>hudson</td>
+                            <td>ks</td>
+                            <td>us</td>
+                            <td>light</td>
+                            <td>1200</td>
+                            <td>The light chased us.</td>
+                            <td>38.105556</td>
+                            <td>-98.659722</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>10/10/1976 20:30</td>
+                            <td>washougal</td>
+                            <td>wa</td>
+                            <td>us</td>
+                            <td>oval</td>
+                            <td>60</td>
+                            <td>Three extremely large lights hanging above nea...</td>
+                            <td>45.582778</td>
+                            <td>-122.352222</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>10/10/1980 23:30</td>
+                            <td>manchester</td>
+                            <td>nh</td>
+                            <td>us</td>
+                            <td>light</td>
+                            <td>300</td>
+                            <td>A red glowing sphere stopped and watched me.</td>
+                            <td>42.995556</td>
+                            <td>-71.455278</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                Checking the data type of the 'datetime' column with <code>ufo_df['datetime'].dtype</code> returns
+                <code>dtype('O')</code>.
+            </p>
+            <p>
+                To convert the whole column into pandas <code>Timestamp</code> objects, provide the
+                <code>to_datetime</code> method with the
+                column and the format of the datetime text; in this case, we'll let pandas do the work and infer the
+                format.
+            </p>
+            <p>
+                One thing to note with pandas is the inferred values for hours in a day span from 0-23. If we check the
+                value counts of the 'datetime' column with <code>ufo_df['datetime'].value_counts()</code> we can see
+                that the column contains values for hours spanning from 1-24. This will cause an error when we go to
+                convert this column. In order to circumvent this, we can apply a <code>.str.replace()</code> method to
+                the dataframe column, replacing the value 24 with the value 00.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python">import pandas as pd
+
+ufo_df = pd.read_csv('scrubbed.csv')
+
+# Create a new datetime column with correctly formatted dates and times
+ufo_df['datetime'] = pd.to_datetime(ufo_df['datetime'].str.replace(" 24:", " 00:"), infer_datetime_format=True)
+print(ufo_df['datetime'].head())</code></pre>
+            </div>
+            <pre>0   1970-10-10 16:00:00
+1   1971-10-10 21:00:00
+2   1974-10-10 23:00:00
+3   1976-10-10 20:30:00
+4   1980-10-10 23:30:00
+Name: datetime, dtype: datetime64[ns]</pre>
+            <p>
+                Now we can see the time is formatted correctly, and we have a <code>datetime64[ns]</code> object.
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                Now it's your turn to convert some text or string columns to a <code>Timestamp</code> object. To also
+                practice some
+                of our previous skills, you will find some data to read in. Here are some suggestions to get started:
+            </p>
+            <ul>
+                <li>Find, download, or create a data set that includes a date and time in some format</li>
+                <li>Read the data into a DataFrame</li>
+                <li>Check the data type to confirms that it isn't already in a <code>datetime</code> or
+                    <code>datetime64</code> format
+                </li>
+                <li>Use the <code>to_datetime()</code> method to convert; try out the <code>format</code> argument if
+                    you are having trouble</li>
+            </ul>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.to_datetime.html"
+                        target="_blank" rel="noopener noreferrer">Pandas to_datetime<span class="sr-only"></span></a>
+                </li>
+                <li>
+                    <a href="https://numpy.org/doc/stable/reference/arrays.datetime.html?highlight=datetime"
+                        target="_blank" rel="noopener noreferrer">NumPy Datetimes and Timedeltas<span
+                            class="sr-only"></span></a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 01 - Concatenate Data Using the Pandas Concat Method</h2>
+            <h3>Overview</h3>
+            <p>
+                Data sets come in all shapes and sizes, and sometimes we need to combine them in various ways. This type
+                of data wrangling task is very well suited for pandas. There are several different tools that we can
+                use, from very simple to very complex DataFrame combinations. We'll begin with one of the easiest:
+                concatenation using the pandas method <code>pd.concat</code>.
+            </p>
+            <p>
+                Concatenation means to join two things together. For example, with string concatenation, we join two or
+                more strings end-to-end. However, we'll see that for a structure like a DataFrame, "end" has a slightly
+                different meaning.
+            </p>
+            <p>
+                One way to join files and also display them, would be with the use of Unix terminal command
+                <code>cat</code>, which is short for concatenate.
+            </p>
+            <h3>Introduction to pd.concat()</h3>
+            <p>
+                To become more familiar with this method, let's look at the default parameters of
+                <code>pd.concat()</code>.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Import libraries
+import pandas as pd
+import numpy as np
+
+# Display the arguments for pd.concat()
+pd.concat</code></pre>
+                <pre><code class="language-python"></code>&lt;function pandas.core.reshape.concat.concat(objs, axis=0, join='outer', join_axes=None, ignore_index=False, keys=None, levels=None, names=None, verify_integrity=False, sort=None, copy=True)&gt;</code></pre>
+            </div>
+            <p>
+                We can see that there are a number of parameters to use with this method. To start with, our use cases
+                will focus on the <code>axis</code> and <code>join</code> parameters.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                To demonstrate how to combine DataFrames we need to create a few to practice with.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Make DataFrames
+df1 = pd.DataFrame(np.random.rand(3,2),
+                  columns = ['cat', 'dog'])
+df2 = pd.DataFrame(np.random.rand(3,2),
+                  columns = ['cat', 'dog'])
+
+# Print out the DataFrames
+print(df1); print(df2)</code></pre>
+                <pre><code class="language-python">        cat       dog
+0  0.693574  0.094608
+1  0.045537  0.449816
+2  0.077305  0.590424
+        cat       dog
+0  0.685117  0.628959
+1  0.079331  0.955059
+2  0.530680  0.949267</code></pre>
+            </div>
+            <h3>Using <code>pd.concat</code></h3>
+            <p>
+                We'll combine them along the row axis (axis=0) which is the default setting for
+                <code>pd.concat()</code>.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Concatenate along the row axis
+pd.concat([df1, df2])</code></pre>
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>cat</th>
+                                <th>dog</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0</td>
+                                <td>0.693574</td>
+                                <td>0.094608</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>0.045537</td>
+                                <td>0.449816</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>0.077305</td>
+                                <td>0.590424</td>
+                            </tr>
+                            <tr>
+                                <td>0</td>
+                                <td>0.685117</td>
+                                <td>0.628959</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>0.079331</td>
+                                <td>0.955059</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>0.530680</td>
+                                <td>0.949267</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p>
+                We can see that the concatenation preserves the indexes, so we now have some that repeat. One way to
+                avoid this is to set the parameter <code>ignore_index=True</code>.
+            </p>
+            <p>
+                Say we have another DataFrame, and we would like to concatenate them along the column axis. We need to
+                set the argument <code>axis=1</code> to do this. We'll create a DataFrame with different column names,
+                combine them, and view the results to test this out.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Create the new DataFrame
+df3 = pd.DataFrame(np.random.rand(3,2),
+                  columns = ['bird', 'horse'])
+
+# Concatenate it with one of the previous examples
+pd.concat([df1, df3], axis=1)</code></pre>
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>cat</th>
+                                <th>dog</th>
+                                <th>bird</th>
+                                <th>horse</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0</td>
+                                <td>0.693574</td>
+                                <td>0.094608</td>
+                                <td>0.818225</td>
+                                <td>0.971892</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>0.045537</td>
+                                <td>0.449816</td>
+                                <td>0.306902</td>
+                                <td>0.428235</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>0.077305</td>
+                                <td>0.590424</td>
+                                <td>0.929212</td>
+                                <td>0.186076</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <p>
+                In the above examples, <code>df1</code> and <code>df2</code> have the same column names; it was easy to
+                combine them. What do we do if we don't have any column names in common but still want to combine the
+                DataFrames? There are additional arguments that we can pass to <code>pd.concat</code>.
+            </p>
+            <p>
+                Using the <code>join</code> argument, we can combine two DataFrames with overlapping columns. The
+                default value of <code>join</code> is <code>outer</code>, which is a union of all of the columns. First,
+                let's create a few more DataFrames to practice.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Create the DataFrames
+
+data4 = {'Alpaca':['A1', 'A2', 'A3'], 'Bird':['B1', 'B2', 'B3'],
+        'Camel':['C1', 'C2', 'C3']} 
+df4 = pd.DataFrame(data4)
+print(df4)
+
+data5 = {'Bird':['B3', 'B4', 'B5'], 'Camel':['C3', 'C4', 'C5'],
+        'Duck':['D3', 'D4', 'D5']} 
+df5 = pd.DataFrame(data5, index=[3,4,5])
+print(df5)
+
+# Concatenate with default join='outer'
+print(pd.concat([df4, df5], sort=False))</code></pre>
+                <pre><code class="language-python">  Alpaca Bird Camel
+0     A1   B1    C1
+1     A2   B2    C2
+2     A3   B3    C3
+  Bird Camel Duck
+3   B3    C3   D3
+4   B4    C4   D4
+5   B5    C5   D5
+  Alpaca Bird Camel Duck
+0     A1   B1    C1  NaN
+1     A2   B2    C2  NaN
+2     A3   B3    C3  NaN
+3    NaN   B3    C3   D3
+4    NaN   B4    C4   D4
+5    NaN   B5    C5   D5</code></pre>
+            </div>
+            <p>
+                We can see in the above example that those cells that did not have any data available, now have all ,
+                NaN values. To join only those columns that are common to the two DataFrames, we can use the
+                <code>join='inner'</code> argument.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Concatenate with default join='inner'
+print(pd.concat([df4, df5], join='inner'))</code></pre>
+                <pre><code class="language-python">  Bird Camel
+0   B1    C1
+1   B2    C2
+2   B3    C3
+3   B3    C3
+4   B4    C4
+5   B5    C5</code></pre>
+            </div>
+            <p>
+                Now the only columns that remain are the ones that the two DataFrames had in common.
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                Using the same process as above, practice concatenating some DataFrames that you create. You should
+                follow these general steps:
+            </p>
+            <ul>
+                <li>Create DataFrames with either the <code>np.array</code> syntax or by creating a dictionary; create
+                    something that is ~10 rows.</li>
+                <li>Concatenate along either the rows or columns, depending on the column names you made; experiment!
+                </li>
+                <li>Use <code>pd.concat</code> with the <code>join</code> argument.</li>
+            </ul>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html"
+                        target="_blank" rel="noopener noreferrer">pandas concat</a>
+                </li>
+                <li>
+                    <a href="https://jakevdp.github.io/PythonDataScienceHandbook/03.06-concat-and-append.html"
+                        target="_blank" rel="noopener noreferrer">Combining Datasets: Concat and Append</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Merge Data Using Pandas Merge</h2>
+            <h3>Overview</h3>
+            <p>
+                There are other ways to combine DataFrames, especially when there are overlapping rows. For example, the
+                pandas <code>pd.merge()</code> method uses database-style joins, similar to what you might see in SQL
+                later in this course.
+            </p>
+            <h3>Introduction to pd.merge()</h3>
+            <p>
+                To become more familiar with this method, let's look at the available arguments and defaults for this
+                function.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Import libraries
+import pandas as pd
+import numpy as np
+
+# Display the arguments for pd.merge()
+pd.merge</code></pre>
+                <pre>&lt;function pandas.core.reshape.merge.merge(left, right, how='inner', on=None, left_on=None, right_on=None, left_index=False, right_index=False, sort=False, suffixes=('_x', '_y'), copy=True, indicator=False, validate=None)&gt;</pre>
+            </div>
+            <p>
+                Some of the arguments are similar to what we have seen already with concatenation. But with
+                <code>pd.merge()</code> we can do a lot of different types of joins. Let's summarize some of the
+                different parameters.
+            </p>
+            <ul>
+                <li><strong>left</strong> - one of the DataFrames to merge</li>
+                <li><strong>right</strong> - the other DataFrame to merge</li>
+                <li><strong>how</strong> - specifies the kind of merge to make</li>
+                <li><strong>on</strong> - the column on which to merge; needs to be in both DataFrames</li>
+                <li><strong>left_on</strong> - the column to join on in the left DataFrame</li>
+                <li><strong>right_on</strong> - the column to join on in the right DataFrame</li>
+                <li><strong>left_index</strong> or <strong>right_index</strong> - use the index from the left/right
+                    DataFrame as the join key(s)</li>
+            </ul>
+            <p>
+                Let's start with one of the more basic joins, the same as the <code>pd.concat()</code> column-wise
+                example we completed previously.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                We'll create some more DataFrames for practice.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Create DataFrames
+df1 = pd.DataFrame({'day': ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri'],
+                   'weather': ['sunny', 'windy', 'rainy', 'cloudy', 'cold']})
+
+df2 = pd.DataFrame({'day': ['Wed', 'Fri', 'Mon', 'Thurs', 'Tues'],
+                   'temp': [88, 75, 62, 65, 53]})
+
+# Display the DataFrames
+display(df1)
+display(df2)
+
+# Merge them with the default values
+df3 = pd.merge(df1, df2)
+display(df3)</code></pre>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>day</th>
+                            <th>weather</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Mon</td>
+                            <td>sunny</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Tues</td>
+                            <td>windy</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Wed</td>
+                            <td>rainy</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Thurs</td>
+                            <td>cloudy</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Fri</td>
+                            <td>cold</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>day</th>
+                            <th>temp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Wed</td>
+                            <td>88</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Fri</td>
+                            <td>75</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Mon</td>
+                            <td>62</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Thurs</td>
+                            <td>65</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Tues</td>
+                            <td>53</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>day</th>
+                            <th>weather</th>
+                            <th>temp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Mon</td>
+                            <td>sunny</td>
+                            <td>62</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Tues</td>
+                            <td>windy</td>
+                            <td>53</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Wed</td>
+                            <td>rainy</td>
+                            <td>88</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Thurs</td>
+                            <td>cloudy</td>
+                            <td>65</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Fri</td>
+                            <td>cold</td>
+                            <td>75</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                Our new DataFrame <code>df3</code> only has one column for the 'day'; <code>pd.merge()</code> recognized
+                the shared column and merged them on this column. It's also important to note that the order of the days
+                (rows) in each DataFrame doesn't have to be the same for them to merge.
+            </p>
+            <p>
+                There will be cases where the column names don't match, which is where the <code>left_on</code> and
+                <code>right_on</code> parameters are useful. Let's use the same DataFrames as above but instead change
+                the column name on one of them.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Change the column name day -> day_of_week
+df2_new = pd.DataFrame({'day_of_week': ['Wed', 'Fri', 'Mon', 'Thurs', 'Tues'],
+                   'temp': [88, 75, 62, 65, 53]})
+
+# Merge with left and right columns
+df4 = pd.merge(df1, df2_new, left_on='day', right_on='day_of_week')
+display(df4)</code></pre>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>day</th>
+                            <th>weather</th>
+                            <th>day_of_week</th>
+                            <th>temp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Mon</td>
+                            <td>sunny</td>
+                            <td>Mon</td>
+                            <td>62</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Tues</td>
+                            <td>windy</td>
+                            <td>Tues</td>
+                            <td>53</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Wed</td>
+                            <td>rainy</td>
+                            <td>Wed</td>
+                            <td>88</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Thurs</td>
+                            <td>cloudy</td>
+                            <td>Thurs</td>
+                            <td>65</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Fri</td>
+                            <td>cold</td>
+                            <td>Fri</td>
+                            <td>75</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                There is a redundant column where 'day' and 'day_of_week' both have the same values. We can use the
+                <code>.drop()</code> method to remove right after we join the DataFrames.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Drop the day_of_week column
+df5 = pd.merge(df1, df2_new, left_on='day', right_on='day_of_week').drop('day_of_week', axis=1)
+display(df5)</code></pre>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>day</th>
+                            <th>weather</th>
+                            <th>temp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Mon</td>
+                            <td>sunny</td>
+                            <td>62</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Tues</td>
+                            <td>windy</td>
+                            <td>53</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Wed</td>
+                            <td>rainy</td>
+                            <td>88</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Thurs</td>
+                            <td>cloudy</td>
+                            <td>65</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Fri</td>
+                            <td>cold</td>
+                            <td>75</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3>Joins</h3>
+            <p>
+                So far, we have not considered a scenario where there are missing values in the columns of data sets we
+                want to merge or join. Let's look at one such example, by creating two new DataFrames containing sample
+                information about pets in an animal rescue site. Let knowingly not include information on some of the
+                animals, and demonstrate what happens with an 'inner' and 'outer' join on those two DataFrames .
+            </p>
+            <p>
+                We'll use a sample of information about pets in an animal rescue, where we won't have all of the data on
+                all of the animals. It will be easier to demonstrate both an 'inner' and 'outer' join with the same
+                DataFrames.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Create the DataFrames
+df6 = pd.DataFrame({'name': ['Snowball', 'Bob', 'Tweetie', 'Fluffy'],
+                   'type': ['cat', 'rat', 'bird', 'dog']})
+
+df7 = pd.DataFrame({'name': ['Snowball', 'Bob'],
+                   'weight': [400, 749]})
+
+# Display before merging
+display(df6); display(df7)
+
+# Merge in two different ways
+df8_outer = pd.merge(df6, df7, how='outer')
+df8_inner = pd.merge(df6, df7, how='inner')
+
+# Display after merging
+display(df8_outer); display(df8_inner)</code></pre>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>name</th>
+                            <th>type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Snowball</td>
+                            <td>cat</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Bob</td>
+                            <td>rat</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Tweetie</td>
+                            <td>bird</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Fluffy</td>
+                            <td>dog</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>name</th>
+                            <th>weight</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Snowball</td>
+                            <td>400</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Bob</td>
+                            <td>749</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>name</th>
+                            <th>type</th>
+                            <th>weight</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Snowball</td>
+                            <td>cat</td>
+                            <td>400.0</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Bob</td>
+                            <td>rat</td>
+                            <td>749.0</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Tweetie</td>
+                            <td>bird</td>
+                            <td>NaN</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Fluffy</td>
+                            <td>dog</td>
+                            <td>NaN</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>name</th>
+                            <th>type</th>
+                            <th>weight</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Snowball</td>
+                            <td>cat</td>
+                            <td>400</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Bob</td>
+                            <td>rat</td>
+                            <td>749</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                We started with animal names, types, and weights but didn't have weight data for all animals. So the
+                'outer' join used all of the animals and filled in 'NaN' for the missing weights. This type of join is
+                called a union. The 'inner' join only includes rows with data in all three columns; this type is an
+                intersection.
+            </p>
+            <h3>Using the <code>.join</code> method</h3>
+            <p>
+                There is also a <code>.join()</code> method that is available with DataFrame objects. This method is a
+                convenient way to join DataFrames without making a full <code>merge()</code> call. Some of the
+                parameters we can use here are:
+            </p>
+            <ul>
+                <li><strong>other</strong> - the other DataFrame you are joining</li>
+                <li><strong>on</strong> - the column or Index on which to join the other DataFrame (default is the
+                    Index)</li>
+                <li><strong>how</strong> - similar to merge the choices are left, right, outer, inner</li>
+            </ul>
+            <p>
+                We need to use <code>set_index</code> on our DataFrames so that they can be joined on those indexes.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Reset indices 
+df1a = df1.set_index('day')
+df2a = df2.set_index('day')
+
+# Join on the new index='day'
+df1a.join(df2a, on='day')</code></pre>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>day</th>
+                            <th>weather</th>
+                            <th>temp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mon</td>
+                            <td>sunny</td>
+                            <td>62</td>
+                        </tr>
+                        <tr>
+                            <td>Tues</td>
+                            <td>windy</td>
+                            <td>53</td>
+                        </tr>
+                        <tr>
+                            <td>Wed</td>
+                            <td>rainy</td>
+                            <td>88</td>
+                        </tr>
+                        <tr>
+                            <td>Thurs</td>
+                            <td>cloudy</td>
+                            <td>65</td>
+                        </tr>
+                        <tr>
+                            <td>Fri</td>
+                            <td>cold</td>
+                            <td>75</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3>Challenge</h3>
+            <p>
+                There were a few types of merges that we didn't demonstrate above, so this is a good time to practice
+                the other methods. Using the examples above, you'll create some DataFrames and then <code>merge()</code>
+                using both'inner' and 'outer' joins. Also try out the <code>.join()</code> method and see how it
+                compares to the results from your merges.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://realpython.com/pandas-merge-join-and-concat/" target="_blank"
+                        rel="noopener noreferrer">Combining Data in Pandas With merge(), .join(), and concat()</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 03 - Define the Concept of Tidy Data and Describe the Format</h2>
+            <h3>Overview</h3>
+            <p>
+                The term "tidy data" is something you have probably come across a lot. You might have a general idea of
+                what it means, but we'll present the standard model of tidy data here. One of the first things you
+                probably encountered when working with data is how much time you spent cleaning it: dealing with missing
+                values, formatting, renaming columns, etc. In addition to general cleaning, it's also essential to make
+                sure the data is in a tidy format.
+            </p>
+            <p>
+                Tidy data principles describe a standard for organizing the values in a data set. Data in a clear and
+                standard format can be explored and manipulated with any tools that expect this format. In short,
+                standardizing our data in a tidy format makes it faster and easier to analyze and produce results.
+            </p>
+            <h3>Tidy Data Format</h3>
+            <p>
+                Much of the data we deal with is in the form of a table (tabular data). It usually contains columns
+                (often labeled) and rows (sometimes labeled). But, there isn't a universal standard format for these
+                tables. A messy Excel spreadsheet comes to mind, with no standard for organizing the rows and columns.
+            </p>
+            <p>
+                "Tidy Data" is commonly used in Statistics as an alternative term for data matrix. Hadley Wickham (see
+                reference linked below), later defined it in context of data sets. Tiny Data is structured such that:
+            </p>
+            <ul>
+                <li>Each variable is a column</li>
+                <li>Each observation forms a row</li>
+            </ul>
+            <p>
+                For example, a variable could be a measurement (mass, density, temperature) or an attribute (population,
+                quantity); these are just a few examples. Observations are across rows, and typical examples are dates,
+                times, indexes, or locations like latitude/longitude. The intersection of the variable and observation
+                is the value. An example of this could be the temperature (column/variable) at a given time
+                (row/observation).
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                Let's look at an example where we take a "messy" data set and transform it into a tidy format. The
+                following table lists a student_ID and a score (ques1, ques2, etc.) and title (title1, title2, etc.) for
+                that student.
+            </p>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>student_ID</th>
+                            <th>ques1</th>
+                            <th>title1</th>
+                            <th>ques2</th>
+                            <th>title2</th>
+                            <th>ques3</th>
+                            <th>title3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>11926</td>
+                            <td>45</td>
+                            <td>readcsv</td>
+                            <td>78</td>
+                            <td>groupby</td>
+                            <td>86</td>
+                            <td>forloop</td>
+                        </tr>
+                        <tr>
+                            <td>82275</td>
+                            <td>93</td>
+                            <td>ifthen</td>
+                            <td>93</td>
+                            <td>merge</td>
+                            <td>94</td>
+                            <td>readcsv</td>
+                        </tr>
+                        <tr>
+                            <td>40124</td>
+                            <td>83</td>
+                            <td>melt</td>
+                            <td>63</td>
+                            <td>readcsv</td>
+                            <td>83</td>
+                            <td>forloop</td>
+                        </tr>
+                        <tr>
+                            <td>29113</td>
+                            <td>34</td>
+                            <td>merge</td>
+                            <td>56</td>
+                            <td>groupby</td>
+                            <td>85</td>
+                            <td>ifthen</td>
+                        </tr>
+                        <tr>
+                            <td>48454</td>
+                            <td>87</td>
+                            <td>readcsv</td>
+                            <td>87</td>
+                            <td>groupby</td>
+                            <td>62</td>
+                            <td>forloop</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                This data set could be displayed in tidy format by using a column for question number, question title,
+                and score. A possible tidy format is shown below:
+            </p>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>student_ID</th>
+                            <th>ques_num</th>
+                            <th>ques_title</th>
+                            <th>score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>11926</td>
+                            <td>1</td>
+                            <td>readcsv</td>
+                            <td>45</td>
+                        </tr>
+                        <tr>
+                            <td>11926</td>
+                            <td>2</td>
+                            <td>groupby</td>
+                            <td>78</td>
+                        </tr>
+                        <tr>
+                            <td>11926</td>
+                            <td>3</td>
+                            <td>forloop</td>
+                            <td>86</td>
+                        </tr>
+                        <tr>
+                            <td>82275</td>
+                            <td>1</td>
+                            <td>ifthen</td>
+                            <td>93</td>
+                        </tr>
+                        <tr>
+                            <td>82275</td>
+                            <td>2</td>
+                            <td>merge</td>
+                            <td>93</td>
+                        </tr>
+                        <tr>
+                            <td>82275</td>
+                            <td>3</td>
+                            <td>readcsv</td>
+                            <td>94</td>
+                        </tr>
+                        <tr>
+                            <td>40124</td>
+                            <td>1</td>
+                            <td>melt</td>
+                            <td>83</td>
+                        </tr>
+                        <tr>
+                            <td>40124</td>
+                            <td>2</td>
+                            <td>readcsv</td>
+                            <td>63</td>
+                        </tr>
+                        <tr>
+                            <td>40124</td>
+                            <td>3</td>
+                            <td>forloop</td>
+                            <td>83</td>
+                        </tr>
+                        <tr>
+                            <td>29113</td>
+                            <td>1</td>
+                            <td>merge</td>
+                            <td>34</td>
+                        </tr>
+                        <tr>
+                            <td>29113</td>
+                            <td>2</td>
+                            <td>groupby</td>
+                            <td>56</td>
+                        </tr>
+                        <tr>
+                            <td>29113</td>
+                            <td>3</td>
+                            <td>ifthen</td>
+                            <td>85</td>
+                        </tr>
+                        <tr>
+                            <td>48454</td>
+                            <td>1</td>
+                            <td>readcsv</td>
+                            <td>87</td>
+                        </tr>
+                        <tr>
+                            <td>48454</td>
+                            <td>2</td>
+                            <td>groupby</td>
+                            <td>87</td>
+                        </tr>
+                        <tr>
+                            <td>48454</td>
+                            <td>3</td>
+                            <td>forloop</td>
+                            <td>62</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                While the original data was almost in a tidy format, numeric information is in the column name labels
+                (ques1, ques2, ques3). With the transformed data, it's much easier to sort and group by the question
+                number and title when they are all listed in the same column.
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                Using some of the example tables found <a
+                    href="https://en.wikipedia.org/wiki/List_of_United_States_cities_by_population" target="_blank"
+                    rel="noopener noreferrer">here</a> (scroll down for the table), identify how they are
+                "messy" and how they would need to be within a tidy format. Make sure to identify the problems with the
+                original data set and how you could correct it. For this exercise, you don't need to load the data into
+                pandas or write out the specific code; it's enough, for now, to be able to identify how you would
+                transform it. Draw a picture if needed!
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://en.wikipedia.org/wiki/Tidy_data" target="_blank"
+                        rel="noopener noreferrer">Wikipedia: Tidy data</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 04 - Transition Between Tidy and Wide Data Formats With the Melt and Pivot Methods</h2>
+            <h3>Overview</h3>
+            <p>
+                We've already introduced the basics for tidy data structure and looked at examples from practice data
+                sets before and after tidying. We can now comprehend how easy and efficient it is, to explore the data,
+                when the columns and rows are somewhat standardized.
+            </p>
+            <h3>Wide and Long Format</h3>
+            <p>
+                While data appears in many formats, we can somewhat generalize it into two types: wide and long. The
+                long format looks very similar to the tidy format, where each column is a variable and each row is an
+                observation. From the last objective, the transformed student data is in a long format. "Long" refers to
+                the number of rows: we need more rows to hold the data in this format.
+            </p>
+            <h4>Long format</h4>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>student_ID</th>
+                            <th>ques_num</th>
+                            <th>ques_title</th>
+                            <th>score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>11926</td>
+                            <td>1</td>
+                            <td>readcsv</td>
+                            <td>45</td>
+                        </tr>
+                        <tr>
+                            <td>11926</td>
+                            <td>2</td>
+                            <td>groupby</td>
+                            <td>78</td>
+                        </tr>
+                        <tr>
+                            <td>11926</td>
+                            <td>3</td>
+                            <td>forloop</td>
+                            <td>86</td>
+                        </tr>
+                        <tr>
+                            <td>82275</td>
+                            <td>1</td>
+                            <td>ifthen</td>
+                            <td>93</td>
+                        </tr>
+                        <tr>
+                            <td>82275</td>
+                            <td>2</td>
+                            <td>merge</td>
+                            <td>93</td>
+                        </tr>
+                        <tr>
+                            <td>82275</td>
+                            <td>3</td>
+                            <td>readcsv</td>
+                            <td>94</td>
+                        </tr>
+                        <tr>
+                            <td>40124</td>
+                            <td>1</td>
+                            <td>melt</td>
+                            <td>83</td>
+                        </tr>
+                        <tr>
+                            <td>40124</td>
+                            <td>2</td>
+                            <td>readcsv</td>
+                            <td>63</td>
+                        </tr>
+                        <tr>
+                            <td>40124</td>
+                            <td>3</td>
+                            <td>forloop</td>
+                            <td>83</td>
+                        </tr>
+                        <tr>
+                            <td>29113</td>
+                            <td>1</td>
+                            <td>merge</td>
+                            <td>34</td>
+                        </tr>
+                        <tr>
+                            <td>29113</td>
+                            <td>2</td>
+                            <td>groupby</td>
+                            <td>56</td>
+                        </tr>
+                        <tr>
+                            <td>29113</td>
+                            <td>3</td>
+                            <td>ifthen</td>
+                            <td>85</td>
+                        </tr>
+                        <tr>
+                            <td>48454</td>
+                            <td>1</td>
+                            <td>readcsv</td>
+                            <td>87</td>
+                        </tr>
+                        <tr>
+                            <td>48454</td>
+                            <td>2</td>
+                            <td>groupby</td>
+                            <td>87</td>
+                        </tr>
+                        <tr>
+                            <td>48454</td>
+                            <td>3</td>
+                            <td>forloop</td>
+                            <td>62</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                The data set we started with was in a wide format, where the question scores and titles were all in
+                separate columns. It's called "wide" because there are many columns, increasing the width of the table.
+            </p>
+            <h4>Wide format</h4>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>student_ID</th>
+                            <th>ques1</th>
+                            <th>title1</th>
+                            <th>ques2</th>
+                            <th>title2</th>
+                            <th>ques3</th>
+                            <th>title3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>11926</td>
+                            <td>45</td>
+                            <td>readcsv</td>
+                            <td>78</td>
+                            <td>groupby</td>
+                            <td>86</td>
+                            <td>forloop</td>
+                        </tr>
+                        <tr>
+                            <td>82275</td>
+                            <td>93</td>
+                            <td>ifthen</td>
+                            <td>93</td>
+                            <td>merge</td>
+                            <td>94</td>
+                            <td>readcsv</td>
+                        </tr>
+                        <tr>
+                            <td>40124</td>
+                            <td>83</td>
+                            <td>melt</td>
+                            <td>63</td>
+                            <td>readcsv</td>
+                            <td>83</td>
+                            <td>forloop</td>
+                        </tr>
+                        <tr>
+                            <td>29113</td>
+                            <td>34</td>
+                            <td>merge</td>
+                            <td>56</td>
+                            <td>groupby</td>
+                            <td>85</td>
+                            <td>ifthen</td>
+                        </tr>
+                        <tr>
+                            <td>48454</td>
+                            <td>87</td>
+                            <td>readcsv</td>
+                            <td>87</td>
+                            <td>groupby</td>
+                            <td>62</td>
+                            <td>forloop</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                Now that we have defined the wide vs. long formats, we need to introduce the pandas tools that we use
+                for converting between them.
+            </p>
+            <h3>Pandas - <code>melt()</code></h3>
+            <p>
+                When we start with data in a wide format, we use the <code>pd.melt()</code> function to move or unpivot
+                some columns of a DataFrame. The parameters of this function are:
+            </p>
+            <ul>
+                <li><strong>identifier variables (id_vars)</strong> - identifies the observation (row)</li>
+                <li><strong>measured variables (value_vars)</strong> - the columns that will unpivot</li>
+            </ul>
+            <p>
+                Let's use an example from the pandas <code>pd.melt()</code> documentation, and see how this works.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Import libraries
+import pandas as pd
+
+# Create a DataFrame
+df = pd.DataFrame({'A': {0: 'a', 1: 'b', 2: 'c'},
+                   'B': {0: 1, 1: 3, 2: 5}
+                  })
+display(df)
+
+# Melt or unpivot the B column
+pd.melt(df, id_vars=['A'], value_vars=['B'])</code></pre>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>A</th>
+                            <th>B</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>a</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>b</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>c</td>
+                            <td>5</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>A</th>
+                            <th>variable</th>
+                            <th>value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>a</td>
+                            <td>B</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>b</td>
+                            <td>B</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>c</td>
+                            <td>B</td>
+                            <td>5</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                In the above example, we set column 'A' as the identifier column (a, b, c) and column 'B' as the
+                observation values (1, 3, 5)
+            </p>
+            <p>
+                So how do we go back? The above operation is called unpivoting so the reverse must be to pivot.
+            </p>
+            <h3>Pandas - <code>pivot()</code></h3>
+            <p>
+                This function reshapes data based on column values. In the parameters, we specify the index or columns
+                that will form the axes of the resulting DataFrame.
+            </p>
+            <ul>
+                <li><strong>index</strong> - column to use to create the new index</li>
+                <li><strong>columns</strong> - values in this column will create the new columns</li>
+                <li><strong>values</strong> - column(s) to use for populating the values</li>
+            </ul>
+            <p>
+                Let's use another example from the pandas documentation to pivot a DataFrame.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Create the DataFrame
+df = pd.DataFrame({'foo': ['one', 'one', 'one', 'two', 'two', 'two'],
+                   'bar': ['A', 'B', 'C', 'A', 'B', 'C'],
+                   'baz': [1, 2, 3, 4, 5, 6]})
+
+# Look at the DataFrame
+display(df)
+
+# Pivot with the given 
+df.pivot(index='foo', columns='bar', values='baz')</code></pre>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>foo</th>
+                            <th>bar</th>
+                            <th>baz</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>one</td>
+                            <td>A</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>one</td>
+                            <td>B</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>one</td>
+                            <td>C</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>two</td>
+                            <td>A</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>two</td>
+                            <td>B</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>two</td>
+                            <td>C</td>
+                            <td>6</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>bar</th>
+                            <th>A</th>
+                            <th>B</th>
+                            <th>C</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>foo: one</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>foo: two</td>
+                            <td>4</td>
+                            <td>5</td>
+                            <td>6</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Follow Along</h3>
+            <p>
+                It is often helpful to use real data sets when looking at different parameters. The <a
+                    href="https://seaborn.pydata.org/introduction.html" target="_blank"
+                    rel="noopener noreferrer">seaborn plotting library</a> comes with several data sets, which are
+                easy to load once you have imported the library. The flight's
+                data set records the year, month, and the number of passengers who flew.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Import the seaborn plotting library
+import seaborn as sns
+
+# Load the 
+flights = sns.load_dataset("flights")
+flights.head(10)</code></pre>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>year</th>
+                            <th>month</th>
+                            <th>passengers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>1949</td>
+                            <td>January</td>
+                            <td>112</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>1949</td>
+                            <td>February</td>
+                            <td>118</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>1949</td>
+                            <td>March</td>
+                            <td>132</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>1949</td>
+                            <td>April</td>
+                            <td>129</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>1949</td>
+                            <td>May</td>
+                            <td>121</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>1949</td>
+                            <td>June</td>
+                            <td>135</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>1949</td>
+                            <td>July</td>
+                            <td>148</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>1949</td>
+                            <td>August</td>
+                            <td>148</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>1949</td>
+                            <td>September</td>
+                            <td>136</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>1949</td>
+                            <td>October</td>
+                            <td>119</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                We can see that this data is already in an extended format; it is also tidy, with one variable per
+                column and observations organized by row. As discussed earlier, long/tidy format makes it easier to
+                analyze, group data, and perform different operations on those groups. But, long format isn't always the
+                best for creating visualizations.
+            </p>
+            <p>
+                Using the <code>.pivot()</code> method, we'll transform it into a form that is easier to plot.
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Pivot - indexed by year, one month per column, value is passengers/month
+flights_pivot = flights.pivot(index='year', columns='month', values='passengers')
+
+# Display the pivoted DataFrame
+display(flights_pivot)</code></pre>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>year</th>
+                            <th>January</th>
+                            <th>February</th>
+                            <th>March</th>
+                            <th>April</th>
+                            <th>May</th>
+                            <th>June</th>
+                            <th>July</th>
+                            <th>August</th>
+                            <th>September</th>
+                            <th>October</th>
+                            <th>November</th>
+                            <th>December</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1949</td>
+                            <td>112</td>
+                            <td>118</td>
+                            <td>132</td>
+                            <td>129</td>
+                            <td>121</td>
+                            <td>135</td>
+                            <td>148</td>
+                            <td>148</td>
+                            <td>136</td>
+                            <td>119</td>
+                            <td>104</td>
+                            <td>118</td>
+                        </tr>
+                        <tr>
+                            <td>1950</td>
+                            <td>115</td>
+                            <td>126</td>
+                            <td>141</td>
+                            <td>135</td>
+                            <td>125</td>
+                            <td>149</td>
+                            <td>170</td>
+                            <td>170</td>
+                            <td>158</td>
+                            <td>133</td>
+                            <td>114</td>
+                            <td>140</td>
+                        </tr>
+                        <tr>
+                            <td>1951</td>
+                            <td>145</td>
+                            <td>150</td>
+                            <td>178</td>
+                            <td>163</td>
+                            <td>172</td>
+                            <td>178</td>
+                            <td>199</td>
+                            <td>199</td>
+                            <td>184</td>
+                            <td>162</td>
+                            <td>146</td>
+                            <td>166</td>
+                        </tr>
+                        <tr>
+                            <td>1952</td>
+                            <td>171</td>
+                            <td>180</td>
+                            <td>193</td>
+                            <td>181</td>
+                            <td>183</td>
+                            <td>218</td>
+                            <td>230</td>
+                            <td>242</td>
+                            <td>209</td>
+                            <td>191</td>
+                            <td>172</td>
+                            <td>194</td>
+                        </tr>
+                        <tr>
+                            <td>1953</td>
+                            <td>196</td>
+                            <td>196</td>
+                            <td>236</td>
+                            <td>235</td>
+                            <td>229</td>
+                            <td>243</td>
+                            <td>264</td>
+                            <td>272</td>
+                            <td>237</td>
+                            <td>211</td>
+                            <td>180</td>
+                            <td>201</td>
+                        </tr>
+                        <tr>
+                            <td>1954</td>
+                            <td>204</td>
+                            <td>188</td>
+                            <td>235</td>
+                            <td>227</td>
+                            <td>234</td>
+                            <td>264</td>
+                            <td>302</td>
+                            <td>293</td>
+                            <td>259</td>
+                            <td>229</td>
+                            <td>203</td>
+                            <td>229</td>
+                        </tr>
+                        <tr>
+                            <td>1955</td>
+                            <td>242</td>
+                            <td>233</td>
+                            <td>267</td>
+                            <td>269</td>
+                            <td>270</td>
+                            <td>315</td>
+                            <td>364</td>
+                            <td>347</td>
+                            <td>312</td>
+                            <td>274</td>
+                            <td>237</td>
+                            <td>278</td>
+                        </tr>
+                        <tr>
+                            <td>1956</td>
+                            <td>284</td>
+                            <td>277</td>
+                            <td>317</td>
+                            <td>313</td>
+                            <td>318</td>
+                            <td>374</td>
+                            <td>413</td>
+                            <td>405</td>
+                            <td>355</td>
+                            <td>306</td>
+                            <td>271</td>
+                            <td>306</td>
+                        </tr>
+                        <tr>
+                            <td>1957</td>
+                            <td>315</td>
+                            <td>301</td>
+                            <td>356</td>
+                            <td>348</td>
+                            <td>355</td>
+                            <td>422</td>
+                            <td>465</td>
+                            <td>467</td>
+                            <td>404</td>
+                            <td>347</td>
+                            <td>305</td>
+                            <td>336</td>
+                        </tr>
+                        <tr>
+                            <td>1958</td>
+                            <td>340</td>
+                            <td>318</td>
+                            <td>362</td>
+                            <td>348</td>
+                            <td>363</td>
+                            <td>435</td>
+                            <td>491</td>
+                            <td>505</td>
+                            <td>404</td>
+                            <td>359</td>
+                            <td>310</td>
+                            <td>337</td>
+                        </tr>
+                        <tr>
+                            <td>1959</td>
+                            <td>360</td>
+                            <td>342</td>
+                            <td>406</td>
+                            <td>396</td>
+                            <td>420</td>
+                            <td>472</td>
+                            <td>548</td>
+                            <td>559</td>
+                            <td>463</td>
+                            <td>407</td>
+                            <td>362</td>
+                            <td>405</td>
+                        </tr>
+                        <tr>
+                            <td>1960</td>
+                            <td>417</td>
+                            <td>391</td>
+                            <td>419</td>
+                            <td>461</td>
+                            <td>472</td>
+                            <td>535</td>
+                            <td>622</td>
+                            <td>606</td>
+                            <td>508</td>
+                            <td>461</td>
+                            <td>390</td>
+                            <td>432</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                Now we have the data in a format that could provide more flexibility for visualizations. Since we're
+                talking about it, let's try out a seaborn heatmap:
+            </p>
+            <div class="code-example">
+                <pre><code class="language-python"># Create a heatmap of the pivoted flights data set
+ax = sns.heatmap(flights_pivot) #uncomment to plot heatmap</code></pre>
+            </div>
+            <img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_1/sprint_1/mod3_obj4_heatmap.png"
+                alt="heatmap" loading="lazy">
+
+            <h3>Challenge</h3>
+            <p>
+                The seaborn library has many additional datasets that you can use to practice. Choose one from this <a
+                    href="https://github.com/mwaskom/seaborn-data" target="_blank" rel="noopener noreferrer">list</a>
+                and load it in the same way we loaded the flights data set; change the name to match the file. Once you
+                have your data loaded, try out the following steps:
+            </p>
+            <ul>
+                <li>use <code>.pivot()</code> to create a wide-form table</li>
+                <li>try using more than one column for the values parameter</li>
+                <li>use <code>.melt()</code> to unpivot what you created</li>
+                <li>try out a heatmap if your data set is in the right format</li>
+            </ul>
+
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.melt.html"
+                        target="_blank" rel="noopener noreferrer">Pandas documentation: melt()</a>
+                </li>
+                <li>
+                    <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.pivot.html"
+                        target="_blank" rel="noopener noreferrer">Pandas documentation: pivot()</a>
+                </li>
+                <li>
+                    <a href="https://seaborn.pydata.org/introduction.html" target="_blank" rel="noopener noreferrer">An
+                        Introduction to seaborn</a>
+                </li>
             </ul>
         </section>
 

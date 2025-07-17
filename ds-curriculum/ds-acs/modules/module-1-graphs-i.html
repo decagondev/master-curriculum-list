@@ -108,11 +108,11 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <!-- Navigation -->
         <div class="flex justify-between items-center mb-8">
-            <a href="./../welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+            <a href="./../index.html" class="text-primary hover:text-secondary flex items-center space-x-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
-                <span>Back to Welcome Page</span>
+                <span>Back to Main ACS Page</span>
             </a>
         </div>
 
@@ -284,40 +284,31 @@
                                 a graph. It uses an array or object where each vertex is associated with a list of its
                                 adjacent vertices (neighbors).</p>
 
-                            <h5 class="text-md font-medium text-white mb-2">Implementation in JavaScript:</h5>
+                            <h5 class="text-md font-medium text-white mb-2">Implementation in Python:</h5>
                             <div class="bg-gray-800 rounded-lg p-4 my-3">
-                                <pre class="text-gray-100"><code>class Graph {
-  constructor() {
-    this.adjacencyList = {};
-  }
-  
-  addVertex(vertex) {
-    if (!this.adjacencyList[vertex]) {
-      this.adjacencyList[vertex] = [];
-    }
-  }
-  
-  addEdge(vertex1, vertex2) {
-    // For undirected graph
-    this.adjacencyList[vertex1].push(vertex2);
-    this.adjacencyList[vertex2].push(vertex1);
-  }
-  
-  removeEdge(vertex1, vertex2) {
-    this.adjacencyList[vertex1] = this.adjacencyList[vertex1]
-      .filter(v => v !== vertex2);
-    this.adjacencyList[vertex2] = this.adjacencyList[vertex2]
-      .filter(v => v !== vertex1);
-  }
-  
-  removeVertex(vertex) {
-    while(this.adjacencyList[vertex].length) {
-      const adjacentVertex = this.adjacencyList[vertex].pop();
-      this.removeEdge(vertex, adjacentVertex);
-    }
-    delete this.adjacencyList[vertex];
-  }
-}</code></pre>
+                                <pre class="text-gray-100"><code>class Graph:
+    def __init__(self):
+        self.adjacency_list = {}
+    
+    def add_vertex(self, vertex):
+        if vertex not in self.adjacency_list:
+            self.adjacency_list[vertex] = []
+    
+    def add_edge(self, vertex1, vertex2):
+        # For undirected graph
+        self.adjacency_list[vertex1].append(vertex2)
+        self.adjacency_list[vertex2].append(vertex1)
+    
+    def remove_edge(self, vertex1, vertex2):
+        self.adjacency_list[vertex1] = [v for v in self.adjacency_list[vertex1] if v != vertex2]
+        self.adjacency_list[vertex2] = [v for v in self.adjacency_list[vertex2] if v != vertex1]
+    
+    def remove_vertex(self, vertex):
+        while self.adjacency_list[vertex]:
+            adjacent_vertex = self.adjacency_list[vertex].pop()
+            self.remove_edge(vertex, adjacent_vertex)
+        del self.adjacency_list[vertex]
+</code></pre>
                             </div>
 
                             <h5 class="text-md font-medium text-white mb-2">Time Complexity:</h5>
@@ -364,51 +355,42 @@
                                 represent vertices. The value at matrix[i][j] indicates if there is an edge from vertex
                                 i to vertex j.</p>
 
-                            <h5 class="text-md font-medium text-white mb-2">Implementation in JavaScript:</h5>
+                            <h5 class="text-md font-medium text-white mb-2">Implementation in Python:</h5>
                             <div class="bg-gray-800 rounded-lg p-4 my-3">
-                                <pre class="text-gray-100"><code>class GraphMatrix {
-  constructor(numVertices) {
-    this.numVertices = numVertices;
-    // Initialize matrix with zeros
-    this.matrix = Array(numVertices).fill()
-      .map(() => Array(numVertices).fill(0));
-  }
-  
-  // Add edge for undirected graph
-  addEdge(v1, v2) {
-    // Set values to 1 to indicate an edge
-    this.matrix[v1][v2] = 1;
-    this.matrix[v2][v1] = 1; // Remove this line for directed graph
-  }
-  
-  // Add edge with weight
-  addWeightedEdge(v1, v2, weight) {
-    this.matrix[v1][v2] = weight;
-    this.matrix[v2][v1] = weight; // Remove this line for directed graph
-  }
-  
-  // Remove edge
-  removeEdge(v1, v2) {
-    this.matrix[v1][v2] = 0;
-    this.matrix[v2][v1] = 0; // Remove this line for directed graph
-  }
-  
-  // Check if there is an edge between vertices
-  hasEdge(v1, v2) {
-    return this.matrix[v1][v2] !== 0;
-  }
-  
-  // Get all adjacent vertices of a vertex
-  getAdjacentVertices(v) {
-    const adjacent = [];
-    for (let i = 0; i < this.numVertices; i++) {
-      if (this.matrix[v][i] !== 0) {
-        adjacent.push(i);
-      }
-    }
-    return adjacent;
-  }
-}</code></pre>
+                                <pre class="text-gray-100"><code>class GraphMatrix:
+    def __init__(self, num_vertices):
+        self.num_vertices = num_vertices
+        # Initialize matrix with zeros
+        self.matrix = [[0 for _ in range(num_vertices)] for _ in range(num_vertices)]
+    
+    # Add edge for undirected graph
+    def add_edge(self, v1, v2):
+        # Set values to 1 to indicate an edge
+        self.matrix[v1][v2] = 1
+        self.matrix[v2][v1] = 1  # Remove this line for directed graph
+    
+    # Add edge with weight
+    def add_weighted_edge(self, v1, v2, weight):
+        self.matrix[v1][v2] = weight
+        self.matrix[v2][v1] = weight  # Remove this line for directed graph
+    
+    # Remove edge
+    def remove_edge(self, v1, v2):
+        self.matrix[v1][v2] = 0
+        self.matrix[v2][v1] = 0  # Remove this line for directed graph
+    
+    # Check if there is an edge between vertices
+    def has_edge(self, v1, v2):
+        return self.matrix[v1][v2] != 0
+    
+    # Get all adjacent vertices of a vertex
+    def get_adjacent_vertices(self, v):
+        adjacent = []
+        for i in range(self.num_vertices):
+            if self.matrix[v][i] != 0:
+                adjacent.append(i)
+        return adjacent
+</code></pre>
                             </div>
 
                             <h5 class="text-md font-medium text-white mb-2">Comparison with Adjacency Lists:</h5>
@@ -465,56 +447,48 @@
 
                             <h5 class="text-md font-medium text-white mb-2">Recursive Implementation:</h5>
                             <div class="bg-gray-800 rounded-lg p-4 my-3">
-                                <pre class="text-gray-100"><code>class Graph {
-  // ... previous methods ...
-  
-  depthFirstTraversal(start) {
-    const result = [];
-    const visited = {};
+                                <pre class="text-gray-100"><code>class Graph:
+    # ... previous methods ...
     
-    // Helper function to perform recursive DFT
-    const dfs = (vertex) => {
-      if (!vertex) return null;
-      
-      // Mark as visited and add to result
-      visited[vertex] = true;
-      result.push(vertex);
-      
-      // Visit all neighbors
-      this.adjacencyList[vertex].forEach(neighbor => {
-        if (!visited[neighbor]) {
-          return dfs(neighbor);
-        }
-      });
-    };
+    def depth_first_traversal(self, start):
+        result = 
+        visited = {}
+        
+        # Helper function to perform recursive DFT
+        def dfs(vertex):
+            if not vertex:
+                return None
+            
+            # Mark as visited and add to result
+            visited[vertex] = True
+            result.append(vertex)
+            
+            # Visit all neighbors
+            for neighbor in self.adjacency_list[vertex]:
+                if neighbor not in visited:
+                    dfs(neighbor)
+        
+        # Start traversal
+        dfs(start)
+        return result
     
-    // Start traversal
-    dfs(start);
-    return result;
-  }
-  
-  // Iterative implementation using stack
-  depthFirstIterative(start) {
-    const stack = [start];
-    const result = [];
-    const visited = {};
-    visited[start] = true;
-    
-    while (stack.length) {
-      const currentVertex = stack.pop();
-      result.push(currentVertex);
-      
-      this.adjacencyList[currentVertex].forEach(neighbor => {
-        if (!visited[neighbor]) {
-          visited[neighbor] = true;
-          stack.push(neighbor);
-        }
-      });
-    }
-    
-    return result;
-  }
-}</code></pre>
+    # Iterative implementation using stack
+    def depth_first_iterative(self, start):
+        stack = [start]
+        result = 
+        visited = {start: True}
+        
+        while stack:
+            current_vertex = stack.pop()
+            result.append(current_vertex)
+            
+            for neighbor in self.adjacency_list[current_vertex]:
+                if neighbor not in visited:
+                    visited[neighbor] = True
+                    stack.append(neighbor)
+        
+        return result
+</code></pre>
                             </div>
 
                             <h5 class="text-md font-medium text-white mb-2">Applications of DFT:</h5>
@@ -549,37 +523,28 @@
                         <div class="space-y-4">
                             <h3 class="text-xl font-medium text-primary">Graph Class Implementation</h3>
                             <div class="bg-gray-800 rounded-lg p-4">
-                                <pre class="text-gray-100"><code>class Graph {
-    constructor() {
-        this.adjacencyList = {};
-    }
+                                <pre class="text-gray-100"><code>class Graph:
+    def __init__(self):
+        self.adjacency_list = {}
 
-    addVertex(vertex) {
-        if (!this.adjacencyList[vertex]) {
-            this.adjacencyList[vertex] = [];
-        }
-    }
+    def add_vertex(self, vertex):
+        if vertex not in self.adjacency_list:
+            self.adjacency_list[vertex] = []
 
-    addEdge(vertex1, vertex2) {
-        this.adjacencyList[vertex1].push(vertex2);
-        this.adjacencyList[vertex2].push(vertex1);
-    }
+    def add_edge(self, vertex1, vertex2):
+        self.adjacency_list[vertex1].append(vertex2)
+        self.adjacency_list[vertex2].append(vertex1)
 
-    removeEdge(vertex1, vertex2) {
-        this.adjacencyList[vertex1] = this.adjacencyList[vertex1]
-            .filter(v => v !== vertex2);
-        this.adjacencyList[vertex2] = this.adjacencyList[vertex2]
-            .filter(v => v !== vertex1);
-    }
+    def remove_edge(self, vertex1, vertex2):
+        self.adjacency_list[vertex1] = [v for v in self.adjacency_list[vertex1] if v != vertex2]
+        self.adjacency_list[vertex2] = [v for v in self.adjacency_list[vertex2] if v != vertex1]
 
-    removeVertex(vertex) {
-        while(this.adjacencyList[vertex].length) {
-            const adjacentVertex = this.adjacencyList[vertex].pop();
-            this.removeEdge(vertex, adjacentVertex);
-        }
-        delete this.adjacencyList[vertex];
-    }
-}</code></pre>
+    def remove_vertex(self, vertex):
+        while self.adjacency_list[vertex]:
+            adjacent_vertex = self.adjacency_list[vertex].pop()
+            self.remove_edge(vertex, adjacent_vertex)
+        del self.adjacency_list[vertex]
+</code></pre>
                             </div>
                         </div>
 
@@ -587,28 +552,26 @@
                         <div class="space-y-4">
                             <h3 class="text-xl font-medium text-primary">Depth First Traversal</h3>
                             <div class="bg-gray-800 rounded-lg p-4">
-                                <pre class="text-gray-100"><code>class Graph {
-    // ... previous methods ...
+                                <pre class="text-gray-100"><code>class Graph:
+    # ... previous methods ...
 
-    depthFirstTraversal(start) {
-        const result = [];
-        const visited = {};
-        const adjacencyList = this.adjacencyList;
+    def depth_first_traversal(self, start):
+        result = 
+        visited = {}
+        adjacency_list = self.adjacency_list
 
-        (function dfs(vertex) {
-            if (!vertex) return null;
-            visited[vertex] = true;
-            result.push(vertex);
-            adjacencyList[vertex].forEach(neighbor => {
-                if (!visited[neighbor]) {
-                    return dfs(neighbor);
-                }
-            });
-        })(start);
+        def dfs(vertex):
+            if not vertex:
+                return None
+            visited[vertex] = True
+            result.append(vertex)
+            for neighbor in adjacency_list[vertex]:
+                if neighbor not in visited:
+                    dfs(neighbor)
 
-        return result;
-    }
-}</code></pre>
+        dfs(start)
+        return result
+</code></pre>
                             </div>
                         </div>
 
@@ -616,24 +579,24 @@
                         <div class="space-y-4">
                             <h3 class="text-xl font-medium text-primary">Usage Example</h3>
                             <div class="bg-gray-800 rounded-lg p-4">
-                                <pre class="text-gray-100"><code>// Create a new graph
-const graph = new Graph();
+                                <pre class="text-gray-100"><code># Create a new graph
+graph = Graph()
 
-// Add vertices
-graph.addVertex("A");
-graph.addVertex("B");
-graph.addVertex("C");
-graph.addVertex("D");
+# Add vertices
+graph.add_vertex("A")
+graph.add_vertex("B")
+graph.add_vertex("C")
+graph.add_vertex("D")
 
-// Add edges
-graph.addEdge("A", "B");
-graph.addEdge("A", "C");
-graph.addEdge("B", "D");
-graph.addEdge("C", "D");
+# Add edges
+graph.add_edge("A", "B")
+graph.add_edge("A", "C")
+graph.add_edge("B", "D")
+graph.add_edge("C", "D")
 
-// Perform DFS starting from vertex "A"
-console.log(graph.depthFirstTraversal("A")); 
-// Output: ["A", "B", "D", "C"]</code></pre>
+# Perform DFS starting from vertexA
+print(graph.depth_first_traversal("A")) 
+# Output: ["A", "B", "D", "C"]</code></pre>
                             </div>
                         </div>
                     </div>

@@ -129,38 +129,33 @@
       neighbors of a vertex.</p>
 
     <div class="code-block">
-      // Adjacency List implementation
-      class Graph {
-      constructor() {
-      this.adjacencyList = {};
-      }
+      # Adjacency List implementation
+      class Graph:
+      def __init__(self):
+      self.adjacency_list = {}
 
-      addVertex(vertex) {
-      if (!this.adjacencyList[vertex]) {
-      this.adjacencyList[vertex] = [];
-      }
-      }
+      def add_vertex(self, vertex):
+      if vertex not in self.adjacency_list:
+      self.adjacency_list[vertex] = []
 
-      addEdge(vertex1, vertex2) {
-      this.adjacencyList[vertex1].push(vertex2);
-      this.adjacencyList[vertex2].push(vertex1); // For undirected graph
-      }
-      }
+      def add_edge(self, vertex1, vertex2):
+      self.adjacency_list[vertex1].append(vertex2)
+      self.adjacency_list[vertex2].append(vertex1) # For undirected graph
 
-      // Example
-      const graph = new Graph();
-      graph.addVertex("A");
-      graph.addVertex("B");
-      graph.addVertex("C");
-      graph.addEdge("A", "B");
-      graph.addEdge("B", "C");
+      # Example
+      graph = Graph()
+      graph.add_vertex("A")
+      graph.add_vertex("B")
+      graph.add_vertex("C")
+      graph.add_edge("A", "B")
+      graph.add_edge("B", "C")
 
-      // Result:
-      // {
-      // "A": ["B"],
-      // "B": ["A", "C"],
-      // "C": ["B"]
-      // }
+      # Result:
+      # {
+      # "A": ["B"],
+      # "B": ["A", "C"],
+      # "C": ["B"]
+      # }
     </div>
 
     <h4>2. Adjacency Matrix</h4>
@@ -168,15 +163,15 @@
       vertex j.</p>
 
     <div class="code-block">
-      // Adjacency Matrix representation
-      // For the same graph as above:
-      const matrix = [
-      [0, 1, 0], // A's connections (to B)
-      [1, 0, 1], // B's connections (to A and C)
-      [0, 1, 0] // C's connections (to B)
-      ];
+      # Adjacency Matrix representation
+      # For the same graph as above:
+      matrix = [
+      [0, 1, 0], # A's connections (to B)
+      [1, 0, 1], # B's connections (to A and C)
+      [0, 1, 0] # C's connections (to B)
+      ]
 
-      // In a weighted graph, instead of 0/1, we'd use the weight value
+      # In a weighted graph, instead of 0/1, we'd use the weight value
     </div>
   </div>
 
@@ -186,36 +181,30 @@
       recursively or using a stack.</p>
 
     <div class="code-block">
-      // Recursive DFT implementation
-      class Graph {
-      // ... other methods
+      # Recursive DFT implementation
+      class Graph:
+      # ... other methods
 
-      depthFirstTraversal(startVertex) {
-      const result = [];
-      const visited = {};
+      def depth_first_traversal(self, start_vertex):
+      result = []
+      visited = {}
 
-      const dfs = (vertex) => {
-      if (!vertex) return null;
+      def dfs(vertex):
+      if not vertex:
+      return None
+      visited[vertex] = True
+      result.append(vertex)
+      for neighbor in self.adjacency_list[vertex]:
+      if not visited.get(neighbor):
+      dfs(neighbor)
 
-      visited[vertex] = true;
-      result.push(vertex);
+      dfs(start_vertex)
+      return result
 
-      this.adjacencyList[vertex].forEach(neighbor => {
-      if (!visited[neighbor]) {
-      return dfs(neighbor);
-      }
-      });
-      };
-
-      dfs(startVertex);
-      return result;
-      }
-      }
-
-      // Example usage
-      const graph = new Graph();
-      // ... add vertices and edges
-      console.log(graph.depthFirstTraversal("A")); // ["A", "B", "C", ...]
+      # Example usage
+      graph = Graph()
+      # ... add vertices and edges
+      print(graph.depth_first_traversal("A")) # ["A", "B", "C", ...]
     </div>
   </div>
 

@@ -291,7 +291,7 @@
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
-                <span>Back to Welcome Page</span>
+                <span>Back to Main ACS Page</span>
             </a>
         </div>
 
@@ -392,22 +392,15 @@
                             <div class="info-box">
                                 <h3>Implementation Steps</h3>
                                 <div class="code-block">
-                                    <code>function floodFill(grid, row, col, newColor, oldColor = grid[row][col]) {
-    // Check bounds and color match
-    if (row < 0 || row >= grid.length || 
-        col < 0 || col >= grid[0].length || 
-        grid[row][col] !== oldColor) {
+                                    <code>public static void floodFill(int[][] grid, int row, int col, int newColor, int oldColor) {
+    if (row &lt; 0 || row &gt;= grid.length || col &lt; 0 || col &gt;= grid[0].length || grid[row][col] != oldColor) {
         return;
     }
-
-    // Fill current cell
     grid[row][col] = newColor;
-
-    // Recursively fill neighbors (4-way connectivity)
-    floodFill(grid, row + 1, col, newColor, oldColor);  // Down
-    floodFill(grid, row - 1, col, newColor, oldColor);  // Up
-    floodFill(grid, row, col + 1, newColor, oldColor);  // Right
-    floodFill(grid, row, col - 1, newColor, oldColor);  // Left
+    floodFill(grid, row + 1, col, newColor, oldColor); // Down
+    floodFill(grid, row - 1, col, newColor, oldColor); // Up
+    floodFill(grid, row, col + 1, newColor, oldColor); // Right
+    floodFill(grid, row, col - 1, newColor, oldColor); // Left
 }</code>
                                 </div>
                             </div>
@@ -415,24 +408,20 @@
                             <div class="info-box">
                                 <h3>Example Usage</h3>
                                 <div class="code-block">
-                                    <code>const grid = [
-    [1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1]
-];
-
+                                    <code>int[][] grid = {
+    {1, 1, 1, 1, 1},
+    {1, 0, 0, 0, 1},
+    {1, 0, 0, 0, 1},
+    {1, 1, 1, 1, 1}
+};
 // Fill starting at [1,1] with color 2
-floodFill(grid, 1, 1, 2);
-
-console.log(grid);
+floodFill(grid, 1, 1, 2, grid[1][1]);
+System.out.println(Arrays.deepToString(grid));
 /* Output:
-[
-    [1, 1, 1, 1, 1],
-    [1, 2, 2, 2, 1],
-    [1, 2, 2, 2, 1],
-    [1, 1, 1, 1, 1]
-]
+[[1, 1, 1, 1, 1],
+ [1, 2, 2, 2, 1],
+ [1, 2, 2, 2, 1],
+ [1, 1, 1, 1, 1]]
 */</code>
                                 </div>
                             </div>
@@ -440,31 +429,23 @@ console.log(grid);
                             <div class="info-box">
                                 <h3>Iterative Implementation (using BFS)</h3>
                                 <div class="code-block">
-                                    <code>function floodFillBFS(grid, row, col, newColor) {
-    const oldColor = grid[row][col];
-    if (oldColor === newColor) return grid; // No need to fill if same color
-    
-    const queue = [[row, col]];
-    const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]; // Down, Up, Right, Left
-    
-    while (queue.length > 0) {
-        const [r, c] = queue.shift();
-        
-        // Check if this cell needs filling
-        if (r < 0 || r >= grid.length || c < 0 || c >= grid[0].length || grid[r][c] !== oldColor) {
+                                    <code>public static void floodFillBFS(int[][] grid, int row, int col, int newColor) {
+    int oldColor = grid[row][col];
+    if (oldColor == newColor) return;
+    Queue&lt;int[]&gt; queue = new LinkedList&lt;&gt;();
+    queue.add(new int[]{row, col});
+    int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    while (!queue.isEmpty()) {
+        int[] cell = queue.poll();
+        int r = cell[0], c = cell[1];
+        if (r &lt; 0 || r &gt;= grid.length || c &lt; 0 || c &gt;= grid[0].length || grid[r][c] != oldColor) {
             continue;
         }
-        
-        // Fill current cell
         grid[r][c] = newColor;
-        
-        // Add all adjacent cells to queue
-        for (const [dr, dc] of directions) {
-            queue.push([r + dr, c + dc]);
+        for (int[] dir : directions) {
+            queue.add(new int[]{r + dir[0], c + dir[1]});
         }
     }
-    
-    return grid;
 }</code>
                                 </div>
                             </div>
