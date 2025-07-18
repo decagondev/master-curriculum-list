@@ -21,7 +21,6 @@
                         <a href="../../modules/module4/index.html">Module 4: Testing Web Applications</a>
                     </div>
                 </li>
-                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
                 <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
         </nav>
@@ -29,104 +28,315 @@
 
     <main class="container">
         <section class="welcome">
-            <h1>Web Unit 3 Sprint 9 - Class Components & Testing</h1>
+            <h1>Web Unit 3 Sprint 9 - Class Components</h1>
             
             <div class="content-box module1-accent">
-                <h2>Module 1: Class Components</h2>
-                <p>In this module, you'll learn about class components in React and how they differ from functional components. You'll understand the lifecycle methods and state management in class components.</p>
-                
-                <p>Class components have been a significant part of the React ecosystem because they provide functionality that wasn't initially available with functional components. Though hooks now bring similar capabilities to functional components, many existing projects still use class components, making it essential to understand how to work with them.</p>
-                
-                <p>The focus will be on understanding React's <code>Component</code> base class, which allows access to lifecycle methods, state management, and event handling in a class-based approach.</p>
-            </div>
+                <h3>Using Class Components</h3>
+                <p>React gave us the idea of components as independent pieces of UI. And thus far, you have learned how to build out functional components to make multiple DOM elements. Now, we're going to be learning about React.Component base class that allows us to use some of the React team's methods to tap into the Component Lifecycle. These methods (known as life-cycle hooks, more on these to come) give us control over how our components work, and if we'd like to use them, we have to build out a class component that extends the React.Component parent class.</p>
 
-            <div class="content-box">
-                <h2>Learning Objectives</h2>
-                <ul>
-                    <li>Explain class components and use a class component to render some state data to the DOM</li>
-                    <li>Describe the three phases of the React component lifecycle</li>
-                    <li>Properly explain what the constructor and render methods do and what their place is in the React component lifecycle</li>
-                    <li>Simulate interactions with userEvent</li>
-                </ul>
-                
-                <p>Remember the "CCR" approach to building class components:</p>
+                <p>Whenever you see a line of code that looks like the following, you're using React.Component parent class, and you can tap into these methods:</p>
+
+                <pre><code>class FooComponent extends React.Component {}</code></pre>
+
+                <p>By creating components as classes, you can set up a data object that your component is concerned with. This is done using state and setting up that object on our constructor method. Once we have some data that we can render out to the DOM, we need a vehicle that will allow us to render that data. This is achieved with the JSX method render() from within the life-cycle hook.</p>
+
+                <h4>Key Steps</h4>
                 <ol>
-                    <li><strong>C</strong>lass - Declare your class and extend React.Component</li>
-                    <li><strong>C</strong>onstructor - Set up state and bind methods</li>
-                    <li><strong>R</strong>ender/Return - Render UI to the DOM</li>
+                    <li>Declare your class component by extending the React.Component parent class</li>
+                    <li>Use the constructor function to set up state (calling super() is required)</li>
+                    <li>Implement the render method to display UI</li>
                 </ol>
-            </div>
 
-            <div class="content-box">
-                <h2>Content</h2>
-                <div class="card">
-                    <h3>Introduction to Class Components</h3>
-                    <p>Class components are ES6 classes that extend React.Component. They were the primary way to manage state and lifecycle methods before the introduction of hooks.</p>
-                    
-                    <p>A basic class component looks like this:</p>
-                    <pre>
-import React from 'react';
+                <p>A helpful way to remember these steps is by using the acronym CCR (like Creedence Clearwater Revival): <strong>C</strong>lass, <strong>C</strong>onstructor, and <strong>R</strong>ender/Return.</p>
 
-class MyComponent extends React.Component {
-  constructor(props) {
-    super(props);
+                <h4>Example Component Structure</h4>
+                <pre><code>class FooComponent extends React.Component {
+  constructor() {
+    super();
+    this.state = {};
+  }
+  render() {
+    return &lt;div&gt;Hello, I am Foo Component&lt;/div&gt;;
+  }
+}</code></pre>
+
+                <p>Now that we have constructed a skeleton for our class component, it can be more dynamic. We'll achieve this by using pre-defined data that we want our component to display, using interpolation to present it to the DOM within some Text.</p>
+
+                <p>Components built by extending the Base React.Component class come with many benefits directly from the React API. While we'll discuss lifecycle methods in detail later, for now, let's focus on how a component can manage its own state (data) in a reactive way.</p>
+
+                <p>The state object we set up in our constructor has a React-specific purpose - it allows us to drive our UI using data. Consider Facebook as an example: you constantly interact with and see data updates in real-time while using the app. This reactive approach to data management is one of React's key strengths.</p>
+                <div class="note-box">
+                    <h3>How to Build</h3>
+                    <p>Let's work together to build out a class component that prints a message to the screen using a few DOM elements. First, we will hold a message on state and print it to the screen by selecting it and assigning it to a DOM element. Then we will take it a step further and pass that message down to another component using props.</p>
+
+                    <p>Go ahead and navigate over to <a href="https://codesandbox.io" target="_blank">this Codesandbox</a>, where we will write our React code. CodeSandbox is an online editor that can be used to write React code right away! I can't emphasize how cool this is.</p>
+
+                    <p>You'll notice that we're getting an error on this page. As we begin to define our app class, elements will start to come to life for us. But, for now, let's start by simply adding the class through CCR.</p>
+
+                    <p>When you're done, your browser window should re-render without any errors. Your app class should look like this:</p>
+
+                    <pre><code>class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {};
+  }
+  render() {
+    return &lt;div&gt;Hello From App!&lt;/div&gt;;
+  }
+}</code></pre>
+
+                    <p>Now, let's add a property to our state data. Define a message property on the state object.</p>
+
+                    <pre><code>this.state = {
+  message: "Hello from App State!!"
+};</code></pre>
+
+                    <p>Now that we have the message on our component's state, we can use it through interpolation. In our render method, let's change the message inside of div to reference the state object. Remember the <code>this</code> keyword when pointing to an object on the class constructor.</p>
+
+                    <pre><code>render() {
+  return &lt;div&gt;{this.state.message}&lt;/div&gt;;
+}</code></pre>
+
+                    <p>Hooray! You've now built your first class component, and you're ready to rock n' roll.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/smwcywa148" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h3>Using State and Props</h3>
+                <p>Up until this point, our applications have been fairly simple. One or two components with a bit of state to allow for interaction. As our applications grow, so does the complexity in how components relate to each other. To do this, it helps to see our components as being structure in a parent / child relationship.</p>
+
+                <p>Here is an example of a more complicated application hierarchy.</p>
+
+                <div class="image-container">
+                    <img src="../../assets/images/graph-1.png" alt="Component hierarchy diagram" />
+                </div>
+
+                <p>Simple or complex, every application needs shared, persistent data to run.</p>
+
+                <p>Currently, we have been using state to hold that data. Unlike statically defined data within our component, state is persistent, changeable and can flow into other components through use of prop drilling. Changes to state immediately rerender the parts of our components effected by that change of state in a process called reactivity. When working with more complex component trees, state always runs from a parent component down to a child.</p>
+
+                <div class="image-container">
+                    <img src="../../assets/images/graph-2.png" alt="State flow diagram" />
+                </div>
+
+                <p>What if we want to modify that data? Just as we can pass parent state down through props, we can also pass functions that modify child state! Executing these functions in our child components will cause state to change at our parent level components, resulting in reactive rendering throughout our application!</p>
+
+                <div class="image-container">
+                    <img src="../../assets/images/graph-3.png" alt="State modification flow diagram" />
+                </div>
+
+                <p>We have already seen how to pass state through props using functional components. Now, let's take a look at how we work with state-in-class-based components.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Consider the following component:</p>
+
+                    <pre><code>class App extends React.Component {
+  constructor() {
+    super();
     this.state = {
-      count: 0
+      welcomeMessage: 'world!'
     };
   }
 
   render() {
     return (
       &lt;div&gt;
-        &lt;h1&gt;Count: {this.state.count}&lt;/h1&gt;
-        &lt;button onClick={() => this.setState({ count: this.state.count + 1 })}&gt;
-          Increment
-        &lt;/button&gt;
+        &lt;h1&gt;Hello, {this.state.welcomeMessage}!&lt;/h1&gt;
       &lt;/div&gt;
     );
   }
-}
+}</code></pre>
 
-export default MyComponent;
-                    </pre>
+                    <p>Let's create a sub component using functional components to hold our welcome message.</p>
+
+                    <pre><code>const WelcomeBanner = (props) =>
+{
+  return(&lt;h1&gt;Hello, {props.message}!&lt;/h1&gt;);
+}</code></pre>
+
+                    <p>Now, lets refactor our component using React classes.</p>
+
+                    <pre><code>class WelcomeBanner extends React.Component {
+    render(){
+        return(
+        &lt;div&gt;
+            &lt;h1&gt;Hello, {this.props.message}&lt;/h1&gt;
+        &lt;/div&gt;
+    }
+}</code></pre>
+
+                    <p>Notice that props are not passed in as they were in functional components. Instead, props are attached to the this object, just like state.</p>
+
+                    <p>Great! We are sharing data between a component's state and a component's props. This means that when the state object changes, so too will the props.</p>
+
+                    <p>Now let's add in the ability to modify that state. To do this, we will need to:</p>
+                    <ul>
+                        <li>Connect a state change method to an event listener in our child component.</li>
+                        <li>Create the substance of that method in our parent.</li>
+                        <li>Pass that method to the child through props.</li>
+                    </ul>
+
+                    <p>Let's start at the bottom, our child component. Let's say that we want to use a form to dynamically update our message statement. This small component should do nicely:</p>
+
+                    <pre><code>const FormComponent = props => {
+  return (
+    &lt;form&gt;
+      &lt;input placeholder="change state" onChange={props.updateStateMessage} /&gt;
+    &lt;/form&gt;
+};</code></pre>
+
+                    <p>The only problem is, we don't have access to state all the way down here! Let's build out our state changing method where it belongs, in App.js our parent. While we are at it, let's add our form component to our rendering so we can see it in the first place.</p>
+
+                    <pre><code>class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      welcomeMessage: 'world!'
+    };
+  }
+
+  updateStateMessage = (e)=> {
+    this.setState({welcomeMessage:e.target.value});
+  }
+
+  render() {
+    return (
+      &lt;div&gt;
+        &lt;WelcomeBanner message={this.state.welcomeMessage} /&gt;
+        &lt;FormComponent updateStateMessage={this.updateStateMessage}/&gt;
+      &lt;/div&gt;
+    );
+  }
+};</code></pre>
+
+                    <p>And there we go! We successfully passed our state data downstream through props in WelcomeBanner. At the same time, we can also successful pass data back upstream by executing state modifying functions passed through props in FormComponent.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/mugqjb9qmn" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h3>User Interaction and Event Handling</h3>
+                <p>In our last objective, we explored how state can be displayed and changed by passing state value and state modifying functions respectively through props. We explored this using the onChange eventlistener. That is, of course, only one of many user event you can integrate into your applications!</p>
+
+                <p>We have already seen how events are handled within React class components. We need an event handler function and we need to link it to an eventlistener method within our DOM.</p>
+
+                <pre><code>class Button extends React.Component {
+  handleButton = (e)=> {
+    console.log(e);  }
+
+  render() {
+    return &lt;button onClick={this.handleButton}&gt;Click Me&lt;/button&gt;;
+  }
+}</code></pre>
+
+                <p>Notice once again the need for that this object when referencing our event handler. Within class components, just like our props and state, our event handlers are bound to the instance of this class and are accessed through this.</p>
+
+                <p>We have also seen that "e" parameter before. This parameter is known is React as a synthetic event object. Inside this object, we will have access to various pieces of information regarding this event triggered, including the target DOM element, the type of event, and methods that control the propagation of that event like preventDefault. For more details on the synthetic event objects, check out the reference materials here<a href="https://reactjs.org/docs/events.html">Links to an external site</a>.</p>
+
+                <p>Let's add in some functionality to our event handler.</p>
+
+                <pre><code>class Button extends React.Component {
+  clickHandler = event => {
+    console.log(event); // this is the react Synthetic Event
+  };
+
+  render() {
+    return &lt;button onClick={this.clickHandler}&gt;Click Me&lt;/button&gt;;
+  }
+}</code></pre>
+
+                <p>Now, when we click on our button, we can actually print out our synthetic event object. We can now do anything we want within event handler, from triggering a change of state to starting an external api call.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's build a simple application that demonstrates handling various events in React class components:</p>
+
+                    <pre><code>class EventHandlerDemo extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      displayText: ''
+    }
+  }
+
+  singleClickHandler = () => alert("Single Click!");
+
+  doubleClickHandler = () => alert("Double Clicked!");
+
+  mouseEnterHandler = () => alert("Mouse Entered");
+
+  changeHandler = event => {
+    this.setState({ displayText: event.target.value });
+    console.log(this.state);
+  };
+
+  render() {
+    return (
+      &lt;div className="App"&gt;
+        &lt;h1&gt;Hello Handlers&lt;/h1&gt;
+        &lt;h2&gt;{this.state.displayText}&lt;/h2&gt;
+        &lt;h3&gt;Lets build out some handler functions.&lt;/h3&gt;
+        &lt;button onClick={this.singleClickHandler}&gt;Click Handler Demo&lt;/button&gt;
+        &lt;button onDoubleClick={this.doubleClickHandler}&gt;Double Click Handler&lt;/button&gt;
+        &lt;div onMouseEnter={this.mouseEnterHandler}&gt;Mouse Enter&lt;/div&gt;
+        &lt;input 
+          onChange={this.changeHandler}
+          placeholder="Change my input"
+        /&gt;
+      &lt;/div&gt;
+    );
+  }
+}</code></pre>
+
+                    <p>In this example, we've created several event handlers:</p>
+                    <ul>
+                        <li>A single click handler that shows an alert</li>
+                        <li>A double click handler that shows a different alert</li>
+                        <li>A mouse enter handler that triggers when the mouse enters a div</li>
+                        <li>A change handler that updates state with the input value</li>
+                    </ul>
+
+                    <p>The change handler is particularly interesting as it demonstrates how to:</p>
+                    <ul>
+                        <li>Access the event object and its properties</li>
+                        <li>Update state based on user input</li>
+                        <li>Display the updated state in real-time</li>
+                    </ul>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/ixahjh7sqq" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
                 </div>
             </div>
 
-            <div class="content-box">
-                <h2>Key Concepts</h2>
-                <div class="card">
-                    <h3>The Class Structure</h3>
-                    <ul>
-                        <li><strong>Extends React.Component</strong>: Inherits functionality from React's Component class</li>
-                        <li><strong>Constructor</strong>: Initialize state and bind methods</li>
-                        <li><strong>this.state</strong>: The component's local state object</li>
-                        <li><strong>this.props</strong>: Properties passed from parent components</li>
-                        <li><strong>this.setState()</strong>: Method to update state (triggers re-render)</li>
-                        <li><strong>render()</strong>: Required method to return JSX</li>
-                    </ul>
-                </div>
+            <div class="content-box module1-accent">
+                <h2>Guided Project</h2>
+              <p><a href="https://github.com/bloominstituteoftechnology/web-guided-project-class-components" target="_blank" rel="noopener">Class Components Starter Code</a></p>
+              <p><a href="https://github.com/bloominstituteoftechnology/web-guided-project-class-components-solution" target="_blank" rel="noopener">Class Components Solution</a></p>
+              <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/tf8rgvk7x0" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+              </div>
             </div>
 
-            <div class="content-box">
-                <h2>State in Class Components</h2>
-                <div class="card">
-                    <h3>Managing State</h3>
-                    <p>Class components manage state through the constructor and setState method:</p>
-                    <ul>
-                        <li>Initialize state in constructor</li>
-                        <li>Access state with this.state</li>
-                        <li>Update state with this.setState()</li>
-                        <li>Never modify this.state directly</li>
-                    </ul>
-                    
-                    <h3>setState() Deep Dive</h3>
-                    <p>setState() has several important characteristics:</p>
-                    <ul>
-                        <li>It's asynchronous</li>
-                        <li>It performs shallow merges</li>
-                        <li>It can accept a function for state updates that depend on previous state</li>
-                        <li>It can accept a callback function as a second argument</li>
-                    </ul>
+            <div class="content-box module1-accent">
+                <h2>Module 1 Project: Class Components</h2>
+
+                <p>Today we will learn all about classes in React. Then, we will use classes to build out our components. Class components have been a big part of the React ecosystem because they brought a lot of functionality that we normally didn't get with the React API when using function components. Now with hooks, that functionality is available in function components. However, many projects will still have class components in them, and we need to be prepared to work with classes when we see them.</p>
+                <p>The module project contains advanced problems that will challenge and stretch your understanding of the module's content. The project has built-in tests for you to check your work, and the solution video is available in case you need help or want to see how we solved each challenge, but remember, there is always more than one way to solve a problem. Before reviewing the solution video, be sure to attempt the project and try solving the challenges yourself.</p>
+                
+
+                <h3>Instructions</h3>
+
+                <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
+                <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/web-module-project-class-components" target="_blank">React Todo</a></p>
+
+                <ul>
+                    <li>Fork the repository,</li>
+                    <li>clone it to your machine, and</li>
+                    <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
+                    <li>submit your completed project to the BloomTech Portal</li>
+                </ul>
+
+                <h3>Solution</h3>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/soew9i8uzw" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
             </div>
 
