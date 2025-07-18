@@ -23,7 +23,6 @@
                         <a href="../../modules/module4/index.html" class="active">Module 4: Testing Web Applications</a>
                     </div>
                 </li>
-                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
                 <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
         </nav>
@@ -31,136 +30,417 @@
 
     <main class="container">
         <section class="welcome">
-            <h1>Web Unit 3 Sprint 9 - Class Components & Testing</h1>
+            <h1>Testing Web Applications</h1>
 
             <div class="content-box module4-accent">
-                <h2>Module 4: Testing Web Applications</h2>
-                <p>In this module, you'll learn about testing web applications using React Testing Library and Jest.
-                    You'll understand how to write effective tests for React components, custom hooks, and user
-                    interactions.</p>
+                <h2>Testing Output on Props Change</h2>
+                <p>Today we will continue working with the React testing library to test rendered DOM elements. This objective will focus on testing data being passed as props and testing props changes that may happen in a component.</p>
 
-                <p>Testing is a crucial aspect of building reliable and maintainable React applications. By implementing
-                    a comprehensive testing strategy, you can catch bugs early, ensure your components behave as
-                    expected, and have confidence when refactoring or adding new features.</p>
+                <p>Often, in a React app, the user interaction inside a component may trigger a call to a child component that receives props. This will cause the app to re-render (update one or more components on the screen) while maintaining the state. When testing this child component, you will want to simulate the re-render with the updated props.</p>
 
-                <p>We'll focus on modern testing practices that emphasize testing behavior over implementation details,
-                    using tools like React Testing Library that encourage accessibility and user-centric testing
-                    approaches.</p>
-            </div>
+                <p>In some cases, when props are updated, you'll want to run a second test on the same component, to make sure that the component is updating properly. You could write an additional test, render the component with a different prop, and make the new assertion:</p>
 
-            <div class="content-box">
-                <h2>Learning Objectives</h2>
+                <pre><code>test("calling render with prop", () => {
+  render(&lt;NumberDisplay number={1} /&gt;)
+  expect(screen.getByTestId("number-display")).toHaveTextContent("1")
+})
+
+test("calling render with different prop", () => {
+  render(&lt;NumberDisplay number={2} /&gt;)
+  expect(screen.getByTestId("number-display")).toHaveTextContent("2")
+})</code></pre>
+
+                <p>But a fresh new render might not be ideal! You will have to write one test for each prop, which may become tiring after a while. Besides, the component is unmounting and re-mounting for each test, which is not necessarily what you want to do. Every time the component mounts, it will lose state, and possibly trigger effects.</p>
+
+                <p>To simulate a more realistic behavior, where components re-render upon a prop change, there is a built-in method called rerender(), which will re-render the component as it would happen in the browser. The rerender() method is returned by render() when you perform the initial render (mount) and can be used later in the test.</p>
+                <div class="note-box">
+                    <h3>Howto Build It</h3>
+                    <p>You could spin up a new project with:</p>
+
+                    <pre><code>npx @bloomtools/react@0.1.28 testing-props
+cd testing-props
+npm install</code></pre>
+
+                    <p>Then create the NumberDisplay.test.js file inside the frontend/components/__tests__ directory, with this content:</p>
+
+                    <pre><code>import React from "react"
+import { render, screen } from "@testing-library/react"
+import "@testing-library/jest-dom"
+
+const NumberDisplay = ({ number }) => {
+  return (
+    &lt;div&gt;
+      &lt;span data-testid="number-display"&gt;{number}&lt;/span&gt;
+    &lt;/div&gt;
+  )
+}
+
+test("calling render with multiple props", () => {
+  // The {rerender} method is returned by render()
+  const { rerender } = render(&lt;NumberDisplay number={1} /&gt;)
+  expect(screen.getByTestId("number-display")).toHaveTextContent("1")
+  rerender(&lt;NumberDisplay number={2} /&gt;)
+  expect(screen.getByTestId("number-display")).toHaveTextContent("2")
+})</code></pre>
+
+                    <p>And finally, run the test with:</p>
+
+                    <pre><code>npm test -- NumberDisplay.test.js</code></pre>
+
+                    <p>Both tests should pass and the code looks cleaner, simulating the actual behavior of the component on a live page!</p>
+
+                    <p>Although you can use the rerender method in other situations, it is especially useful when simulating components calling a child component with props. That way, you can re-render without losing context (state, controlled inputs etc.).</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/3lc214nkyf?seo=false&videoFoam=false" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h2>Simulating Interactions with userEvent</h2>
+                <p>Moving on to another level of component testing, you will now learn how to simulate user interactions in your tests. As you know, the React-testing library is designed to mimic how a human interacts with a website, so having a virtual user perform actions is possibly the ultimate form of testing React components! For that, you will be using the user-event library, which can simulate the mouse, keyboard and many other events.</p>
+
+                <p>Inside your test, the component is not being rendered in the browser, so the virtual user will be interacting with the fake DOM that simulates the real thing. Still, a user event might cause changes in state, or props, triggering one or more re-renders of this fake DOM.</p>
+
+                <p>This chain of events takes some time and that's why most of the methods from the user-event library are asynchronous, and return promises. In practice, the easiest way to deal with that is to declare your test function as async and use await when calling user interaction methods.</p>
+
+                <p>Using the library is as easy as calling the desired method on an element/node. A click on a button would be similar to this:</p>
+
+                <pre><code>// Notice the async keyword
+test("whatever", async () => {
+  // Initialization, render etc.
+  // Grab the node you want to interact with
+  const button = screen.getBy... // Use the proper grabber
+  // Simulate a user click, using await
+  await user.click(button)
+  // Continue with assertions
+  expect...
+})</code></pre>
+
+                <p>As long as you remember to use async and await, simulating user interactions is pretty simple! As a matter of fact, you could spin up a live page and test it both ways: simulation through RTL, and manual interaction through the browser. That's what I call a comprehensive test!</p>
+
+                <p>You can find the documentation for the user-event library <a href="https://testing-library.com/docs/ecosystem-user-event/" target="_blank">HERE</a>.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>First, you need to install the library in your project. The bloomtools will do that for you while creating a fresh new project, which you can load in the browser for further testing and visualization. If you intend to install the user-event library yourself, check the installation instructions <a href="https://testing-library.com/docs/ecosystem-user-event/setup" target="_blank">HERE</a>.</p>
+
+                    <pre><code>npx @bloomtools/react@0.1.18 user-interaction
+cd user-interaction
+npm install</code></pre>
+
+                    <p>Let's consider the example of a simple counter component driven by two buttons:</p>
+
+                    <pre><code>import React, { useState } from "react"
+
+const Counter = () => {
+  const [count, setCount] = useState(0)
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{count}&lt;/h2&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;Increment&lt;/button&gt;
+      &lt;button onClick={() => setCount(count - 1)}&gt;Decrement&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default Counter</code></pre>
+
+                    <p>Inside the test, to simulate a user clicking on the buttons, you need to import the user-event library, set the virtual user and invoke the click method on the element. Study the code below:</p>
+
+                    <pre><code>import React from "react"
+import { render, screen } from "@testing-library/react"
+import "@testing-library/jest-dom"
+// Add this import below
+import userEvent from "@testing-library/user-event"
+// And make sure to import the component as well, from the correct path
+import Counter from "../Counter"
+
+// The test function must be async
+test("count correctly updates when buttons are clicked", async () => {
+  // Initialize the virtual user
+  const user = userEvent.setup()
+  // Fresh render
+  render(&lt;Counter /&gt;)
+  // Grab the counter's text (should be 0 initially, so this is also a test in itself!)
+  const count = screen.getByText("0")
+  // Grab the increment button node
+  const increment = screen.getByText("Increment")
+  // Grab the Decrement button node
+  const decrement = screen.getByText("Decrement")
+  // Simulate some clicks, use await
+  await user.click(increment) // 0+1=1
+  await user.click(increment) // 1+1=2
+  await user.click(decrement) // 2-1=1
+
+  // Assert!
+  expect(count).toHaveTextContent("1"); // Passes, because we expect it to be 1
+})</code></pre>
+
+                    <p>Run the test with:</p>
+
+                    <pre><code>npm test -- Counter.test.js</code></pre>
+
+                    <p>As you can see, once the virtual user is set, you can call interaction methods over any elements of the component, await for the promise to resolve and perform the assertion. The user-event library will take care of re-rendering the component in the fake DOM so you can safely assume that the DOM will be updated when you make the assertions.</p>
+
+                    <p>The click method is just one of many exposed by the user object. If you log the user object in your test, you will be able to see all the options:</p>
+
+                    <img src="../../assets/images/console_user.png" alt="user-event methods">
+
+                    <p>It is never too much to reinforce that the count variable above represents a node in the DOM tree and NOT the text content of the node. That's why you can grab the node at the beginning of the test, right after the render, and use the same variable to make the assertion later on.</p>
+
+                    <p><strong>Pro Tip:</strong> When this line of code <code>const count = screen.getByText("0")</code> is executed inside the test, the getByTest method will throw an error if it can't find a node with such text. This would cause the test to fail outright. So, in other words, when using this method, you are automatically making an assertion, even if it's not wrapped inside an expect statement! In fact, just by running <code>screen.getByText("0")</code>, you are making an assertion. Other grabber methods like queryByText behave a bit differently and will return null if the node is not found.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/3lc214nkyf?seo=false&videoFoam=false" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h2>Using Test Lifecycle Hooks</h2>
+                <p>You will now dive into the essential techniques of structuring your test suite for optimum performance and reliability. Life cycle hooks are integral to this process, providing a structured approach to setting up preconditions and cleaning up after your tests have been executed. This ensures that the state and environment of one test do not inadvertently affect another, which is critical for maintaining the integrity of your test results.</p>
+
+                <p>A life cycle hook (not to be confused with React hooks) is really just a helpful function - or a syntax sugar - that makes your tests look cleaner and easy to write and maintain. In theory, you could get the same results by adding extra code to each test, but it could become very repetitive.</p>
+
+                <p>Throughout this Learning Objective, you'll become familiar with the purpose and practical usage of various life cycle hooks:</p>
+
                 <ul>
-                    <li>Use React Testing Library for testing React components</li>
-                    <li>Test output on props change</li>
-                    <li>Using test lifecycle hooks</li>
-                    <li>Creating asynchronous tests</li>
+                    <li><strong>beforeEach</strong>: This hook is executed before each test within a describe block, allowing you to establish certain conditions that are necessary for every test. For instance, you might want to assign values to some global variables, render a component with specific props or initialize mock functions before each test run.</li>
+                    <li><strong>afterEach</strong>: After the execution of each test, it might be necessary to perform a cleanup to prevent side effects. This hook is perfect for this, enabling you to unmount components, reset mock states, or clear any document mutations that occurred during the test.</li>
+                    <li><strong>beforeAll</strong>: Sometimes, you may need to perform a setup that is more global and only needs to run once before all tests in a suite begin. This hook allows you to do heavy-lifting tasks like creating a mock server or establishing a database connection, thus improving test efficiency and code readability.</li>
+                    <li><strong>afterAll</strong>: This hook is called after all tests in a suite have finished. It's the ideal place to close database connections, stop mock servers, and perform any other teardown tasks that only need to happen once after all tests are complete.</li>
                 </ul>
 
-                <p>Testing React applications typically involves several types of tests:</p>
-                <ul>
-                    <li><strong>Unit Tests:</strong> Testing individual components in isolation</li>
-                    <li><strong>Integration Tests:</strong> Testing how components work together</li>
-                    <li><strong>End-to-End Tests:</strong> Testing the entire application flow</li>
-                </ul>
+                <p>Whether you're dealing with simple unit tests or complex integration tests involving API calls and user interactions, life cycle hooks are indispensable tools in your testing arsenal.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's use the previous project to work and experiment with some lifecycle hooks. Get into the project directory:</p>
 
-                <p>React Testing Library is designed around the principle of testing components the way users actually
-                    use them, focusing on:</p>
-                <ul>
-                    <li>Accessibility concerns</li>
-                    <li>User interactions rather than implementation details</li>
-                    <li>Finding elements by role, text, or label rather than test IDs or class names</li>
-                </ul>
-            </div>
+                    <pre><code>cd user-interaction</code></pre>
 
-            <div class="content-box">
-                <h2>Content</h2>
+                    <p>There's no need to install or import any extra library since the hooks are already available with Jest. Let's revisit the components's code:</p>
 
-                <div class="video-container">
-                    <h3>React Testing Library</h3>
-                    <iframe class="wistia_embed" title="React Testing Library Video"
-                        src="https://fast.wistia.net/embed/iframe/1tr6xo9ier" width="640" height="360"
-                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
-                    <div class="card">
-                        <h4>Key Concepts of React Testing Library</h4>
-                        <ul>
-                            <li><strong>Testing Philosophy:</strong> Test the way users interact with components</li>
-                            <li><strong>Queries:</strong> Methods for finding elements in the rendered output</li>
-                            <li><strong>Firing Events:</strong> Simulating user interactions like clicks and keyboard
-                                input</li>
-                            <li><strong>Assertions:</strong> Making sure the component renders and behaves as expected
-                            </li>
-                            <li><strong>Setup:</strong> Using render, cleanup, and other utilities</li>
-                        </ul>
-                    </div>
-                </div>
+                    <pre><code>import React, { useState } from "react"
 
-                <div class="video-container">
-                    <h3>Testing Output on Props Change</h3>
-                    <iframe class="wistia_embed" title="Testing Output on Props Change Video"
-                        src="https://fast.wistia.net/embed/iframe/3lc214nkyf" width="640" height="360"
-                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
-                    <div class="card">
-                        <h4>Testing Component Updates</h4>
-                        <ul>
-                            <li><strong>Rerendering:</strong> Using rerender to update props between tests</li>
-                            <li><strong>Assertions:</strong> Verifying that components update correctly when props
-                                change</li>
-                            <li><strong>Testing Props:</strong> Checking that components use props values correctly</li>
-                            <li><strong>Testing Class Components:</strong> Using ReactTestUtils.act() for class
-                                component updates</li>
-                        </ul>
-                    </div>
-                </div>
+const Counter = () => {
+  const [count, setCount] = useState(0)
 
-                <div class="video-container">
-                    <h3>Test lifecycle hooks</h3>
-                    <iframe class="wistia_embed" title="Test lifecycle hooks"
-                        src="https://fast.wistia.net/embed/iframe/weaaztmcmy" width="640" height="360"
-                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
-                    <div class="card">
-                        <h4>Testing with Lifecycle Hooks</h4>
-                        <ul>
-                            <li><strong>Setup and Teardown:</strong> Using beforeEach, afterEach, beforeAll, afterAll
-                            </li>
-                            <li><strong>Mocks and Spies:</strong> Creating and resetting mocks between tests</li>
-                            <li><strong>State Management:</strong> Testing components with complex internal state</li>
-                            <li><strong>Testing useEffect:</strong> Verifying side effects in functional components</li>
-                        </ul>
-                    </div>
-                </div>
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{count}&lt;/h2&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;Increment&lt;/button&gt;
+      &lt;button onClick={() => setCount(count - 1)}&gt;Decrement&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
 
-                <div class="video-container">
-                    <h3>Creating asynchronous tests</h3>
-                    <iframe class="wistia_embed" title="Creating asynchronous tests"
-                        src="https://fast.wistia.net/embed/iframe/blxmx2hwz9" width="640" height="360"
-                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
-                    <div class="card">
-                        <h4>Asynchronous Testing Techniques</h4>
-                        <ul>
-                            <li><strong>waitFor:</strong> Waiting for elements to appear or disappear</li>
-                            <li><strong>Async/Await:</strong> Using async test functions for cleaner code</li>
-                            <li><strong>Mocking API Calls:</strong> Using jest.mock to mock fetch or axios</li>
-                            <li><strong>Testing Loading States:</strong> Verifying loading indicators appear and
-                                disappear</li>
-                            <li><strong>Error Handling:</strong> Testing how components handle API errors</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+export default Counter</code></pre>
 
-            <div class="content-box">
-                <h2>Practice Activities</h2>
-                <div class="card">
-                    <h4>Guided Project</h4>
+                    <p>Now let's say you want to perform three tests: assert that the Increment and Decrement buttons work, and confirm that the count element becomes negative when decremented below zero (overflows and underflows should be tested whenever possible, although JavaScript makes it a lot easier to deal with types, variable sizes and conversions, as compared to other languages). Edit the Counter.test.js file like this:</p>
+
+                    <pre><code>import React from "react"
+import { render, screen } from "@testing-library/react"
+import "@testing-library/jest-dom"
+import userEvent from "@testing-library/user-event"
+import Counter from "../Counter"
+
+describe("Count component", () => {
+  test("increments count when increment button is clicked", async () => {
+    const user = userEvent.setup()
+    render(&lt;Counter /&gt;)
+    const count = screen.getByText("0")
+    const increment = screen.getByText("Increment")
+    await user.click(increment) // 0+1=1
+    expect(count).toHaveTextContent("1") //passes, because we expect it to be 1
+  })
+  test("increments and decrements count correctly", async () => {
+    const user = userEvent.setup()
+    render(&lt;Counter /&gt;)
+    const count = screen.getByText("0")
+    const increment = screen.getByText("Increment")
+    const decrement = screen.getByText("Decrement")
+    await user.click(increment) // 0+1=1
+    await user.click(increment) // 1+1=2
+    await user.click(increment) // 2+1=3
+    await user.click(decrement) // 3-1=2
+    expect(count).toHaveTextContent("2") //passes, because we expect it to be 2
+  })
+  test("count becomes negative", async () => {
+    const user = userEvent.setup()
+    render(&lt;Counter /&gt;)
+    const count = screen.getByText("0")
+    const decrement = screen.getByText("Decrement")
+    await user.click(decrement) // 0-1=-1
+    await user.click(decrement) // -1-1=-2
+    expect(count).toHaveTextContent("-2") //passes, because we expect it to be -2
+  })
+})</code></pre>
+
+                    <p>Now run the test to make sure it passes:</p>
+
+                    <pre><code>npm test -- Counter.test.js</code></pre>
+
+                    <p>So far so good, but notice there's a lot of repetition in your test code! Every single test is setting the virtual user, rendering the component and grabbing the same elements. There's got to be a cleaner way to do this. Hence, lifecycle hooks. Edit the code:</p>
+
+                    <pre><code>import React from "react"
+import { render, screen } from "@testing-library/react"
+import "@testing-library/jest-dom"
+import userEvent from "@testing-library/user-event"
+import Counter from "../Counter"
+
+describe("Count component", () => {
+  let user, count, increment, decrement
+  beforeEach(() => {
+    user = userEvent.setup()
+    render(&lt;Counter /&gt;)
+    count = screen.getByText("0")
+    increment = screen.getByText("Increment")
+    decrement = screen.getByText("Decrement")
+  })
+  test("increments count when increment button is clicked", async () => {
+    await user.click(increment) // 0+1=1
+    expect(count).toHaveTextContent("1") //passes, because we expect it to be 1
+  })
+  test("increments and decrements count correctly", async () => {
+    await user.click(increment) // 0+1=1
+    await user.click(increment) // 1+1=2
+    await user.click(increment) // 2+1=3
+    await user.click(decrement) // 3-1=2
+    expect(count).toHaveTextContent("2") //passes, because we expect it to be 2
+  })
+  test("count becomes negative", async () => {
+    await user.click(decrement) // 0-1=-1
+    await user.click(decrement) // -1-1=-2
+    expect(count).toHaveTextContent("-2") //passes, because we expect it to be -2
+  })
+})</code></pre>
+
+                    <p>Notice the enhancements made!</p>
+
                     <ul>
-                        <li><a href="https://github.com/bloominstituteoftechnology/web-guided-project-testing"
-                                target="_blank" rel="noopener noreferrer">Module 4 Guided Project</a></li>
-                        <li><a href="https://github.com/bloominstituteoftechnology/web-guided-project-testing-solution"
-                                target="_blank" rel="noopener noreferrer">Project Solution</a></li>
-                        <li><a href="https://fast.wistia.net/embed/iframe/0b691adccb26d11b650068e95d57d940"
-                                target="_blank" rel="noopener noreferrer">Project Solution Video</a></li>
+                        <li>Specific global variables have been established within this describe scope, accessible via lifecycle hooks;</li>
+                        <li>The beforeEach hook is implemented to handle repetitive tasks, ensuring automatic execution before each test.</li>
                     </ul>
+
+                    <p>As a result, the test becomes more readable and maintainable. Ultimately, every test now concentrates solely on its core purpose: triggering interactions and verifying outcomes!</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/weaaztmcmy?seo=false&videoFoam=false" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h2>Creating Asynchronous Tests</h2>
+                <p>Apps built in React routinely launch network requests in order to obtain JSON data. This data is injected into the components so that they may render useful content for the users of the application. It follows that most text content we test our user interface for is seldom available on first render.</p>
+
+                <p>waitFor and findBy queries in React Testing Library are game changers for testing asynchronous UI updates, a common scenario as we have seen.</p>
+
+                <p>Firstly, waitFor is a powerful utility that allows your tests to pause execution until a set of conditions are all met. This is critical when you're dealing with components that update asynchronously, like after fetching data from an API. Instead of relying on arbitrary timeouts or constantly polling the DOM, waitFor elegantly handles these scenarios by repeatedly executing your assertion, and then gracefully proceeding once the condition is true or timing out after a specified period.</p>
+
+                <p>On the other hand, the findBy queries are a neat extension of RTL's getBy queries. They return a promise that resolves when an element is found or rejects if the element is not found within a timeout. This is particularly awesome for elements that appear in the DOM asynchronously.</p>
+
+                <p>Together, these utilities encourage a more declarative approach to testing asynchronous behaviors. They align with modern async-await syntax in JavaScript, making your tests appear more like natural, synchronous code.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>You can bootstrap a basic React application running the following command:</p>
+
+                    <pre><code>npx @bloomtools/react@0.1.28 async-tests</code></pre>
+
+                    <p>Inside the frontend folder, create a new module called async.test.js and add the following content:</p>
+
+                    <pre><code>import React, { useState } from 'react'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import '@testing-library/jest-dom'
+
+function App() {
+  const [message, setMessage] = useState()
+  const setMessageAsync = () => {
+    setTimeout(() => {
+      setMessage('This appears asynchronously')
+    }, 10)
+  }
+  return (
+    &lt;div&gt;
+      {message && &lt;p&gt;{message}&lt;/p&gt;}
+      &lt;button onClick={setMessageAsync}&gt;
+        Set message asynchronously
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+describe('Async testing', () => {
+  let user, button
+  beforeEach(() => {
+    render(&lt;App /&gt;)
+    user = userEvent.setup()
+    button = screen.getByRole('button')
+  })
+  test('1- Message not available', async () => {
+    await user.click(button)
+    expect(screen.queryByText('This appears asynchronously'))
+      .not.toBeInTheDocument()
+  })
+})</code></pre>
+
+                    <p>And run this test suit by executing the following command:</p>
+
+                    <pre><code>npm test -- async.test.js</code></pre>
+
+                    <p>The test passes because the text is not immediately available. Clicking on the button starts a chain of events that results in "This appears asynchronously" rendering to the page after a certain delay. But the text not being available in the DOM right away would be the case in any scenario where the data needs to be fetched from a server. We are simulating the delay using a setTimeout.</p>
+
+                    <p>Let's explore awaiting for the message using waitFor, imported at the top of the module. Add a second test, with the following code:</p>
+
+                    <pre><code>  test('2- Message appears eventually (waitFor)', async () => {
+    await user.click(button)
+    await waitFor(() => {
+      // Inside this callback, we can create an assertion that would
+      // normally fail because the text appears asynchronously.
+      expect(screen.queryByText('This appears asynchronously')).toBeVisible()
+      // We can include more than one assertion, and they will all
+      // be retried, for a certain (configurable) amount of time
+    })
+  })</code></pre>
+
+                    <p>If several different pieces of UI change as a direct result of our async operation, we can group all the assertions inside a single waitFor. You can read more about this utility <a href="https://testing-library.com/docs/dom-testing-library/api-async/#waitfor">HERE</a>.</p>
+
+                    <p>On the other hand, if you wish to create a single assertion, you can use the findBy queries. Add a third test, with the following code:</p>
+
+                    <pre><code>  test('3- Message appears eventually (findBy)', async () => {
+    await user.click(button)
+    expect(await screen.findByText('This appears asynchronously')).toBeVisible()
+  })</code></pre>
+
+                    <p>The findBy queries (read about them <a href="https://testing-library.com/docs/dom-testing-library/api-queries/#findby">HERE</a>) are a great way to wait for an element to appear asynchronously. There are findBy versions of all <a href="https://testing-library.com/docs/queries/about">queries</a> in React Testing Library. Of course, whenever using them, you must remember to always prefix your tests with the async keyword!</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/blxmx2hwz9?seo=false&videoFoam=false" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-box module4-accent">
+                <h2>Guided Project</h2>
+              <p><a href="https://github.com/bloominstituteoftechnology/W_S9M1_GP" target="_blank" rel="noopener">Testing Web Applications Starter Code</a></p>
+              <p><a href="https://github.com/bloominstituteoftechnology/W_S9M1_GP-solution" target="_blank" rel="noopener">Testing Web Applications Solution</a></p>
+              <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/p1xjm4fsqz" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+              </div>
+            </div>
+
+            <div class="content-box module4-accent">
+                <h2>Module 4 Project: Testing Web Applications</h2>
+
+                <p>This project will have you test the entire login/logout flow of a real application. Your task is to write tests to check that the login form works correctly and can be submitted, that registered users are welcomed into the system and unknown users are rejected, and that users are able to log out correctly. By the end, you will have seven passing tests.</p>
+                <p>The module project contains advanced problems that will challenge and stretch your understanding of the module's content. The project has built-in tests for you to check your work, and the solution video is available in case you need help or want to see how we solved each challenge, but remember, there is always more than one way to solve a problem. Before reviewing the solution video, be sure to attempt the project and try solving the challenges yourself.</p>
+                
+
+                <h3>Instructions</h3>
+
+                <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
+                <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/W_S9M1_MP" target="_blank">Introduction to Testing</a></p>
+
+                <ul>
+                    <li>Fork the repository,</li>
+                    <li>clone it to your machine, and</li>
+                    <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
+                    <li>submit your completed project to the BloomTech Portal</li>
+                </ul>
+
+                <h3>Solution</h3>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/jfccubtj83?seo=false&videoFoam=false" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
             </div>
 

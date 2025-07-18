@@ -23,7 +23,6 @@
                         <a href="../../modules/module4/index.html">Module 4: Testing Web Applications</a>
                     </div>
                 </li>
-                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
                 <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
         </nav>
@@ -31,139 +30,240 @@
 
     <main class="container">
         <section class="welcome">
-            <h1>Web Unit 3 Sprint 9 - Class Components & Testing</h1>
+            <h1>The React Lifecycle</h1>
 
             <div class="content-box module2-accent">
-                <h2>Module 2: The React Lifecycle</h2>
-                <p>In this module, you'll dive deeper into the React component lifecycle, understanding how components
-                    mount, update, and unmount. You'll learn about lifecycle methods and their use cases.</p>
+                <h2>Three phases of the React Lifecycle</h2>
+                <p>React is, in essence, a combination of multiple components. A component can be as simple as a single user interface that represents a small portion of our application. Conceptually, a component lifecycle happens in three phases. This idea is displayed nicely in the following diagram from one of the maintainers of React "Dan Abramov."</p>
 
-                <p>Understanding the React component lifecycle is critical for creating efficient and effective React
-                    applications. The component lifecycle is divided into three main phases (mounting, updating, and
-                    unmounting), each with specific methods that you can leverage to control your component's behavior.
-                </p>
+                <img src="../../assets/images/lifecycle.jpg" alt="React Lifecycle">
 
-                <p>By mastering lifecycle methods, you'll be able to handle side effects, optimize performance, manage
-                    resources, and create more dynamic and responsive React applications.</p>
-            </div>
+                <p>As you can see, the three React lifecycle phases are 1) Birth/Mounting, 2) Growth/Updating, and 3) Death/Unmounting.</p>
 
-            <div class="content-box">
-                <h2>Learning Objectives</h2>
+                <h3>The Birth/Mounting Phase</h3>
+                <p>This is the phase when the component is being built from the ground up. A few things are happening here:</p>
                 <ul>
-                    <li>Describe the three phases of the React component lifecycle</li>
-                    <li>Properly explain what the constructor and render methods do and what their place is in the React
-                        component lifecycle</li>
-                    <li>Understand and implement componentDidMount, componentDidUpdate, and componentWillUnmount</li>
-                    <li>Use lifecycle methods to handle side effects and cleanup</li>
+                    <li>Whatever initial data you want access to will be defined on the constructor of this phase</li>
+                    <li>Your render method is invoked.</li>
+                    <li>componentDidMount gets called as well.</li>
                 </ul>
 
-                <p>As Dan Abramov (one of React's maintainers) visually explains, the lifecycle can be thought of as a
-                    component's birth, growth, and death process:</p>
+                <h3>Growth/Updating Phase</h3>
+                <p>In the Growth/Updating phase you're updating compnent data.</p>
                 <ul>
-                    <li><strong>Birth/Mounting</strong> - Your component is being initialized and inserted into the DOM
-                    </li>
-                    <li><strong>Growth/Updating</strong> - Your component is receiving new props or state changes</li>
-                    <li><strong>Death/Unmounting</strong> - Your component is being removed from the DOM</li>
+                    <li>setState can be used to change the component's state data, forcing a call to render.</li>
+                    <li>shouldComponentUpdate is a method one could use here to stop a component from calling render if necessary.</li>
                 </ul>
-            </div>
 
-            <div class="content-box">
-                <h2>Content</h2>
+                <h3>Death/Un-mounting Phase</h3>
+                <p>Again, self-explanatory, but the unmounting phase includes removing the component from the screen.</p>
+                <ul>
+                    <li>Component is removed from the screen.</li>
+                    <li>componentWillUnmount is called and can be used for any clean up you may need to do.</li>
+                </ul>
 
-                <div class="video-container">
-                    <h3>The React Component Lifecycle</h3>
-                    <iframe class="wistia_embed" title="The React Component LifeCycle Video"
-                        src="https://fast.wistia.net/embed/iframe/6hfsu1fhe2" width="640" height="360"
-                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
-                    <div class="card">
-                        <h4>Component Lifecycle Phases in Detail</h4>
-                        <ul>
-                            <li><strong>Mounting Phase:</strong> Component initialization, first render, and initial DOM
-                                insertion
-                                <ul>
-                                    <li><code>constructor()</code> - Initialize state and bind methods</li>
-                                    <li><code>render()</code> - Create elements from JSX</li>
-                                    <li><code>componentDidMount()</code> - Component is in the DOM, fetch data, set up
-                                        subscriptions</li>
-                                </ul>
-                            </li>
-                            <li><strong>Updating Phase:</strong> Component reacts to prop/state changes
-                                <ul>
-                                    <li><code>shouldComponentUpdate()</code> - Decide if a re-render is necessary</li>
-                                    <li><code>render()</code> - Re-render with updated values</li>
-                                    <li><code>componentDidUpdate()</code> - React to changes after the DOM updates</li>
-                                </ul>
-                            </li>
-                            <li><strong>Unmounting Phase:</strong> Component is removed from the DOM
-                                <ul>
-                                    <li><code>componentWillUnmount()</code> - Clean up subscriptions, timers, event
-                                        listeners</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Dive into the documentation at <a href="https://reactjs.org" target="_blank" rel="noopener noreferrer">ReactJS</a> and look into some of the key pieces of the LifeCycle API.</p>
 
-                <div class="video-container">
-                    <h3>React Component LifeCycle - Mounting Phase</h3>
-                    <iframe class="wistia_embed" title="React Component LifeCycle - Mounting Phase pt. 1 of 2 Video"
-                        src="https://fast.wistia.net/embed/iframe/5xongli94f" width="640" height="360"
-                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
-                    <div class="card">
-                        <h4>Constructor and Render Methods</h4>
-                        <ul>
-                            <li><strong>Constructor:</strong>
-                                <ul>
-                                    <li>Always call <code>super(props)</code> first</li>
-                                    <li>Initialize state (this.state = {...})</li>
-                                    <li>Bind event handler methods to class instance</li>
-                                    <li>Do NOT cause side effects or use setState()</li>
-                                </ul>
-                            </li>
-                            <li><strong>Render:</strong>
-                                <ul>
-                                    <li>Required in every class component</li>
-                                    <li>Must be pure - same input always produces same output</li>
-                                    <li>Returns React elements (JSX), arrays, portals, strings, numbers, null, or
-                                        booleans</li>
-                                    <li>Don't modify state or interact with DOM directly</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="video-container">
-                    <h3>Testing Output on Props Change</h3>
-                    <iframe class="wistia_embed" title="Testing Output on Props Change Video"
-                        src="https://fast.wistia.net/embed/iframe/3lc214nkyf" width="640" height="360"
-                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
-                    <div class="card">
-                        <h4>componentDidUpdate and Testing</h4>
-                        <ul>
-                            <li><code>componentDidUpdate(prevProps, prevState)</code> allows you to compare current
-                                props/state with previous values</li>
-                            <li>Perfect for reacting to prop changes and performing side effects (like data fetching)
-                            </li>
-                            <li>Testing prop changes ensures components react correctly to new data</li>
-                            <li>Avoid infinite loops by conditionally updating state</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="content-box">
-                <h2>Practice Activities</h2>
-                <div class="card">
-                    <h4>Guided Project</h4>
+                    <p>The methods that we're going to look at are:</p>
                     <ul>
-                        <li><a href="https://github.com/bloominstituteoftechnology/web-guided-project-lifecycle"
-                                target="_blank" rel="noopener noreferrer">Module 2 Guided Project</a></li>
-                        <li><a href="https://github.com/bloominstituteoftechnology/web-guided-project-lifecycle-solution"
-                                target="_blank" rel="noopener noreferrer">Project Solution</a></li>
-                        <li><a href="https://fast.wistia.net/embed/iframe/0b691adccb26d11b650068e95d57d940"
-                                target="_blank" rel="noopener noreferrer">Project Solution Video</a></li>
+                        <li><code>constructor</code></li>
+                        <li><code>render</code></li>
+                        <li><code>componentDidMount</code></li>
+                        <li><code>componentDidUpdate</code></li>
+                        <li><code>componentWillUnmount</code></li>
                     </ul>
+
+                    <p>Let's also compare where each of these methods belongs within the react lifecycle by looking at this <a href="http://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/" target="_blank" rel="noopener noreferrer">diagram</a>.</p>
+
+                    <p>We will explore these in-depth later on but focus on warming up to the documentation and the idea that components have a lifecycle.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/6hfsu1fhe2" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h2>Contructor and Render Methods</h2>
+                <h3>The Constructor Function</h3>
+                <p>You already know all about the constructor function as it pertains to classes in JavaScript. It's not much different in React. The constructor's purpose in React is to create components with inciting state data for the initial render. Any other props that the component receives on state can be done through the constructor function. We also used to bind all of our event handlers to the component via the constructor, and now we don't have to because of some special ESNext syntax that allows us to use arrow functions on our class methods. The following snippet is an example of this.</p>
+
+                <pre><code>eventHandler = () => this.setState({ foo: 'bar' });</code></pre>
+
+                <p>We will have ample time to practice application set up with state data via the constructor, so for now, soak in these examples.</p>
+
+                <p>Let's say we have some data from an external file living within our application. Let's say, too, that we want our component to render a list of that data out to the DOM. We would need to import the external data as an array (we don't care about the shape or type of data, just that it lives on an array) and use the constructor to set it up on state.</p>
+
+                <pre><code>import React from 'react';
+import { data } from './extraneousSource.js';
+
+class MyComponent extends React.Component {
+  constructor() { // if I wanted to receive some props here I could pass them in through the constructor! constructor(props)...
+    super(); // if i receive props through the constructor I will need to pass them back through super(props);
+    this.state = {
+       arbitraryStateData: data,
+    }
+  }
+}</code></pre>
+
+                <p>This is how we use the constructor in the mounting phase of our component's lifecycle. Now that our data is set up on state, we can access it during our render portion of the mounting phase.</p>
+
+                <p>In conclusion, the constructor function on a React class' component's purpose is to serve up initial state data for when the time comes to mount up your DOM elements.</p>
+
+                <h3>The Render Method</h3>
+                <p>The render() method is one of the React lifecycle methods that is used to tell React, to return some piece of DOM. The React virtual DOM will then handle the steps to mount those DOM pieces.</p>
+
+                <p>The render() method is required for a class component, and without it, the component won't work.</p>
+
+                <p>render should be a pure function, meaning it should return the same thing each time you call it. Its concern is to look at this.props and this.state and return some DOM element, a boolean, an array of DOM elements, and a couple of other things that you may want to reference or look into later.</p>
+
+                <p>The function is there to return what your component should render to the screen. Though many developers ignore it, render is an important lifecycle method and should be regarded as such.</p>
+
+                <p>Another essential item to remember about render is that it is called not only in the Mounting Phase of the component lifecycle but also during the Updating Phase. This duality makes the render() method unique because it exists across multiple phases.</p>
+
+                <p>Now that we have our state data set up for us, we can use that state data to give a list of elements to React and let it do its thing. Inside the render method of our component, let's return a list of items that the arbitraryStateData property (found on our state object) will generate.</p>
+
+                <pre><code>render () {
+  return (
+    &lt;div&gt;
+        // map returns an array remember? So lets give react an array of JSX elements and let it perform it's magic. For this example we'll assume this list is a string.
+        {this.state.arbitraryStateData.map(data => &lt;div&gt;{data}&lt;/div&gt;)}
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+                <p>One last thing to note is that any changes from setState invoke a call to our render method as well. We'll discuss more on this later, but it's important to remember that render() is called during mounting, and will be reinvoked if anything changes in our state object. You can think of the state object and render methods as existing together. The state object is like the bigger brother to the render function, it tells the render function what to do, and the render function obeys.</p>
+
+                <p>In conclusion, the render() method is how we tell React what data we want to turn into DOM elements. render() is necessary for every class component we create because we need it to return &lt;JSX/&gt; elements. It is involved in the Mounting Phase and the Updating Phase of our component's lifecycle.</p>
+
+                <p>Continue to think about these methods as the mounting methods in our component LifeCycle as you create more and more professional-looking code.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's build out some friends together using <a href="https://codesandbox.io/s/react-lifecycle-mounting-demo-forked-ql8jj" target="_blank" rel="noopener">this code sandbox link</a>. Take notes and share what you learned in a post on #Sprint-9-12 via Slack.</p>
+
+                    <p>Once there, you should see a page that renders out a &lt;h1&gt; and &lt;p&gt; tags. You should also notice a people.js file that contains an array of objects with this shape.</p>
+
+                    <pre><code>{
+  "id": 1,
+  "first_name": "Suzi", 
+  "last_name": "Claiden",
+  "email": "sclaiden0@arizona.edu",
+  "occupation": "Biostatistician II",
+  "friends": [
+      {
+          "firstName": "Gabe",
+          "lastName": "Lemery"
+      }
+  ]
+}</code></pre>
+
+                    <p>This is the data that our application will consume. Using the React LifeCycle methods, we will discuss how to get this data from one place to another.</p>
+
+                    <p>Let's start at the beginning with our constructor method. But, first, let's define a name for our state data. Our data object is all about people, so let's call our state object "persons" (intentionally not "people," so that we can tell the two apart.)</p>
+
+                    <p>Let's import the people and set them up on our constructor's state object.</p>
+
+                    <pre><code>import { people } from "./people";
+
+...
+constructor() {
+  super();
+  this.state = {
+    persons: people
+  };
+}
+...</code></pre>
+
+                    <p>Now that we imported data, we can loop over that friends array and generate a DOM element for each item in the array.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/5xongli94f" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h2>componentDidMount</h2>
+                <p>The componentDidMount method is a part of the mounting phase in the React Lifecycle. This method gets called as soon as the render method is called the first time, and it begs the question…now what?</p>
+
+                <p>When our component has mounted, we have the bare-bones minimum. We need to put something on the screen, so now what?</p>
+
+                <p>Inside of componentDidMount we can call setState which forces a re-render of our component. This way, any asynchronous actions should be performed inside of our componentDidMount function, especially when it comes to fetching data via HTTP. Data fetching is the de-facto purpose for using componentDidMount within a component because of its position within the component lifecycle.</p>
+
+                <p>This method is guaranteed to be called only once in the whole lifecycle, immediately after a mounted component.</p>
+
+                <p>Until we know more about async AJAX calls, we'll use componentDidMount to set up state data living in a separate file. We'll do this by pulling the data in and setting it on state. This is also something you're going to have to do for your "Insta-clone" assignment today.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's put some of our knowledge together and build a React component that consumes data from a different resource.</p>
+
+                    <p>To follow along, go ahead and click on <a href="#" target="_blank">this link</a> that will take you to a CodeSandbox.</p>
+
+                    <p>Your index.js file should look a lot like this:</p>
+
+                    <pre><code>import React, { Component } from "react";
+import { render } from "react-dom";
+import CitiesList from "./CitiesList";
+
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      cities: []
+    };
+  }
+
+  render() {
+    return &lt;CitiesList /&gt;;
+  }
+}
+
+render(&lt;App /&gt;, document.getElementById("root"));</code></pre>
+
+                    <p>We are merely importing in a component called CitiesList and returning it to the screen. CitiesList is a pure functional Component whose only responsibility is to render the props passed down to it onto the screen. We have two very different styles of components here.</p>
+
+                    <p>The only problem is that CitiesList wants to render something out, in fact, right now, if you look at the console, you'll see that props is an empty object. Our goal is to try and fix that.</p>
+
+                    <p>Inside of the cities.js file, you'll find a global object with a property data as an array of cities. Let's import that into our index.js file and utilize the data.</p>
+
+                    <pre><code>import cities from './cities.js';</code></pre>
+
+                    <p>If we console.log our cities, you'll see that we now have access to them. To fix the issue set forward earlier, we need to set this data on state and pass that data down as props to our CitiesList component. We'll do this inside of componentDidMount</p>
+
+                    <pre><code>componentDidMount() {
+  this.setState({ cities: cities.data });
+}</code></pre>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/ooysuaj0ly" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-box module2-accent">
+                <h2>Guided Project</h2>
+              <p><a href="https://github.com/bloominstituteoftechnology/web-guided-project-lifecycle" target="_blank" rel="noopener">The React Lifecycle Starter Code</a></p>
+              <p><a href="https://github.com/bloominstituteoftechnology/web-guided-project-lifecycle-solution" target="_blank" rel="noopener">The React Lifecycle Solution</a></p>
+              <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/tf8rgvk7x0" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+              </div>
+            </div>
+
+            <div class="content-box module2-accent">
+                <h2>Module 2 Project: React Lifecycle</h2>
+
+                <p>Every component in React has what we call a lifecycle. The lifecycle is a part of how our components operate under the hood. Being able to demonstrate an understanding of the React component lifecycle, and how to use a few of the "Methods" provided, will help you understand how and why React behaves the way it does.</p>
+                <p>The module project contains advanced problems that will challenge and stretch your understanding of the module's content. The project has built-in tests for you to check your work, and the solution video is available in case you need help or want to see how we solved each challenge, but remember, there is always more than one way to solve a problem. Before reviewing the solution video, be sure to attempt the project and try solving the challenges yourself.</p>
+                
+
+                <h3>Instructions</h3>
+
+                <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
+                <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/web-module-project-lifecycle" target="_blank">React Todo with AJAX</a></p>
+
+                <ul>
+                    <li>Fork the repository,</li>
+                    <li>clone it to your machine, and</li>
+                    <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
+                    <li>submit your completed project to the BloomTech Portal</li>
+                </ul>
+
+                <h3>Solution</h3>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/aazl06yh3f" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
             </div>
 
