@@ -126,7 +126,10 @@
     <div class="code-block">
       // Binary Tree Node implementation
       class TreeNode {
-      constructor(value) {
+      int value;
+      TreeNode left;
+      TreeNode right;
+      TreeNode(int value) {
       this.value = value;
       this.left = null;
       this.right = null;
@@ -135,31 +138,28 @@
 
       // Binary Search Tree implementation
       class BinarySearchTree {
-      constructor() {
+      TreeNode root;
+      BinarySearchTree() {
       this.root = null;
       }
 
-      insert(value) {
-      const newNode = new TreeNode(value);
-
-      if (this.root === null) {
+      public BinarySearchTree insert(int value) {
+      TreeNode newNode = new TreeNode(value);
+      if (this.root == null) {
       this.root = newNode;
       return this;
       }
-
-      let current = this.root;
-
+      TreeNode current = this.root;
       while (true) {
-      if (value === current.value) return this; // Duplicate value
-
+      if (value == current.value) return this; // Duplicate value
       if (value &lt; current.value) {
-      if (current.left === null) {
+      if (current.left == null) {
       current.left = newNode;
       return this;
       }
       current = current.left;
       } else {
-      if (current.right === null) {
+      if (current.right == null) {
       current.right = newNode;
       return this;
       }
@@ -188,36 +188,30 @@
 
     <div class="code-block">
       // Depth-First Traversal implementations
-      function preOrderTraversal(node, result = []) {
-      if (node === null) return result;
-
+      public static List&lt;Integer&gt; preOrderTraversal(TreeNode node, List&lt;Integer&gt; result) {
+      if (node == null) return result;
       // Root, Left, Right
-      result.push(node.value);
+      result.add(node.value);
       preOrderTraversal(node.left, result);
       preOrderTraversal(node.right, result);
-
       return result;
       }
 
-      function inOrderTraversal(node, result = []) {
-      if (node === null) return result;
-
+      public static List&lt;Integer&gt; inOrderTraversal(TreeNode node, List&lt;Integer&gt; result) {
+      if (node == null) return result;
       // Left, Root, Right
       inOrderTraversal(node.left, result);
-      result.push(node.value);
+      result.add(node.value);
       inOrderTraversal(node.right, result);
-
       return result;
       }
 
-      function postOrderTraversal(node, result = []) {
-      if (node === null) return result;
-
+      public static List&lt;Integer&gt; postOrderTraversal(TreeNode node, List&lt;Integer&gt; result) {
+      if (node == null) return result;
       // Left, Right, Root
       postOrderTraversal(node.left, result);
       postOrderTraversal(node.right, result);
-      result.push(node.value);
-
+      result.add(node.value);
       return result;
       }
     </div>
@@ -227,20 +221,17 @@
 
     <div class="code-block">
       // Breadth-First Traversal implementation
-      function levelOrderTraversal(root) {
-      if (root === null) return [];
-
-      const result = [];
-      const queue = [root];
-
-      while (queue.length > 0) {
-      const currentNode = queue.shift();
-      result.push(currentNode.value);
-
-      if (currentNode.left) queue.push(currentNode.left);
-      if (currentNode.right) queue.push(currentNode.right);
+      public static List&lt;Integer&gt; levelOrderTraversal(TreeNode root) {
+      List&lt;Integer&gt; result = new ArrayList&lt;&gt;();
+      if (root == null) return result;
+      Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;();
+      queue.add(root);
+      while (!queue.isEmpty()) {
+      TreeNode currentNode = queue.poll();
+      result.add(currentNode.value);
+      if (currentNode.left != null) queue.add(currentNode.left);
+      if (currentNode.right != null) queue.add(currentNode.right);
       }
-
       return result;
       }
     </div>
@@ -254,38 +245,31 @@
 
     <div class="code-block">
       // Find height of a binary tree
-      function findHeight(node) {
-      if (node === null) return -1;
-
-      const leftHeight = findHeight(node.left);
-      const rightHeight = findHeight(node.right);
-
+      public static int findHeight(TreeNode node) {
+      if (node == null) return -1;
+      int leftHeight = findHeight(node.left);
+      int rightHeight = findHeight(node.right);
       return Math.max(leftHeight, rightHeight) + 1;
       }
 
       // Check if a binary tree is balanced
-      function isBalanced(node) {
-      if (node === null) return true;
-
-      const leftHeight = findHeight(node.left);
-      const rightHeight = findHeight(node.right);
-
+      public static boolean isBalanced(TreeNode node) {
+      if (node == null) return true;
+      int leftHeight = findHeight(node.left);
+      int rightHeight = findHeight(node.right);
       // Height difference should not exceed 1
-      if (Math.abs(leftHeight - rightHeight) > 1) return false;
-
+      if (Math.abs(leftHeight - rightHeight) &gt; 1) return false;
       // Recursively check if both subtrees are balanced
-      return isBalanced(node.left) && isBalanced(node.right);
+      return isBalanced(node.left) &amp;&amp; isBalanced(node.right);
       }
 
       // Check if a binary tree is a valid BST
-      function isValidBST(node, min = -Infinity, max = Infinity) {
-      if (node === null) return true;
-
+      public static boolean isValidBST(TreeNode node, int min, int max) {
+      if (node == null) return true;
       // Current node's value must be within valid range
-      if (node.value &lt;= min || node.value >= max) return false;
-
+      if (node.value &lt;= min || node.value &gt;= max) return false;
       // Recursively validate left and right subtrees
-      return isValidBST(node.left, min, node.value) &&
+      return isValidBST(node.left, min, node.value) &amp;&amp;
       isValidBST(node.right, node.value, max);
       }
     </div>
