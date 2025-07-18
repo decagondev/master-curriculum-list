@@ -266,7 +266,7 @@
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
-                <span>Back to Welcome Page</span>
+                <span>Back to Main ACS Page</span>
             </a>
         </div>
 
@@ -332,7 +332,7 @@
                         <div class="wistia-responsive-padding">
                             <div class="wistia-responsive-wrapper">
                                 <iframe src="https://fast.wistia.net/embed/iframe/u2wkfdr8y7?videoFoam=true"
-                                    title="s19M1 Guided Project Binary Trees I Video" allow="autoplay; fullscreen"
+                                    title="s19M1 Guided Project Binary Trees I Video" allow="fullscreen"
                                     allowtransparency="true" frameborder="0" scrolling="no" width="100%"
                                     height="100%"></iframe>
                             </div>
@@ -348,7 +348,10 @@
                                 <h4>Step 1: Node Creation</h4>
                                 <div class="code-block">
                                     <code>class BSTNode {
-    constructor(value) {
+    int value;
+    BSTNode left;
+    BSTNode right;
+    BSTNode(int value) {
         this.value = value;
         this.left = null;
         this.right = null;
@@ -360,15 +363,13 @@
                             <div>
                                 <h4>Step 2: Insert Method</h4>
                                 <div class="code-block">
-                                    <code>insert(value) {
-    const newNode = new BSTNode(value);
-    
-    if (this.root === null) {
-        this.root = newNode;
+                                    <code>public void insert(int value) {
+    BSTNode newNode = new BSTNode(value);
+    if (root == null) {
+        root = newNode;
         return;
     }
-    
-    this._insertNode(this.root, newNode);
+    insertNode(root, newNode);
 }</code>
                                 </div>
                             </div>
@@ -377,18 +378,18 @@
                         <div>
                             <h4>Step 3: Recursive Insert Helper</h4>
                             <div class="code-block">
-                                <code>_insertNode(node, newNode) {
-    if (newNode.value < node.value) {
-        if (node.left === null) {
+                                <code>private void insertNode(BSTNode node, BSTNode newNode) {
+    if (newNode.value &lt; node.value) {
+        if (node.left == null) {
             node.left = newNode;
         } else {
-            this._insertNode(node.left, newNode);
+            insertNode(node.left, newNode);
         }
     } else {
-        if (node.right === null) {
+        if (node.right == null) {
             node.right = newNode;
         } else {
-            this._insertNode(node.right, newNode);
+            insertNode(node.right, newNode);
         }
     }
 }</code>
@@ -399,33 +400,30 @@
                             <h4>Step 4: Complete BST Class</h4>
                             <div class="code-block">
                                 <code>class BST {
-    constructor() {
+    BSTNode root;
+    public BST() {
         this.root = null;
     }
-    
-    insert(value) {
-        const newNode = new BSTNode(value);
-        
-        if (this.root === null) {
-            this.root = newNode;
+    public void insert(int value) {
+        BSTNode newNode = new BSTNode(value);
+        if (root == null) {
+            root = newNode;
             return;
         }
-        
-        this._insertNode(this.root, newNode);
+        insertNode(root, newNode);
     }
-    
-    _insertNode(node, newNode) {
-        if (newNode.value < node.value) {
-            if (node.left === null) {
+    private void insertNode(BSTNode node, BSTNode newNode) {
+        if (newNode.value &lt; node.value) {
+            if (node.left == null) {
                 node.left = newNode;
             } else {
-                this._insertNode(node.left, newNode);
+                insertNode(node.left, newNode);
             }
         } else {
-            if (node.right === null) {
+            if (node.right == null) {
                 node.right = newNode;
             } else {
-                this._insertNode(node.right, newNode);
+                insertNode(node.right, newNode);
             }
         }
     }
@@ -462,14 +460,26 @@
                         <h4>Starter Code:</h4>
                         <div class="code-block">
                             <code>class BST {
-    constructor() {
+    BSTNode root;
+    public BST() {
         this.root = null;
     }
-    
     // Previous methods here...
-    
-    search(value) {
-        // Your implementation here
+    public boolean search(int value) {
+        return searchRecursive(root, value);
+    }
+    private boolean searchRecursive(BSTNode node, int value) {
+        if (node == null) {
+            return false;
+        }
+        if (node.value == value) {
+            return true;
+        }
+        if (value &lt; node.value) {
+            return searchRecursive(node.left, value);
+        } else {
+            return searchRecursive(node.right, value);
+        }
     }
 }</code>
                         </div>

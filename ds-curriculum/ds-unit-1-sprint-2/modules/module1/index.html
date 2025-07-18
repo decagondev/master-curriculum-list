@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 1: Hypothesis Testing (t-tests) - Data Science Sprint 2</title>
-    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../../css/style.css">
 </head>
 
 <body>
@@ -58,12 +58,1039 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - Explain the Purpose of a t-test and Identify Applications</h2>
+            <h3>Overview</h3>
+            <p>
+                Before we learn about t-tests, we should cover some more basic information about the concept of
+                hypothesis testing first. When interpreting our data or results, we want to confirm or reject an
+                assumption about that data or result. This assumption can also be called a hypothesis. So, before we
+                interpret our results (hopefully), we will have stated our hypothesis. Then, we need to test it to
+                determine at what confidence level we know our results. Hypothesis tests are also known as significance
+                tests, meaning we want to know how significant our result is.
+            </p>
+            <p>
+                When we use statistical methods to test our hypothesis, we're conducting a statistical hypothesis test.
+                There are several different statistical tests we can do. For this objective, we're going to be focusing
+                on t-tests. They make use of a statistical distribution called the Student's t-distribution.
+            </p>
+            <p>
+                But, before we get into the t-distribution, a refresher of the normal distribution will be helpful.
+            </p>
+
+            <h3>Normal distribution</h3>
+            <p>
+                The normal probability distribution comes up very frequently in the study of probability and statistics.
+                A variable that has a normal distribution is one where the mean = median = mode. A normal distribution
+                is theoretical, which means that in nature, nothing will strictly follow this distribution. But many
+                variables approximate to it, such as the height of adult humans, birth weight of human babies, height of
+                the same variety of pine trees.
+            </p>
+            <p>
+                The normal distribution is known as a bell curve because it has the shape of a bell. Using the numpy
+                normal distribution, we can draw a sample population with a specified mean (center point of the "bell")
+                and standard deviation (width or "spread" of the curve), and plot it.
+            </p>
+            <pre><code>import seaborn as sns
+import matplotlib.pyplot as plt
+
+# The mean of a normal distribution can be any value
+# (we're using 0 for plotting nicely and to see the symmetry)
+mean = 0
+
+# The width of the normal distribution is set by the standard deviation
+sigma = 1
+
+# Create a sample drawn from the normal distribution
+sample = np.random.normal(loc=mean, scale=sigma, size=1000)
+
+# Create the fig and axes object and plot
+fig, ax = plt.subplots(figsize=(8,8))
+ax = sns.displot(sample)
+ax.set_titles('The normal distribution', fontsize=16)
+
+fig.clf()
+</code></pre>
+            <img src="../../assets/DS-sp-2-mod-1-obj-1-1.png" alt="download.png" loading="lazy">
+            <p>
+                In the plot, we can see a nice bell shape, centered on the mean we specified as 0 and with a standard
+                deviation of the sample equal to 1.
+            </p>
+
+            <h3>The z-score</h3>
+            <p>
+                In statistics, we also use something called the z-score. Say, for example, you take a value at random
+                from the distribution above. We can calculate a z-score for that value which describes its position in
+                terms of the distance from the mean when measured in standard deviation units. Z-scores may be positive
+                or negative, with a positive value indicating the score is above the mean and a negative score below the
+                mean. For example, a z-score of 1 means the value you chose is one standard deviation from the mean.
+            </p>
+
+            <h3>The t-values and t-tests</h3>
+            <p>
+                In some situations, we have to draw a sample from a population whose mean is unknown. What if for the
+                normal distribution plotted above, and we had set the mean equal to one?
+            </p>
+            <p>
+                In such scenarios, we use the sample's mean instead. When we use the mean of the sample and not the mean
+                of the population from which we drew the sample, we calculate the t-value. This value is similar to the
+                z-score but we use the mean of the sample instead of the population to calculate it.
+            </p>
+            <p>
+                A t-test is based on a t-value. When you perform a t-test for a single study, you obtain a single
+                t-value. If you drew lots of random samples of the same size from the same population, performed a
+                t-test each time (to obtain a t-value), you could then plot a distribution of all the t-values. This
+                type of distribution is called a sampling distribution and, in this case, a t-distribution.
+            </p>
+            <p>
+                Thanks to math and statisticians, the properties of t-distributions are well understood, so we can plot
+                them without having to draw samples, calculate the t-value, etc. A specific t-distribution is defined by
+                its degrees of freedom (dof), with a sample size-1. So there is a whole "family" of t-distributions for
+                every sample size. For large samples size (n &gt; 120), the shape of the t-distribution is almost
+                identical to the normal distribution. For smaller sample sizes, the t-distribution is much flatter in
+                the middle. In the next section, we'll look at the t-distribution graphically.
+            </p>
+
+            <h3>When to use a t-test?</h3>
+            <p>
+                There are a few situations where using a t-test is useful. In this lesson, we will be focusing on two:
+            </p>
+            <h4>One-sample t-test</h4>
+            <p>
+                One of the most common one-sample t-tests is to determine the statistical difference between a sample
+                mean and a known or hypothesized value of the mean in the population. For example, say we want to
+                compare the average Netflix watching time for a specific group of viewers, such as ages 5-12 (mean value
+                of the sample), and compare it to the average Netflix time for the US population (mean value for the
+                population from the sample ). Then, we perform a t-test to determine how effective the mean of the
+                sample is in comparison to the general population - does this age group watch significantly more or less
+                Netflix? Or is it not statistically different?
+            </p>
+            <h4>Two-sample t-test (also called an independent t-test)</h4>
+            <p>
+                A two-sample t-test is helpful if we want to compare the mean of two samples and determine if a property
+                is true. example, say you want to know if the mean petal length of iris flowers differs according to
+                their species. So you measure 25 petals of each species and then test the difference between these two
+                groups using a t-test.
+            </p>
+
+            <h3>Follow Along</h3>
+            <p>
+                We've covered the concepts of distributions and t-values. Now, we can look at some graphical
+                representations of these distributions. In the following plot, we created t-distributions with varying
+                degrees of freedom. We can see that the t-distribution with the smallest number of degrees of freedom is
+                flatter in the middle and "wider" on the sides. As the sample size increases (degrees of freedom
+                increase), the t-distribution approaches the normal distribution (plotted in black).
+            </p>
+            <pre><code># Import the libraries
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create the t-distributions
+t_df10 = np.random.standard_t(df=10, size=100)
+t_df100 = np.random.standard_t(df=100, size=1000)
+t_df1000 = np.random.standard_t(df=1000, size=10000)
+
+# Create the normal distribution
+s = np.random.normal(size=10000)
+
+# Create the figure and axes objects and plots
+fig, ax = plt.subplots(1)
+
+# Plot t-distributions
+ax = sns.kdeplot(t_df10, color='r');
+ax = sns.kdeplot(t_df100, color='y');
+ax = sns.kdeplot(t_df1000, color='b');
+
+# Plot normal distributions
+sns.kdeplot(s, color='k');
+</code></pre>
+            <img src="../../assets/DS-sp-2-mod-1-obj-1-2.png" alt="download.png" loading="lazy">
+
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.standard_t.html"
+                        target="_blank" rel="noopener noreferrer">NumPy Standard t-distribution</a></li>
+                <li><a href="https://blog.minitab.com/blog/adventures-in-statistics-2/understanding-t-tests-t-values-and-t-distributions"
+                        target="_blank" rel="noopener noreferrer">Understanding t-Tests: t-values and
+                        t-distributions</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Set Up and Run a one-sample or two-sample t-test</h2>
+            <h3>Overview</h3>
+            <p>
+                We've already reviewed the normal distributions and the t-distributions and how they are related to
+                t-tests and t-values. Now we'll work through an example of a one-sample t-test where we calculate the
+                t-value.
+            </p>
+            <p>
+                When we do a one-sample t-test, we're comparing the mean of our sample data to a known value. For
+                example, we can look at the effectiveness of a cardio-based fitness program on cardiovascular health. We
+                might sample a group of 50 individuals who participated in a program to lower their heart rate. After
+                six months of the program, measurements were taken, and the mean heart rate was recorded. We would then
+                like to compare the mean heart rate to the general US population. We'll look at the specifics in the
+                next section and calculate the t-value, both by "hand" and using Python tools.
+            </p>
+
+            <h3>Follow Along</h3>
+            <p>
+                We'll expand slightly on the above example to calculate the t-value by hand (we'll write out the
+                equation and work through each step). Then, we will compare that result to the calculation determined by
+                using the SciPy stats module.
+            </p>
+            <p>
+                We will use SciPy and NumPy to draw a sample from a distribution. We will determine the mean and
+                standard deviation from that sample, and then verify the t-value by hand.
+            </p>
+
+            <h4>Sample Information</h4>
+            <p>
+                The sample population we have consists of 50 individuals, with a mean heart rate of 69 beats per minute
+                (bpm) and a standard deviation of 6.5 bpm. We'd like to compare this to the population mean heart rate
+                of 72 bpm.
+            </p>
+
+            <h4>Calculate with Numpy and SciPy</h4>
+            <pre><code># Import the stats module
+from scipy import stats
+
+# Generate the random test scores with the specified mean, std, and sample size
+rvs = stats.norm.rvs(loc=69, scale=6.5, size=50, random_state=42)
+
+# Display the test scores, as a check
+rvs
+
+# Check the sample mean and std
+print('The mean of the sample: ', rvs.mean())
+print('The standard deviation of the sample: ', rvs.std())
+
+# Calculate the t value using the ttest_1samp 
+stats.ttest_1samp(rvs, popmean=72)
+</code></pre>
+            <pre><code>The mean of the sample:  67.53441961583509
+The standard deviation of the sample:  6.00785209617076
+
+
+
+
+
+Ttest_1sampResult(statistic=-5.2030346601039055, pvalue=3.841987344207577e-06)</code></pre>
+
+            <h4>Manual Calculation</h4>
+            <p>
+                We can see that the actual values for our sample distribution are slightly different. The difference is
+                because we're drawing a random distribution from the sample with <code>stats.norm.rvs()</code>. Using
+                the mean and standard deviation printed out from this random sample, we can verify the t-statistic by
+                hand.
+            </p>
+            <p>
+                The t-value is calculated by taking the following equation:
+            </p>
+            <p>t-value = (sample mean-population mean) / standard error.</p>
+            <code>t-value = (67.53 - 72) / (6.01/sqrt(50))</code>
+            <p>
+                For this example, we'll use Python's calculator abilities to do the math for us.
+            </p>
+            <pre><code># Import the library
+import numpy as np
+
+# Calculate the t-value
+tstatistic = (67.53-72)/(6.01/np.sqrt(50))
+print('The t-statistic is: ', tstatistic)</code></pre>
+            <pre><code>The t-statistic is:  -5.259180219473988</code></pre>
+
+            <p>
+                They agree! It's an excellent exercise to write this out by hand so that you can better understand how
+                we use the variables in the equations.
+            </p>
+            <p>
+                It's important to note that we can see both the t-statistic and p-value displayed. We'll cover the
+                p-value and how to interpret it later in this module; for now, we'll focus on the t-statistic.
+            </p>
+
+            <h3>Challenge</h3>
+            <p>
+                Following the same example as above, generate a random distribution using the
+                <code>stats.norm.rvs()</code> method. Change the values of "loc" (mean) and "scale" (standard deviation)
+                and the sample size. Consider using some of the following variations:
+            </p>
+            <ul>
+                <li>have the mean remain the same but change the "scale" (standard deviation)</li>
+                <li>change the sample size("size") and see how it affect the t statistic</li>
+            </ul>
+
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_1samp.html"
+                        target="_blank" rel="noopener noreferrer">
+                        SciPy Stats one-sample t test
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 03 - Set Up and Run a Two-sample Independent t-test</h2>
+            <h3>Overview</h3>
+            <p>
+                We've already reviewed normal and t-distributions, and calculated the t-statistic for one sample. Next,
+                we'll work through an example for a two-sample t-test and then calculate the t-value for two independent
+                populations.
+            </p>
+            <p>
+                When we do a one-sample t-test, we're comparing the mean of our sample data to a known value. For
+                two-sample t-tests, to determine the t-value, you compare the means of two independent samples to a
+                given variable. Expanding on our example from the one-sample test, we'll add another group of
+                individuals participating in an exercise program to decrease their heart rate.
+            </p>
+            <p>
+                In other words, we'll compare the mean heart rate of the exercise group participating in a cardio-heavy
+                program and another sample group participating in a yoga-based fitness program. The other parameters are
+                the same: duration (six months), size of each sample population (50).
+            </p>
+            <p>
+                For a two-sample t-test, we want to know the average difference between the mean heart rates, if we
+                repeatedly selected heart rate samples for each group of fitness participants.
+            </p>
+
+            <h3>Follow Along</h3>
+            <p>
+                For the two-sample t-tests, it's more challenging to calculate the t-value by hand; the equation is a
+                little longer, and it's more involved when the sizes and variance/standard deviation are different for
+                the two samples. So we'll use the power of Python!
+            </p>
+
+            <h3>Calculate with NumPy and SciPy</h3>
+            <p>
+                Here are the parameters we are using for our two-sample t-test:
+            </p>
+            <ul>
+                <li>cardio-based program: mean=69 bpm, std=6.5 bpm</li>
+                <li>yoga-based program: mean=71 bpm, std=7.3 bpm</li>
+            </ul>
+            <p>
+                Let's use some NumPy and SciPy tools to generate a normal distribution with the specified parameters. We
+                have the sample means and sample standard deviations. We'll create a distribution of random variables
+                with the given mean (loc) and standard deviation (<em>scale</em>).
+            </p>
+            <pre><code># Import the libraries 
+
+import numpy as np 
+
+from scipy import stats
+#apply a seed value that ensures that different machines will return the same result
+np.random.seed(42)
+
+# Generate the random variables with the specified mean, std, and sample size
+#cardio
+rvs1 = stats.norm.rvs(loc=69, scale=6.5,size=50)
+
+#yoga
+rvs2 = stats.norm.rvs(loc=71, scale=7.3, size=50)
+
+# Calculate the t statistic for these two sample populations
+stats.ttest_ind(rvs1, rvs2)
+</code></pre>
+            <code>Ttest_indResult(statistic=-2.886610676042845, pvalue=0.004790856010749188)</code>
+
+            <h3>Challenge</h3>
+            <p>
+                Using the same process as above, generate additional distributions with the specified mean and standard
+                deviation and calculate the t-statistic for each set of populations. Consider using some of the
+                following variations:
+            </p>
+            <ul>
+                <li>have the mean remain the same but change the "scale" (standard deviation)</li>
+                <li>change the sample sizes for each sample ("size") and see how it affect the t-statistic</li>
+            </ul>
+
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_ind.html"
+                        target="_blank" rel="noopener noreferrer">
+                        SciPy Stats independent sample t test
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 04 - Use a t-test p-value to Draw a Conclusion About the Null and Alternative Hypothesis</h2>
+            <h3>Overview</h3>
+            <p>
+                When we want to determine if a result is statistically significant, we need a standard to judge the
+                hypotheses. For example, let's say we wanted to know if cardiovascular exercise can lower resting heart
+                rate.
+            </p>
+            <p>
+                We could state our hypothesis that the mean resting heart rate in cardiovascular exercise individuals is
+                not different from the mean resting heart rate for all US adults (78 beats per minute).
+            </p>
+            <p>
+                The process of this set of hypotheses might look something like the following:
+            </p>
+            <ol>
+                <li>First, we state our null hypothesis: The mean heart rate in individuals who do cardiovascular
+                    exercise is not different from the mean heart rate of the rest of the population (78bpm).</li>
+                <li>Second, we determine the alternative hypothesis: The mean heart rate in individuals who do
+                    cardiovascular exercise is different from the mean heart rate in the rest of the population (78bpm).
+                </li>
+                <li>We select a representative sample of cardiovascular exercise individuals and calculate the mean and
+                    SD heart rate.</li>
+            </ol>
+            <p>
+                The null hypothesis is written out symbolically as:
+            </p>
+            <pre><code>H_{0}: &mu; = reference value</code></pre>
+            <p>
+                where &mu; is the population mean of all individuals doing cardiovascular exercise.
+            </p>
+            <p>
+                In this specific situation:
+            </p>
+            <pre><code>H_{0}: &mu; = 78</code></pre>
+            <p>
+                Although we suspect that cardiovascular exercise will lower resting heart rate, it is better to be
+                "conservative" and use a "not equal to" alternative hypothesis is:
+            </p>
+            <p>
+                This is written symbolically as: <code>H_{a}: &mu; != 78</code>
+            </p>
+            <h3>Interpret the p-value</h3>
+            <p>
+                Now that we have decided on both the null and alternative hypotheses, we need to determine if we reject
+                or fail to reject the null hypothesis. Here is where the p-value finally comes in. The p-value is the
+                probability of observing our sample mean if the null hypothesis is true. We'll add to the hypothesis
+                testing process from above:
+            </p>
+            <ol>
+                <li>Decide on the null and alternative hypotheses.</li>
+                <li>Determine the significance level you wish to use. Often this is 0.05, but it doesn't have to be.
+                </li>
+                <li>Calculate the test statistics (in this module, we have focused on the t statistic) and the
+                    associated p-value.</li>
+                <li>Use the p-value and the significance level to determine if you reject or fail to reject the null
+                    hypothesis.</li>
+            </ol>
+            <p>
+                A note on the significance level: This value is also called the alpha level. If we choose alpha=0.05 or
+                5%, we would expect to incorrectly reject the null hypothesis 5% of the time. A stricter significance
+                level of alpha=0.01 (1%) would mean that we would only expect to incorrectly reject the null hypothesis
+                1% of the time (also referred to as a Type 1 error). To reject the null hypothesis, the p-value needs to
+                be less than the
+                (alpha):
+            </p>
+            <ul>
+                <li>p-value &lt; <em>alpha</em>: reject the null hypothesis</li>
+                <li>p-value &gt; <em>alpha</em>: fail to reject the null hypothesis</li>
+            </ul>
+            <p><strong>We never accept a null hypothesis or prove it to be true, we can only fail to reject it.</strong>
+            </p>
+            <p>
+                In other words, failing to reject the null hypothesis means that we do not have enough evidence to
+                conclude that the null hypothesis is false.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                We want to test if a new method of teaching physics increases understanding as measured by higher scores
+                on a particular physics test. Therefore, a random sample of 50 students who have learned using this new
+                method is selected, and the mean score on the physics test is determined to be 74.6 with a standard
+                deviation of 12.3.
+            </p>
+            <p>
+                We then want to compare this to the entire population of physics test scores, where the mean is 67.5.
+            </p>
+            <p>
+                The null hypothesis is that the mean tests score for students who learned using the new method is
+                equivalent to the mean test score for the entire population of physics students. We write this
+                symbolically as <code>H_{0}: &mu; = 67.5</code>
+            </p>
+            <p>
+                To be conservative, we won't automatically believe that the new method improves scores and will instead
+                specify that the alternative hypothesis is that the scores are simply not equal to each other
+                <code>H_{a}: &mu; \neq 67.5</code>.
+            </p>
+            <h3>Calculate with SciPy</h3>
+            <p>
+                Using the tools available in SciPy, we'll create random test scores for the general student population,
+                with the given mean of 67.5. From this distribution, we'll select 50 scores with a mean of 74.6 and a
+                standard deviation of 12.3. Using these values, we'll let SciPy calculate the t-statistic and p-value.
+            </p>
+            <pre><code># Import the stats module
+from scipy import stats
+
+# Here are the 50 scores from the class (they were generated to have the correct mean and SD)
+rvs = stats.norm.rvs(loc=74.6, scale=12.3, size=50, random_state=42)
+
+# Calculate the t statistic and the p-value
+stats.ttest_1samp(rvs,67.5)</code></pre>
+            <code>Ttest_1sampResult(statistic=2.6640411076902604, pvalue=0.010421324745517498)</code>
+
+            <h3>Interpret the p-value</h3>
+            <p>
+                We have a p-value of 0.0104. Let's compare this to the alpha value: p-value 0.0104 &lt; 0.05. Therefore,
+                we should reject the null hypothesis and conclude that students using the new method to learn physics do
+                have a statistically significant mean physics test score compared to the entire population of physics
+                students.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://medium.com/swlh/hypothesis-testing-using-t-test-using-inferential-statistics-python-4dce44eb4146"
+                        target="_blank" rel="noopener noreferrer">
+                        T-test Using Python and NumPy
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 05 - Explain the Concepts of Statistical Estimate, Precision, and Standard Error as They Apply
+                to Inferential Statistics</h2>
+            <h3>Overview</h3>
+            <p>
+                So far, we have worked through several examples of hypothesis testing using t-tests in this course. In
+                some of the equations we've worked with, we have used the standard error value (or the standard
+                deviation). But we haven't covered what this standard error is. Once we better understand this concept,
+                many of the other concepts we have used so far will make more sense. Statistics is often about
+                understanding more straightforward concepts and then fitting them together into a larger conceptual
+                framework.
+            </p>
+
+            <h3>Error</h3>
+            <p>
+                Most people are familiar with the concept of an error as used outside of statistics. For example, an
+                error can be a typo, an incorrect variable in an equation, or a bug in your Python code that results in
+                a <code>TypeError</code> or <code>AssertionError</code>. But what does the error mean as used in
+                statistics?
+            </p>
+            <p>
+                We have been working with this idea so far without really knowing it. In statistics, error refers to the
+                random variation when we are drawing random samples from a distribution. In other words, it's not an
+                unintentional mistake but another way to describe the variation in the parameters we are trying to
+                measure.
+            </p>
+            <p>
+                We have been working with the mean values of populations from which we have gathered samples throughout
+                this sprint. Since we're trying to understand the mean error for these sampling distributions, we're
+                working with the standard error of the mean.
+            </p>
+
+            <h3>Expected value</h3>
+            <p>
+                Let's try to look at this another way. When we sample from a population, we calculate the mean of that
+                sample. Then, when we sample from that population again, we get different values, which can (and usually
+                do) have a different mean. So if we took 1000 samples from the population, we would have 1000 various
+                sample means. We call this set of 1000 sample means a sampling distribution, and this distribution has a
+                mean (a mean of the means). This mean of the means has a unique name: the expected value of the mean.
+                The "expected" word is important because we expect the mean of the sampling distribution to have the
+                same mean as the population from which we drew the samples.
+            </p>
+            <p>
+                Okay, that was a lot of sentences with the word "mean." So how does this concept of an expected value of
+                the mean relate to the error? We have a bunch of means (1000 in the case of the above example). We can
+                calculate the standard deviation of these means. Remember that the standard deviation is the sum of the
+                squared difference between the mean (
+                <em>&mu;</em>
+                ) and each value (
+                <span class="MathJax_SVG" id="MathJax-Element-2-Frame" tabindex="0"
+                    style="font-size: 100%; display: inline-block; position: relative;"
+                    data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;msub&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;/msub&gt;&lt;/math&gt;"
+                    role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="2.129ex" height="1.738ex"
+                        viewBox="0 -533.5 916.8 748.2" role="img" focusable="false" style="vertical-align: -0.498ex;"
+                        aria-hidden="true">
+                        <g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)">
+                            <use xlink:href="#MJMATHI-78" x="0" y="0"></use>
+                            <use transform="scale(0.707)" xlink:href="#MJMATHI-69" x="809" y="-213"></use>
+                        </g>
+                    </svg><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math
+                            xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                            <msub>
+                                <mi>x</mi>
+                                <mi>i</mi>
+                            </msub>
+                        </math></span></span>
+                ), all divided by the total number of values (N) minus one.
+            </p>
+            <span class="MathJax_SVG" id="MathJax-Element-3-Frame" tabindex="0"
+                style="font-size: 100%; display: inline-block; position: relative;"
+                data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;s&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;msqrt&gt;&lt;mfrac&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;/msub&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mi&gt;&amp;#x03BC;&lt;/mi&gt;&lt;msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;/mrow&gt;&lt;mrow&gt;&lt;mi&gt;N&lt;/mi&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;/msqrt&gt;&lt;/math&gt;"
+                role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="19.038ex" height="7.417ex"
+                    viewBox="0 -1968.7 8196.7 3193.3" role="img" focusable="false" style="vertical-align: -2.844ex;"
+                    aria-hidden="true">
+                    <g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)">
+                        <use xlink:href="#MJMATHI-73" x="0" y="0"></use>
+                        <use xlink:href="#MJMAIN-3D" x="747" y="0"></use>
+                        <g transform="translate(1803,0)">
+                            <use xlink:href="#MJSZ4-221A" x="0" y="83"></use>
+                            <rect stroke="none" width="5392" height="60" x="1000" y="1774"></rect>
+                            <g transform="translate(1000,0)">
+                                <g transform="translate(120,0)">
+                                    <rect stroke="none" width="5152" height="60" x="0" y="220"></rect>
+                                    <g transform="translate(60,723)">
+                                        <use xlink:href="#MJSZ1-2211" x="0" y="0"></use>
+                                        <use xlink:href="#MJMAIN-28" x="1056" y="0"></use>
+                                        <g transform="translate(1446,0)">
+                                            <use xlink:href="#MJMATHI-78" x="0" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-69" x="809" y="-213">
+                                            </use>
+                                        </g>
+                                        <use xlink:href="#MJMAIN-2212" x="2585" y="0"></use>
+                                        <use xlink:href="#MJMATHI-3BC" x="3585" y="0"></use>
+                                        <g transform="translate(4189,0)">
+                                            <use xlink:href="#MJMAIN-29" x="0" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMAIN-32" x="550" y="408"></use>
+                                        </g>
+                                    </g>
+                                    <g transform="translate(1270,-686)">
+                                        <use xlink:href="#MJMATHI-4E" x="0" y="0"></use>
+                                        <use xlink:href="#MJMAIN-2212" x="1110" y="0"></use>
+                                        <use xlink:href="#MJMAIN-31" x="2111" y="0"></use>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </svg><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math
+                        xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                        <mi>s</mi>
+                        <mo>=</mo>
+                        <msqrt>
+                            <mfrac>
+                                <mrow class="MJX-TeXAtom-ORD">
+                                    <mo>∑</mo>
+                                    <mo stretchy="false">(</mo>
+                                    <msub>
+                                        <mi>x</mi>
+                                        <mi>i</mi>
+                                    </msub>
+                                    <mo>−</mo>
+                                    <mi>μ</mi>
+                                    <msup>
+                                        <mo stretchy="false">)</mo>
+                                        <mn>2</mn>
+                                    </msup>
+                                </mrow>
+                                <mrow>
+                                    <mi>N</mi>
+                                    <mo>−</mo>
+                                    <mn>1</mn>
+                                </mrow>
+                            </mfrac>
+                        </msqrt>
+                    </math></span></span>
+            <p>
+                We have a sample of means and know the standard deviation of that sample distribution. Since the
+                standard deviation measures the variation around the mean, the std is the variation around the expected
+                mean (the population mean). In other words, the standard error of the mean is a measure of how much
+                error we expect when we compare the sample mean to the population mean.
+            </p>
+            <p>
+                To calculate the standard error of the mean (sem), we take the standard deviation of our sample (s) and
+                divide by the number of samples:
+            </p>
+            <span class="MathJax_SVG" id="MathJax-Element-4-Frame" tabindex="0"
+                style="font-size: 100%; display: inline-block; position: relative;"
+                data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;s&lt;/mi&gt;&lt;mi&gt;e&lt;/mi&gt;&lt;mi&gt;m&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mfrac&gt;&lt;mi&gt;s&lt;/mi&gt;&lt;mrow&gt;&lt;msqrt&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;/msqrt&gt;&lt;mi&gt;N&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;/math&gt;"
+                role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="14.346ex" height="5.935ex"
+                    viewBox="0 -1224.6 6176.6 2555.4" role="img" focusable="false" style="vertical-align: -3.091ex;"
+                    aria-hidden="true">
+                    <g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)">
+                        <use xlink:href="#MJMATHI-73" x="0" y="0"></use>
+                        <use xlink:href="#MJMATHI-65" x="469" y="0"></use>
+                        <use xlink:href="#MJMATHI-6D" x="936" y="0"></use>
+                        <use xlink:href="#MJMAIN-3D" x="2092" y="0"></use>
+                        <g transform="translate(2870,0)">
+                            <g transform="translate(397,0)">
+                                <rect stroke="none" width="2788" height="60" x="0" y="220"></rect>
+                                <use xlink:href="#MJMATHI-73" x="1159" y="676"></use>
+                                <g transform="translate(60,-905)">
+                                    <use xlink:href="#MJSZ1-221A" x="0" y="20"></use>
+                                    <rect stroke="none" width="389" height="60" x="1000" y="811"></rect>
+                                    <use xlink:href="#MJMAIN-28" x="1000" y="0"></use>
+                                    <use xlink:href="#MJMATHI-4E" x="1390" y="0"></use>
+                                    <use xlink:href="#MJMAIN-29" x="2278" y="0"></use>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </svg><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math
+                        xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                        <mi>s</mi>
+                        <mi>e</mi>
+                        <mi>m</mi>
+                        <mo>=</mo>
+                        <mfrac>
+                            <mi>s</mi>
+                            <mrow>
+                                <msqrt>
+                                    <mo stretchy="false">(</mo>
+                                </msqrt>
+                                <mi>N</mi>
+                                <mo stretchy="false">)</mo>
+                            </mrow>
+                        </mfrac>
+                    </math></span></span>
+            <p>
+                where s is the standard deviation of the sample mean (as calculated above) and N is the number of
+                samples in the distribution.
+            </p>
+
+            <h3>Follow Along</h3>
+            <p>
+                It will probably help to work through an example where we have a population of values, draw samples,
+                calculate the sample means, and then look at the properties of that sampling distribution.
+            </p>
+            <p>
+                We'll use an example from the food industry and examine <a
+                    href="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-practice-datasets/main/unit_1/Cereal/cereal_weights.csv"
+                    target="_blank" rel="noopener noreferrer">Cereal Weights</a>. Note: this is
+                not an actual company or product; the data is generated. In most cereal factories, automated machinery
+                fills each cereal box, and the box's weight is on the package. The cereal weights data set provides the
+                mean weight (in ounces) of 10,000 sampling distributions of cereal boxes. Each box is supposed to
+                contain 20 ounces of cereal (minus the weight of the bag/box).
+            </p>
+            <p>
+                How well do we know the error in the weight from a single box of cereal? We don't know the standard
+                deviation of the original population. Let's read in the data, calculate the mean of the sample
+                distribution, and calculate the standard error.
+            </p>
+            <pre><code># Import the libraries
+import pandas as pd
+import scipy.stats as stats
+
+# Load the data into a DataFrame
+cereal = pd.read_csv('cereal_weights.csv')
+
+# Look at the general statistics
+display(cereal.describe())
+
+# Calculate the standard error of the mean (sem)
+stderr_mean = stats.sem(cereal['weight'])
+print('The standard error of the mean: ', stderr_mean.round(6))</code></pre>
+
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>count</td>
+                            <td>10000.000000</td>
+                        </tr>
+                        <tr>
+                            <td>mean</td>
+                            <td>20.499212</td>
+                        </tr>
+                        <tr>
+                            <td>std</td>
+                            <td>0.199874</td>
+                        </tr>
+                        <tr>
+                            <td>min</td>
+                            <td>19.752000</td>
+                        </tr>
+                        <tr>
+                            <td>25%</td>
+                            <td>20.365000</td>
+                        </tr>
+                        <tr>
+                            <td>50%</td>
+                            <td>20.500000</td>
+                        </tr>
+                        <tr>
+                            <td>75%</td>
+                            <td>20.635000</td>
+                        </tr>
+                        <tr>
+                            <td>max</td>
+                            <td>21.171000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <code>The standard error of the mean:  0.001999</code>
+
+            <p>
+                The expected mean for this population of cereal is the advertised weight: 20 ounces. However, the sample
+                distribution mean of 20.5 ounces with a standard deviation of 0.2 ounces would suggest that the factory
+                equipment isn't hitting the exact target of 20 ounces: 20.5 &plusmn; 0.2 gives a range of 20.3 to 20.7
+                ounces.
+            </p>
+            <p>
+                As we continue through the module, we'll learn to use the standard error to calculate confidence
+                intervals.
+            </p>
+
+            <h3>Challenge</h3>
+            <p>
+                For this challenge, think about how the standard error of the mean would change with more samples; does
+                the error increase or decrease? Then, you can download the data set for yourself and draw a smaller
+                subset of samples to observe how the standard error is affected by sample size.
+            </p>
+
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://stattrek.com/statistics/dictionary.aspx?definition=standard_error" target="_blank"
+                        rel="noopener noreferrer">
+                        Stat Trek: Standard Error
+                    </a>
+                </li>
+                <li>
+                    <a href="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-practice-datasets/main/unit_1/Cereal/cereal_weights.csv"
+                        target="_blank" rel="noopener noreferrer">
+                        Cereal Weights
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 06 - Explain the Implications of the Central Limit Theorem in Inferential Statistics</h2>
+            <h3>Overview</h3>
+            <p>
+                We've been focusing on taking samples from normal distributions or using the closely related
+                t-distribution. But not all distributions are normal; some are skewed to the left or right and don't
+                have that nice bell-shaped curve. In addition, some distributions are binomial with two peaks rather
+                than just one. We call these types of distributions non-normal.
+            </p>
+            <p>
+                There is an exciting property observed when we sample from these non-normal distributions and calculate
+                the means of those samples: the means are normally distributed! In other words, when we draw at least
+                ~30 samples from a non-normal distribution (eg: exponential distribution), and plot the mean of all the
+                samples, the resulting plot will be normally distributed. This property is called as the Central Limit
+                Theorem.
+            </p>
+            <h3>Central Limit Theorem (CLT)</h3>
+            <p>
+                Central Limit Theorem can be formally stated as: If you have a population with a mean and a standard
+                deviation, and take sufficiently large random samples from it, the sample means will be approximately
+                normally distributed, even if the population isn't normally distributed.
+            </p>
+            <p>
+                The central limit theorem holds true when the number of samples is at least ~30. Let's work through some
+                examples where we sample from a non-normal distribution, calculate the sample means and then plot those
+                means.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                We'll use the exponential distribution for this example since it has a non-symmetric shape that differs
+                from the normal distribution. In the following code, almost every line has a comment to explain what the
+                code does, so make sure to read those comments.
+            </p>
+            <h4>Exponential Distribution</h4>
+            <p>
+                We'll use the <code>scipy.stats</code> module to draw a sample of random variables from an exponential
+                distribution.
+                Then we'll use seaborn to create a distribution plot.
+            </p>
+            <pre><code># Import the necessary libraries (statistics, plotting)
+import numpy as np
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Set the style-sheet
+plt.style.use('seaborn-bright')
+
+# Create the figure and axes objects
+fig, ax = plt.subplots(1, 1, figsize=(8,6))
+
+# Create an exponential distribution
+# (with a sample size of 1000)
+data_exp = stats.expon.rvs(size=1000)
+
+# Plot the distribution and the kernel density estimate (KDE)
+ax = sns.histplot(data_exp, kde=True, bins=100)
+
+# Set the axis labels
+ax.set(xlabel='Exponential Distribution', ylabel='Frequency')
+
+fig.clf() #comment/delete to plot</code></pre>
+            <pre><code>&lt;Figure size 576x432 with 0 Axes&gt;</code></pre>
+            <img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_1/sprint_2/mod3_obj2_expdist.png"
+                alt="expdist" loading="lazy">
+            <p>
+                The distribution has a peak between 0 and 1, and a sharp exponential decrease on the right. Next, we'll
+                draw random samples from the exponential distribution. Each sample will be of size=1000 having the same
+                "width" or scale. Next, we'll draw three different sets of samples (n=25, n=50, n=1000) to see how the
+                increase in sample number approximates the normal distribution better. Finally, we are going to
+                demonstrate the Central Limit Theorem graphically.
+            </p>
+            <pre><code># Create a list of means for each set of samples
+
+###
+# Initialize the list to hold the means
+rs_means_n25 = []
+# Loop 25 times, fill the list with 25 sample means
+for i in range(25):
+    # Draw random samples from the exponential distribution
+    rs_exp = np.random.exponential(scale=1.0, size=1000)
+    # Append the mean of the random sample
+    rs_means_n25.append(rs_exp.mean())
+
+###
+# Initialize the list to hold the means
+rs_means_n100 = []
+
+# Loop 100 times, fill the list with 100 sample means
+for i in range(100):
+    # Draw random samples from the exponential distribution
+    rs_exp = np.random.exponential(scale=1.0, size=1000)
+    # Append the mean of the random sample
+    rs_means_n100.append(rs_exp.mean())
+
+###
+# Initialize the list to hold the means
+rs_means_n1000 = []
+# Loop 1000 times, fill the list with 1000 sample means
+for i in range(1000):
+    # Draw random samples from the exponential distribution
+    rs_exp = np.random.exponential(scale=1.0, size=1000)
+    # Append the mean of the random sample
+    rs_means_n1000.append(rs_exp.mean())</code></pre>
+            <pre><code># Create the figure, axes objects
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(10,4))
+
+# Plot each example on the correspond axis
+sns.histplot(rs_means_n25, kde=True, bins=100, ax=ax1)
+ax1.set(xlabel='n=25', ylabel='Frequency')
+
+sns.histplot(rs_means_n100, kde=True, bins=100, ax=ax2)
+ax2.set(xlabel='n=100')
+
+sns.histplot(rs_means_n1000, kde=True, bins=100, ax=ax3)
+ax3.set(xlabel='n=1000');
+
+fig.clf() #comment/delete to plot</code></pre>
+            <pre><code>&lt;Figure size 720x288 with 0 Axes&gt;</code></pre>
+            <img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_1/sprint_2/mod3_obj2_central_numsamp.png"
+                alt="central_numsamp" loading="lazy">
+            <p>
+                It's pretty cool to see the normal distribution take shape! As the number of samples draws from our
+                original exponential distribution increases, the more normal the distribution becomes.
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                We are using the applet linked <a
+                    href="http://digitalfirst.bfwpub.com/stats_applet/stats_applet_3_cltmean.html" target="_blank"
+                    rel="noopener noreferrer">here</a>, we can experiment with drawing a different
+                number of samples from three other distributions (exponential, uniform, and normal). Set the sample
+                size=1 to see what the distribution looks like before we draw more than one sample. Increase the sample
+                size by five each time and draw the samples again. Note when the resulting sampling distribution begins
+                to approximate a normal distribution.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://en.wikipedia.org/wiki/Central_limit_theorem" target="_blank"
+                        rel="noopener noreferrer">
+                        Central Limit Theorem
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 07 - Explain the Purpose of and Identify Applications for Confidence Intervals</h2>
+            <h3>Overview</h3>
+            <p>
+                We've taken a closer look at standard error and what it means in terms of sampling from a population. We
+                use this standard error in our hypothesis testing equations, but it has some implications for
+                determining the actual significance of our result.
+            </p>
+            <p>
+                In this next objective (and the rest of the module), we will introduce the concept of confidence
+                intervals, when to use them, and how to calculate them. But, first, let's review what we know about
+                hypothesis testing and why we sometimes need different answers.
+            </p>
+            <h3>Hypothesis Testing Limits</h3>
+            <p>
+                First, consider how we have been testing our results so far. First, consider how we can test our
+                results. We have performed t-tests until now, and will look into chi-square tests later on, to determine
+                the significance of our results. But these tests have limited us to answering yes-or-no questions or
+                rejecting (or not) a null hypothesis. We often want to know more about our results, such as how
+                significant an observed effect is or how confident we are in our conclusions.
+            </p>
+            <p>
+                Another limitation with statistical testing is how influential the sample size is on the tests: the
+                larger the sample, the smaller the error. When we look at how this "small" error propagates through, we
+                can see the problem: the z-scores and t-scores become larger (because we're diving by a smaller
+                denominator). As a result, small differences between a sample statistic and a population parameter
+                seeming to be more significant than it is. So, larger sample size -&gt; smaller standard error -&gt;
+                larger z-score/t-score -&gt; deceptively significant value.
+            </p>
+            <p>
+                Well, what do we do? At this point, confidence intervals comes into play.
+            </p>
+            <h3>Confidence Intervals</h3>
+            <p>
+                When we want to know the significance of our result(s), we can calculate the confidence interval for
+                that result. A confidence interval for a parameter is an interval computed from sample data by a method
+                with a given probability C of producing an interval containing the true value of the parameter.
+            </p>
+            <p>
+                Let's unpack that definition a bit more. The confidence level C is a percent, and the values often used
+                are 90%, 95%, and sometimes 99%. The interval is the estimated parameter plus or minus (+/-) the margin
+                of error.
+            </p>
+            <p>
+                For example, if we chose a confidence level of 95% and drew a sample from our population, our result
+                would fall within the confidence interval 95% of the time. However, if we wanted even more certainty, we
+                might set the level at 99%: our result would be within the confidence interval 99% of the time.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                Let's look at confidence intervals graphically. We generated the following plot with this program: <a
+                    href="https://onlinestatbook.com/stat_sim/conf_interval/index.html" target="_blank"
+                    rel="noopener noreferrer">Statistical Applet: Confidence Intervals</a>.
+            </p>
+            <p>
+                At the top, we can see an example population (solid gray line) and a sample (red dotted line). On the
+                lower half of the graphic are lines with a dot in the middle. The dot is the sample mean, and the line
+                through the dot is the confidence interval. For a confidence level set at 95%, the interval will cover
+                the population mean. We can see in this particular example that the interval did not include the
+                population mean in two cases (red lines).
+            </p>
+            <img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_1/sprint_2/mod3_obj3_CIexample.png"
+                alt="CI Example" loading="lazy">
+            <h3>Challenge</h3>
+            <p>
+                Using the same <a href="https://digitalfirst.bfwpub.com/stats_applet/stats_applet_4_ci.html"
+                    target="_blank" rel="noopener noreferrer">applet</a> that we used to generate the above graphic, try
+                adjusting the
+                confidence interval and notice what happens to the size of the lines. In addition, change the sample
+                size and observe how that affects the percent of samples that have intervals covering the population
+                mean (the "percent hit" in the applet)
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://digitalfirst.bfwpub.com/stats_applet/stats_applet_4_ci.html" target="_blank"
+                        rel="noopener noreferrer">
+                        Statistical Applet: Confidence Intervals
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Guided Project -->
+        <section class="content-box">
             <h2>Guided Project</h2>
             <p>Open <strong>DS_121_ttests_confidence_intervals.ipynb</strong> in the GitHub repository below to follow
                 along with the guided project:</p>
             <div class="resource-links">
                 <a href="https://github.com/bloominstituteoftechnology/DS-Unit-1-Sprint-2-Statistics/tree/master/module1-hypothesis-ttests-and-conf-intervals"
-                    class="resource-link" target="_blank" rel="noopener noreferrer">GitHub: Hypothesis Tests and Confidence
+                    class="resource-link" target="_blank" rel="noopener noreferrer">GitHub: Hypothesis Tests and
+                    Confidence
                     Intervals</a>
             </div>
 
@@ -71,8 +1098,8 @@
             <div class="video-container">
                 <iframe class="wistia_embed"
                     title="Sprint 2 Hypothesis Testing (t-tests) and Confidence Intervals Video"
-                    src="https://fast.wistia.net/embed/iframe/le4g0nlox3" width="640" height="360"
-                    allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    src="https://fast.wistia.net/embed/iframe/le4g0nlox3" width="640" height="360" allow="fullscreen"
+                    loading="lazy"></iframe>
             </div>
         </section>
 
@@ -89,8 +1116,8 @@
             <h2>Assignment Solution Video</h2>
             <div class="video-container">
                 <iframe class="wistia_embed" title="Module 1 Assignment Solution"
-                    src="https://fast.wistia.net/embed/iframe/kpq0rqczgq" width="640" height="360"
-                    allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    src="https://fast.wistia.net/embed/iframe/kpq0rqczgq" width="640" height="360" allow="fullscreen"
+                    loading="lazy"></iframe>
             </div>
         </section>
 
@@ -100,7 +1127,8 @@
             <h3>T-Test Resources</h3>
             <ul>
                 <li><a href="https://blog.minitab.com/blog/adventures-in-statistics-2/understanding-t-tests-t-values-and-t-distributions"
-                        target="_blank" rel="noopener noreferrer">Understanding t-Tests: t-values and t-distributions</a></li>
+                        target="_blank" rel="noopener noreferrer">Understanding t-Tests: t-values and
+                        t-distributions</a></li>
                 <li><a href="https://medium.com/swlh/hypothesis-testing-using-t-test-using-inferential-statistics-python-4dce44eb4146"
                         target="_blank" rel="noopener noreferrer">T-test Using Python</a></li>
                 <li><a href="https://www.statisticssolutions.com/manova-analysis-one-sample-t-test/" target="_blank"
@@ -111,7 +1139,8 @@
             <ul>
                 <li><a href="https://www.khanacademy.org/math/statistics-probability/sampling-distributions-library/sample-means/v/central-limit-theorem"
                         target="_blank" rel="noopener noreferrer">Khan Academy: Central Limit Theorem</a></li>
-                <li><a href="https://www.youtube.com/watch?v=YAlJCEDH2uY" target="_blank" rel="noopener noreferrer">Central Limit
+                <li><a href="https://www.youtube.com/watch?v=YAlJCEDH2uY" target="_blank"
+                        rel="noopener noreferrer">Central Limit
                         Theorem Explained Simply (YouTube)</a></li>
             </ul>
 

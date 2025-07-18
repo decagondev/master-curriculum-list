@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 2 - Futures - BD Unit 7 Sprint 26</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -26,39 +28,47 @@
             </ul>
         </nav>
     </header>
-    
+
     <main class="container">
         <section class="welcome">
             <h1>Module 2 - Futures</h1>
-            
+
             <div class="content-box module2-accent">
                 <h2>Module Overview</h2>
-                <p>Explore Callable interfaces and Future objects for asynchronous programming, enabling efficient non-blocking operations in your Java applications.</p>
+                <p>Explore Callable interfaces and Future objects for asynchronous programming, enabling efficient
+                    non-blocking operations in your Java applications.</p>
             </div>
 
             <div class="content-box">
                 <h2>Learning Objectives</h2>
                 <ul>
                     <li>Use Future's get method to retrieve the result of an asynchronous task</li>
-                    <li>Implement code to handle exceptions thrown while retrieving the result of an asynchronous task from a Future</li>
-                    <li>Implement a method that retrieves the result of an asynchronous task from a Future with minimal blocking time</li>
-                    <li>Recall that the Future object represents the eventual result of a concurrent task and will not immediately contain a result</li>
+                    <li>Implement code to handle exceptions thrown while retrieving the result of an asynchronous task
+                        from a Future</li>
+                    <li>Implement a method that retrieves the result of an asynchronous task from a Future with minimal
+                        blocking time</li>
+                    <li>Recall that the Future object represents the eventual result of a concurrent task and will not
+                        immediately contain a result</li>
                     <li>Summarize the Callable interface</li>
                     <li>Outline the differences between the Callable and Runnable interfaces</li>
                     <li>Implement the Callable interface using lambda syntax</li>
-                    <li>Implement functionality that executes a task asynchronously by submitting a Callable to an ExecutorService</li>
+                    <li>Implement functionality that executes a task asynchronously by submitting a Callable to an
+                        ExecutorService</li>
                     <li>Design and implement a class that implements Callable to execute functionality concurrently</li>
                 </ul>
             </div>
 
             <div class="content-box">
                 <h2>Understanding the Callable Interface</h2>
-            
+
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Introduction to Callable Interfaces" src="https://fast.wistia.net/embed/iframe/yhy12nni2r" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Introduction to Callable Interfaces"
+                        src="https://fast.wistia.net/embed/iframe/yhy12nni2r" width="100%" height="360"
+                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
                 </div>
 
-                <p>The Callable interface represents a task that returns a result and can throw an exception. This makes it more powerful than Runnable, which cannot return a value or throw checked exceptions.</p>
+                <p>The Callable interface represents a task that returns a result and can throw an exception. This makes
+                    it more powerful than Runnable, which cannot return a value or throw checked exceptions.</p>
                 <p>Key differences between Callable and Runnable:</p>
                 <ul>
                     <li>Callable can return results while Runnable cannot</li>
@@ -76,22 +86,47 @@ ExecutorService executor = Executors.newCachedThreadPool();
 Future&lt;String&gt; future = executor.submit(task);</code></pre>
 
                 <h2>Overview</h2>
-                <p>In this lesson, we will learn about two new concurrency tools, the Callable and Future interfaces. We will use them to execute tasks with return values in concurrent threads and get those values after those threads have completed. We will learn how to use them with an ExecutorService from the previous lesson.</p>
+                <p>In this lesson, we will learn about two new concurrency tools, the Callable and Future interfaces. We
+                    will use them to execute tasks with return values in concurrent threads and get those values after
+                    those threads have completed. We will learn how to use them with an ExecutorService from the
+                    previous lesson.</p>
 
-                <p>The first reading focuses on using Callables for concurrent programming. We'll be explaining the difference between a Callable and a Runnable, and how to use them with an ExecutorService.</p>
-                <p>The second reading will focus on Futures. We'll explain how they wrap the results of concurrent tasks and how to safely use them.</p>
+                <p>The first reading focuses on using Callables for concurrent programming. We'll be explaining the
+                    difference between a Callable and a Runnable, and how to use them with an ExecutorService.</p>
+                <p>The second reading will focus on Futures. We'll explain how they wrap the results of concurrent tasks
+                    and how to safely use them.</p>
 
                 <h2>The Callable Interface</h2>
-                <p>Up until now we've been using the Runnable interface in our concurrency lessons. Runnables, when used in threading, allow us to execute code concurrently to our application's main thread. They can be executed by instantiating a Thread with them directly or, as we learned in the last lesson, submitted to an ExecutorService. However, Runnables don't have return values, so threads executing a Runnable can't return a value upon completion. That's where the Callable interface comes in.</p>
+                <p>Up until now we've been using the Runnable interface in our concurrency lessons. Runnables, when used
+                    in threading, allow us to execute code concurrently to our application's main thread. They can be
+                    executed by instantiating a Thread with them directly or, as we learned in the last lesson,
+                    submitted to an ExecutorService. However, Runnables don't have return values, so threads executing a
+                    Runnable can't return a value upon completion. That's where the Callable interface comes in.</p>
 
-                <p>The Callable interface is conceptually the same as Runnable. They both can be used to execute tasks in a concurrent thread. The major difference is that Callables return a value on completion. The return type is defined in the class declaration where we implement Callable, like this ...implements Callable&lt;ReturnType&gt;. The Callable interface has a method named call() which contains the code to be executed by the thread. This is similar to the run() method in the Runnable interface. The call() method does two things different from run(). It can return a value of the type defined in our declaration and it can throw checked exceptions, neither of which are possible with a Runnable.</p>
+                <p>The Callable interface is conceptually the same as Runnable. They both can be used to execute tasks
+                    in a concurrent thread. The major difference is that Callables return a value on completion. The
+                    return type is defined in the class declaration where we implement Callable, like this ...implements
+                    Callable&lt;ReturnType&gt;. The Callable interface has a method named call() which contains the code
+                    to be executed by the thread. This is similar to the run() method in the Runnable interface. The
+                    call() method does two things different from run(). It can return a value of the type defined in our
+                    declaration and it can throw checked exceptions, neither of which are possible with a Runnable.</p>
 
-                <p>One of the limitations of Callables is that we can't use them to instantiate a Thread the way we did with Runnable. However, we can still use them with ExecutorService. When we submit() a Callable to an ExecutorService, the ExecutorService wraps the result of call() in a Future. Futures provide a way to access the return value of a thread that may not have completed yet. We will learn more about Futures in the next reading.</p>
+                <p>One of the limitations of Callables is that we can't use them to instantiate a Thread the way we did
+                    with Runnable. However, we can still use them with ExecutorService. When we submit() a Callable to
+                    an ExecutorService, the ExecutorService wraps the result of call() in a Future. Futures provide a
+                    way to access the return value of a thread that may not have completed yet. We will learn more about
+                    Futures in the next reading.</p>
 
-                <p>Combining Callables with an ExecutorService allows us to execute many tasks at once and to combine their results easily without having to share states between threads like we have done with Runnables.</p>
+                <p>Combining Callables with an ExecutorService allows us to execute many tasks at once and to combine
+                    their results easily without having to share states between threads like we have done with
+                    Runnables.</p>
 
                 <h2>How to Use Callables</h2>
-                <p>In the code below, we have a program that is simulating charging a credit card. We have a class CardVerification that implements Callable and returns a Boolean. The call() method checks that the card number passed in starts with a specific sequence, and returns if it was verified or not. In the CardChargerManager class, we pass in cardNum to CardVerification and submit it to an ExecutorService. Then the result of the call is printed.</p>
+                <p>In the code below, we have a program that is simulating charging a credit card. We have a class
+                    CardVerification that implements Callable and returns a Boolean. The call() method checks that the
+                    card number passed in starts with a specific sequence, and returns if it was verified or not. In the
+                    CardChargerManager class, we pass in cardNum to CardVerification and submit it to an
+                    ExecutorService. Then the result of the call is printed.</p>
 
                 <pre><code>public class CardVerification implements Callable&lt;Boolean&gt; {
     private String cardNum;
@@ -135,20 +170,30 @@ public class CardChargerManager {
                 <pre><code>CardVerification called.
 cardNum verification result: true</code></pre>
 
-                <p>This might seem like a lot, so let's go through it piece by piece. First, we implement Callable in CardVerification. It has a similar structure to Runnable, with some small changes. The first difference is in the declaration line.</p>
+                <p>This might seem like a lot, so let's go through it piece by piece. First, we implement Callable in
+                    CardVerification. It has a similar structure to Runnable, with some small changes. The first
+                    difference is in the declaration line.</p>
 
                 <pre><code>public class CardVerification implements Callable&lt;Boolean&gt; {</code></pre>
 
-                <p>For Callable interfaces we need to declare a return type, in this case, a Boolean. Then we implement the call() method that needs to return that same type.</p>
+                <p>For Callable interfaces we need to declare a return type, in this case, a Boolean. Then we implement
+                    the call() method that needs to return that same type.</p>
 
                 <pre><code>public Boolean call() {
     System.out.println("CardVerification called.");
     return cardNum.substring(0, 4).equals("1234");
 }</code></pre>
 
-                <p>As we've discussed, the call() method serves the same function as run() does for Runnable, the primary difference being that call() has a return value. We should note that both call() and run() don't accept any parameters, so any required values need to be set in a constructor or setters before call() is executed. In this example, cardNum is passed into the constructor. Note that call() can also be called like a regular method directly in your code like run(). But, as you'll remember, that doesn't execute it in a new thread. That's why we need to submit CardVerification to an ExecutorService.</p>
+                <p>As we've discussed, the call() method serves the same function as run() does for Runnable, the
+                    primary difference being that call() has a return value. We should note that both call() and run()
+                    don't accept any parameters, so any required values need to be set in a constructor or setters
+                    before call() is executed. In this example, cardNum is passed into the constructor. Note that call()
+                    can also be called like a regular method directly in your code like run(). But, as you'll remember,
+                    that doesn't execute it in a new thread. That's why we need to submit CardVerification to an
+                    ExecutorService.</p>
 
-                <p>In the next section, the chargeCard() method is doing a lot of things. We will step through what's happening, but much of the code here we will discuss more in the next reading.</p>
+                <p>In the next section, the chargeCard() method is doing a lot of things. We will step through what's
+                    happening, but much of the code here we will discuss more in the next reading.</p>
 
                 <pre><code>public void chargeCard() throws ExecutionException, InterruptedException {
     ExecutorService verificationExecutor = Executors.newCachedThreadPool();
@@ -158,12 +203,22 @@ cardNum verification result: true</code></pre>
     System.out.println("cardNum verification result: " + cardNumValid.get());
 }</code></pre>
 
-                <p>First, create an ExecutorService to run our task. Then, we create a new CardVerification instance and pass in cardNum. This is our Callable instance we want to run in a new thread. To do that, we call submit() on the ExecutorService, passing in our Callable instance. submit() will wrap the result of the task as a Future of the same type declared by the Callable interface. So, when submit() is called here with our CardVerification class, a Future&lt;Boolean&gt; result is returned and stored in the variable cardNumValid.</p>
+                <p>First, create an ExecutorService to run our task. Then, we create a new CardVerification instance and
+                    pass in cardNum. This is our Callable instance we want to run in a new thread. To do that, we call
+                    submit() on the ExecutorService, passing in our Callable instance. submit() will wrap the result of
+                    the task as a Future of the same type declared by the Callable interface. So, when submit() is
+                    called here with our CardVerification class, a Future&lt;Boolean&gt; result is returned and stored
+                    in the variable cardNumValid.</p>
 
-                <p>Lastly, we use the result in our output by calling cardNumValid.get(). In order to call get() we need to handle two exceptions: ExecutionException and InterruptedException. In this example we handled them in the method declaration. These can be thrown by Future's get() method, but we'll go more into what can cause them in the next reading.</p>
+                <p>Lastly, we use the result in our output by calling cardNumValid.get(). In order to call get() we need
+                    to handle two exceptions: ExecutionException and InterruptedException. In this example we handled
+                    them in the method declaration. These can be thrown by Future's get() method, but we'll go more into
+                    what can cause them in the next reading.</p>
 
                 <h2>Callable lambdas</h2>
-                <p>It should be noted that Callable tasks can also be created as lambdas, like we did with Runnable tasks in the last lesson. In the example below, we took the code above and modified it to demonstrate how this would work.</p>
+                <p>It should be noted that Callable tasks can also be created as lambdas, like we did with Runnable
+                    tasks in the last lesson. In the example below, we took the code above and modified it to
+                    demonstrate how this would work.</p>
 
                 <pre><code>public class CardChargerManager {
     private List&lt;String&gt; cardNumbers = new ArrayList&lt;String&gt;(Arrays.asList("1234", "5678", "9010"));
@@ -188,28 +243,51 @@ cardNum verification result: true</code></pre>
     }
 }</code></pre>
 
-                <p>In this modification of the CardChargeManager class we have an ArrayList of cardNumbers that we will be validating. The purpose of ExecutorService is to allow us to create many threads very quickly to handle many concurrent tasks, so we'll be creating a new Callable for each card number in our ArrayList.</p>
+                <p>In this modification of the CardChargeManager class we have an ArrayList of cardNumbers that we will
+                    be validating. The purpose of ExecutorService is to allow us to create many threads very quickly to
+                    handle many concurrent tasks, so we'll be creating a new Callable for each card number in our
+                    ArrayList.</p>
 
-                <p>Now, when the chargeCards() method is called, it iterates through our list of card numbers and creates a new callable lambda for each one. That lambda call returns its Future&lt;Boolean&gt; right into a new ArrayList of cardValidations that correspond to whether the card number is valid or not. You can see that the lambda function contains the same validation code that our Callable CardVerification class had. In this case it's only a few lines long rather than an entire separate class! Once all the threads are created, we loop through the cardValidations list to see if any of the cards were invalid. If they were, we'd respond appropriately here, probably by throwing an exception that indicates a bad request was made.</p>
+                <p>Now, when the chargeCards() method is called, it iterates through our list of card numbers and
+                    creates a new callable lambda for each one. That lambda call returns its Future&lt;Boolean&gt; right
+                    into a new ArrayList of cardValidations that correspond to whether the card number is valid or not.
+                    You can see that the lambda function contains the same validation code that our Callable
+                    CardVerification class had. In this case it's only a few lines long rather than an entire separate
+                    class! Once all the threads are created, we loop through the cardValidations list to see if any of
+                    the cards were invalid. If they were, we'd respond appropriately here, probably by throwing an
+                    exception that indicates a bad request was made.</p>
 
-                <p>You should note that since we're creating the lambda as part of the CardChargerManager class, we are able to use cardNumbers as a shared value. Since we are not making changes to cardNumbers, this is OK. If we were making changes, we would need to be more careful, and would probably want to give each thread their own copy of the value they were validating, which would be better suited to our previous example with a separately implemented class.</p>
+                <p>You should note that since we're creating the lambda as part of the CardChargerManager class, we are
+                    able to use cardNumbers as a shared value. Since we are not making changes to cardNumbers, this is
+                    OK. If we were making changes, we would need to be more careful, and would probably want to give
+                    each thread their own copy of the value they were validating, which would be better suited to our
+                    previous example with a separately implemented class.</p>
 
                 <h2>Summary</h2>
-                <p>In this reading, we learned about the Callable interface. We learned the differences between Runnable and Callable. We also learned how the call() method returns a result on completion and can throw checked exceptions. We also learned how to use ExecutorService's submit() method to execute a Callable in a separate thread and store the result in a Future. We were able to not only execute Callable tasks in a separate thread, but also retrieve the results of them this way.</p>
+                <p>In this reading, we learned about the Callable interface. We learned the differences between Runnable
+                    and Callable. We also learned how the call() method returns a result on completion and can throw
+                    checked exceptions. We also learned how to use ExecutorService's submit() method to execute a
+                    Callable in a separate thread and store the result in a Future. We were able to not only execute
+                    Callable tasks in a separate thread, but also retrieve the results of them this way.</p>
 
                 <h2>Up Next</h2>
-                <p>In the next reading, we will be covering the Future we get when we submit a Callable to an ExecutorService. We'll learn how to retrieve the result of the Callable from the Future and how to handle exceptions that can occur while retrieving that result.</p>
+                <p>In the next reading, we will be covering the Future we get when we submit a Callable to an
+                    ExecutorService. We'll learn how to retrieve the result of the Callable from the Future and how to
+                    handle exceptions that can occur while retrieving that result.</p>
             </div>
 
             <div class="content-box">
                 <h2>Working with Future Objects</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Working with Future Objects" src="https://fast.wistia.net/embed/iframe/hgin92j98d" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Working with Future Objects"
+                        src="https://fast.wistia.net/embed/iframe/hgin92j98d" width="100%" height="360"
+                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
                 </div>
 
 
-                <p>A Future represents the result of an asynchronous computation. It provides methods to check if the computation is complete, wait for its completion, and retrieve the computation result.</p>
+                <p>A Future represents the result of an asynchronous computation. It provides methods to check if the
+                    computation is complete, wait for its completion, and retrieve the computation result.</p>
                 <p>When working with Future objects, remember:</p>
                 <ul>
                     <li>The Future doesn't immediately contain the result</li>
@@ -233,20 +311,46 @@ try {
 }</code></pre>
 
                 <h2>Overview</h2>
-                <p>In this lesson, we will learn about two new concurrency tools, the Callable and Future interfaces. We will use them to execute tasks with return values in concurrent threads and get those values after those threads have completed. We will learn how to use them with an ExecutorService from the previous lesson.</p>
+                <p>In this lesson, we will learn about two new concurrency tools, the Callable and Future interfaces. We
+                    will use them to execute tasks with return values in concurrent threads and get those values after
+                    those threads have completed. We will learn how to use them with an ExecutorService from the
+                    previous lesson.</p>
 
-                <p>The first reading focused on using Callables for concurrent programming. We explained the difference between Callable and Runnable, and how to use Callables with an ExecutorService.</p>
-                <p>This reading will focus on the Futures. We'll explain how they wrap the results of concurrent tasks, and how to safely use them.</p>
+                <p>The first reading focused on using Callables for concurrent programming. We explained the difference
+                    between Callable and Runnable, and how to use Callables with an ExecutorService.</p>
+                <p>This reading will focus on the Futures. We'll explain how they wrap the results of concurrent tasks,
+                    and how to safely use them.</p>
 
                 <h2>The Future interface</h2>
-                <p>In the previous reading, we learned about the Callable interface and how we use it to submit tasks to an ExecutorService in order to get a result from a concurrent thread. Now we want to dig deeper into how those results are returned wrapped in a Future. The Future object is not a direct value, it just represents the "future" result of a concurrent task. This means that when the object is created and has a task assigned to it, there isn't immediately a result in it. Only after the task is complete are we able to retrieve the result from the Future.</p>
+                <p>In the previous reading, we learned about the Callable interface and how we use it to submit tasks to
+                    an ExecutorService in order to get a result from a concurrent thread. Now we want to dig deeper into
+                    how those results are returned wrapped in a Future. The Future object is not a direct value, it just
+                    represents the "future" result of a concurrent task. This means that when the object is created and
+                    has a task assigned to it, there isn't immediately a result in it. Only after the task is complete
+                    are we able to retrieve the result from the Future.</p>
 
-                <p>This behavior makes working with Futures a little tricky. Future has a method get() which is how we get the result of the task. Complications can come up when calling get(). On creation, a Future will not have a value we can access. At this point it is only representative of the result since the associated task will not have completed. Meaning if we tried to call get() on a Future immediately after we create it, it's likely the result won't yet exist, so our main thread will be blocked. The get() method, when called, will stop (or "block") the execution of the main thread until the result referenced by a Future is available. We'll be looking at how to retrieve a result using get() in the next section.</p>
+                <p>This behavior makes working with Futures a little tricky. Future has a method get() which is how we
+                    get the result of the task. Complications can come up when calling get(). On creation, a Future will
+                    not have a value we can access. At this point it is only representative of the result since the
+                    associated task will not have completed. Meaning if we tried to call get() on a Future immediately
+                    after we create it, it's likely the result won't yet exist, so our main thread will be blocked. The
+                    get() method, when called, will stop (or "block") the execution of the main thread until the result
+                    referenced by a Future is available. We'll be looking at how to retrieve a result using get() in the
+                    next section.</p>
 
-                <p>It's important to understand, especially now with Future, that we are dealing with concurrent execution. When we submit or implement code in a concurrent thread, we largely lose control over the timing or order of our code's execution. With Future, we have the means to work with values from tasks that may not have completed yet. Many of the examples we've been working with in these lessons are simple enough that they can complete almost immediately. But in practical applications, you may be working with concurrent systems where tasks take longer, and it will be important to take these precautions to maximize the value of concurrency and avoid problems.</p>
+                <p>It's important to understand, especially now with Future, that we are dealing with concurrent
+                    execution. When we submit or implement code in a concurrent thread, we largely lose control over the
+                    timing or order of our code's execution. With Future, we have the means to work with values from
+                    tasks that may not have completed yet. Many of the examples we've been working with in these lessons
+                    are simple enough that they can complete almost immediately. But in practical applications, you may
+                    be working with concurrent systems where tasks take longer, and it will be important to take these
+                    precautions to maximize the value of concurrency and avoid problems.</p>
 
                 <h2>Using Futures</h2>
-                <p>In this code snippet, we are making a simulation of an online cart checkout. We have two Callable inline lambdas that simulate network calls and return Booleans that confirm if the call was made or not. Both are submitted to the ExecutorService in checkout(), and a message is printed reporting if the transaction was successful.</p>
+                <p>In this code snippet, we are making a simulation of an online cart checkout. We have two Callable
+                    inline lambdas that simulate network calls and return Booleans that confirm if the call was made or
+                    not. Both are submitted to the ExecutorService in checkout(), and a message is printed reporting if
+                    the transaction was successful.</p>
 
                 <pre><code>public class CartCheckout {
     private final PaymentService paymentService;
@@ -286,9 +390,13 @@ try {
 
 }</code></pre>
 
-                <p>To start, our CartCheckout class constructor accepts our dependencies, setting the AmazonUser, PaymentService and DistroService we need for our checkout process. These will be used by our Callable lambdas to handle parts of the checkout process concurrently. We've declared them final in order to ensure that the objects they reference won't change while threads are using them.</p>
+                <p>To start, our CartCheckout class constructor accepts our dependencies, setting the AmazonUser,
+                    PaymentService and DistroService we need for our checkout process. These will be used by our
+                    Callable lambdas to handle parts of the checkout process concurrently. We've declared them final in
+                    order to ensure that the objects they reference won't change while threads are using them.</p>
 
-                <p>In the checkout() method, we create an ExecutorService and submit() the two Callable lambda tasks, storing the returned Futures in list networkCallResults.</p>
+                <p>In the checkout() method, we create an ExecutorService and submit() the two Callable lambda tasks,
+                    storing the returned Futures in list networkCallResults.</p>
 
                 <pre><code>List&lt;Future&lt;Boolean&gt;&gt; networkCallResults = new ArrayList&lt;Future&lt;Boolean&gt;&gt;();
 
@@ -297,7 +405,10 @@ networkCallResults.add(
 networkCallResults.add(
     cartExecutor.submit(() -> distroService.newOrderSubmitted(user.address)));</code></pre>
 
-                <p>Once we have our tasks submitted and our list of results in the networkCallResults list, we can call shutdown() on the ExecutorService since we don't require it anymore. We then get() the result of each of the Futures in our list to confirm each checkout task completed successfully, then return that result. Let's look more closely at the loop where we check the results in our Futures.</p>
+                <p>Once we have our tasks submitted and our list of results in the networkCallResults list, we can call
+                    shutdown() on the ExecutorService since we don't require it anymore. We then get() the result of
+                    each of the Futures in our list to confirm each checkout task completed successfully, then return
+                    that result. Let's look more closely at the loop where we check the results in our Futures.</p>
 
                 <pre><code>boolean checkoutSuccessful = true;
 for (Future&lt;Boolean&gt; result : networkCallResults) {
@@ -306,10 +417,21 @@ for (Future&lt;Boolean&gt; result : networkCallResults) {
     }
 }</code></pre>
 
-                <p>The important code is the result.get() call. When using Futures, it is a best practice to submit our tasks as early as possible and retrieve their results as late as possible. This minimizes the time we block on the get() method waiting for those tasks to complete. Here we shut down the ExecutorService before starting the check loop, which buys us some time for the tasks to complete. In a real-world example, the network calls might take longer than the time we give them here. This would result in our code being blocked until all the results came back.</p>
+                <p>The important code is the result.get() call. When using Futures, it is a best practice to submit our
+                    tasks as early as possible and retrieve their results as late as possible. This minimizes the time
+                    we block on the get() method waiting for those tasks to complete. Here we shut down the
+                    ExecutorService before starting the check loop, which buys us some time for the tasks to complete.
+                    In a real-world example, the network calls might take longer than the time we give them here. This
+                    would result in our code being blocked until all the results came back.</p>
 
                 <h2>Using exceptions with Future</h2>
-                <p>The get() method in the example above can throw two exceptions, InterrruptedException and ExecutionException. An InterruptedException can be thrown if the thread calling get() is interrupted while waiting for get() to return. An ExecutionException wraps any exceptions thrown while the Callable is executing. Depending on what your program is doing you may need to handle these in specific ways so you can recover from them gracefully. In the code snippet below we added a try/catch to the check loop from the example above. We log the error, mark that checkout was not successful, and then continue the execution of our program.</p>
+                <p>The get() method in the example above can throw two exceptions, InterrruptedException and
+                    ExecutionException. An InterruptedException can be thrown if the thread calling get() is interrupted
+                    while waiting for get() to return. An ExecutionException wraps any exceptions thrown while the
+                    Callable is executing. Depending on what your program is doing you may need to handle these in
+                    specific ways so you can recover from them gracefully. In the code snippet below we added a
+                    try/catch to the check loop from the example above. We log the error, mark that checkout was not
+                    successful, and then continue the execution of our program.</p>
 
                 <pre><code>boolean checkoutSuccessful = true;
 for (Future&lt;Boolean&gt; result : networkCallResults) {
@@ -324,7 +446,12 @@ for (Future&lt;Boolean&gt; result : networkCallResults) {
 }</code></pre>
 
                 <h2>get() Timeouts</h2>
-                <p>There are other methods in Future that are worth knowing. One example is the get() method has an overload for adding a time limit on retrieving results. This overload takes the timeout duration and a time unit and throws a TimeoutException if the task has not returned a value before the timeout duration expires. This is useful when you want to set a limit on how long your main thread can block while waiting for your other tasks to complete. The example below shows how to use this, including the exception.</p>
+                <p>There are other methods in Future that are worth knowing. One example is the get() method has an
+                    overload for adding a time limit on retrieving results. This overload takes the timeout duration and
+                    a time unit and throws a TimeoutException if the task has not returned a value before the timeout
+                    duration expires. This is useful when you want to set a limit on how long your main thread can block
+                    while waiting for your other tasks to complete. The example below shows how to use this, including
+                    the exception.</p>
 
                 <pre><code>boolean checkoutSuccessful = true;
 for (Future&lt;Boolean&gt; result : networkCallResults) {
@@ -339,18 +466,31 @@ for (Future&lt;Boolean&gt; result : networkCallResults) {
 }</code></pre>
 
                 <h2>Conclusion</h2>
-                <p>In this lesson, we covered the Callable and Future interfaces. We learned how Futures wrap the results of Callable tasks submitted to an ExecutorService, and how we can properly access those values with minimal interruption. These functions allow us to be a lot more efficient with our concurrent programming. We can use Callable tasks to return values back to our main thread from concurrent threads, spreading out the computation of large tasks and combining the results at the end. The Future objects created by the ExecutorService allow us to store and pass along the results of our concurrent tasks even before they've completed. This gives us the flexibility to let a concurrent task run its course while continuing with the processing in our main thread. When we need it, the Future will either have the value or pause our main thread until the value is ready. By submitting tasks early and retrieving the results after our other computations are complete, we can maximize our processing with many threads and minimize the time we spend waiting for those threads to complete.</p>
+                <p>In this lesson, we covered the Callable and Future interfaces. We learned how Futures wrap the
+                    results of Callable tasks submitted to an ExecutorService, and how we can properly access those
+                    values with minimal interruption. These functions allow us to be a lot more efficient with our
+                    concurrent programming. We can use Callable tasks to return values back to our main thread from
+                    concurrent threads, spreading out the computation of large tasks and combining the results at the
+                    end. The Future objects created by the ExecutorService allow us to store and pass along the results
+                    of our concurrent tasks even before they've completed. This gives us the flexibility to let a
+                    concurrent task run its course while continuing with the processing in our main thread. When we need
+                    it, the Future will either have the value or pause our main thread until the value is ready. By
+                    submitting tasks early and retrieving the results after our other computations are complete, we can
+                    maximize our processing with many threads and minimize the time we spend waiting for those threads
+                    to complete.</p>
             </div>
 
             <div class="content-box">
                 <h3>Advanced Future Features</h3>
-                <p>Futures provide several additional capabilities that help you control asynchronous task execution, such as timeouts, cancellation, and checking completion status.</p>
+                <p>Futures provide several additional capabilities that help you control asynchronous task execution,
+                    such as timeouts, cancellation, and checking completion status.</p>
                 <p>Important Future methods:</p>
                 <ul>
                     <li><code>get(long timeout, TimeUnit unit)</code> - Wait for result with a timeout</li>
                     <li><code>cancel(boolean mayInterruptIfRunning)</code> - Attempt to cancel execution</li>
                     <li><code>isCancelled()</code> - Check if task was cancelled</li>
-                    <li><code>isDone()</code> - Check if task completed (successfully, with exception, or cancelled)</li>
+                    <li><code>isDone()</code> - Check if task completed (successfully, with exception, or cancelled)
+                    </li>
                 </ul>
                 <pre><code>// Using Future with timeout
 Future&lt;String&gt; future = executor.submit(task);
@@ -374,11 +514,14 @@ try {
                 <h2>Guided Project</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Advanced Future Features" src="https://fast.wistia.net/embed/iframe/rqslkx1kfs" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Advanced Future Features"
+                        src="https://fast.wistia.net/embed/iframe/rqslkx1kfs" width="100%" height="360"
+                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
                 </div>
 
                 <div class="resource-links">
-                    <a href="https://github.com/BloomTechBackend/bd-futures-found-me" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://github.com/BloomTechBackend/bd-futures-found-me" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
                         They Found Me
                     </a>
                 </div>
@@ -387,13 +530,16 @@ try {
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
-                    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Future.html" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Future.html" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
                         Java Future Documentation
                     </a>
-                    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Callable.html" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Callable.html"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
                         Java Callable Documentation
                     </a>
-                    <a href="https://www.baeldung.com/java-future" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://www.baeldung.com/java-future" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
                         Working with Future in Java - Baeldung
                     </a>
                 </div>
@@ -401,4 +547,5 @@ try {
         </section>
     </main>
 </body>
-</html> 
+
+</html>

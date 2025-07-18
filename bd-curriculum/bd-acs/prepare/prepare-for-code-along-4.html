@@ -127,48 +127,38 @@
     <div class="code-block">
       // 1. Adjacency List representation
       class Graph {
-      constructor() {
-      this.adjacencyList = {};
+      Map&lt;String, List&lt;String&gt;&gt; adjacencyList;
+      Graph() {
+      adjacencyList = new HashMap&lt;&gt;();
       }
-
-      addVertex(vertex) {
-      if (!this.adjacencyList[vertex]) {
-      this.adjacencyList[vertex] = [];
+      void addVertex(String vertex) {
+      adjacencyList.putIfAbsent(vertex, new ArrayList&lt;&gt;());
       }
+      void addEdge(String vertex1, String vertex2) {
+      adjacencyList.get(vertex1).add(vertex2);
+      adjacencyList.get(vertex2).add(vertex1);
       }
-
-      addEdge(vertex1, vertex2) {
-      // For undirected graph
-      this.adjacencyList[vertex1].push(vertex2);
-      this.adjacencyList[vertex2].push(vertex1);
+      void removeEdge(String vertex1, String vertex2) {
+      adjacencyList.get(vertex1).remove(vertex2);
+      adjacencyList.get(vertex2).remove(vertex1);
       }
-
-      removeEdge(vertex1, vertex2) {
-      this.adjacencyList[vertex1] = this.adjacencyList[vertex1].filter(
-      v => v !== vertex2
-      );
-      this.adjacencyList[vertex2] = this.adjacencyList[vertex2].filter(
-      v => v !== vertex1
-      );
+      void removeVertex(String vertex) {
+      while (!adjacencyList.get(vertex).isEmpty()) {
+      String adjacentVertex = adjacencyList.get(vertex).remove(adjacencyList.get(vertex).size() - 1);
+      removeEdge(vertex, adjacentVertex);
       }
-
-      removeVertex(vertex) {
-      while (this.adjacencyList[vertex].length) {
-      const adjacentVertex = this.adjacencyList[vertex].pop();
-      this.removeEdge(vertex, adjacentVertex);
-      }
-      delete this.adjacencyList[vertex];
+      adjacencyList.remove(vertex);
       }
       }
 
       // 2. Adjacency Matrix representation
       // For a graph with 4 vertices (0, 1, 2, 3)
-      const adjacencyMatrix = [
-      [0, 1, 0, 1], // Vertex 0 is connected to 1 and 3
-      [1, 0, 1, 0], // Vertex 1 is connected to 0 and 2
-      [0, 1, 0, 1], // Vertex 2 is connected to 1 and 3
-      [1, 0, 1, 0] // Vertex 3 is connected to 0 and 2
-      ];
+      int[][] adjacencyMatrix = {
+      {0, 1, 0, 1}, // Vertex 0 is connected to 1 and 3
+      {1, 0, 1, 0}, // Vertex 1 is connected to 0 and 2
+      {0, 1, 0, 1}, // Vertex 2 is connected to 1 and 3
+      {1, 0, 1, 0} // Vertex 3 is connected to 0 and 2
+      };
     </div>
   </div>
 
@@ -182,46 +172,40 @@
 
     <div class="code-block">
       // Recursive DFS implementation
-      function depthFirstSearchRecursive(graph, start) {
-      const result = [];
-      const visited = {};
-
-      function dfs(vertex) {
-      if (!vertex) return null;
-
-      visited[vertex] = true;
-      result.push(vertex);
-
-      graph.adjacencyList[vertex].forEach(neighbor => {
-      if (!visited[neighbor]) {
-      return dfs(neighbor);
-      }
-      });
-      }
-
-      dfs(start);
+      public static List&lt;String&gt; depthFirstSearchRecursive(Graph graph, String start) {
+      List&lt;String&gt; result = new ArrayList&lt;&gt;();
+      Set&lt;String&gt; visited = new HashSet&lt;&gt;();
+      dfs(graph, start, visited, result);
       return result;
+      }
+      private static void dfs(Graph graph, String vertex, Set&lt;String&gt; visited, List&lt;String&gt; result) {
+      if (vertex == null) return;
+      visited.add(vertex);
+      result.add(vertex);
+      for (String neighbor : graph.adjacencyList.get(vertex)) {
+      if (!visited.contains(neighbor)) {
+      dfs(graph, neighbor, visited, result);
+      }
+      }
       }
 
       // Iterative DFS implementation using a stack
-      function depthFirstSearchIterative(graph, start) {
-      const stack = [start];
-      const result = [];
-      const visited = {};
-      visited[start] = true;
-
-      while (stack.length) {
-      const currentVertex = stack.pop();
-      result.push(currentVertex);
-
-      graph.adjacencyList[currentVertex].forEach(neighbor => {
-      if (!visited[neighbor]) {
-      visited[neighbor] = true;
+      public static List&lt;String&gt; depthFirstSearchIterative(Graph graph, String start) {
+      Stack&lt;String&gt; stack = new Stack&lt;&gt;();
+      List&lt;String&gt; result = new ArrayList&lt;&gt;();
+      Set&lt;String&gt; visited = new HashSet&lt;&gt;();
+      stack.push(start);
+      visited.add(start);
+      while (!stack.isEmpty()) {
+      String currentVertex = stack.pop();
+      result.add(currentVertex);
+      for (String neighbor : graph.adjacencyList.get(currentVertex)) {
+      if (!visited.contains(neighbor)) {
+      visited.add(neighbor);
       stack.push(neighbor);
       }
-      });
       }
-
+      }
       return result;
       }
     </div>
@@ -232,24 +216,22 @@
 
     <div class="code-block">
       // BFS implementation
-      function breadthFirstSearch(graph, start) {
-      const queue = [start];
-      const result = [];
-      const visited = {};
-      visited[start] = true;
-
-      while (queue.length) {
-      const currentVertex = queue.shift();
-      result.push(currentVertex);
-
-      graph.adjacencyList[currentVertex].forEach(neighbor => {
-      if (!visited[neighbor]) {
-      visited[neighbor] = true;
-      queue.push(neighbor);
+      public static List&lt;String&gt; breadthFirstSearch(Graph graph, String start) {
+      Queue&lt;String&gt; queue = new LinkedList&lt;&gt;();
+      List&lt;String&gt; result = new ArrayList&lt;&gt;();
+      Set&lt;String&gt; visited = new HashSet&lt;&gt;();
+      queue.add(start);
+      visited.add(start);
+      while (!queue.isEmpty()) {
+      String currentVertex = queue.poll();
+      result.add(currentVertex);
+      for (String neighbor : graph.adjacencyList.get(currentVertex)) {
+      if (!visited.contains(neighbor)) {
+      visited.add(neighbor);
+      queue.add(neighbor);
       }
-      });
       }
-
+      }
       return result;
       }
     </div>
@@ -263,57 +245,54 @@
 
     <div class="code-block">
       // Dijkstra's Algorithm (simplified)
-      function dijkstra(graph, start, end) {
-      const nodes = new PriorityQueue();
-      const distances = {};
-      const previous = {};
-      const path = []; // to return at end
-      let smallest;
-
-      // Build up initial state
-      for (let vertex in graph.adjacencyList) {
-      if (vertex === start) {
-      distances[vertex] = 0;
-      nodes.enqueue(vertex, 0);
+      public static List&lt;String&gt; dijkstra(Graph graph, String start, String end) {
+      PriorityQueue&lt;Node&gt; nodes = new PriorityQueue&lt;&gt;(Comparator.comparingInt(n -&gt; n.priority));
+      Map&lt;String, Integer&gt; distances = new HashMap&lt;&gt;();
+      Map&lt;String, String&gt; previous = new HashMap&lt;&gt;();
+      List&lt;String&gt; path = new ArrayList&lt;&gt;();
+      for (String vertex : graph.adjacencyList.keySet()) {
+      if (vertex.equals(start)) {
+      distances.put(vertex, 0);
+      nodes.add(new Node(vertex, 0));
       } else {
-      distances[vertex] = Infinity;
-      nodes.enqueue(vertex, Infinity);
+      distances.put(vertex, Integer.MAX_VALUE);
+      nodes.add(new Node(vertex, Integer.MAX_VALUE));
       }
-      previous[vertex] = null;
+      previous.put(vertex, null);
       }
-
-      // As long as there is something to visit
-      while (nodes.values.length) {
-      smallest = nodes.dequeue().val;
-
-      if (smallest === end) {
-      // We are done
-      // Build up path to return
-      while (previous[smallest]) {
-      path.push(smallest);
-      smallest = previous[smallest];
+      while (!nodes.isEmpty()) {
+      Node smallestNode = nodes.poll();
+      String smallest = smallestNode.value;
+      if (smallest.equals(end)) {
+      while (previous.get(smallest) != null) {
+      path.add(smallest);
+      smallest = previous.get(smallest);
       }
       break;
       }
-
-      if (smallest || distances[smallest] !== Infinity) {
-      for (let neighbor in graph.adjacencyList[smallest]) {
-      // Find neighboring node
-      let nextNode = graph.adjacencyList[smallest][neighbor];
-      // Calculate new distance to neighboring node
-      let candidate = distances[smallest] + nextNode.weight;
-      if (candidate &lt; distances[nextNode.node]) {
-      // Updating new smallest distance to neighbor
-      distances[nextNode.node] = candidate;
-      // Updating previous - How we got to neighbor
-      previous[nextNode.node] = smallest;
-      // Enqueue in priority queue with new priority
-      nodes.enqueue(nextNode.node, candidate);
+      if (smallest != null &amp;&amp; distances.get(smallest) != Integer.MAX_VALUE) {
+      for (String neighbor : graph.adjacencyList.get(smallest)) {
+      // Assume weight = 1 for unweighted graph
+      int candidate = distances.get(smallest) + 1;
+      if (candidate &lt; distances.get(neighbor)) {
+      distances.put(neighbor, candidate);
+      previous.put(neighbor, smallest);
+      nodes.add(new Node(neighbor, candidate));
       }
       }
       }
       }
-      return path.concat(smallest).reverse();
+      path.add(smallestNode.value);
+      Collections.reverse(path);
+      return path;
+      }
+      static class Node {
+      String value;
+      int priority;
+      Node(String value, int priority) {
+      this.value = value;
+      this.priority = priority;
+      }
       }
     </div>
 
@@ -321,30 +300,27 @@
     <p>Finding all connected components in an undirected graph:</p>
 
     <div class="code-block">
-      function connectedComponents(graph) {
-      const visited = {};
-      const components = [];
-
-      for (let vertex in graph.adjacencyList) {
-      if (!visited[vertex]) {
-      const component = [];
+      public static List&lt;List&lt;String&gt;&gt; connectedComponents(Graph graph) {
+      Set&lt;String&gt; visited = new HashSet&lt;&gt;();
+      List&lt;List&lt;String&gt;&gt; components = new ArrayList&lt;&gt;();
+      for (String vertex : graph.adjacencyList.keySet()) {
+      if (!visited.contains(vertex)) {
+      List&lt;String&gt; component = new ArrayList&lt;&gt;();
       exploreComponent(vertex, visited, component, graph);
-      components.push(component);
+      components.add(component);
       }
       }
-
       return components;
       }
-
-      function exploreComponent(vertex, visited, component, graph) {
-      visited[vertex] = true;
-      component.push(vertex);
-
-      graph.adjacencyList[vertex].forEach(neighbor => {
-      if (!visited[neighbor]) {
+      private static void exploreComponent(String vertex, Set&lt;String&gt; visited, List&lt;String&gt; component, Graph
+      graph) {
+      visited.add(vertex);
+      component.add(vertex);
+      for (String neighbor : graph.adjacencyList.get(vertex)) {
+      if (!visited.contains(neighbor)) {
       exploreComponent(neighbor, visited, component, graph);
       }
-      });
+      }
       }
     </div>
   </div>
@@ -352,7 +328,7 @@
   <h2>Prepare For Success</h2>
   <p><iframe class="wistia_embed" title="Code-Along Learner Facing Walkthrough Video"
       src="https://fast.wistia.net/embed/iframe/hbcdzlz9ga" width="640" height="360" name="wistia_embed"
-      allow="autoplay; fullscreen" loading="lazy"></iframe></p>
+      allow="fullscreen" loading="lazy"></iframe></p>
   <p>The best Code-Along experiences happen when you are ready before coming to class. Your instructors created a
     starting point and a solution for each of your Code-Alongs to ensure you have what you need to succeed.</p>
   <hr>

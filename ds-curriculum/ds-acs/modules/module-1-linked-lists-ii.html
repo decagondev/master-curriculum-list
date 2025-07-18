@@ -108,11 +108,11 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <!-- Navigation -->
         <div class="flex justify-between items-center mb-8">
-            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+            <a href="./../index.html" class="text-primary hover:text-secondary flex items-center space-x-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
-                <span>Back to Welcome Page</span>
+                <span>Back to Main ACS Page</span>
             </a>
         </div>
 
@@ -208,7 +208,7 @@
                     <div class="video-container">
                         <div class="video-wrapper">
                             <iframe src="https://fast.wistia.net/embed/iframe/tygskfx3bq?videoFoam=true"
-                                title="s17M1 JavaScript CC1 Linked List Search Video" allow="autoplay; fullscreen"
+                                title="s17M1 JavaScript CC1 Linked List Search Video" allow="fullscreen"
                                 allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed"
                                 name="wistia_embed" width="100%" height="100%"></iframe>
                         </div>
@@ -230,7 +230,7 @@
                     <div class="video-container">
                         <div class="video-wrapper">
                             <iframe src="https://fast.wistia.net/embed/iframe/67m6157lfv?videoFoam=true"
-                                title="s17M1 JavaScript CC2 Linked List Insert Video" allow="autoplay; fullscreen"
+                                title="s17M1 JavaScript CC2 Linked List Insert Video" allow="fullscreen"
                                 allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed"
                                 name="wistia_embed" width="100%" height="100%"></iframe>
                         </div>
@@ -252,7 +252,7 @@
                     <div class="video-container">
                         <div class="video-wrapper">
                             <iframe src="https://fast.wistia.net/embed/iframe/h4tepvxupq?videoFoam=true"
-                                title="s17M1 JavaScript - Linked List Delete Video" allow="autoplay; fullscreen"
+                                title="s17M1 JavaScript - Linked List Delete Video" allow="fullscreen"
                                 allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed"
                                 name="wistia_embed" width="100%" height="100%"></iframe>
                         </div>
@@ -279,81 +279,54 @@
                         <div class="space-y-4">
                             <h3 class="text-xl font-medium text-primary">Node Class</h3>
                             <div class="code-block">
-                                <code>class Node {
-    constructor(value) {
-        this.value = value;
-        this.next = null;
-    }
-}</code>
-                            </div>
-                        </div>
+                                <code>class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
 
-                        <!-- LinkedList Class Implementation -->
-                        <div class="space-y-4">
-                            <h3 class="text-xl font-medium text-primary">LinkedList Class with Operations</h3>
-                            <div class="code-block">
-                                <code>class LinkedList {
-    constructor() {
-        this.head = null;
-        this.length = 0;
-    }
+class LinkedList:
+    def __init__(self):
+        self.head = None
+        self.length = 0
 
-    search(value) {
-        let current = this.head;
-        while (current) {
-            if (current.value === value) {
-                return current;
-            }
-            current = current.next;
-        }
-        return null;
-    }
+    def search(self, value):
+        current = self.head
+        while current:
+            if current.value == value:
+                return current
+            current = current.next
+        return None
 
-    insert(value, index) {
-        if (index < 0 || index > this.length) {
-            return false;
-        }
+    def insert(self, value, index):
+        if index < 0 or index > self.length:
+            return False
+        new_node = Node(value)
+        if index == 0:
+            new_node.next = self.head
+            self.head = new_node
+        else:
+            current = self.head
+            for _ in range(index - 1):
+                current = current.next
+            new_node.next = current.next
+            current.next = new_node
+        self.length += 1
+        return True
 
-        const newNode = new Node(value);
-        
-        if (index === 0) {
-            newNode.next = this.head;
-            this.head = newNode;
-        } else {
-            let current = this.head;
-            for (let i = 0; i < index - 1; i++) {
-                current = current.next;
-            }
-            newNode.next = current.next;
-            current.next = newNode;
-        }
-        
-        this.length++;
-        return true;
-    }
-
-    delete(index) {
-        if (index < 0 || index >= this.length) {
-            return null;
-        }
-
-        let deletedNode;
-        if (index === 0) {
-            deletedNode = this.head;
-            this.head = this.head.next;
-        } else {
-            let current = this.head;
-            for (let i = 0; i < index - 1; i++) {
-                current = current.next;
-            }
-            deletedNode = current.next;
-            current.next = current.next.next;
-        }
-
-        this.length--;
-        return deletedNode.value;
-    }
-}</code>
+    def delete(self, index):
+        if index < 0 or index >= self.length:
+            return None
+        if index == 0:
+            deleted_node = self.head
+            self.head = self.head.next
+        else:
+            current = self.head
+            for _ in range(index - 1):
+                current = current.next
+            deleted_node = current.next
+            current.next = current.next.next
+        self.length -= 1
+        return deleted_node.value</code>
                             </div>
                         </div>
 
@@ -361,19 +334,19 @@
                         <div class="space-y-4">
                             <h3 class="text-xl font-medium text-primary">Usage Example</h3>
                             <div class="code-block">
-                                <code>const list = new LinkedList();
+                                <code>list = LinkedList()
 
-// Insert elements
-list.insert(10, 0); // [10]
-list.insert(20, 1); // [10, 20]
-list.insert(15, 1); // [10, 15, 20]
+# Insert elements
+list.insert(10, 0)  # [10]
+list.insert(20, 1)  # [10, 20]
+list.insert(15, 1)  # [10, 15, 20]
 
-// Search for element
-console.log(list.search(15)); // Node { value: 15, next: Node }
+# Search for element
+print(list.search(15))  # Node object with value 15
 
-// Delete element
-console.log(list.delete(1)); // 15
-// List is now [10, 20]</code>
+# Delete element
+print(list.delete(1))  # 15
+# List is now [10, 20]</code>
                             </div>
                         </div>
                     </div>

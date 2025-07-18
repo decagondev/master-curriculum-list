@@ -1,407 +1,413 @@
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Module 3: Introduction to Recursion</title>
-<meta name="identifier" content="g808b234207be23fe4a1c059b7400a1f7"/>
-<meta name="editing_roles" content="teachers"/>
-<meta name="workflow_state" content="active"/>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 3: Introduction to Recursion</title>
+  <meta name="identifier" content="g808b234207be23fe4a1c059b7400a1f7" />
+  <meta name="editing_roles" content="teachers" />
+  <meta name="workflow_state" content="active" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
     tailwind.config = {
-        theme: {
-            extend: {
-                colors: {
-                    primary: '#ff5722',
-                    secondary: '#ff7043',
-                    dark: '#1a1d23',
-                    darker: '#222831', 
-                    darkgray: '#2a303c',
-                    darkborder: '#333a47',
-                    lighttext: '#b3b3b3',
-                }
-            }
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ff5722',
+            secondary: '#ff7043',
+            dark: '#1a1d23',
+            darker: '#222831',
+            darkgray: '#2a303c',
+            darkborder: '#333a47',
+            lighttext: '#b3b3b3',
+          }
         }
+      }
     }
-</script>
-<style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 20px;
-    background-color: #1a1d23; /* Dark background color */
-    color: #ffffff;
-  }
-  
-  h1, h2, h3, h4, h5 {
-    color: #ffffff;
-    margin-top: 20px;
-    margin-bottom: 10px;
-  }
-  
-  h3 {
-    color: #ff5722; /* Orange accent color */
-    border-bottom: 1px solid #333a47;
-    padding-bottom: 8px;
-  }
-  
-  p, ul, ol {
-    color: #b3b3b3;
-  }
-  
-  .code-block {
-    background-color: #1e222a;
-    padding: 15px;
-    border-radius: 5px;
-    margin: 15px 0;
-    font-family: monospace;
-    white-space: pre;
-    overflow-x: auto;
-    color: #b3b3b3;
-    border-left: 2px solid #ff5722;
-  }
-  
-  .leetcode-link {
-    color: #ff5722;
-    text-decoration: none;
-  }
-  
-  .leetcode-link:hover {
-    text-decoration: underline;
-    color: #ff7043;
-  }
-  
-  .objectives-section {
-    margin-bottom: 20px;
-    padding: 15px;
-    border-left: 3px solid #ff5722;
-    background-color: #2a303c;
-    border-radius: 4px;
-  }
-  
-  .content-section {
-    margin-bottom: 30px;
-    background-color: #2a303c;
-    border-radius: 4px;
-    padding: 20px;
-    border: 1px solid #333a47;
-  }
+  </script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      background-color: #1a1d23;
+      /* Dark background color */
+      color: #ffffff;
+    }
 
-  .content-section h4 {
-    color: #ff5722;
-    font-weight: bold;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #333a47;
-    padding-bottom: 8px;
-  }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      color: #ffffff;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
 
-  /* Video container styles */
-  .video-container {
-    position: relative;
-    padding-bottom: 56.25%;
-    height: 0;
-    overflow: hidden;
-    margin: 20px 0;
-    border: 1px solid #333a47;
-    border-radius: 4px;
-  }
-  
-  .video-wrapper {
-    height: 100%;
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
-  }
+    h3 {
+      color: #ff5722;
+      /* Orange accent color */
+      border-bottom: 1px solid #333a47;
+      padding-bottom: 8px;
+    }
 
-  /* Table styles */
-  .data-table {
-    border-collapse: collapse;
-    width: 100%;
-    color: #b3b3b3;
-  }
+    p,
+    ul,
+    ol {
+      color: #b3b3b3;
+    }
 
-  .table-header {
-    padding: 8px;
-    background-color: #2a303c;
-    color: #ffffff;
-  }
+    .code-block {
+      background-color: #1e222a;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 15px 0;
+      font-family: monospace;
+      white-space: pre;
+      overflow-x: auto;
+      color: #b3b3b3;
+      border-left: 2px solid #ff5722;
+    }
 
-  .table-cell {
-    padding: 8px;
-    border: 1px solid #333a47;
-  }
-  
-  hr {
-    border: 0;
-    height: 1px;
-    background-color: #333a47;
-    margin: 30px 0;
-  }
-</style>
+    .leetcode-link {
+      color: #ff5722;
+      text-decoration: none;
+    }
+
+    .leetcode-link:hover {
+      text-decoration: underline;
+      color: #ff7043;
+    }
+
+    .objectives-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-left: 3px solid #ff5722;
+      background-color: #2a303c;
+      border-radius: 4px;
+    }
+
+    .content-section {
+      margin-bottom: 30px;
+      background-color: #2a303c;
+      border-radius: 4px;
+      padding: 20px;
+      border: 1px solid #333a47;
+    }
+
+    .content-section h4 {
+      color: #ff5722;
+      font-weight: bold;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #333a47;
+      padding-bottom: 8px;
+    }
+
+    /* Video container styles */
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      margin: 20px 0;
+      border: 1px solid #333a47;
+      border-radius: 4px;
+    }
+
+    .video-wrapper {
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 100%;
+    }
+
+    /* Table styles */
+    .data-table {
+      border-collapse: collapse;
+      width: 100%;
+      color: #b3b3b3;
+    }
+
+    .table-header {
+      padding: 8px;
+      background-color: #2a303c;
+      color: #ffffff;
+    }
+
+    .table-cell {
+      padding: 8px;
+      border: 1px solid #333a47;
+    }
+
+    hr {
+      border: 0;
+      height: 1px;
+      background-color: #333a47;
+      margin: 30px 0;
+    }
+  </style>
 </head>
+
 <body class="bg-dark min-h-screen">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Navigation -->
-        <div class="flex justify-between items-center mb-8">
-            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-                <span>Back to Welcome Page</span>
-            </a>
-        </div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Navigation -->
+    <div class="flex justify-between items-center mb-8">
+      <a href="./../index.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        <span>Back to Main ACS Page</span>
+      </a>
+    </div>
 
-        <!-- Header Section -->
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-white mb-4">Module 3: Introduction to Recursion</h1>
-            <p class="text-xl text-lighttext max-w-3xl mx-auto">
-                Master the fundamentals of recursion.
-                Learn how to implement and analyze recursive algorithms.
-            </p>
-        </div>
+    <!-- Header Section -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-white mb-4">Module 3: Introduction to Recursion</h1>
+      <p class="text-xl text-lighttext max-w-3xl mx-auto">
+        Master the fundamentals of recursion.
+        Learn how to implement and analyze recursive algorithms.
+      </p>
+    </div>
 
-        <div class="objectives-section">
-            <h2>Module Objectives</h2>
-            <p>Upon completion of this module, you will be able to:</p>
-            <ul>
-                <li>Identify a recursive problem and determine when recursion is appropriate</li>
-                <li>Define a recursive solution by breaking down a problem into smaller, similar problems</li>
-                <li>Understand base cases and recursive cases in recursive functions</li>
-                <li>Trace recursive function calls to understand execution flow</li>
-                <li>Apply recursive solutions to linked list and tree problems</li>
-                <li>Analyze the time and space complexity of recursive algorithms</li>
-            </ul>
-        </div>
+    <div class="objectives-section">
+      <h2>Module Objectives</h2>
+      <p>Upon completion of this module, you will be able to:</p>
+      <ul>
+        <li>Identify a recursive problem and determine when recursion is appropriate</li>
+        <li>Define a recursive solution by breaking down a problem into smaller, similar problems</li>
+        <li>Understand base cases and recursive cases in recursive functions</li>
+        <li>Trace recursive function calls to understand execution flow</li>
+        <li>Apply recursive solutions to linked list and tree problems</li>
+        <li>Analyze the time and space complexity of recursive algorithms</li>
+      </ul>
+    </div>
 
-        <h3><strong>Recursion Basics</strong></h3>
-        <p>
-        <div class="video-container">
-            <div class="video-wrapper">
-                <iframe class="wistia_embed" title="s17M3 JavaScript CC1 Recursion Basics Video" src="https://fast.wistia.net/embed/iframe/dy4ey5vozu" width="100%" height="100%" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
-        </div>
-        </p>
+    <h3><strong>Recursion Basics</strong></h3>
+    <p>
+    <div class="video-container">
+      <div class="video-wrapper">
+        <iframe class="wistia_embed" title="s17M3 JavaScript CC1 Recursion Basics Video"
+          src="https://fast.wistia.net/embed/iframe/dy4ey5vozu" width="100%" height="100%" name="wistia_embed"
+          allow="fullscreen" loading="lazy"></iframe>
+      </div>
+    </div>
+    </p>
 
-        <div class="content-section">
-            <h4>What is Recursion?</h4>
-            <p class="mb-4">Recursion is a programming technique where a function calls itself to solve a problem. It's particularly useful for problems that can be broken down into smaller instances of the same problem.</p>
-            
-            <p class="mb-4"><strong>Key Components of Recursion:</strong></p>
-            <ul class="mb-4">
-                <li><strong>Base Case:</strong> A condition that stops the recursion</li>
-                <li><strong>Recursive Case:</strong> The function calling itself with a smaller/simpler input</li>
-                <li><strong>Progress Toward Base Case:</strong> Ensuring the recursion will eventually terminate</li>
-            </ul>
-            
-            <h4>Simple Example: Factorial</h4>
-            <div class="code-block">
-// Recursive factorial function
-function factorial(n) {
-  // Base case
-  if (n === 0 || n === 1) {
-    return 1;
-  }
-  // Recursive case
-  return n * factorial(n - 1);
-}
+    <div class="content-section">
+      <h4>What is Recursion?</h4>
+      <p class="mb-4">Recursion is a programming technique where a function calls itself to solve a problem. It's
+        particularly useful for problems that can be broken down into smaller instances of the same problem.</p>
 
-// Example usage
-console.log(factorial(5)); // 120 (5 * 4 * 3 * 2 * 1)
-  </div>
-  
-  <h4>Recursive Function Tracing</h4>
-  <p>Understanding how recursive calls stack up is crucial:</p>
-  <div class="code-block">
-// Tracing factorial(5):
-factorial(5)
-→ 5 * factorial(4)
-  → 5 * (4 * factorial(3))
-    → 5 * (4 * (3 * factorial(2)))
-      → 5 * (4 * (3 * (2 * factorial(1))))
+      <p class="mb-4"><strong>Key Components of Recursion:</strong></p>
+      <ul class="mb-4">
+        <li><strong>Base Case:</strong> A condition that stops the recursion</li>
+        <li><strong>Recursive Case:</strong> The function calling itself with a smaller/simpler input</li>
+        <li><strong>Progress Toward Base Case:</strong> Ensuring the recursion will eventually terminate</li>
+      </ul>
+
+      <h4>Simple Example: Factorial</h4>
+      <div class="code-block">
+        // Recursive factorial function
+        function factorial(n) {
+        // Base case
+        if (n === 0 || n === 1) {
+        return 1;
+        }
+        // Recursive case
+        return n * factorial(n - 1);
+        }
+
+        // Example usage
+        console.log(factorial(5)); // 120 (5 * 4 * 3 * 2 * 1)
+      </div>
+
+      <h4>Recursive Function Tracing</h4>
+      <p>Understanding how recursive calls stack up is crucial:</p>
+      <div class="code-block">
+        // Tracing factorial(5):
+        factorial(5)
+        → 5 * factorial(4)
+        → 5 * (4 * factorial(3))
+        → 5 * (4 * (3 * factorial(2)))
+        → 5 * (4 * (3 * (2 * factorial(1))))
         → 5 * (4 * (3 * (2 * 1)))
-      → 5 * (4 * (3 * 2))
-    → 5 * (4 * 6)
-  → 5 * 24
-→ 120
-  </div>
-</div>
+        → 5 * (4 * (3 * 2))
+        → 5 * (4 * 6)
+        → 5 * 24
+        → 120
+      </div>
+    </div>
 
-<div class="content-section">
-  <h4>More Recursive Examples</h4>
-  
-  <h5>1. Fibonacci Sequence</h5>
-  <div class="code-block">
-// Recursive Fibonacci (inefficient but illustrative)
-function fibonacci(n) {
-  // Base cases
-  if (n <= 0) return 0;
-  if (n === 1) return 1;
-  
-  // Recursive case
-  return fibonacci(n - 1) + fibonacci(n - 2);
-}
+    <div class="content-section">
+      <h4>More Recursive Examples</h4>
 
-// Example usage
-console.log(fibonacci(6)); // 8
-  </div>
-  
-  <p>Note: The simple recursive implementation of Fibonacci has exponential time complexity O(2^n). For efficiency, you'd use dynamic programming or memoization:</p>
-  
-  <div class="code-block">
-// Fibonacci with memoization
-function fibonacciMemo(n, memo = {}) {
-  if (n in memo) return memo[n];
-  if (n <= 0) return 0;
-  if (n === 1) return 1;
-  
-  memo[n] = fibonacciMemo(n - 1, memo) + fibonacciMemo(n - 2, memo);
-  return memo[n];
-}
+      <h5>1. Fibonacci Sequence</h5>
+      <div class="code-block">
+        // Recursive Fibonacci (inefficient but illustrative)
+        function fibonacci(n) {
+        // Base cases
+        if (n <= 0) return 0; if (n===1) return 1; // Recursive case return fibonacci(n - 1) + fibonacci(n - 2); } //
+          Example usage console.log(fibonacci(6)); // 8 </div>
 
-// Example usage
-console.log(fibonacciMemo(50)); // Much faster for large inputs
-  </div>
-  
-  <h5>2. Linked List Recursion</h5>
-  <div class="code-block">
-// Node definition
-class Node {
-  constructor(value) {
-    this.value = value;
-    this.next = null;
-  }
-}
+          <p>Note: The simple recursive implementation of Fibonacci has exponential time complexity O(2^n). For
+            efficiency, you'd use dynamic programming or memoization:</p>
 
-// Find length of linked list recursively
-function getLength(head) {
-  // Base case: empty list
-  if (head === null) {
-    return 0;
-  }
-  
-  // Recursive case: count this node plus the rest
-  return 1 + getLength(head.next);
-}
+          <div class="code-block">
+            // Fibonacci with memoization
+            function fibonacciMemo(n, memo = {}) {
+            if (n in memo) return memo[n];
+            if (n <= 0) return 0; if (n===1) return 1; memo[n]=fibonacciMemo(n - 1, memo) + fibonacciMemo(n - 2, memo);
+              return memo[n]; } // Example usage console.log(fibonacciMemo(50)); // Much faster for large inputs </div>
 
-// Reverse a linked list recursively
-function reverseList(head) {
-  // Base cases: empty list or only one node
-  if (head === null || head.next === null) {
-    return head;
-  }
-  
-  // Recursive case
-  const newHead = reverseList(head.next);
-  
-  // Reverse the pointers
-  head.next.next = head;
-  head.next = null;
-  
-  return newHead;
-}
-  </div>
-</div>
+              <h5>2. Linked List Recursion</h5>
+              <div class="code-block">
+                // Node definition
+                class Node {
+                constructor(value) {
+                this.value = value;
+                this.next = null;
+                }
+                }
 
-<div class="content-section">
-  <h4>Recursion vs. Iteration</h4>
-  <p>It's important to understand when to use recursion versus iterative approaches:</p>
-  
-  <table class="data-table">
-    <tr>
-      <th class="table-header">Aspect</th>
-      <th class="table-header">Recursion</th>
-      <th class="table-header">Iteration</th>
-    </tr>
-    <tr>
-      <td class="table-cell">Memory Usage</td>
-      <td class="table-cell">Uses call stack (higher memory overhead)</td>
-      <td class="table-cell">Typically uses less memory</td>
-    </tr>
-    <tr>
-      <td class="table-cell">Code Clarity</td>
-      <td class="table-cell">Often more elegant and readable for certain problems</td>
-      <td class="table-cell">May be more straightforward for simple problems</td>
-    </tr>
-    <tr>
-      <td class="table-cell">Performance</td>
-      <td class="table-cell">Can be slower due to function call overhead</td>
-      <td class="table-cell">Usually faster</td>
-    </tr>
-    <tr>
-      <td class="table-cell">Stack Overflow Risk</td>
-      <td class="table-cell">Possible with deep recursion</td>
-      <td class="table-cell">Not an issue</td>
-    </tr>
-    <tr>
-      <td class="table-cell">Best For</td>
-      <td class="table-cell">Tree traversals, divide-and-conquer algorithms</td>
-      <td class="table-cell">Simple loops, performance-critical code</td>
-    </tr>
-  </table>
-  
-  <h5 class="mt-4">Iterative vs. Recursive Factorial Example</h5>
-  <div class="code-block">
-// Recursive
-function factorialRecursive(n) {
-  if (n === 0 || n === 1) return 1;
-  return n * factorialRecursive(n - 1);
-}
+                // Find length of linked list recursively
+                function getLength(head) {
+                // Base case: empty list
+                if (head === null) {
+                return 0;
+                }
 
-// Iterative
-function factorialIterative(n) {
-  let result = 1;
-  for (let i = 2; i <= n; i++) {
-    result *= i;
-  }
-  return result;
-}
-  </div>
-</div>
+                // Recursive case: count this node plus the rest
+                return 1 + getLength(head.next);
+                }
 
-<div class="content-section">
-  <h4>Common Recursion Pitfalls</h4>
-  <ul class="mb-4">
-    <li><strong>Missing Base Case:</strong> Leads to infinite recursion and stack overflow</li>
-    <li><strong>Inefficient Overlapping Subproblems:</strong> Can make recursion exponentially slow</li>
-    <li><strong>Stack Overflow:</strong> With deeply nested recursion</li>
-    <li><strong>Unnecessary Recursion:</strong> When an iterative solution is simpler</li>
-  </ul>
-  
-  <h4>Techniques to Improve Recursive Solutions</h4>
-  <ul>
-    <li><strong>Memoization:</strong> Store results of subproblems to avoid redundant calculations</li>
-    <li><strong>Tail Recursion:</strong> Special form where recursive call is the last operation</li>
-    <li><strong>Trampolining:</strong> Technique to avoid stack overflow by simulating recursion</li>
-  </ul>
-</div>
+                // Reverse a linked list recursively
+                function reverseList(head) {
+                // Base cases: empty list or only one node
+                if (head === null || head.next === null) {
+                return head;
+                }
 
-<h3>Practice with LeetCode Problems</h3>
+                // Recursive case
+                const newHead = reverseList(head.next);
 
-<p class="mb-4">Note: Previously, this course referenced the CodeSignal Arcade for practice, which is no longer available. The LeetCode problems below follow the same principles and are an excellent alternative for practicing recursion.</p>
+                // Reverse the pointers
+                head.next.next = head;
+                head.next = null;
 
-<h4>Basic Recursion Problems:</h4>
-<ul class="mb-4">
-  <li><a href="https://leetcode.com/problems/fibonacci-number/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Fibonacci Number</a> - Classic recursion example</li>
-  <li><a href="https://leetcode.com/problems/climbing-stairs/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Climbing Stairs</a> - Similar to Fibonacci but with a practical context</li>
-  <li><a href="https://leetcode.com/problems/powx-n/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Pow(x, n)</a> - Implement power function using recursion</li>
-</ul>
+                return newHead;
+                }
+              </div>
+          </div>
 
-<h4>Recursive List Problems:</h4>
-<ul class="mb-4">
-  <li><a href="https://leetcode.com/problems/reverse-linked-list/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Reverse Linked List</a> - Practice recursive linked list manipulation</li>
-  <li><a href="https://leetcode.com/problems/swap-nodes-in-pairs/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Swap Nodes in Pairs</a> - Intermediate linked list recursion</li>
-  <li><a href="https://leetcode.com/problems/merge-two-sorted-lists/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Merge Two Sorted Lists</a> - Can be solved elegantly with recursion</li>
-</ul>
+          <div class="content-section">
+            <h4>Recursion vs. Iteration</h4>
+            <p>It's important to understand when to use recursion versus iterative approaches:</p>
 
-<h4>Tree Recursion:</h4>
-<ul class="mb-4">
-  <li><a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Maximum Depth of Binary Tree</a> - Simple tree recursion</li>
-  <li><a href="https://leetcode.com/problems/same-tree/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Same Tree</a> - Compare two trees recursively</li>
-  <li><a href="https://leetcode.com/problems/path-sum/" class="leetcode-link" target="_blank" rel="noopener noreferrer">Path Sum</a> - Find paths in a tree recursively</li>
-</ul>
+            <table class="data-table">
+              <tr>
+                <th class="table-header">Aspect</th>
+                <th class="table-header">Recursion</th>
+                <th class="table-header">Iteration</th>
+              </tr>
+              <tr>
+                <td class="table-cell">Memory Usage</td>
+                <td class="table-cell">Uses call stack (higher memory overhead)</td>
+                <td class="table-cell">Typically uses less memory</td>
+              </tr>
+              <tr>
+                <td class="table-cell">Code Clarity</td>
+                <td class="table-cell">Often more elegant and readable for certain problems</td>
+                <td class="table-cell">May be more straightforward for simple problems</td>
+              </tr>
+              <tr>
+                <td class="table-cell">Performance</td>
+                <td class="table-cell">Can be slower due to function call overhead</td>
+                <td class="table-cell">Usually faster</td>
+              </tr>
+              <tr>
+                <td class="table-cell">Stack Overflow Risk</td>
+                <td class="table-cell">Possible with deep recursion</td>
+                <td class="table-cell">Not an issue</td>
+              </tr>
+              <tr>
+                <td class="table-cell">Best For</td>
+                <td class="table-cell">Tree traversals, divide-and-conquer algorithms</td>
+                <td class="table-cell">Simple loops, performance-critical code</td>
+              </tr>
+            </table>
 
-<hr>
+            <h5 class="mt-4">Iterative vs. Recursive Factorial Example</h5>
+            <div class="code-block">
+              // Recursive
+              function factorialRecursive(n) {
+              if (n === 0 || n === 1) return 1;
+              return n * factorialRecursive(n - 1);
+              }
+
+              // Iterative
+              function factorialIterative(n) {
+              let result = 1;
+              for (let i = 2; i <= n; i++) { result *=i; } return result; } </div>
+            </div>
+
+            <div class="content-section">
+              <h4>Common Recursion Pitfalls</h4>
+              <ul class="mb-4">
+                <li><strong>Missing Base Case:</strong> Leads to infinite recursion and stack overflow</li>
+                <li><strong>Inefficient Overlapping Subproblems:</strong> Can make recursion exponentially slow</li>
+                <li><strong>Stack Overflow:</strong> With deeply nested recursion</li>
+                <li><strong>Unnecessary Recursion:</strong> When an iterative solution is simpler</li>
+              </ul>
+
+              <h4>Techniques to Improve Recursive Solutions</h4>
+              <ul>
+                <li><strong>Memoization:</strong> Store results of subproblems to avoid redundant calculations</li>
+                <li><strong>Tail Recursion:</strong> Special form where recursive call is the last operation</li>
+                <li><strong>Trampolining:</strong> Technique to avoid stack overflow by simulating recursion</li>
+              </ul>
+            </div>
+
+            <h3>Practice with LeetCode Problems</h3>
+
+            <p class="mb-4">Note: Previously, this course referenced the CodeSignal Arcade for practice, which is no
+              longer available. The LeetCode problems below follow the same principles and are an excellent alternative
+              for practicing recursion.</p>
+
+            <h4>Basic Recursion Problems:</h4>
+            <ul class="mb-4">
+              <li><a href="https://leetcode.com/problems/fibonacci-number/" class="leetcode-link" target="_blank"
+                  rel="noopener noreferrer">Fibonacci Number</a> - Classic recursion example</li>
+              <li><a href="https://leetcode.com/problems/climbing-stairs/" class="leetcode-link" target="_blank"
+                  rel="noopener noreferrer">Climbing Stairs</a> - Similar to Fibonacci but with a practical context</li>
+              <li><a href="https://leetcode.com/problems/powx-n/" class="leetcode-link" target="_blank"
+                  rel="noopener noreferrer">Pow(x, n)</a> - Implement power function using recursion</li>
+            </ul>
+
+            <h4>Recursive List Problems:</h4>
+            <ul class="mb-4">
+              <li><a href="https://leetcode.com/problems/reverse-linked-list/" class="leetcode-link" target="_blank"
+                  rel="noopener noreferrer">Reverse Linked List</a> - Practice recursive linked list manipulation</li>
+              <li><a href="https://leetcode.com/problems/swap-nodes-in-pairs/" class="leetcode-link" target="_blank"
+                  rel="noopener noreferrer">Swap Nodes in Pairs</a> - Intermediate linked list recursion</li>
+              <li><a href="https://leetcode.com/problems/merge-two-sorted-lists/" class="leetcode-link" target="_blank"
+                  rel="noopener noreferrer">Merge Two Sorted Lists</a> - Can be solved elegantly with recursion</li>
+            </ul>
+
+            <h4>Tree Recursion:</h4>
+            <ul class="mb-4">
+              <li><a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" class="leetcode-link"
+                  target="_blank" rel="noopener noreferrer">Maximum Depth of Binary Tree</a> - Simple tree recursion
+              </li>
+              <li><a href="https://leetcode.com/problems/same-tree/" class="leetcode-link" target="_blank"
+                  rel="noopener noreferrer">Same Tree</a> - Compare two trees recursively</li>
+              <li><a href="https://leetcode.com/problems/path-sum/" class="leetcode-link" target="_blank"
+                  rel="noopener noreferrer">Path Sum</a> - Find paths in a tree recursively</li>
+            </ul>
+
+            <hr>
 </body>
+
 </html>

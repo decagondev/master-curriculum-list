@@ -1,68 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Module 4 - Backend Testing</title>
-    <link rel="stylesheet" href="../../assets/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 4 - Backend Testing</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
-    <header>
-        <nav>
-            <div class="logo">Web Unit 4 Sprint 15</div>
-            <ul>
-                <li><a href="../../index.html">Home</a></li>
-                <li class="dropdown">
-                    <a href="#" class="active">Modules</a>
-                    <div class="dropdown-content">
-                        <a href="../module-1-auth/index.html">Module 1: Authentication</a>
-                        <a href="../module-2-jwt/index.html">Module 2: JWT</a>
-                        <a href="../module-3-testing/index.html">Module 3: Testing</a>
-                        <a href="../module-4-backend-testing/index.html" class="active">Module 4: Backend Testing</a>
-                    </div>
-                </li>
-                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
-            </ul>
-        </nav>
-    </header>
+  <header>
+    <nav>
+      <div class="logo">Web Unit 4 Sprint 15</div>
+      <ul>
+        <li><a href="../../index.html">Home</a></li>
+        <li class="dropdown">
+          <a href="#" class="active">Modules</a>
+          <div class="dropdown-content">
+            <a href="../module-1-auth/index.html">Module 1: Authentication</a>
+            <a href="../module-2-jwt/index.html">Module 2: JWT</a>
+            <a href="../module-3-testing/index.html">Module 3: Testing</a>
+            <a href="../module-4-backend-testing/index.html" class="active">Module 4: Backend Testing</a>
+          </div>
+        </li>
+        <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <main class="container">
-        <section class="welcome">
-            <h1>Module 4: Backend Testing</h1>
-            <div class="content-box module4-accent">
-              <h2>Test Web API Endpoints</h2>
-              <p>The tests we write for endpoints are called integration tests because they test how different parts of the system work together. This is different from the unit tests we use to verify the correctness of one part of the system in isolation.</p>
+  <main class="container">
+    <section class="welcome">
+      <h1>Module 4: Backend Testing</h1>
+      <div class="content-box module4-accent">
+        <h2>Test Web API Endpoints</h2>
+        <p>The tests we write for endpoints are called integration tests because they test how different parts of the
+          system work together. This is different from the unit tests we use to verify the correctness of one part of
+          the system in isolation.</p>
 
-              <p>We'll use a npm module called <a href="https://github.com/visionmedia/supertest" target="_blank" rel="noopener noreferrer">supertest</a> that makes it easier to write tests for Node.js HTTP servers. We can use supertest to load an instance of our server, send requests to the different endpoints, and make assertions about the responses.</p>
+        <p>We'll use a npm module called <a href="https://github.com/visionmedia/supertest" target="_blank"
+            rel="noopener noreferrer">supertest</a> that makes it easier to write tests for Node.js HTTP servers. We can
+          use supertest to load an instance of our server, send requests to the different endpoints, and make assertions
+          about the responses.</p>
 
-              <p>We could use supertest to verify that making a POST request to a particular endpoint returns a 201 HTTP status code after successfully creating a resource or, that it returns a 500 code if the server ran into an error while processing the request. Writing such a test may look like this:</p>
+        <p>We could use supertest to verify that making a POST request to a particular endpoint returns a 201 HTTP
+          status code after successfully creating a resource or, that it returns a 500 code if the server ran into an
+          error while processing the request. Writing such a test may look like this:</p>
 
-              <ul>
-                <li>Save a reference to the server.</li>
-                <li>Use supertest to make a POST request passing correct data inside the body.</li>
-                <li>Check that the server responds with status code 201.</li>
-              </ul>
+        <ul>
+          <li>Save a reference to the server.</li>
+          <li>Use supertest to make a POST request passing correct data inside the body.</li>
+          <li>Check that the server responds with status code 201.</li>
+        </ul>
 
-              <p>Writing such a test verifies that all middleware, including the route handler is working as intended.</p>
-              <div class="note-box">
-                <h3>How to Build It</h3>
-                <ol>
-                  <li>Create a folder and cd into it:</li>
-                  <pre><code>mkdir api-testing
+        <p>Writing such a test verifies that all middleware, including the route handler is working as intended.</p>
+        <div class="note-box">
+          <h3>How to Build It</h3>
+          <ol>
+            <li>Create a folder and cd into it:</li>
+            <pre><code>mkdir api-testing
 cd api-testing</code></pre>
 
-                  <li>Initialize git repository:</li>
-                  <pre><code>git init</code></pre>
+            <li>Initialize git repository:</li>
+            <pre><code>git init</code></pre>
 
-                  <li>Create package.json:</li>
-                  <pre><code>npm init -y</code></pre>
+            <li>Create package.json:</li>
+            <pre><code>npm init -y</code></pre>
 
-                  <li>Install dependencies:</li>
-                  <pre><code>npm i express
+            <li>Install dependencies:</li>
+            <pre><code>npm i express
 npm i -D jest supertest</code></pre>
 
-                  <li>Update package.json with test script and jest config:</li>
-                  <pre><code>{
+            <li>Update package.json with test script and jest config:</li>
+            <pre><code>{
   "scripts": {
     "test": "jest --watch --verbose"
   },
@@ -71,8 +80,8 @@ npm i -D jest supertest</code></pre>
   }
 }</code></pre>
 
-                  <li>Create server.spec.js:</li>
-                  <pre><code>const request = require('supertest');
+            <li>Create server.spec.js:</li>
+            <pre><code>const request = require('supertest');
 const server = require('./server.js');
 
 describe('server.js', () => {
@@ -96,8 +105,8 @@ describe('server.js', () => {
   });
 });</code></pre>
 
-                  <li>Create server.js:</li>
-                  <pre><code>const express = require('express');
+            <li>Create server.js:</li>
+            <pre><code>const express = require('express');
 const server = express();
 
 server.get('/', (req, res) => {
@@ -105,31 +114,42 @@ server.get('/', (req, res) => {
 });
 
 module.exports = server;</code></pre>
-                </ol>
+          </ol>
 
-                <p>Note: We separate the server implementation from the code that runs the server to avoid port conflicts during testing and to maintain separation of concerns between building and running the server.</p>
-                <div class="video-container">
-                  <iframe src="https://fast.wistia.net/embed/iframe/zyxiup0p28" title="Setting Up Backend Testing Environment" allow="autoplay; fullscreen" loading="lazy"></iframe>
-                </div>
-              </div>
-              <h2>Test Data Access Code</h2>
-                <p>To test the data access, we'll write end to end tests. These types of tests run slower because they perform operations and run queries against an actual database that is similar to the one used in production.</p>
+          <p>Note: We separate the server implementation from the code that runs the server to avoid port conflicts
+            during testing and to maintain separation of concerns between building and running the server.</p>
+          <div class="video-container">
+            <iframe src="https://fast.wistia.net/embed/iframe/zyxiup0p28" title="Setting Up Backend Testing Environment"
+              allow="fullscreen" loading="lazy"></iframe>
+          </div>
+        </div>
+        <h2>Test Data Access Code</h2>
+        <p>To test the data access, we'll write end to end tests. These types of tests run slower because they perform
+          operations and run queries against an actual database that is similar to the one used in production.</p>
 
-                <p>To avoid polluting the development database, we'll use a separate database for testing. One advantage of using a dedicated testing database is that we can add and remove records without affecting the data in the development or staging databases.</p>
+        <p>To avoid polluting the development database, we'll use a separate database for testing. One advantage of
+          using a dedicated testing database is that we can add and remove records without affecting the data in the
+          development or staging databases.</p>
 
-                <p>Next, we'll walk through setting up our API to switch to the testing database based on an environment variable, including setting a different value for that environment value only when running tests.</p>
-                <div class="note-box">
-                  <h3>How to Build It</h3>
-                  <h4>Using cross-env</h4>
-                  <p>Setting and using environment variables is different for Windows and POSIX (Mac, Linux, Unix) Operating Systems. We can use <a href="https://www.npmjs.com/package/cross-env" target="_blank" rel="noopener noreferrer">cross-env</a>. This npm module deals with the OS inconsistencies and provides a uniform setting environment variables across all platforms.</p>
+        <p>Next, we'll walk through setting up our API to switch to the testing database based on an environment
+          variable, including setting a different value for that environment value only when running tests.</p>
+        <div class="note-box">
+          <h3>How to Build It</h3>
+          <h4>Using cross-env</h4>
+          <p>Setting and using environment variables is different for Windows and POSIX (Mac, Linux, Unix) Operating
+            Systems. We can use <a href="https://www.npmjs.com/package/cross-env" target="_blank"
+              rel="noopener noreferrer">cross-env</a>. This npm module deals with the OS inconsistencies and provides a
+            uniform setting environment variables across all platforms.</p>
 
-                  <p>Open package.json and look at the test script. It uses cross-env to set an environment variable with the key DB_ENV and the value: testing.</p>
+          <p>Open package.json and look at the test script. It uses cross-env to set an environment variable with the
+            key DB_ENV and the value: testing.</p>
 
-                  <pre><code>"test": "cross-env DB_ENV=testing jest --watch"</code></pre>
+          <pre><code>"test": "cross-env DB_ENV=testing jest --watch"</code></pre>
 
-                  <p>This environment variable is available to the API as process.env.DB_ENV. The sample code provided uses it inside ./data/dbConfig.js to choose which configuration object to use for the knex connection.</p>
+          <p>This environment variable is available to the API as process.env.DB_ENV. The sample code provided uses it
+            inside ./data/dbConfig.js to choose which configuration object to use for the knex connection.</p>
 
-                  <pre><code>// ./data/dbConfig.js
+          <pre><code>// ./data/dbConfig.js
 const knex = require('knex');
 
 const config = require('../knexfile.js');
@@ -143,9 +163,9 @@ const dbEnv = process.env.DB_ENV || 'development';
 // from knexfile.js
 module.exports = knex(config[dbEnv]);</code></pre>
 
-                  <p>To make this work, knexfile.js has a dedicated configuration key for testing.</p>
+          <p>To make this work, knexfile.js has a dedicated configuration key for testing.</p>
 
-                  <pre><code>// ./knexfile.js
+          <pre><code>// ./knexfile.js
 
 module.exports = {
   development: {
@@ -176,21 +196,23 @@ module.exports = {
   },
 };</code></pre>
 
-                  <h4>Using Different Environments for Knex Migrations and Seeding</h4>
-                  <p>Different databases have different configuration objects defined within knexfile.js. To specify which environment to target during migrations and seeding use the --env command-line argument.</p>
+          <h4>Using Different Environments for Knex Migrations and Seeding</h4>
+          <p>Different databases have different configuration objects defined within knexfile.js. To specify which
+            environment to target during migrations and seeding use the --env command-line argument.</p>
 
-                  <p>To run migrations against the testing database, use the following command.</p>
-                  <pre><code>npx knex migrate:latest --env=testing</code></pre>
+          <p>To run migrations against the testing database, use the following command.</p>
+          <pre><code>npx knex migrate:latest --env=testing</code></pre>
 
-                  <p>To run seeds against the testing database, use the following command.</p>
-                  <pre><code>npx knex seed:run --env=testing</code></pre>
+          <p>To run seeds against the testing database, use the following command.</p>
+          <pre><code>npx knex seed:run --env=testing</code></pre>
 
-                  <h4>Write End to End Tests that Involve the Database</h4>
-                  <p>To test the data access code, execute the data access and verify that the database was updated correctly.</p>
+          <h4>Write End to End Tests that Involve the Database</h4>
+          <p>To test the data access code, execute the data access and verify that the database was updated correctly.
+          </p>
 
-                  <p>In this example, the data access code has an .insert() method. Let's see how to test it.</p>
+          <p>In this example, the data access code has an .insert() method. Let's see how to test it.</p>
 
-                  <pre><code>// our connection to the database
+          <pre><code>// our connection to the database
 const db = require('../data/dbConfig.js');
 
 // the data access file we are testing
@@ -214,16 +236,17 @@ describe('hobbits model', () => {
   });
 });</code></pre>
 
-                  <p>To guarantee that the tables are cleared before running each test, add the following code before the test cases.</p>
+          <p>To guarantee that the tables are cleared before running each test, add the following code before the test
+            cases.</p>
 
-                  <pre><code>beforeEach(async () => {
+          <pre><code>beforeEach(async () => {
   // this function executes and clears out the table before each test
   await db('hobbits').truncate();
 });</code></pre>
 
-                  <p>Implement code to make the tests pass.</p>
+          <p>Implement code to make the tests pass.</p>
 
-                  <pre><code>// ./hobbits/hobbitsModel.js
+          <pre><code>// ./hobbits/hobbitsModel.js
 async function insert(hobbit) {
   // the second parameter here is of other databases, SQLite returns the id by default
   const [id] = await db('hobbits').insert(hobbit, 'id');
@@ -233,11 +256,13 @@ async function insert(hobbit) {
     .first();
 }</code></pre>
 
-                  <p>This test checks that two records are added to the table, even if those records were there at the beginning.</p>
+          <p>This test checks that two records are added to the table, even if those records were there at the
+            beginning.</p>
 
-                  <p>Let's add another test to make sure that the record is making it to the database and that the .insert() method returns the newly inserted hobbit.</p>
+          <p>Let's add another test to make sure that the record is making it to the database and that the .insert()
+            method returns the newly inserted hobbit.</p>
 
-                  <pre><code>// note we're checking one hobbit at a time
+          <pre><code>// note we're checking one hobbit at a time
 it('should insert the provided hobbit into the db', async () => {
   let hobbit = await Hobbits.insert({ name: 'gaffer' });
   expect(hobbit.name).toBe('gaffer');
@@ -247,64 +272,79 @@ it('should insert the provided hobbit into the db', async () => {
   expect(hobbit.name).toBe('sam');
 });</code></pre>
 
-                  <div class="video-container">
-                    <iframe src="https://fast.wistia.net/embed/iframe/djdzjyiwj2" title="Testing Database Operations" allow="autoplay; fullscreen" loading="lazy"></iframe>
-                  </div>
-                </div>
-                
-            </div>
-            
-            <div class="content-box module4-accent">
-              <h2>Guided Project</h2>
-            <p><a href="https://github.com/bloominstituteoftechnology/node-testing2-guided" target="_blank" rel="noopener noreferrer">Testing the Back End Starter Code</a></p>
-            <p><a href="https://github.com/bloominstituteoftechnology/node-testing2-guided-solution" target="_blank" rel="noopener noreferrer">Testing the Back End Solution</a></p>
-            <div class="video-container">
-                <iframe src="https://fast.wistia.net/embed/iframe/xr8hp7d4n0" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
-            </div>
+          <div class="video-container">
+            <iframe src="https://fast.wistia.net/embed/iframe/djdzjyiwj2" title="Testing Database Operations"
+              allow="fullscreen" loading="lazy"></iframe>
           </div>
+        </div>
 
-          <div class="content-box module4-accent">
-              <h2>Module 4 Project: Backend Testing</h2>
+      </div>
 
-              <p>The module project contains advanced problems that will challenge and stretch your understanding of the module's content. The project has built-in tests for you to check your work, and the solution video is available in case you need help or want to see how we solved each challenge, but remember, there is always more than one way to solve a problem. Before reviewing the solution video, be sure to attempt the project and try solving the challenges yourself.</p>
-              
+      <div class="content-box module4-accent">
+        <h2>Guided Project</h2>
+        <p><a href="https://github.com/bloominstituteoftechnology/node-testing2-guided" target="_blank"
+            rel="noopener noreferrer">Testing the Back End Starter Code</a></p>
+        <p><a href="https://github.com/bloominstituteoftechnology/node-testing2-guided-solution" target="_blank"
+            rel="noopener noreferrer">Testing the Back End Solution</a></p>
+        <div class="video-container">
+          <iframe src="https://fast.wistia.net/embed/iframe/xr8hp7d4n0" title="Guided Project" allow="fullscreen"
+            loading="lazy"></iframe>
+        </div>
+      </div>
 
-              <h3>Instructions</h3>
+      <div class="content-box module4-accent">
+        <h2>Module 4 Project: Backend Testing</h2>
 
-              <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
-              <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/node-testing2-project" target="_blank" rel="noopener noreferrer">Unit Testing</a></p>
+        <p>The module project contains advanced problems that will challenge and stretch your understanding of the
+          module's content. The project has built-in tests for you to check your work, and the solution video is
+          available in case you need help or want to see how we solved each challenge, but remember, there is always
+          more than one way to solve a problem. Before reviewing the solution video, be sure to attempt the project and
+          try solving the challenges yourself.</p>
 
-              <ul>
-                  <li>Fork the repository,</li>
-                  <li>clone it to your machine, and</li>
-                  <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
-                  <li>submit your completed project to the BloomTech Portal</li>
-              </ul>
 
-              <h3>Solution</h3>
-              <div class="video-container">
-                  <iframe src="https://fast.wistia.net/embed/iframe/2dad8ocsuf" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
-              </div>
-          </div>
+        <h3>Instructions</h3>
 
-            <section class="resource-section">
-                <h2 class="resource-section-title">Additional Resources</h2>
-                <div class="resource-links">
-                    <a href="https://github.com/visionmedia/supertest" target="_blank" rel="noopener noreferrer" class="resource-link">
-                        Supertest Documentation
-                    </a>
-                    <a href="https://jestjs.io/docs/mongodb" target="_blank" rel="noopener noreferrer" class="resource-link">
-                        Jest MongoDB Setup
-                    </a>
-                    <a href="https://www.npmjs.com/package/mongodb-memory-server" target="_blank" rel="noopener noreferrer" class="resource-link">
-                        MongoDB Memory Server
-                    </a>
-                    <a href="https://martinfowler.com/articles/practical-test-pyramid.html" target="_blank" rel="noopener noreferrer" class="resource-link">
-                        Practical Test Pyramid
-                    </a>
-                </div>
-            </section>
-        </section>
-    </main>
+        <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your
+          own GitHub account, and clone it down to your computer:</p>
+        <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/node-testing2-project" target="_blank"
+            rel="noopener noreferrer">Unit Testing</a></p>
+
+        <ul>
+          <li>Fork the repository,</li>
+          <li>clone it to your machine, and</li>
+          <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
+          <li>submit your completed project to the BloomTech Portal</li>
+        </ul>
+
+        <h3>Solution</h3>
+        <div class="video-container">
+          <iframe src="https://fast.wistia.net/embed/iframe/2dad8ocsuf" title="Solution Video" allow="fullscreen"
+            loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <section class="resource-section">
+        <h2 class="resource-section-title">Additional Resources</h2>
+        <div class="resource-links">
+          <a href="https://github.com/visionmedia/supertest" target="_blank" rel="noopener noreferrer"
+            class="resource-link">
+            Supertest Documentation
+          </a>
+          <a href="https://jestjs.io/docs/mongodb" target="_blank" rel="noopener noreferrer" class="resource-link">
+            Jest MongoDB Setup
+          </a>
+          <a href="https://www.npmjs.com/package/mongodb-memory-server" target="_blank" rel="noopener noreferrer"
+            class="resource-link">
+            MongoDB Memory Server
+          </a>
+          <a href="https://martinfowler.com/articles/practical-test-pyramid.html" target="_blank"
+            rel="noopener noreferrer" class="resource-link">
+            Practical Test Pyramid
+          </a>
+        </div>
+      </section>
+    </section>
+  </main>
 </body>
-</html> 
+
+</html>

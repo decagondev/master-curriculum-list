@@ -291,7 +291,7 @@
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
-                <span>Back to Welcome Page</span>
+                <span>Back to Main ACS Page</span>
             </a>
         </div>
 
@@ -381,7 +381,7 @@
                             <div class="wistia-responsive-padding">
                                 <div class="wistia-responsive-wrapper">
                                     <iframe src="https://fast.wistia.net/embed/iframe/8kiae5gf08?videoFoam=true"
-                                        title="S20M3 Guided Project - Floodfill Video" allow="autoplay; fullscreen"
+                                        title="S20M3 Guided Project - Floodfill Video" allow="fullscreen"
                                         allowtransparency="true" frameborder="0" scrolling="no" width="100%"
                                         height="100%"></iframe>
                                 </div>
@@ -392,179 +392,160 @@
                             <div class="info-box">
                                 <h3>Implementation Steps</h3>
                                 <div class="code-block">
-                                    <code>function floodFill(grid, row, col, newColor, oldColor = grid[row][col]) {
-    // Check bounds and color match
-    if (row < 0 || row >= grid.length || 
-        col < 0 || col >= grid[0].length || 
-        grid[row][col] !== oldColor) {
-        return;
-    }
-
-    // Fill current cell
-    grid[row][col] = newColor;
-
-    // Recursively fill neighbors (4-way connectivity)
-    floodFill(grid, row + 1, col, newColor, oldColor);  // Down
-    floodFill(grid, row - 1, col, newColor, oldColor);  // Up
-    floodFill(grid, row, col + 1, newColor, oldColor);  // Right
-    floodFill(grid, row, col - 1, newColor, oldColor);  // Left
-}</code>
+                                    <code>def flood_fill(grid, row, col, new_color, old_color=None):
+    if old_color is None:
+        old_color = grid[row][col]
+    # Check bounds and color match
+    if (row < 0 or row >= len(grid) or 
+        col < 0 or col >= len(grid[0]) or 
+        grid[row][col] != old_color):
+        return
+    # Fill current cell
+    grid[row][col] = new_color
+    # Recursively fill neighbors (4-way connectivity)
+    flood_fill(grid, row + 1, col, new_color, old_color)  # Down
+    flood_fill(grid, row - 1, col, new_color, old_color)  # Up
+    flood_fill(grid, row, col + 1, new_color, old_color)  # Right
+    flood_fill(grid, row, col - 1, new_color, old_color)  # Left</code>
                                 </div>
                             </div>
 
                             <div class="info-box">
                                 <h3>Example Usage</h3>
                                 <div class="code-block">
-                                    <code>const grid = [
+                                    <code>grid = [
     [1, 1, 1, 1, 1],
     [1, 0, 0, 0, 1],
     [1, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1]
-];
-
-// Fill starting at [1,1] with color 2
-floodFill(grid, 1, 1, 2);
-
-console.log(grid);
-/* Output:
-[
-    [1, 1, 1, 1, 1],
-    [1, 2, 2, 2, 1],
-    [1, 2, 2, 2, 1],
     [1, 1, 1, 1, 1]
 ]
-*/</code>
+# Fill starting at [1,1] with color 2
+flood_fill(grid, 1, 1, 2)
+print(grid)
+# Output:
+# [
+#     [1, 1, 1, 1, 1],
+#     [1, 2, 2, 2, 1],
+#     [1, 2, 2, 2, 1],
+#     [1, 1, 1, 1, 1]
+# ]</code>
                                 </div>
-                            </div>
 
-                            <div class="info-box">
-                                <h3>Iterative Implementation (using BFS)</h3>
-                                <div class="code-block">
-                                    <code>function floodFillBFS(grid, row, col, newColor) {
-    const oldColor = grid[row][col];
-    if (oldColor === newColor) return grid; // No need to fill if same color
-    
-    const queue = [[row, col]];
-    const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]; // Down, Up, Right, Left
-    
-    while (queue.length > 0) {
-        const [r, c] = queue.shift();
-        
-        // Check if this cell needs filling
-        if (r < 0 || r >= grid.length || c < 0 || c >= grid[0].length || grid[r][c] !== oldColor) {
-            continue;
-        }
-        
-        // Fill current cell
-        grid[r][c] = newColor;
-        
-        // Add all adjacent cells to queue
-        for (const [dr, dc] of directions) {
-            queue.push([r + dr, c + dc]);
-        }
-    }
-    
-    return grid;
-}</code>
+                                <div class="info-box">
+                                    <h3>Iterative Implementation (using BFS)</h3>
+                                    <div class="code-block">
+                                        <code>def flood_fill_bfs(grid, row, col, new_color):
+    old_color = grid[row][col]
+    if old_color == new_color:
+        return grid  # No need to fill if same color
+    queue = [[row, col]]
+    directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]  # Down, Up, Right, Left
+    while queue:
+        r, c = queue.pop(0)
+        # Check if this cell needs filling
+        if (r < 0 or r >= len(grid) or c < 0 or c >= len(grid[0]) or 
+            grid[r][c] != old_color):
+            continue
+        # Fill current cell
+        grid[r][c] = new_color
+        # Add all adjacent cells to queue
+        for dr, dc in directions:
+            queue.append([r + dr, c + dc])
+    return grid</code>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Practice Challenge Tab -->
-            <div data-tab-content="practice" class="hidden space-y">
-                <div class="section">
-                    <h2>Practice Challenge: 8-Way Floodfill</h2>
-
-                    <div class="space-y">
-                        <h3>Challenge Description</h3>
-                        <p>Implement a floodfill algorithm that uses 8-way connectivity (includes diagonals).</p>
-
-                        <div class="info-box">
-                            <h4>Requirements:</h4>
-                            <ul>
-                                <li>Modify the floodfill algorithm to include diagonal neighbors</li>
-                                <li>Add an additional parameter to toggle between 4-way and 8-way connectivity</li>
-                                <li>Test with various grid patterns</li>
-                            </ul>
-                        </div>
+                <!-- Practice Challenge Tab -->
+                <div data-tab-content="practice" class="hidden space-y">
+                    <div class="section">
+                        <h2>Practice Challenge: 8-Way Floodfill</h2>
 
                         <div class="space-y">
-                            <h3>Code Starting Point</h3>
-                            <div class="code-block">
-                                <code>function floodFill(grid, row, col, newColor, useEightWay = false, oldColor = grid[row][col]) {
-    // Check bounds and color match
-    if (row < 0 || row >= grid.length || 
-        col < 0 || col >= grid[0].length || 
-        grid[row][col] !== oldColor) {
-        return;
-    }
+                            <h3>Challenge Description</h3>
+                            <p>Implement a floodfill algorithm that uses 8-way connectivity (includes diagonals).</p>
 
-    // Fill current cell
-    grid[row][col] = newColor;
-
-    // Recursively fill neighbors (4-way connectivity)
-    floodFill(grid, row + 1, col, newColor, useEightWay, oldColor);  // Down
-    floodFill(grid, row - 1, col, newColor, useEightWay, oldColor);  // Up
-    floodFill(grid, row, col + 1, newColor, useEightWay, oldColor);  // Right
-    floodFill(grid, row, col - 1, newColor, useEightWay, oldColor);  // Left
-    
-    // TODO: Add diagonal directions for 8-way connectivity
-    // if (useEightWay) {
-    //     ...
-    // }
-}</code>
+                            <div class="info-box">
+                                <h4>Requirements:</h4>
+                                <ul>
+                                    <li>Modify the floodfill algorithm to include diagonal neighbors</li>
+                                    <li>Add an additional parameter to toggle between 4-way and 8-way connectivity</li>
+                                    <li>Test with various grid patterns</li>
+                                </ul>
                             </div>
-                        </div>
 
-                        <div class="space-y">
-                            <h3>Testing Your Solution</h3>
-                            <div class="code-block">
-                                <code>// Create a test grid
-const grid1 = [
+                            <div class="space-y">
+                                <h3>Code Starting Point</h3>
+                                <div class="code-block">
+                                    <code>def flood_fill(grid, row, col, new_color, use_eight_way=False, old_color=None):
+    if old_color is None:
+        old_color = grid[row][col]
+    # Check bounds and color match
+    if (row < 0 or row >= len(grid) or 
+        col < 0 or col >= len(grid[0]) or 
+        grid[row][col] != old_color):
+        return
+    # Fill current cell
+    grid[row][col] = new_color
+    # Directions for 4-way connectivity
+    directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+    # Add diagonals for 8-way connectivity if needed
+    if use_eight_way:
+        directions += [[1, 1], [1, -1], [-1, 1], [-1, -1]]
+    for dr, dc in directions:
+        flood_fill(grid, row + dr, col + dc, new_color, use_eight_way, old_color)</code>
+                                </div>
+                            </div>
+
+                            <div class="space-y">
+                                <h3>Testing Your Solution</h3>
+                                <div class="code-block">
+                                    <code># Create a test grid
+grid1 = [
     [1, 1, 1, 1, 1],
     [1, 0, 0, 0, 1],
     [1, 0, 1, 0, 1],
     [1, 0, 0, 0, 1],
     [1, 1, 1, 1, 1]
-];
-
-// Test with 4-way connectivity
-const grid2 = JSON.parse(JSON.stringify(grid1)); // Deep copy
-floodFill(grid2, 1, 1, 2, false);
-console.log("4-way result:");
-console.log(grid2);
-
-// Test with 8-way connectivity
-const grid3 = JSON.parse(JSON.stringify(grid1)); // Deep copy
-floodFill(grid3, 1, 1, 2, true);
-console.log("8-way result:");
-console.log(grid3);</code>
+]
+# Test with 4-way connectivity
+grid2 = [row[:] for row in grid1]  # Deep copy
+flood_fill(grid2, 1, 1, 2, False)
+print("4-way result:")
+print(grid2)
+# Test with 8-way connectivity
+grid3 = [row[:] for row in grid1]  # Deep copy
+flood_fill(grid3, 1, 1, 2, True)
+print("8-way result:")
+print(grid3)</code>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="space-y">
-                            <h3>LeetCode Practice</h3>
-                            <p>After completing this challenge, try these LeetCode problems:</p>
-                            <ul>
-                                <li><a href="https://leetcode.com/problems/flood-fill/" class="leetcode-link"
-                                        target="_blank" rel="noopener noreferrer">733. Flood Fill</a> - Basic floodfill
-                                    implementation</li>
-                                <li><a href="https://leetcode.com/problems/number-of-islands/" class="leetcode-link"
-                                        target="_blank" rel="noopener noreferrer">200. Number of Islands</a> - Count
-                                    connected regions</li>
-                                <li><a href="https://leetcode.com/problems/surrounded-regions/" class="leetcode-link"
-                                        target="_blank" rel="noopener noreferrer">130. Surrounded Regions</a> - Advanced
-                                    floodfill application</li>
-                            </ul>
+                            <div class="space-y">
+                                <h3>LeetCode Practice</h3>
+                                <p>After completing this challenge, try these LeetCode problems:</p>
+                                <ul>
+                                    <li><a href="https://leetcode.com/problems/flood-fill/" class="leetcode-link"
+                                            target="_blank" rel="noopener noreferrer">733. Flood Fill</a> - Basic
+                                        floodfill
+                                        implementation</li>
+                                    <li><a href="https://leetcode.com/problems/number-of-islands/" class="leetcode-link"
+                                            target="_blank" rel="noopener noreferrer">200. Number of Islands</a> - Count
+                                        connected regions</li>
+                                    <li><a href="https://leetcode.com/problems/surrounded-regions/"
+                                            class="leetcode-link" target="_blank" rel="noopener noreferrer">130.
+                                            Surrounded Regions</a> - Advanced
+                                        floodfill application</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 </body>
 
 </html>

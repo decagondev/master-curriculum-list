@@ -125,11 +125,11 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <!-- Navigation -->
     <div class="flex justify-between items-center mb-8">
-      <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+      <a href="./../index.html" class="text-primary hover:text-secondary flex items-center space-x-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
-        <span>Back to Welcome Page</span>
+        <span>Back to Main ACS Page</span>
       </a>
     </div>
 
@@ -159,7 +159,7 @@
       <div class="video-wrapper">
         <iframe class="wistia_embed" title="s20M1 JavaScript CC4 Graph DFT Video"
           src="https://fast.wistia.net/embed/iframe/79o1ig55qk" width="100%" height="100%" name="wistia_embed"
-          allow="autoplay; fullscreen" loading="lazy"></iframe>
+          allow="fullscreen" loading="lazy"></iframe>
       </div>
     </div>
     </p>
@@ -186,22 +186,18 @@
         include:</p>
 
       <div class="code-block">
-        // Adjacency List representation
+        // Adjacency List representation (Java)
         class Graph {
-        constructor() {
-        this.adjacencyList = {};
+        private Map&lt;String, List&lt;String&gt;&gt; adjacencyList = new HashMap&lt;&gt;();
+
+        public void addVertex(String vertex) {
+        adjacencyList.putIfAbsent(vertex, new ArrayList&lt;&gt;());
         }
 
-        addVertex(vertex) {
-        if (!this.adjacencyList[vertex]) {
-        this.adjacencyList[vertex] = [];
-        }
-        }
-
-        addEdge(vertex1, vertex2) {
-        this.adjacencyList[vertex1].push(vertex2);
+        public void addEdge(String vertex1, String vertex2) {
+        adjacencyList.get(vertex1).add(vertex2);
         // For undirected graph, add the reverse edge too
-        // this.adjacencyList[vertex2].push(vertex1);
+        // adjacencyList.get(vertex2).add(vertex1);
         }
         }
       </div>
@@ -213,41 +209,33 @@
         visit:</p>
 
       <div class="code-block">
-        // Recursive DFT implementation
+        // Recursive DFT implementation (Java)
         class Graph {
-        // ... previous methods from above ...
+        private Map&lt;String, List&lt;String&gt;&gt; adjacencyList = new HashMap&lt;&gt;();
 
-        depthFirstTraversalRecursive(startVertex) {
-        const result = [];
-        const visited = {};
-        const adjacencyList = this.adjacencyList;
+        // ... addVertex and addEdge methods ...
 
-        // Helper function to conduct DFT recursively
-        function dfs(vertex) {
-        if (!vertex) return null;
-
-        // Mark vertex as visited
-        visited[vertex] = true;
-        // Add vertex to result
-        result.push(vertex);
-
-        // Visit each neighbor
-        adjacencyList[vertex].forEach(neighbor => {
-        if (!visited[neighbor]) {
-        return dfs(neighbor);
-        }
-        });
-        }
-
-        // Start DFT from startVertex
-        dfs(startVertex);
-
+        public List&lt;String&gt; depthFirstTraversalRecursive(String startVertex) {
+        List&lt;String&gt; result = new ArrayList&lt;&gt;();
+        Set&lt;String&gt; visited = new HashSet&lt;&gt;();
+        dfs(startVertex, visited, result);
         return result;
+        }
+
+        private void dfs(String vertex, Set&lt;String&gt; visited, List&lt;String&gt; result) {
+        if (vertex == null || visited.contains(vertex)) return;
+        visited.add(vertex);
+        result.add(vertex);
+        for (String neighbor : adjacencyList.getOrDefault(vertex, new ArrayList&lt;&gt;())) {
+        if (!visited.contains(neighbor)) {
+        dfs(neighbor, visited, result);
+        }
+        }
         }
         }
 
         // Example usage
-        const g = new Graph();
+        Graph g = new Graph();
         g.addVertex("A");
         g.addVertex("B");
         g.addVertex("C");
@@ -263,7 +251,7 @@
         g.addEdge("D", "F");
         g.addEdge("E", "F");
 
-        console.log(g.depthFirstTraversalRecursive("A")); // ["A", "B", "D", "E", "F", "C"]
+        System.out.println(g.depthFirstTraversalRecursive("A")); // [A, B, D, E, F, C]
       </div>
     </div>
 
@@ -272,34 +260,36 @@
       <p class="text-lighttext">The iterative approach uses an explicit stack to keep track of vertices to visit:</p>
 
       <div class="code-block">
-        // Iterative DFT implementation
+        // Iterative DFT implementation (Java)
         class Graph {
-        // ... previous methods ...
+        private Map&lt;String, List&lt;String&gt;&gt; adjacencyList = new HashMap&lt;&gt;();
 
-        depthFirstTraversalIterative(startVertex) {
-        const stack = [startVertex];
-        const result = [];
-        const visited = {};
-        visited[startVertex] = true;
+        // ... addVertex and addEdge methods ...
 
-        while (stack.length) {
-        const currentVertex = stack.pop();
-        result.push(currentVertex);
-
-        this.adjacencyList[currentVertex].forEach(neighbor => {
-        if (!visited[neighbor]) {
-        visited[neighbor] = true;
+        public List&lt;String&gt; depthFirstTraversalIterative(String startVertex) {
+        List&lt;String&gt; result = new ArrayList&lt;&gt;();
+        Set&lt;String&gt; visited = new HashSet&lt;&gt;();
+        Deque&lt;String&gt; stack = new ArrayDeque&lt;&gt;();
+        stack.push(startVertex);
+        while (!stack.isEmpty()) {
+        String current = stack.pop();
+        if (!visited.contains(current)) {
+        visited.add(current);
+        result.add(current);
+        for (String neighbor : adjacencyList.getOrDefault(current, new ArrayList&lt;&gt;())) {
+        if (!visited.contains(neighbor)) {
         stack.push(neighbor);
         }
-        });
         }
-
+        }
+        }
         return result;
         }
         }
 
         // Example usage
-        console.log(g.depthFirstTraversalIterative("A")); // May produce different order than recursive version
+        // System.out.println(g.depthFirstTraversalIterative("A")); // May produce different order than recursive
+        version
       </div>
 
       <p class="text-lighttext"><strong>Time Complexity:</strong> O(V + E) where V is the number of vertices and E is

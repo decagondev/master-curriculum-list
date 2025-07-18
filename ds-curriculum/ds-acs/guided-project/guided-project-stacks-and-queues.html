@@ -281,7 +281,7 @@
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
-                <span>Back to Welcome Page</span>
+                <span>Back to Main ACS Page</span>
             </a>
         </div>
 
@@ -378,9 +378,9 @@
                         <div class="wistia-responsive-padding">
                             <div class="wistia-responsive-wrapper">
                                 <iframe src="https://fast.wistia.net/embed/iframe/1tplct2xxu?videoFoam=true"
-                                    title="s17M4 Web-JavaScript Guided Project Stacks Video"
-                                    allow="autoplay; fullscreen" allowtransparency="true" frameborder="0" scrolling="no"
-                                    width="100%" height="100%"></iframe>
+                                    title="s17M4 Web-JavaScript Guided Project Stacks Video" allow="fullscreen"
+                                    allowtransparency="true" frameborder="0" scrolling="no" width="100%"
+                                    height="100%"></iframe>
                             </div>
                         </div>
                     </div>
@@ -393,37 +393,28 @@
                             <div>
                                 <h4>Step 1: Setup Bracket Maps</h4>
                                 <div class="code-block">
-                                    <code>const bracketPairs = {
+                                    <code>bracket_pairs = {
     '(': ')',
     '{': '}',
     '[': ']'
-};
+}
 
-const openBrackets = new Set(['(', '{', '[']);
-const closeBrackets = new Set([')', '}', ']']);</code>
+open_brackets = {'(', '{', '['}
+close_brackets = {')', '}', ']'}</code>
                                 </div>
                             </div>
 
                             <div>
                                 <h4>Step 2: Validation Function</h4>
                                 <div class="code-block">
-                                    <code>function isValidBracketSequence(sequence) {
-    const stack = [];
-    
-    for (let i = 0; i < sequence.length; i++) {
-        const char = sequence[i];
-        
-        // Skip non-bracket characters
-        if (!openBrackets.has(char) && 
-            !closeBrackets.has(char)) {
-            continue;
-        }
-        
-        // Handle logic here
-    }
-    
-    return stack.length === 0;
-}</code>
+                                    <code>def is_valid_bracket_sequence(sequence):
+    stack = []
+    for char in sequence:
+        # Skip non-bracket characters
+        if char not in open_brackets and char not in close_brackets:
+            continue
+        # Handle logic here
+    return len(stack) == 0</code>
                                 </div>
                             </div>
                         </div>
@@ -432,32 +423,28 @@ const closeBrackets = new Set([')', '}', ']']);</code>
                             <div>
                                 <h4>Step 3: Open Bracket Logic</h4>
                                 <div class="code-block">
-                                    <code>// Inside the for loop from step 2
-if (openBrackets.has(char)) {
-    // If it's an opening bracket, push to stack
-    stack.push(char);
-} else {
-    // Handle closing brackets
-}</code>
+                                    <code># Inside the for loop from step 2
+if char in open_brackets:
+    # If it's an opening bracket, push to stack
+    stack.append(char)
+else:
+    # Handle closing brackets
+    pass</code>
                                 </div>
                             </div>
 
                             <div>
                                 <h4>Step 4: Close Bracket Logic</h4>
                                 <div class="code-block">
-                                    <code>// Inside the else block from step 3
-// If stack is empty, no matching open bracket
-if (stack.length === 0) {
-    return false;
-}
-
-// Get the last open bracket
-const lastOpen = stack.pop();
-
-// Check if brackets match
-if (bracketPairs[lastOpen] !== char) {
-    return false;
-}</code>
+                                    <code># Inside the else block from step 3
+# If stack is empty, no matching open bracket
+if len(stack) == 0:
+    return False
+# Get the last open bracket
+last_open = stack.pop()
+# Check if brackets match
+if bracket_pairs[last_open] != char:
+    return False</code>
                                 </div>
                             </div>
                         </div>
@@ -465,40 +452,26 @@ if (bracketPairs[lastOpen] !== char) {
                         <div>
                             <h4>Step 5: Complete Implementation</h4>
                             <div class="code-block">
-                                <code>function isValidBracketSequence(sequence) {
-    const stack = [];
-    
-    for (let i = 0; i < sequence.length; i++) {
-        const char = sequence[i];
-        
-        // Skip non-bracket characters
-        if (!openBrackets.has(char) && 
-            !closeBrackets.has(char)) {
-            continue;
-        }
-        
-        if (openBrackets.has(char)) {
-            // If it's an opening bracket, push to stack
-            stack.push(char);
-        } else {
-            // If stack is empty, no matching open bracket
-            if (stack.length === 0) {
-                return false;
-            }
-            
-            // Get the last open bracket
-            const lastOpen = stack.pop();
-            
-            // Check if brackets match
-            if (bracketPairs[lastOpen] !== char) {
-                return false;
-            }
-        }
-    }
-    
-    // Valid only if all brackets were matched
-    return stack.length === 0;
-}</code>
+                                <code>def is_valid_bracket_sequence(sequence):
+    stack = []
+    for char in sequence:
+        # Skip non-bracket characters
+        if char not in open_brackets and char not in close_brackets:
+            continue
+        if char in open_brackets:
+            # If it's an opening bracket, push to stack
+            stack.append(char)
+        else:
+            # If stack is empty, no matching open bracket
+            if len(stack) == 0:
+                return False
+            # Get the last open bracket
+            last_open = stack.pop()
+            # Check if brackets match
+            if bracket_pairs[last_open] != char:
+                return False
+    # Valid only if all brackets were matched
+    return len(stack) == 0</code>
                             </div>
                         </div>
                     </div>
@@ -533,29 +506,32 @@ if (bracketPairs[lastOpen] !== char) {
 
                         <h4>Starter Code:</h4>
                         <div class="code-block">
-                            <code>class StackQueue {
-    constructor() {
-        this.stackNewest = []; // for enqueue
-        this.stackOldest = []; // for dequeue
-    }
+                            <code>class StackQueue:
+    def __init__(self):
+        self.stack_newest = []  # for enqueue
+        self.stack_oldest = []  # for dequeue
     
-    enqueue(value) {
-        // Your code here
-    }
+    def enqueue(self, value):
+        self.stack_newest.append(value)
     
-    dequeue() {
-        // Your code here
-    }
+    def dequeue(self):
+        if not self.stack_oldest:
+            while self.stack_newest:
+                self.stack_oldest.append(self.stack_newest.pop())
+        if self.stack_oldest:
+            return self.stack_oldest.pop()
+        return None
     
-    peek() {
-        // Your code here
-    }
+    def peek(self):
+        if not self.stack_oldest:
+            while self.stack_newest:
+                self.stack_oldest.append(self.stack_newest.pop())
+        if self.stack_oldest:
+            return self.stack_oldest[-1]
+        return None
     
-    isEmpty() {
-        // Your code here
-    }
-}
-</code>
+    def is_empty(self):
+        return not self.stack_newest and not self.stack_oldest</code>
                         </div>
 
                         <h4>Challenge Practice Resources:</h4>

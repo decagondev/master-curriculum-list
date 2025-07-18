@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3 - Thread Safety - BD Unit 7 Sprint 26</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -26,14 +28,15 @@
             </ul>
         </nav>
     </header>
-    
+
     <main class="container">
         <section class="welcome">
             <h1>Module 3 - Thread Safety</h1>
-            
+
             <div class="content-box module3-accent">
                 <h2>Module Overview</h2>
-                <p>Understand thread safety, synchronization, and atomic methods to prevent data corruption and race conditions in concurrent Java applications.</p>
+                <p>Understand thread safety, synchronization, and atomic methods to prevent data corruption and race
+                    conditions in concurrent Java applications.</p>
 
                 <h2>Learning Objectives</h2>
                 <ul>
@@ -41,13 +44,16 @@
                     <li>Recall that each thread has its own stack, but all threads share the heap</li>
                     <li>Recall that Java uses locks to support synchronized code</li>
                     <li>Explain the conditions that will cause a deadlock</li>
-                    <li>Design and implement a class that prevents race conditions by declaring one or more of its methods as synchronized</li>
+                    <li>Design and implement a class that prevents race conditions by declaring one or more of its
+                        methods as synchronized</li>
                     <li>Use atomic types to develop consistent read and write functionality across threads</li>
                     <li>Use immutable objects to share consistent state across threads</li>
                     <li>Design and implement functionality that shares a consistent state across threads</li>
                     <li>Recall that synchronized code can only be called by one thread at a time</li>
-                    <li>Recall that a deadlock is a condition where two or more threads can never continue because they are waiting for each other to finish</li>
-                    <li>Explain that the JVM blocks threads that try to execute a synchronized method on an object that is already locked</li>
+                    <li>Recall that a deadlock is a condition where two or more threads can never continue because they
+                        are waiting for each other to finish</li>
+                    <li>Explain that the JVM blocks threads that try to execute a synchronized method on an object that
+                        is already locked</li>
                 </ul>
             </div>
 
@@ -55,10 +61,13 @@
                 <h2>Thread Safety Fundamentals</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Synchronization Techniques" src="https://fast.wistia.net/embed/iframe/slqagct2do" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Synchronization Techniques"
+                        src="https://fast.wistia.net/embed/iframe/slqagct2do" width="100%" height="360"
+                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
                 </div>
 
-                <p>Thread safety ensures that your code works correctly when accessed by multiple threads simultaneously. Understanding memory architecture is key to thread safety.</p>
+                <p>Thread safety ensures that your code works correctly when accessed by multiple threads
+                    simultaneously. Understanding memory architecture is key to thread safety.</p>
                 <p>Key concepts:</p>
                 <ul>
                     <li>Each thread has its own stack for local variables</li>
@@ -79,30 +88,52 @@ public class Counter {
 }</code></pre>
 
                 <h2>Lesson overview</h2>
-                <p>You've learned a lot about threads in this unit, and you might be thinking of different ways to apply those lessons to your code. However, you need to be careful when using multiple threads. Otherwise, threads can conflict, causing data to become inconsistent between them. This lesson you'll learn techniques for thread safety to protect the data in your threads.</p>
+                <p>You've learned a lot about threads in this unit, and you might be thinking of different ways to apply
+                    those lessons to your code. However, you need to be careful when using multiple threads. Otherwise,
+                    threads can conflict, causing data to become inconsistent between them. This lesson you'll learn
+                    techniques for thread safety to protect the data in your threads.</p>
 
                 <p>This reading covers memory considerations with threads as well as the basics of synchronization.</p>
 
-                <p>The next reading explains atomic object types, which we can use to safely share changing state between threads, and how to use immutable objects to share unchanging state between threads.</p>
+                <p>The next reading explains atomic object types, which we can use to safely share changing state
+                    between threads, and how to use immutable objects to share unchanging state between threads.</p>
 
                 <h2>Introduction to thread safety</h2>
-                <p>Webservers handle requests from many users concurrently. These requests often involve personal data, as login credentials, account balances, and contact info. Thread safety allows us to keep each thread's data current and separate.</p>
+                <p>Webservers handle requests from many users concurrently. These requests often involve personal data,
+                    as login credentials, account balances, and contact info. Thread safety allows us to keep each
+                    thread's data current and separate.</p>
 
-                <p>As an example, let's say an Amazon user adds $10 to their gift card that currently has $25. At the same time, one of their family members adds $5 to the same gift card. Because these are separate requests, each is handled in their own thread.</p>
+                <p>As an example, let's say an Amazon user adds $10 to their gift card that currently has $25. At the
+                    same time, one of their family members adds $5 to the same gift card. Because these are separate
+                    requests, each is handled in their own thread.</p>
 
-                <p>Suppose the $5 thread gets the balance ($25), then the JVM pauses it and runs the $10 thread. The $10 thread gets the balance (still $25), adds $10, and sets the balance to $35. When the $5 thread continues running, it has no way to tell that another thread has changed the balance. It doesn't even realize it's been paused. It just adds its $5 to the balance it already got ($25), and sets the balance to $30.</p>
+                <p>Suppose the $5 thread gets the balance ($25), then the JVM pauses it and runs the $10 thread. The $10
+                    thread gets the balance (still $25), adds $10, and sets the balance to $35. When the $5 thread
+                    continues running, it has no way to tell that another thread has changed the balance. It doesn't
+                    even realize it's been paused. It just adds its $5 to the balance it already got ($25), and sets the
+                    balance to $30.</p>
 
                 <p>Both users think they've succesfuly made their deposit. But our system lost $10.</p>
 
-                <p>Thread safety addresses these types of problems by ensuring threads get exclusive access to resources, so their data can't be modified by other threads while they're paused.</p>
+                <p>Thread safety addresses these types of problems by ensuring threads get exclusive access to
+                    resources, so their data can't be modified by other threads while they're paused.</p>
 
                 <h2>The relationship between threads and the heap</h2>
-                <p>Before digging into our gift card problem, let's look closely at how threads use memory. As we learned previously, threads run code at the same time as our main program. Each thread has its own stack that is independent of the main execution stack. As you can see in Figure 1, the object references on the stack point to values stored in the heap. All object instances are stored in the heap, which is used by the entire application. Multiple threads can reference the same object in the heap, so any changes one thread makes to a shared object in the heap can impact other threads.</p>
+                <p>Before digging into our gift card problem, let's look closely at how threads use memory. As we
+                    learned previously, threads run code at the same time as our main program. Each thread has its own
+                    stack that is independent of the main execution stack. As you can see in Figure 1, the object
+                    references on the stack point to values stored in the heap. All object instances are stored in the
+                    heap, which is used by the entire application. Multiple threads can reference the same object in the
+                    heap, so any changes one thread makes to a shared object in the heap can impact other threads.</p>
 
                 <h2>How synchronized methods work</h2>
-                <p>Consider the audio system at a conference, where many attendees request a microphone to ask questions. A moderator chooses one attendee and gives them a microphone. When they give the microphone back to the moderator, all attendees are then free to request a microphone again.</p>
+                <p>Consider the audio system at a conference, where many attendees request a microphone to ask
+                    questions. A moderator chooses one attendee and gives them a microphone. When they give the
+                    microphone back to the moderator, all attendees are then free to request a microphone again.</p>
 
-                <p>Of course, each attendee is free to do other things that don't require a microphone: they can listen to the speakers, read the closed-caption display, and take pictures. No matter what, even if there are many microphones, the moderator makes sure only one person at a time can use a microphone.</p>
+                <p>Of course, each attendee is free to do other things that don't require a microphone: they can listen
+                    to the speakers, read the closed-caption display, and take pictures. No matter what, even if there
+                    are many microphones, the moderator makes sure only one person at a time can use a microphone.</p>
 
                 <p>Java uses the synchronized keyword to achieve similar behavior:</p>
 
@@ -110,13 +141,25 @@ public class Counter {
     this.count++;
 }</code></pre>
 
-                <p>Java treats each object instance like its own conference audio system. When we mark a method with the synchronized keyword, the JVM treats it like a microphone: it enforces that only one thread at a time can call any synchronized method on that instance.</p>
+                <p>Java treats each object instance like its own conference audio system. When we mark a method with the
+                    synchronized keyword, the JVM treats it like a microphone: it enforces that only one thread at a
+                    time can call any synchronized method on that instance.</p>
 
-                <p>Java accomplishes this through "locks". Every Java Object has a lock. To call a synchronized method on an instance, a thread must acquire the instance's lock. The JVM manages these locks and ensures that only one thread can acquire the lock at any time. If any other thread tries to acquire the lock, the JVM suspends it and marks it as BLOCKED. Once the thread that has the lock releases it, the JVM marks all the threads waiting on it as RUNNABLE. The next thread that requests the lock will acquire it and continue, while the others will become BLOCKED again.</p>
+                <p>Java accomplishes this through "locks". Every Java Object has a lock. To call a synchronized method
+                    on an instance, a thread must acquire the instance's lock. The JVM manages these locks and ensures
+                    that only one thread can acquire the lock at any time. If any other thread tries to acquire the
+                    lock, the JVM suspends it and marks it as BLOCKED. Once the thread that has the lock releases it,
+                    the JVM marks all the threads waiting on it as RUNNABLE. The next thread that requests the lock will
+                    acquire it and continue, while the others will become BLOCKED again.</p>
 
-                <p>You many wonder why we need to synchronize the method at all, since count++ is a single statement. To the computer, this is actually three operations! First, it must "load the value of count from memory". Then it must "increment the value". Finally, it must "save the value of count into memory". If another thread executes at the same time, it might read or save count in memory while the first thread is still performing one of its three operations.</p>
+                <p>You many wonder why we need to synchronize the method at all, since count++ is a single statement. To
+                    the computer, this is actually three operations! First, it must "load the value of count from
+                    memory". Then it must "increment the value". Finally, it must "save the value of count into memory".
+                    If another thread executes at the same time, it might read or save count in memory while the first
+                    thread is still performing one of its three operations.</p>
 
-                <p>Let's see synchronization in action. Here's an example using the synchronized keyword to solve our gift card problem from earlier:</p>
+                <p>Let's see synchronization in action. Here's an example using the synchronized keyword to solve our
+                    gift card problem from earlier:</p>
 
                 <pre><code>public class GiftCardProcessor {
 
@@ -164,7 +207,10 @@ public class GiftCardDepositer implements Runnable {
     }
 }</code></pre>
 
-                <p>In this example, when our two threads both execute addBalance(), we don't have to worry about our modifying the balance at the same time. Because addBalance() is synchronized, only one thread can update our GiftCard instance at a time. Now, no matter when a thread pauses, the other thread will wait until it's done with its method.</p>
+                <p>In this example, when our two threads both execute addBalance(), we don't have to worry about our
+                    modifying the balance at the same time. Because addBalance() is synchronized, only one thread can
+                    update our GiftCard instance at a time. Now, no matter when a thread pauses, the other thread will
+                    wait until it's done with its method.</p>
 
                 <p>An example of that output could be:</p>
 
@@ -174,16 +220,34 @@ Added 5, new balance is 30
 Balance is 30
 Added 10, new balance is 40</code></pre>
 
-                <p>Does this example of two threads accessing the same value simultaneously seem familiar? In the Executor Services lesson, you learned about race conditions and the problems they cause through the CargoDemo code. GiftCardProcessor is an example of solving those problems using synchronization. If you look back, you can locate where synchronization would solve the problem in the earlier lesson.</p>
+                <p>Does this example of two threads accessing the same value simultaneously seem familiar? In the
+                    Executor Services lesson, you learned about race conditions and the problems they cause through the
+                    CargoDemo code. GiftCardProcessor is an example of solving those problems using synchronization. If
+                    you look back, you can locate where synchronization would solve the problem in the earlier lesson.
+                </p>
 
                 <h2>Avoiding deadlocks</h2>
-                <p>Since synchronization helps to achieve thread safety, shouldn't we just synchronize every method? Unfortunately, there can be too much of a good thing. While synchronization can achieve thread safety, it can lead to unwanted effects on a system such as slowdowns and a state known as a deadlock.</p>
+                <p>Since synchronization helps to achieve thread safety, shouldn't we just synchronize every method?
+                    Unfortunately, there can be too much of a good thing. While synchronization can achieve thread
+                    safety, it can lead to unwanted effects on a system such as slowdowns and a state known as a
+                    deadlock.</p>
 
-                <img src="https://bloomtech.instructure.com/courses/2534/files/602114/preview" alt="image2.png" data-api-endpoint="https://bloomtech.instructure.com/api/v1/courses/2534/files/602114" data-api-returntype="File" loading="lazy">
+                <img src="https://bloomtech.instructure.com/courses/2534/files/602114/preview" alt="image2.png"
+                    data-api-endpoint="https://bloomtech.instructure.com/api/v1/courses/2534/files/602114"
+                    data-api-returntype="File" loading="lazy">
 
-                <p>Figure 2 illustrates an example of deadlock, where two threads have some form of codependency in their variables. Neither thread can proceed until the other finishes due to locks on those variables. To put it into a real-world example, imagine two chefs making boiled potatoes in a kitchen with only one sink and one colander. One chef holds the colander, and has filled it with potatoes to wash in the sink. The other chef has cooked their potatoes, and is holding a pot of boiling hot water over the sink to drain it. The chef blocking the colander is waiting for the sink, and the chef blocking the sink is waiting for the colander. Neither can continue, so they'll both wait forever.</p>
+                <p>Figure 2 illustrates an example of deadlock, where two threads have some form of codependency in
+                    their variables. Neither thread can proceed until the other finishes due to locks on those
+                    variables. To put it into a real-world example, imagine two chefs making boiled potatoes in a
+                    kitchen with only one sink and one colander. One chef holds the colander, and has filled it with
+                    potatoes to wash in the sink. The other chef has cooked their potatoes, and is holding a pot of
+                    boiling hot water over the sink to drain it. The chef blocking the colander is waiting for the sink,
+                    and the chef blocking the sink is waiting for the colander. Neither can continue, so they'll both
+                    wait forever.</p>
 
-                <p>When possible, try to avoid situations of codependency in your synchronized methods to prevent deadlocks. To get an idea of what we mean, imagine our kitchen situation as if it were a Java application:</p>
+                <p>When possible, try to avoid situations of codependency in your synchronized methods to prevent
+                    deadlocks. To get an idea of what we mean, imagine our kitchen situation as if it were a Java
+                    application:</p>
 
                 <pre><code>public class Chef implements Runnable {
     private Colander colander;
@@ -240,32 +304,55 @@ public class Kitchen {
     }
 }</code></pre>
 
-                <p>Imagine chef1 has finished washing their potato and is calling the synchronized colander.drain() method. Because no other thread has acquired the lock on colander, the JVM gives it to chef1. Running at the same time, chef2 tries to call the synchronized method sink.wash(). Because no other thread has acquired the lock on sink, the JVM gives it to chef2.</p>
+                <p>Imagine chef1 has finished washing their potato and is calling the synchronized colander.drain()
+                    method. Because no other thread has acquired the lock on colander, the JVM gives it to chef1.
+                    Running at the same time, chef2 tries to call the synchronized method sink.wash(). Because no other
+                    thread has acquired the lock on sink, the JVM gives it to chef2.</p>
 
-                <p>When chef1 reaches sink.pour(), it will block waiting for the lock on sink. It will have to wait until chef2 finishes sink.wash(). Unfortunately, that can never happen: chef2 is about to call colander.rinse(), which is synchronized, so it will have to wait until chef1 finishes colander.drain()!</p>
+                <p>When chef1 reaches sink.pour(), it will block waiting for the lock on sink. It will have to wait
+                    until chef2 finishes sink.wash(). Unfortunately, that can never happen: chef2 is about to call
+                    colander.rinse(), which is synchronized, so it will have to wait until chef1 finishes
+                    colander.drain()!</p>
 
-                <p>While this application can cause a deadlock, due to the nature of how threads run it won't always cause a deadlock. For instance, chef1 might reach sink.pour() before chef2 even starts sink.wash(). Then chef1's thread will have both locks, and chef2's will block. When chef1 returns from sink.pour(), it releases the sink lock, and chef2 can continue.</p>
+                <p>While this application can cause a deadlock, due to the nature of how threads run it won't always
+                    cause a deadlock. For instance, chef1 might reach sink.pour() before chef2 even starts sink.wash().
+                    Then chef1's thread will have both locks, and chef2's will block. When chef1 returns from
+                    sink.pour(), it releases the sink lock, and chef2 can continue.</p>
 
-                <p>Since deadlocks may not happen frequently enough to show up in testing, it's important to identify deadlocks manually.</p>
+                <p>Since deadlocks may not happen frequently enough to show up in testing, it's important to identify
+                    deadlocks manually.</p>
 
-                <p>Deadlocks can only happen when multiple threads try to lock multiple objects in a different order. That usually happens when multiple synchronized methods call each other.</p>
+                <p>Deadlocks can only happen when multiple threads try to lock multiple objects in a different order.
+                    That usually happens when multiple synchronized methods call each other.</p>
 
                 <p>In this case, we could:</p>
 
                 <ul>
-                    <li>Build synchronized drain and wash methods in a singleton object like Kitchen, then remove synchronization from the Sink and Colander. Each Chef will now lock a single class, so deadlocks cannot occur.</li>
-                    <li>Change the classes so Sink methods call Colander methods, but not vice-versa. Now each Chef must lock a Sink before trying to lock a Colander, eliminating the deadlock.</li>
+                    <li>Build synchronized drain and wash methods in a singleton object like Kitchen, then remove
+                        synchronization from the Sink and Colander. Each Chef will now lock a single class, so deadlocks
+                        cannot occur.</li>
+                    <li>Change the classes so Sink methods call Colander methods, but not vice-versa. Now each Chef must
+                        lock a Sink before trying to lock a Colander, eliminating the deadlock.</li>
                     <li>Give each Chef their own Colander instance, so they only block on a single Sink.</li>
                 </ul>
 
-                <p>It's easier to verify that all classes go through a single synchronized class than that they all call methods in the same order or have sufficient resources to avoid mutually exclusive locks. We recommend using only one class with synchronized methods in your app.</p>
+                <p>It's easier to verify that all classes go through a single synchronized class than that they all call
+                    methods in the same order or have sufficient resources to avoid mutually exclusive locks. We
+                    recommend using only one class with synchronized methods in your app.</p>
 
                 <h2>Using and Avoiding Synchronization</h2>
-                <p>Since synchronizing many methods can cause deadlocks or delays, we must avoid it if we can. Beside restricting synchronization to a single class, we also avoid synchronizing methods that read data without modifying it.</p>
+                <p>Since synchronizing many methods can cause deadlocks or delays, we must avoid it if we can. Beside
+                    restricting synchronization to a single class, we also avoid synchronizing methods that read data
+                    without modifying it.</p>
 
-                <p>For instance, the GiftCard class we explored has an unsynchronized printBalance() method. This returns a single value, so it is always consistent with the state of the object at some point in time. Users understand that when they see an unexpected value, they should check whether someone else was making changes at the same time. Instead of synchronizing read methods, we prefer to provide audit trails that explain how modifications occurred.</p>
+                <p>For instance, the GiftCard class we explored has an unsynchronized printBalance() method. This
+                    returns a single value, so it is always consistent with the state of the object at some point in
+                    time. Users understand that when they see an unexpected value, they should check whether someone
+                    else was making changes at the same time. Instead of synchronizing read methods, we prefer to
+                    provide audit trails that explain how modifications occurred.</p>
 
-                <p>On the other hand, read methods that return collections of data may return inconsistent results. Consider a system with lists of "premium", "standard", "inactive", and "banned" members.</p>
+                <p>On the other hand, read methods that return collections of data may return inconsistent results.
+                    Consider a system with lists of "premium", "standard", "inactive", and "banned" members.</p>
 
                 <pre><code>public class Membership {
     List<Member> premium;
@@ -289,27 +376,43 @@ public class Kitchen {
     }
 }</code></pre>
 
-                <p>The exportPremiumMembers() method probably doesn't need to be synchronized. Even if we call banMember() while it's iterating over the premium list, and ban a member that has already been exported, the export as a whole still represents the state of the system at some point in time. It's not inconsistent or confusing.</p>
+                <p>The exportPremiumMembers() method probably doesn't need to be synchronized. Even if we call
+                    banMember() while it's iterating over the premium list, and ban a member that has already been
+                    exported, the export as a whole still represents the state of the system at some point in time. It's
+                    not inconsistent or confusing.</p>
 
-                <p>However, exportAllMemberRosters() should probably be synchronized. If we call banMember() while exportAllMemberRosters() is running, and we ban a premimum member who has already been exported, then exportAllMemberRosters() may export the same member again as a banned member! This would be inconsistent and confusing. If users depend on that report to make business decisions, we can ensure consistent data by synchronizing exportAllMemberRosters().</p>
+                <p>However, exportAllMemberRosters() should probably be synchronized. If we call banMember() while
+                    exportAllMemberRosters() is running, and we ban a premimum member who has already been exported,
+                    then exportAllMemberRosters() may export the same member again as a banned member! This would be
+                    inconsistent and confusing. If users depend on that report to make business decisions, we can ensure
+                    consistent data by synchronizing exportAllMemberRosters().</p>
 
-                <p>We synchronize as little as necessary. We try to restrict synchronization to the data-modifying methods of a single class, and we only synchronize read methods if they could return inconsistent collections of data that impact our users.</p>
+                <p>We synchronize as little as necessary. We try to restrict synchronization to the data-modifying
+                    methods of a single class, and we only synchronize read methods if they could return inconsistent
+                    collections of data that impact our users.</p>
 
                 <h2>Summary</h2>
-                <p>The synchronized keyword helps us write thread safe code by ensuring multiple threads cannot execute synchronized methods on a single object at the same time. That said, you must take care when writing your synchronized code to avoid deadlocks, where multiple threads are waiting for each other to unlock before execution can continue.</p>
+                <p>The synchronized keyword helps us write thread safe code by ensuring multiple threads cannot execute
+                    synchronized methods on a single object at the same time. That said, you must take care when writing
+                    your synchronized code to avoid deadlocks, where multiple threads are waiting for each other to
+                    unlock before execution can continue.</p>
 
                 <h2>Next up</h2>
-                <p>In the next reading, we'll tackle atomic objects and put synchronization to use in some more coding examples.</p>
+                <p>In the next reading, we'll tackle atomic objects and put synchronization to use in some more coding
+                    examples.</p>
             </div>
 
             <div class="content-box">
                 <h2>Applying Atomic Methods</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Atomic Variables" src="https://fast.wistia.net/embed/iframe/8aq9qe579b" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Atomic Variables"
+                        src="https://fast.wistia.net/embed/iframe/8aq9qe579b" width="100%" height="360"
+                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
                 </div>
 
-                <p>Java provides atomic classes for common operations that need to be thread-safe without using explicit synchronization. These classes use low-level atomic hardware operations for better performance.</p>
+                <p>Java provides atomic classes for common operations that need to be thread-safe without using explicit
+                    synchronization. These classes use low-level atomic hardware operations for better performance.</p>
                 <p>Common atomic classes:</p>
                 <ul>
                     <li>AtomicInteger, AtomicLong, AtomicBoolean</li>
@@ -341,18 +444,32 @@ public class AtomicCounter {
 }</code></pre>
 
                 <h2>Overview</h2>
-                <p>You've learned a lot about threads in this unit, and you might be thinking of different ways to apply those lessons to your code. However, you need to be careful when using multiple threads. Otherwise, threads can conflict, causing data to become inconsistent between them. This lesson you'll learn techniques for thread safety to protect the data in your threads.</p>
+                <p>You've learned a lot about threads in this unit, and you might be thinking of different ways to apply
+                    those lessons to your code. However, you need to be careful when using multiple threads. Otherwise,
+                    threads can conflict, causing data to become inconsistent between them. This lesson you'll learn
+                    techniques for thread safety to protect the data in your threads.</p>
 
-                <p>The previous reading covered memory considerations with threads as well as the basics of synchronization.</p>
-                <p>This reading explains atomic object types, which we can use to safely share changing state between threads, and how to use immutable objects to share unchanging state between threads.</p>
+                <p>The previous reading covered memory considerations with threads as well as the basics of
+                    synchronization.</p>
+                <p>This reading explains atomic object types, which we can use to safely share changing state between
+                    threads, and how to use immutable objects to share unchanging state between threads.</p>
 
                 <h2>Applying synchronization to objects</h2>
-                <p>How would you describe the behavior of a synchronized method? A synchronized method uses locks to ensure only one thread at a time can use any of the object's synchronized methods. You might say that synchronized methods can't be divided between threads.</p>
+                <p>How would you describe the behavior of a synchronized method? A synchronized method uses locks to
+                    ensure only one thread at a time can use any of the object's synchronized methods. You might say
+                    that synchronized methods can't be divided between threads.</p>
 
-                <p>We can sum up that description of synchronization by saying those methods execute atomically. What if, instead of atomically executing methods, we wanted threads to atomically interact with variables? Luckily, Java's tools ensure we don't have to write synchronized methods for every variable just to ensure thread safety.</p>
+                <p>We can sum up that description of synchronization by saying those methods execute atomically. What
+                    if, instead of atomically executing methods, we wanted threads to atomically interact with
+                    variables? Luckily, Java's tools ensure we don't have to write synchronized methods for every
+                    variable just to ensure thread safety.</p>
 
                 <h2>Atomic object types</h2>
-                <p>As mentioned, Java has some atomic objects built-in to make thread safety easier. AtomicInteger is one such example, a wrapper of the native Java int that enforces synchronized access. Atomic objects work in much the same way as the synchronized methods we discussed in the last reading. In fact, they implement synchronization in their own functionality. Several atomic object types are linked to primitive java types, as well as a generic wrapper object to make any other class atomic.</p>
+                <p>As mentioned, Java has some atomic objects built-in to make thread safety easier. AtomicInteger is
+                    one such example, a wrapper of the native Java int that enforces synchronized access. Atomic objects
+                    work in much the same way as the synchronized methods we discussed in the last reading. In fact,
+                    they implement synchronization in their own functionality. Several atomic object types are linked to
+                    primitive java types, as well as a generic wrapper object to make any other class atomic.</p>
 
                 <ul>
                     <li>AtomicInteger: represents int</li>
@@ -362,16 +479,22 @@ public class AtomicCounter {
                 </ul>
 
                 <h2>Functions of atomic objects</h2>
-                <p>Each atomic object type has its own list of methods and operations that can be referenced in <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/package-summary.html" target="_blank" rel="noopener noreferrer">Java documentation</a>. There are three basic methods that are used by all these classes that are important for you to know. They are:</p>
+                <p>Each atomic object type has its own list of methods and operations that can be referenced in <a
+                        href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/package-summary.html"
+                        target="_blank" rel="noopener noreferrer">Java documentation</a>. There are three basic methods
+                    that are used by all these classes that are important for you to know. They are:</p>
 
                 <ul>
                     <li>get(): gets the object's value, with the latest changes from other threads visible</li>
                     <li>set(value): writes the object's value so that it's visible to other threads</li>
-                    <li>compareAndSet(expect, update): sets the object's value to update, only if the object's current value is expect</li>
+                    <li>compareAndSet(expect, update): sets the object's value to update, only if the object's current
+                        value is expect</li>
                 </ul>
 
                 <h2>Using atomic objects for read/writing</h2>
-                <p>Looking back at the CargoDemo example from the Intro to Threads lesson, we can see the code snippet suffers from race conditions. There was a brief mention that locking could offer a better solution. Below is the initial code with a race condition:</p>
+                <p>Looking back at the CargoDemo example from the Intro to Threads lesson, we can see the code snippet
+                    suffers from race conditions. There was a brief mention that locking could offer a better solution.
+                    Below is the initial code with a race condition:</p>
 
                 <pre><code>public class CargoDemo {
     public static int currentInventory;
@@ -401,17 +524,25 @@ public class ShippingManager implements Runnable {
     }
 }</code></pre>
 
-                <p>Remember that += and -= are one statement to Java, but three operations to the JVM: get the current value from memory, calculate the new value, and save the calculated value in memory.</p>
+                <p>Remember that += and -= are one statement to Java, but three operations to the JVM: get the current
+                    value from memory, calculate the new value, and save the calculated value in memory.</p>
 
-                <p>If both threads retrieved and calculated the value at the same time, and the ShippingManager saved its calculation before the DeliveryManager, you might see this output:</p>
+                <p>If both threads retrieved and calculated the value at the same time, and the ShippingManager saved
+                    its calculation before the DeliveryManager, you might see this output:</p>
 
                 <pre><code>Start of day inventory: 100
 ShippingManager inventory: 0
 DeliveryManager inventory: 400</code></pre>
 
-                <p>This isn't good because the final state of our system is wrong. The DeliveryManager is overwriting the changes done by ShippingManager, with each thread updating currentInventory independently. In a real-world scenario, our output indicates our inventory is larger than it actually is, which would certainly cause concern.</p>
+                <p>This isn't good because the final state of our system is wrong. The DeliveryManager is overwriting
+                    the changes done by ShippingManager, with each thread updating currentInventory independently. In a
+                    real-world scenario, our output indicates our inventory is larger than it actually is, which would
+                    certainly cause concern.</p>
 
-                <p>To solve this problem, let's rewrite currentInventory as an AtomicInteger. This allows thread-safe reading and writing to the currentInventory variable. To do this, we must change the initialization of currentInventory and use AtomicInteger.addAndGet() to both add to and retrieve currentInventory in one synchronized call.</p>
+                <p>To solve this problem, let's rewrite currentInventory as an AtomicInteger. This allows thread-safe
+                    reading and writing to the currentInventory variable. To do this, we must change the initialization
+                    of currentInventory and use AtomicInteger.addAndGet() to both add to and retrieve currentInventory
+                    in one synchronized call.</p>
 
                 <pre><code>import java.util.concurrent.atomic.AtomicInteger;
 public class CargoDemo {
@@ -440,7 +571,8 @@ public class ShippingManager implements Runnable {
     }
 }</code></pre>
 
-                <p>Now if the ShippingManager and DeliveryManager update currentInventory at the same time, whichever one gets there first will make updates, and the other will wait until it's done.</p>
+                <p>Now if the ShippingManager and DeliveryManager update currentInventory at the same time, whichever
+                    one gets there first will make updates, and the other will wait until it's done.</p>
 
                 <p>If the shippingThread executes first, the output would be:</p>
 
@@ -457,9 +589,15 @@ ShippingManager inventory: 300</code></pre>
                 <p>Either way, the final value is correct. We've eliminated the race condition!</p>
 
                 <h2>Using immutable objects with threads</h2>
-                <p>Previously, we learned how immutable objects ensure the details contained within a class instance stay constant. Immutable objects are an important part of thread safety. Let's think back to an example we saw for ExecutorService. In that lesson, we used an ExecutorService to create different aspects of a user account in parallel. Let's add a little more logic to that example and examine how immutable objects are critical to concurrency.</p>
+                <p>Previously, we learned how immutable objects ensure the details contained within a class instance
+                    stay constant. Immutable objects are an important part of thread safety. Let's think back to an
+                    example we saw for ExecutorService. In that lesson, we used an ExecutorService to create different
+                    aspects of a user account in parallel. Let's add a little more logic to that example and examine how
+                    immutable objects are critical to concurrency.</p>
 
-                <p>A big piece left out of the ExecutorService example was how each of the separate threads would know which user they were populating. Let's look at a revision that passes in the user account, and examine some issues that might come up.</p>
+                <p>A big piece left out of the ExecutorService example was how each of the separate threads would know
+                    which user they were populating. Let's look at a revision that passes in the user account, and
+                    examine some issues that might come up.</p>
 
                 <pre><code>public class AmazonAccountGenerator {
     private final UserAccount userAccount;
@@ -487,15 +625,39 @@ ShippingManager inventory: 300</code></pre>
     }
 }</code></pre>
 
-                <p>Here we have the AmazonAccountGenerator class. When a user sets up a new account, the main AccountManager creates a new instance of this class. It gives it a UserAccount object that has the core account information, such as accountId and the user's name. Once an AmazonAccountGenerator is created, AccountManager starts creating the account by calling createAccount. This method creates an ExecutorService and a lambda Runnable for each of the account creation subtasks. Then, it executes those Runnable instances. Each Runnable still only has dummy code, which refers to the UserAccount instance we passed into the generator instance.</p>
+                <p>Here we have the AmazonAccountGenerator class. When a user sets up a new account, the main
+                    AccountManager creates a new instance of this class. It gives it a UserAccount object that has the
+                    core account information, such as accountId and the user's name. Once an AmazonAccountGenerator is
+                    created, AccountManager starts creating the account by calling createAccount. This method creates an
+                    ExecutorService and a lambda Runnable for each of the account creation subtasks. Then, it executes
+                    those Runnable instances. Each Runnable still only has dummy code, which refers to the UserAccount
+                    instance we passed into the generator instance.</p>
 
-                <p>As you may recall, lambda functions access in-scope properties and variables from the class where they were created. In this case, the userAccount property on our generator is in-scope to the lambdas. They can access and use that userAccount instance. Each thread needs to see the accountId so that the resources are linked to the main account properly.</p>
+                <p>As you may recall, lambda functions access in-scope properties and variables from the class where
+                    they were created. In this case, the userAccount property on our generator is in-scope to the
+                    lambdas. They can access and use that userAccount instance. Each thread needs to see the accountId
+                    so that the resources are linked to the main account properly.</p>
 
-                <p>In our simple example, each of those threads complete very quickly. They're not really doing anything, so they take almost no time to complete. In reality, that would not be the case. Each of those threads may have quite a few things to do before completing. While they were working, what if the main AccountManager changed the UserAccount reference, or updated its account number? If that were to happen while the threads were running, it's likely one of the resources would be created and linked to the wrong user account!</p>
+                <p>In our simple example, each of those threads complete very quickly. They're not really doing
+                    anything, so they take almost no time to complete. In reality, that would not be the case. Each of
+                    those threads may have quite a few things to do before completing. While they were working, what if
+                    the main AccountManager changed the UserAccount reference, or updated its account number? If that
+                    were to happen while the threads were running, it's likely one of the resources would be created and
+                    linked to the wrong user account!</p>
 
-                <p>You may notice that in our AmazonAccountGenerator class we declare the userAccount property to be final. This is important. The final keyword ensures the reference stored in that property cannot change once it's set. This is a perfect first step, as it ensures the UserAccount reference we passed into our generator at creation cannot change. It's a big piece in helping us know the threads will always use the same UserAccount object. That's only part of it though.</p>
+                <p>You may notice that in our AmazonAccountGenerator class we declare the userAccount property to be
+                    final. This is important. The final keyword ensures the reference stored in that property cannot
+                    change once it's set. This is a perfect first step, as it ensures the UserAccount reference we
+                    passed into our generator at creation cannot change. It's a big piece in helping us know the threads
+                    will always use the same UserAccount object. That's only part of it though.</p>
 
-                <p>If all our threads are reliant on having the same information as each other (also known as having the same state), we also need to make sure the data in the UserAccount instance remains constant. This is where immutable objects come into play. Immutable objects are classes where the data inside the class cannot change once it's been set. We can accomplish this through a variety of techniques, such as using the final keyword, removing setters from the class, and using defensive copying in the constructor and the getters. As a refresher, look at how we implemented our immutable UserAccount class below.</p>
+                <p>If all our threads are reliant on having the same information as each other (also known as having the
+                    same state), we also need to make sure the data in the UserAccount instance remains constant. This
+                    is where immutable objects come into play. Immutable objects are classes where the data inside the
+                    class cannot change once it's been set. We can accomplish this through a variety of techniques, such
+                    as using the final keyword, removing setters from the class, and using defensive copying in the
+                    constructor and the getters. As a refresher, look at how we implemented our immutable UserAccount
+                    class below.</p>
 
                 <pre><code>public final class UserAccount {
     private final String accountId;
@@ -527,12 +689,26 @@ ShippingManager inventory: 300</code></pre>
     }
 }</code></pre>
 
-                <p>This UserAccount is an example of an immutable class. We used defensive copying for the creationDate, final for all properties, and no setters. By designing the UserAccount class this way, we ensure the properties of the instance we pass to our AmazonAccountGenerator can never change after creation. Combine this with declaring the userAccount reference final, and userAccount will be consistent regardless of how threads access it.</p>
+                <p>This UserAccount is an example of an immutable class. We used defensive copying for the creationDate,
+                    final for all properties, and no setters. By designing the UserAccount class this way, we ensure the
+                    properties of the instance we pass to our AmazonAccountGenerator can never change after creation.
+                    Combine this with declaring the userAccount reference final, and userAccount will be consistent
+                    regardless of how threads access it.</p>
 
-                <p>It's worth noting, you should be careful when sharing state between threads. Since it's impossible to know exactly where the threads are in their execution, you run the risk of variables getting out of sync. Even with care, it's possible for references to get passed around and for another section of code to change the data without realizing it will affect the thread. Therefore, it's important to use immutable objects with your threads whenever those values shouldn't change. This ensures that the state of the data in the thread is constant and unchanging for the life of the thread.</p>
+                <p>It's worth noting, you should be careful when sharing state between threads. Since it's impossible to
+                    know exactly where the threads are in their execution, you run the risk of variables getting out of
+                    sync. Even with care, it's possible for references to get passed around and for another section of
+                    code to change the data without realizing it will affect the thread. Therefore, it's important to
+                    use immutable objects with your threads whenever those values shouldn't change. This ensures that
+                    the state of the data in the thread is constant and unchanging for the life of the thread.</p>
 
                 <h2>When does a method execute atomically?</h2>
-                <p>To answer this question, let's review what we have learned in this lesson. Atomically executing means only one thread can execute the method or access the variable at a time. Any other thread will block until the current thread finishes the atomic operation. We use the synchronized keyword to restrict methods to a single thread. Alternatively, atomic objects, like AtomicInteger, provide atomic access to a specific variable. Use these to hold important values that are accessed and updated by multiple threads. Look at the code snippet below:</p>
+                <p>To answer this question, let's review what we have learned in this lesson. Atomically executing means
+                    only one thread can execute the method or access the variable at a time. Any other thread will block
+                    until the current thread finishes the atomic operation. We use the synchronized keyword to restrict
+                    methods to a single thread. Alternatively, atomic objects, like AtomicInteger, provide atomic access
+                    to a specific variable. Use these to hold important values that are accessed and updated by multiple
+                    threads. Look at the code snippet below:</p>
 
                 <pre><code>private int count;
 
@@ -540,7 +716,9 @@ public void addCount() {
     System.out.println("Count:" + ++count);
 }</code></pre>
 
-                <p>Notice our snippet isn't using any form of synchronization, and it's not atomic. If multiple threads called addCount() at once, they could overwrite each other, throwing off the final value of count. Now, compare the following two code snippets:</p>
+                <p>Notice our snippet isn't using any form of synchronization, and it's not atomic. If multiple threads
+                    called addCount() at once, they could overwrite each other, throwing off the final value of count.
+                    Now, compare the following two code snippets:</p>
 
                 <pre><code>private int count;
 public synchronized void addCount() {
@@ -551,17 +729,33 @@ public void addCount() {
     System.out.println("Count: " + count.incrementAndGet());
 }</code></pre>
 
-                <p>They're both using different forms of synchronization, and both are thread-safe, but only the synchronized method executes atomically. The synchronized keyword ensures all its operations will execute before another thread can call it.</p>
+                <p>They're both using different forms of synchronization, and both are thread-safe, but only the
+                    synchronized method executes atomically. The synchronized keyword ensures all its operations will
+                    execute before another thread can call it.</p>
 
-                <p>The AtomicInteger method is thread-safe, because only one thread can modify the shared value at a time. When many threads execute it, the end value will always be correct. However, a thread could be paused after incrementing but before executing its println(), and another thread could increment and print the value before the first thread resumed and printed its value. Therefore, the entire method is not atomic, and we could see print statements in an unexpected order.</p>
+                <p>The AtomicInteger method is thread-safe, because only one thread can modify the shared value at a
+                    time. When many threads execute it, the end value will always be correct. However, a thread could be
+                    paused after incrementing but before executing its println(), and another thread could increment and
+                    print the value before the first thread resumed and printed its value. Therefore, the entire method
+                    is not atomic, and we could see print statements in an unexpected order.</p>
 
                 <h2>Conclusion</h2>
-                <p>When working with concurrency, it's important to consider thread safety. We don't want threads inadvertently changing values that other threads need. We need to protect the integrity of data. We must be certain we don't end up having threads double-charging a credit card or giving a shipping company the address from the wrong customer's user account. Fortunately, Java provides many ways for programmers to ensure thread safety. We showed you how atomic objects are great for important variables that should only be accessed by one thread at a time. The built-in methods to set and get information safely make synchronization easy and automatic. We also showed you how to apply synchronization to your own methods so only one thread can execute them at a time. Additionally, if we need to share state that shouldn't be changing between threads, we can use immutable objects to ensure those values can't change while the threads run.</p>
+                <p>When working with concurrency, it's important to consider thread safety. We don't want threads
+                    inadvertently changing values that other threads need. We need to protect the integrity of data. We
+                    must be certain we don't end up having threads double-charging a credit card or giving a shipping
+                    company the address from the wrong customer's user account. Fortunately, Java provides many ways for
+                    programmers to ensure thread safety. We showed you how atomic objects are great for important
+                    variables that should only be accessed by one thread at a time. The built-in methods to set and get
+                    information safely make synchronization easy and automatic. We also showed you how to apply
+                    synchronization to your own methods so only one thread can execute them at a time. Additionally, if
+                    we need to share state that shouldn't be changing between threads, we can use immutable objects to
+                    ensure those values can't change while the threads run.</p>
             </div>
 
             <div class="content-box">
                 <h3>Synchronization and Locks</h3>
-                <p>Java provides synchronization mechanisms to prevent race conditions. The synchronized keyword ensures that only one thread can execute a method or block at a time.</p>
+                <p>Java provides synchronization mechanisms to prevent race conditions. The synchronized keyword ensures
+                    that only one thread can execute a method or block at a time.</p>
                 <p>Important synchronization concepts:</p>
                 <ul>
                     <li>Every object in Java has an intrinsic lock (monitor)</li>
@@ -602,7 +796,8 @@ public class BetterThreadSafeCounter {
 
             <div class="content-box">
                 <h3>Thread Safety Best Practices</h3>
-                <p>Designing thread-safe code requires careful consideration of data access patterns and synchronization needs.</p>
+                <p>Designing thread-safe code requires careful consideration of data access patterns and synchronization
+                    needs.</p>
                 <p>Key tips for writing thread-safe code:</p>
                 <ul>
                     <li>Minimize shared mutable state</li>
@@ -633,16 +828,19 @@ public class ThreadSafeSingleton {
     }
 }</code></pre>
             </div>
-            
+
             <div class="content-box">
                 <h2>Guided Project</h2>
 
                 <div class="video-container">
-                    <iframe class="wistia_embed" title="Introduction to Thread Safety" src="https://fast.wistia.net/embed/iframe/eik066yd7h" width="100%" height="360" name="wistia_embed" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <iframe class="wistia_embed" title="Introduction to Thread Safety"
+                        src="https://fast.wistia.net/embed/iframe/eik066yd7h" width="100%" height="360"
+                        name="wistia_embed" allow="fullscreen" loading="lazy"></iframe>
                 </div>
 
                 <h3>Unsynchronized</h3>
-                <p>We're going to simulate concurrency to give you concrete experience with thread safety. We'll be running this code:</p>
+                <p>We're going to simulate concurrency to give you concrete experience with thread safety. We'll be
+                    running this code:</p>
 
                 <pre><code>// Add some Amazon Coins to the account
 public class AddCoinsTask implements Runnable {
@@ -660,13 +858,18 @@ public class AddCoinsTask implements Runnable {
     }
 }</code></pre>
 
-                <p>Your team will act as one AddCoinsTask. The instructor will be the JVM. Your AddCoinsTask has already been instantiated with an account and 1 coin to add. You've been assigned to a Thread, and your run() method has just been called.</p>
+                <p>Your team will act as one AddCoinsTask. The instructor will be the JVM. Your AddCoinsTask has already
+                    been instantiated with an account and 1 coin to add. You've been assigned to a Thread, and your
+                    run() method has just been called.</p>
 
                 <p><strong>Team.answerQuestions():</strong> Discuss this question with your team:</p>
 
                 <p>How would you modify AddCoinsTask and Account to be thread-safe?</p>
 
-                <p><strong>account.setBalance():</strong> Your teacher should have included a link to a file on Drive that contains the Account information. (It's like a real-life Account reference!) Download the file, update the balance according to the code (remember, you were instantiated with 1 coin!), and upload it back to the same location.</p>
+                <p><strong>account.setBalance():</strong> Your teacher should have included a link to a file on Drive
+                    that contains the Account information. (It's like a real-life Account reference!) Download the file,
+                    update the balance according to the code (remember, you were instantiated with 1 coin!), and upload
+                    it back to the same location.</p>
 
                 <p>Now discuss with your team:</p>
 
@@ -677,7 +880,8 @@ public class AddCoinsTask implements Runnable {
                 <p>Return to the class meeting as soon as you're done.</p>
 
                 <div class="resource-links">
-                    <a href="https://github.com/BloomTechBackend/bd-thread-saftey-ice-cream-party" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://github.com/BloomTechBackend/bd-thread-saftey-ice-cream-party" target="_blank"
+                        rel="noopener noreferrer" class="resource-link">
                         Ice Cream Party
                     </a>
                 </div>
@@ -686,13 +890,16 @@ public class AddCoinsTask implements Runnable {
             <section class="resource-section">
                 <h2 class="resource-section-title">Resources</h2>
                 <div class="resource-links">
-                    <a href="https://docs.oracle.com/javase/tutorial/essential/concurrency/syncmeth.html" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://docs.oracle.com/javase/tutorial/essential/concurrency/syncmeth.html"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
                         Java Synchronized Methods Tutorial
                     </a>
-                    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/package-summary.html" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/package-summary.html"
+                        target="_blank" rel="noopener noreferrer" class="resource-link">
                         Java Atomic Variables Documentation
                     </a>
-                    <a href="https://www.baeldung.com/java-thread-safety" target="_blank" rel="noopener noreferrer" class="resource-link">
+                    <a href="https://www.baeldung.com/java-thread-safety" target="_blank" rel="noopener noreferrer"
+                        class="resource-link">
                         Guide to Thread Safety in Java - Baeldung
                     </a>
                 </div>
@@ -700,4 +907,5 @@ public class AddCoinsTask implements Runnable {
         </section>
     </main>
 </body>
-</html> 
+
+</html>

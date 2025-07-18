@@ -108,11 +108,11 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <!-- Navigation -->
         <div class="flex justify-between items-center mb-8">
-            <a href="welcome.html" class="text-primary hover:text-secondary flex items-center space-x-2">
+            <a href="./../index.html" class="text-primary hover:text-secondary flex items-center space-x-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
-                <span>Back to Welcome Page</span>
+                <span>Back to Main ACS Page</span>
             </a>
         </div>
 
@@ -215,7 +215,7 @@
                             <div class="video-container">
                                 <div class="video-wrapper">
                                     <iframe src="https://fast.wistia.net/embed/iframe/r2gomtdqxh?videoFoam=true"
-                                        title="s19M2 JavaScript CC1 Quicksort Video" allow="autoplay; fullscreen"
+                                        title="s19M2 JavaScript CC1 Quicksort Video" allow="fullscreen"
                                         allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed"
                                         name="wistia_embed" width="100%" height="100%"></iframe>
                                 </div>
@@ -257,7 +257,7 @@
                             <div class="video-container">
                                 <div class="video-wrapper">
                                     <iframe src="https://fast.wistia.net/embed/iframe/bqeh3w3sww?videoFoam=true"
-                                        title="s19M2 JavaScript CC2 Merge Sort Video" allow="autoplay; fullscreen"
+                                        title="s19M2 JavaScript CC2 Merge Sort Video" allow="fullscreen"
                                         allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed"
                                         name="wistia_embed" width="100%" height="100%"></iframe>
                                 </div>
@@ -300,27 +300,28 @@
                         <div>
                             <h3 class="text-xl font-medium text-primary mb-4">Quicksort Implementation</h3>
                             <div class="bg-darkgray rounded-lg p-4">
-                                <pre class="text-lighttext"><code>function quickSort(arr, left = 0, right = arr.length - 1) {
+                                <pre class="text-lighttext"><code>public static void quickSort(int[] arr, int left, int right) {
     if (left < right) {
-        const pivotIndex = partition(arr, left, right);
+        int pivotIndex = partition(arr, left, right);
         quickSort(arr, left, pivotIndex - 1);
         quickSort(arr, pivotIndex + 1, right);
     }
-    return arr;
 }
 
-function partition(arr, left, right) {
-    const pivot = arr[right];
-    let i = left - 1;
-
-    for (let j = left; j < right; j++) {
+private static int partition(int[] arr, int left, int right) {
+    int pivot = arr[right];
+    int i = left - 1;
+    for (int j = left; j < right; j++) {
         if (arr[j] <= pivot) {
             i++;
-            [arr[i], arr[j]] = [arr[j], arr[i]];
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
         }
     }
-
-    [arr[i + 1], arr[right]] = [arr[right], arr[i + 1]];
+    int temp = arr[i + 1];
+    arr[i + 1] = arr[right];
+    arr[right] = temp;
     return i + 1;
 }</code></pre>
                             </div>
@@ -329,73 +330,77 @@ function partition(arr, left, right) {
                         <div>
                             <h3 class="text-xl font-medium text-primary mb-4">Merge Sort Implementation</h3>
                             <div class="bg-darkgray rounded-lg p-4">
-                                <pre class="text-lighttext"><code>function mergeSort(arr) {
+                                <pre class="text-lighttext"><code>public static int[] mergeSort(int[] arr) {
     if (arr.length <= 1) return arr;
-
-    const mid = Math.floor(arr.length / 2);
-    const left = mergeSort(arr.slice(0, mid));
-    const right = mergeSort(arr.slice(mid));
-
-    return merge(left, right);
+    int mid = arr.length / 2;
+    int[] left = Arrays.copyOfRange(arr, 0, mid);
+    int[] right = Arrays.copyOfRange(arr, mid, arr.length);
+    return merge(mergeSort(left), mergeSort(right));
 }
 
-function merge(left, right) {
-    const result = [];
-    let i = 0, j = 0;
-
+private static int[] merge(int[] left, int[] right) {
+    int[] result = new int[left.length + right.length];
+    int i = 0, j = 0, k = 0;
     while (i < left.length && j < right.length) {
         if (left[i] <= right[j]) {
-            result.push(left[i++]);
+            result[k++] = left[i++];
         } else {
-            result.push(right[j++]);
+            result[k++] = right[j++];
         }
     }
-
-    return result.concat(left.slice(i)).concat(right.slice(j));
+    while (i < left.length) {
+        result[k++] = left[i++];
+    }
+    while (j < right.length) {
+        result[k++] = right[j++];
+    }
+    return result;
 }</code></pre>
                             </div>
-                        </div>
 
-                        <div class="bg-darkgray p-4 rounded-lg">
-                            <h4 class="text-lg font-medium text-white mb-2">Usage Example:</h4>
-                            <pre class="bg-darkgray p-2 rounded"><code>const arr1 = [64, 34, 25, 12, 22, 11, 90];
-console.log('Quicksort:', quickSort([...arr1]));
-console.log('Merge sort:', mergeSort([...arr1]));</code></pre>
+                            <div class="bg-darkgray p-4 rounded-lg">
+                                <h4 class="text-lg font-medium text-white mb-2">Usage Example:</h4>
+                                <pre class="bg-darkgray p-2 rounded"><code>int[] arr1 = {64, 34, 25, 12, 22, 11, 90};
+quickSort(arr1, 0, arr1.length - 1);
+System.out.println("Quicksort: " + Arrays.toString(arr1));
+int[] arr2 = {64, 34, 25, 12, 22, 11, 90};
+System.out.println("Merge sort: " + Arrays.toString(mergeSort(arr2)));</code></pre>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Practice Exercises Tab -->
-            <div data-tab-content="exercises" class="hidden space-y-6">
-                <div class="bg-darker rounded-lg shadow-sm p-6">
-                    <h2 class="text-2xl font-semibold text-white mb-6">Practice Exercises</h2>
+                <!-- Practice Exercises Tab -->
+                <div data-tab-content="exercises" class="hidden space-y-6">
+                    <div class="bg-darker rounded-lg shadow-sm p-6">
+                        <h2 class="text-2xl font-semibold text-white mb-6">Practice Exercises</h2>
 
-                    <div class="space-y-8">
-                        <div class="space-y-4">
-                            <h3 class="text-xl font-medium text-primary">Exercise 1: Hybrid Sort</h3>
-                            <p class="text-lighttext">Implement a hybrid sorting algorithm that uses both Quicksort and
-                                Insertion Sort.</p>
+                        <div class="space-y-8">
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-medium text-primary">Exercise 1: Hybrid Sort</h3>
+                                <p class="text-lighttext">Implement a hybrid sorting algorithm that uses both Quicksort
+                                    and
+                                    Insertion Sort.</p>
 
-                            <div class="bg-darkgray p-4 rounded-lg">
-                                <h4 class="text-lg font-medium text-white mb-2">Requirements:</h4>
-                                <ul class="list-disc list-inside text-lighttext space-y-2">
-                                    <li>Use Quicksort for large subarrays (n > 10)</li>
-                                    <li>Use Insertion Sort for small subarrays</li>
-                                    <li>Maintain O(n log n) average case</li>
-                                    <li>Improve practical performance</li>
-                                </ul>
+                                <div class="bg-darkgray p-4 rounded-lg">
+                                    <h4 class="text-lg font-medium text-white mb-2">Requirements:</h4>
+                                    <ul class="list-disc list-inside text-lighttext space-y-2">
+                                        <li>Use Quicksort for large subarrays (n > 10)</li>
+                                        <li>Use Insertion Sort for small subarrays</li>
+                                        <li>Maintain O(n log n) average case</li>
+                                        <li>Improve practical performance</li>
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="space-y-4">
-                            <h3 class="text-xl font-medium text-primary">Exercise 2: K-way Merge</h3>
-                            <p class="text-lighttext">Extend the merge sort algorithm to handle k sorted arrays
-                                simultaneously.</p>
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-medium text-primary">Exercise 2: K-way Merge</h3>
+                                <p class="text-lighttext">Extend the merge sort algorithm to handle k sorted arrays
+                                    simultaneously.</p>
 
-                            <div class="bg-darkgray p-4 rounded-lg">
-                                <h4 class="text-lg font-medium text-white mb-2">Example:</h4>
-                                <pre class="bg-darkgray p-2 rounded"><code>const arrays = [
+                                <div class="bg-darkgray p-4 rounded-lg">
+                                    <h4 class="text-lg font-medium text-white mb-2">Example:</h4>
+                                    <pre class="bg-darkgray p-2 rounded"><code>const arrays = [
     [1, 4, 7],
     [2, 5, 8],
     [3, 6, 9]
@@ -403,17 +408,17 @@ console.log('Merge sort:', mergeSort([...arr1]));</code></pre>
 
 console.log(kWayMerge(arrays));
 // Output: [1, 2, 3, 4, 5, 6, 7, 8, 9]</code></pre>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="space-y-4">
-                            <h3 class="text-xl font-medium text-primary">Exercise 3: Custom Comparator</h3>
-                            <p class="text-lighttext">Modify both sorting algorithms to work with custom comparison
-                                functions.</p>
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-medium text-primary">Exercise 3: Custom Comparator</h3>
+                                <p class="text-lighttext">Modify both sorting algorithms to work with custom comparison
+                                    functions.</p>
 
-                            <div class="bg-darkgray p-4 rounded-lg">
-                                <h4 class="text-lg font-medium text-white mb-2">Example Usage:</h4>
-                                <pre class="bg-darkgray p-2 rounded"><code>const people = [
+                                <div class="bg-darkgray p-4 rounded-lg">
+                                    <h4 class="text-lg font-medium text-white mb-2">Example Usage:</h4>
+                                    <pre class="bg-darkgray p-2 rounded"><code>const people = [
     { name: 'Alice', age: 30 },
     { name: 'Bob', age: 25 },
     { name: 'Charlie', age: 35 }
@@ -424,58 +429,63 @@ quickSort(people, (a, b) => a.age - b.age);
 
 // Sort by name
 mergeSort(people, (a, b) => a.name.localeCompare(b.name));</code></pre>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- LeetCode Problem Collection Section -->
-                <div data-tab-content="exercises" class="hidden">
-                    <div class="bg-darker rounded-lg shadow-sm p-6 mt-6">
-                        <h2 class="text-2xl font-semibold text-white mb-4">LeetCode Sorting Problem Collection</h2>
-                        <p class="text-lighttext mb-4">The following LeetCode problems are excellent resources for
-                            practicing sorting algorithms and preparing for technical interviews.</p>
+                    <!-- LeetCode Problem Collection Section -->
+                    <div data-tab-content="exercises" class="hidden">
+                        <div class="bg-darker rounded-lg shadow-sm p-6 mt-6">
+                            <h2 class="text-2xl font-semibold text-white mb-4">LeetCode Sorting Problem Collection</h2>
+                            <p class="text-lighttext mb-4">The following LeetCode problems are excellent resources for
+                                practicing sorting algorithms and preparing for technical interviews.</p>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-3">
-                                <h3 class="text-lg font-medium text-primary">Beginner Sorting Problems</h3>
-                                <ul class="space-y-2">
-                                    <li><a href="https://leetcode.com/problems/sort-array-by-parity/"
-                                            class="leetcode-link">Sort Array By Parity</a></li>
-                                    <li><a href="https://leetcode.com/problems/sort-array-by-parity-ii/"
-                                            class="leetcode-link">Sort Array By Parity II</a></li>
-                                    <li><a href="https://leetcode.com/problems/sort-integers-by-the-number-of-1-bits/"
-                                            class="leetcode-link">Sort Integers by The Number of 1 Bits</a></li>
-                                    <li><a href="https://leetcode.com/problems/relative-sort-array/"
-                                            class="leetcode-link">Relative Sort Array</a></li>
-                                </ul>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-3">
+                                    <h3 class="text-lg font-medium text-primary">Beginner Sorting Problems</h3>
+                                    <ul class="space-y-2">
+                                        <li><a href="https://leetcode.com/problems/sort-array-by-parity/"
+                                                class="leetcode-link">Sort Array By Parity</a></li>
+                                        <li><a href="https://leetcode.com/problems/sort-array-by-parity-ii/"
+                                                class="leetcode-link">Sort Array By Parity II</a></li>
+                                        <li><a href="https://leetcode.com/problems/sort-integers-by-the-number-of-1-bits/"
+                                                class="leetcode-link">Sort Integers by The Number of 1 Bits</a></li>
+                                        <li><a href="https://leetcode.com/problems/relative-sort-array/"
+                                                class="leetcode-link">Relative Sort Array</a></li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-3">
+                                    <h3 class="text-lg font-medium text-primary">Intermediate Sorting Problems</h3>
+                                    <ul class="space-y-2">
+                                        <li><a href="https://leetcode.com/problems/sort-colors/"
+                                                class="leetcode-link">Sort
+                                                Colors (Dutch National Flag Problem)</a></li>
+                                        <li><a href="https://leetcode.com/problems/merge-intervals/"
+                                                class="leetcode-link">Merge Intervals</a></li>
+                                        <li><a href="https://leetcode.com/problems/largest-number/"
+                                                class="leetcode-link">Largest Number</a></li>
+                                        <li><a href="https://leetcode.com/problems/kth-largest-element-in-an-array/"
+                                                class="leetcode-link">Kth Largest Element in an Array</a></li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div class="space-y-3">
-                                <h3 class="text-lg font-medium text-primary">Intermediate Sorting Problems</h3>
-                                <ul class="space-y-2">
-                                    <li><a href="https://leetcode.com/problems/sort-colors/" class="leetcode-link">Sort
-                                            Colors (Dutch National Flag Problem)</a></li>
-                                    <li><a href="https://leetcode.com/problems/merge-intervals/"
-                                            class="leetcode-link">Merge Intervals</a></li>
-                                    <li><a href="https://leetcode.com/problems/largest-number/"
-                                            class="leetcode-link">Largest Number</a></li>
-                                    <li><a href="https://leetcode.com/problems/kth-largest-element-in-an-array/"
-                                            class="leetcode-link">Kth Largest Element in an Array</a></li>
-                                </ul>
-                            </div>
-                        </div>
 
-                        <div class="mt-6">
-                            <p class="text-lighttext">Note: Previously, this course referenced the CodeSignal Arcade,
-                                which is no longer available. The LeetCode problems above follow the same principles and
-                                are an excellent alternative for practicing sorting algorithms and preparing for
-                                technical interviews.</p>
+                            <div class="mt-6">
+                                <p class="text-lighttext">Note: Previously, this course referenced the CodeSignal
+                                    Arcade,
+                                    which is no longer available. The LeetCode problems above follow the same principles
+                                    and
+                                    are an excellent alternative for practicing sorting algorithms and preparing for
+                                    technical interviews.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 </body>
+
+</html>
 
 </html>

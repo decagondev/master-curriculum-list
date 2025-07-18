@@ -96,21 +96,37 @@
 
   <div class="code-block">
     // Creating arrays
-    const numbers = [1, 2, 3, 4, 5];
-    const mixed = [1, "two", { three: 3 }, [4]];
+    int[] numbers = {1, 2, 3, 4, 5};
+    Object[] mixed = {1, "two", new HashMap&lt;String, Integer&gt;() {{ put("three", 3); }}, new int[]{4}};
 
     // Common operations
-    numbers.push(6); // Add to end - O(1)
-    numbers.pop(); // Remove from end - O(1)
-    numbers.unshift(0); // Add to beginning - O(n)
-    numbers.shift(); // Remove from beginning - O(n)
-    numbers.splice(2, 1); // Remove at index - O(n)
+    // Add to end - O(1)
+    numbers = Arrays.copyOf(numbers, numbers.length + 1);
+    numbers[numbers.length - 1] = 6;
+    // Remove from end - O(1)
+    numbers = Arrays.copyOf(numbers, numbers.length - 1);
+    // Add to beginning - O(n)
+    int[] newNumbers = new int[numbers.length + 1];
+    newNumbers[0] = 0;
+    System.arraycopy(numbers, 0, newNumbers, 1, numbers.length);
+    numbers = newNumbers;
+    // Remove from beginning - O(n)
+    numbers = Arrays.copyOfRange(numbers, 1, numbers.length);
+    // Remove at index - O(n)
+    int removeIdx = 2;
+    int[] temp = new int[numbers.length - 1];
+    System.arraycopy(numbers, 0, temp, 0, removeIdx);
+    System.arraycopy(numbers, removeIdx + 1, temp, removeIdx, numbers.length - removeIdx - 1);
+    numbers = temp;
 
     // Iteration
-    for (let i = 0; i < numbers.length; i++) { console.log(numbers[i]); } // Functional methods const
-      doubled=numbers.map(num=> num * 2);
-      const evens = numbers.filter(num => num % 2 === 0);
-      const sum = numbers.reduce((acc, val) => acc + val, 0);
+    for (int i = 0; i &lt; numbers.length; i++) {
+    System.out.println(numbers[i]);
+    }
+    // Functional methods (Java 8+)
+    int[] doubled = Arrays.stream(numbers).map(num -&gt; num * 2).toArray();
+    int[] evens = Arrays.stream(numbers).filter(num -&gt; num % 2 == 0).toArray();
+    int sum = Arrays.stream(numbers).reduce(0, Integer::sum);
   </div>
 
   <h3>Objects</h3>
@@ -119,30 +135,29 @@
 
   <div class="code-block">
     // Creating objects
-    const person = {
-    name: "Alice",
-    age: 28,
-    isStudent: true
-    };
+    Map&lt;String, Object&gt; person = new HashMap&lt;&gt;();
+    person.put("name", "Alice");
+    person.put("age", 28);
+    person.put("isStudent", true);
 
     // Adding properties
-    person.location = "New York";
+    person.put("location", "New York");
 
     // Accessing properties
-    console.log(person.name); // Dot notation
-    console.log(person["age"]); // Bracket notation
+    System.out.println(person.get("name")); // Dot notation equivalent
+    System.out.println(person.get("age")); // Bracket notation equivalent
 
     // Checking if property exists
-    console.log("name" in person); // true
+    System.out.println(person.containsKey("name")); // true
 
     // Iterating through properties
-    for (const key in person) {
-    console.log(`${key}: ${person[key]}`);
+    for (String key : person.keySet()) {
+    System.out.println(key + ": " + person.get(key));
     }
 
     // Getting keys and values
-    const keys = Object.keys(person); // ["name", "age", "isStudent", "location"]
-    const values = Object.values(person); // ["Alice", 28, true, "New York"]
+    Set&lt;String&gt; keys = person.keySet(); // ["name", "age", "isStudent", "location"]
+    Collection&lt;Object&gt; values = person.values(); // ["Alice", 28, true, "New York"]
   </div>
 
   <h3>Sets</h3>
@@ -151,25 +166,25 @@
 
   <div class="code-block">
     // Creating a set
-    const uniqueNumbers = new Set([1, 2, 3, 2, 1]); // {1, 2, 3}
+    Set&lt;Integer&gt; uniqueNumbers = new HashSet&lt;&gt;(Arrays.asList(1, 2, 3, 2, 1)); // [1, 2, 3]
 
     // Adding values
-    uniqueNumbers.add(4); // {1, 2, 3, 4}
+    uniqueNumbers.add(4); // [1, 2, 3, 4]
     uniqueNumbers.add(2); // No change, already exists
 
     // Checking for a value
-    console.log(uniqueNumbers.has(3)); // true
-    console.log(uniqueNumbers.has(5)); // false
+    System.out.println(uniqueNumbers.contains(3)); // true
+    System.out.println(uniqueNumbers.contains(5)); // false
 
     // Removing values
-    uniqueNumbers.delete(1); // {2, 3, 4}
+    uniqueNumbers.remove(1); // [2, 3, 4]
 
     // Size of set
-    console.log(uniqueNumbers.size); // 3
+    System.out.println(uniqueNumbers.size()); // 3
 
     // Iterating through values
-    for (const num of uniqueNumbers) {
-    console.log(num);
+    for (int num : uniqueNumbers) {
+    System.out.println(num);
     }
   </div>
 
@@ -179,29 +194,29 @@
 
   <div class="code-block">
     // Creating a map
-    const userRoles = new Map();
+    Map&lt;String, String&gt; userRoles = new HashMap&lt;&gt;();
 
     // Adding entries
-    userRoles.set("alice", "admin");
-    userRoles.set("bob", "editor");
-    userRoles.set("charlie", "viewer");
+    userRoles.put("alice", "admin");
+    userRoles.put("bob", "editor");
+    userRoles.put("charlie", "viewer");
 
     // Getting values
-    console.log(userRoles.get("alice")); // "admin"
-    console.log(userRoles.get("dana")); // undefined
+    System.out.println(userRoles.get("alice")); // "admin"
+    System.out.println(userRoles.get("dana")); // null
 
     // Checking if key exists
-    console.log(userRoles.has("bob")); // true
+    System.out.println(userRoles.containsKey("bob")); // true
 
     // Size of map
-    console.log(userRoles.size); // 3
+    System.out.println(userRoles.size()); // 3
 
     // Deleting entries
-    userRoles.delete("charlie");
+    userRoles.remove("charlie");
 
     // Iterating through entries
-    for (const [user, role] of userRoles) {
-    console.log(`${user} is a ${role}`);
+    for (Map.Entry&lt;String, String&gt; entry : userRoles.entrySet()) {
+    System.out.println(entry.getKey() + " is a " + entry.getValue());
     }
   </div>
 
