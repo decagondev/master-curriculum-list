@@ -142,7 +142,11 @@
       <div class="code-block">
         // Binary Tree Node
         class Node {
-        constructor(value) {
+        int value;
+        Node left;
+        Node right;
+
+        Node(int value) {
         this.value = value;
         this.left = null;
         this.right = null;
@@ -151,7 +155,9 @@
 
         // Binary Search Tree implementation
         class BinarySearchTree {
-        constructor() {
+        Node root;
+
+        public BinarySearchTree() {
         this.root = null;
         }
 
@@ -172,39 +178,38 @@
       <h4 class="text-lg font-medium text-secondary">BST Search Implementation:</h4>
       <div class="code-block">
         // Search for a value in BST
-        search(value) {
-        return this._searchNode(this.root, value);
+        public Node search(int value) {
+        return searchNode(this.root, value);
         }
 
-        _searchNode(node, value) {
+        private Node searchNode(Node node, int value) {
         // Base cases: empty tree or found the value
-        if (node === null) return null;
-        if (node.value === value) return node;
+        if (node == null) return null;
+        if (node.value == value) return node;
 
         // Recursive cases
-        if (value < node.value) { return this._searchNode(node.left, value); } else { return
-          this._searchNode(node.right, value); } } </div>
+        if (value < node.value) { return searchNode(node.left, value); } else { return searchNode(node.right, value); }
+          } </div>
 
           <h4 class="text-lg font-medium text-secondary mt-6">BST Insert Implementation:</h4>
           <div class="code-block">
             // Insert a value into BST
-            insert(value) {
-            const newNode = new Node(value);
+            public void insert(int value) {
+            Node newNode = new Node(value);
 
-            if (this.root === null) {
+            if (this.root == null) {
             this.root = newNode;
-            return this;
+            return;
             }
 
-            this._insertNode(this.root, newNode);
-            return this;
+            insertNode(this.root, newNode);
             }
 
-            _insertNode(node, newNode) {
+            private void insertNode(Node node, Node newNode) {
             // If value is less than node's value, go left
-            if (newNode.value < node.value) { if (node.left===null) { node.left=newNode; } else {
-              this._insertNode(node.left, newNode); } } // If value is greater than node's value, go right else { if
-              (node.right===null) { node.right=newNode; } else { this._insertNode(node.right, newNode); } } } </div>
+            if (newNode.value < node.value) { if (node.left==null) { node.left=newNode; } else { insertNode(node.left,
+              newNode); } } else { // If value is greater than node's value, go right if (node.right==null) {
+              node.right=newNode; } else { insertNode(node.right, newNode); } } } </div>
           </div>
 
           <div class="content-section">
@@ -216,9 +221,9 @@
 
             <div class="code-block">
               // Linear Search implementation
-              function linearSearch(arr, target) {
-              for (let i = 0; i < arr.length; i++) { if (arr[i]===target) { return i; // Return index if found } }
-                return -1; // Return -1 if not found } // Time Complexity: O(n) // Space Complexity: O(1) </div>
+              public int linearSearch(int[] arr, int target) {
+              for (int i = 0; i < arr.length; i++) { if (arr[i]==target) { return i; // Return index if found } } return
+                -1; // Return -1 if not found } // Time Complexity: O(n) // Space Complexity: O(1) </div>
 
                 <h4 class="text-lg font-medium text-secondary mt-6">Binary Search</h4>
                 <p class="mb-4">Binary search is a divide-and-conquer algorithm that works on sorted arrays by
@@ -226,28 +231,28 @@
 
                 <div class="code-block">
                   // Binary Search implementation (iterative)
-                  function binarySearch(arr, target) {
-                  let left = 0;
-                  let right = arr.length - 1;
+                  public int binarySearch(int[] arr, int target) {
+                  int left = 0;
+                  int right = arr.length - 1;
 
-                  while (left <= right) { const mid=Math.floor((left + right) / 2); // Check if target is at mid if
-                    (arr[mid]===target) { return mid; } // If target is greater, ignore left half if (arr[mid] < target)
-                    { left=mid + 1; } // If target is smaller, ignore right half else { right=mid - 1; } } // Target not
+                  while (left <= right) { int mid=left + (right - left) / 2; // Check if target is at mid if
+                    (arr[mid]==target) { return mid; } // If target is greater, ignore left half if (arr[mid] < target)
+                    { left=mid + 1; } else { // If target is smaller, ignore right half right=mid - 1; } } // Target not
                     found return -1; } // Time Complexity: O(log n) // Space Complexity: O(1) </div>
 
                     <h4 class="text-lg font-medium text-secondary mt-6">Recursive Binary Search</h4>
                     <div class="code-block">
                       // Binary Search implementation (recursive)
-                      function binarySearchRecursive(arr, target, left = 0, right = arr.length - 1) {
+                      public int binarySearchRecursive(int[] arr, int target, int left, int right) {
                       // Base case: element not found
                       if (left > right) {
                       return -1;
                       }
 
-                      const mid = Math.floor((left + right) / 2);
+                      int mid = left + (right - left) / 2;
 
                       // Found the target
-                      if (arr[mid] === target) {
+                      if (arr[mid] == target) {
                       return mid;
                       }
 

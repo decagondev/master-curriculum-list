@@ -304,43 +304,36 @@
                             <div class="bg-darkgray p-4 rounded-lg">
                                 <h4 class="text-lg font-medium text-white mb-2">1. Count Frequency</h4>
                                 <div class="code-block">
-                                    <pre><code>function countFrequency(arr) {
-    const frequencyMap = new Map();
-    
-    for (const item of arr) {
-        frequencyMap.set(item, (frequencyMap.get(item) || 0) + 1);
+                                    <pre><code>public static Map&lt;Character, Integer&gt; countFrequency(String str) {
+    Map&lt;Character, Integer&gt; frequencyMap = new HashMap&lt;&gt;();
+    for (char c : str.toCharArray()) {
+        frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
     }
-    
     return frequencyMap;
 }
 
 // Example: Count letter frequency
-const letters = "programming";
-</code></pre>
+String letters = "programming";
+System.out.println(countFrequency(letters));</code></pre>
                                 </div>
                             </div>
 
                             <div class="bg-darkgray p-4 rounded-lg">
                                 <h4 class="text-lg font-medium text-white mb-2">2. First Non-Repeating Character</h4>
                                 <div class="code-block">
-                                    <pre><code>function firstNonRepeatingChar(str) {
-    // Create frequency map
-    const charCount = new Map();
-    
-    // First pass: count frequencies
-    for (const char of str) {
-        charCount.set(char, (charCount.get(char) || 0) + 1);
+                                    <pre><code>public static Character firstNonRepeatingChar(String str) {
+    Map&lt;Character, Integer&gt; charCount = new HashMap&lt;&gt;();
+    for (char c : str.toCharArray()) {
+        charCount.put(c, charCount.getOrDefault(c, 0) + 1);
     }
-    
-    // Second pass: find first char with count 1
-    for (const char of str) {
-        if (charCount.get(char) === 1) {
-            return char;
+    for (char c : str.toCharArray()) {
+        if (charCount.get(c) == 1) {
+            return c;
         }
     }
-    
     return null;
-}</code></pre>
+}
+</code></pre>
                                 </div>
                             </div>
                         </div>
@@ -357,19 +350,19 @@ const letters = "programming";
                         <div class="space-y-4">
                             <h3 class="text-xl font-medium text-primary">First Non-Repeating Character</h3>
                             <div class="bg-darkgray rounded-lg p-4">
-                                <pre class="text-gray-100"><code>function firstNonRepeatingChar(str) {
+                                <pre class="text-gray-100"><code>public static Character firstNonRepeatingChar(String str) {
     // Create frequency map
-    const charCount = new Map();
+    Map&lt;Character, Integer&gt; charCount = new HashMap&lt;&gt;();
     
     // First pass: count frequencies
-    for (const char of str) {
-        charCount.set(char, (charCount.get(char) || 0) + 1);
+    for (char c : str.toCharArray()) {
+        charCount.put(c, charCount.getOrDefault(c, 0) + 1);
     }
     
     // Second pass: find first char with count 1
-    for (const char of str) {
-        if (charCount.get(char) === 1) {
-            return char;
+    for (char c : str.toCharArray()) {
+        if (charCount.get(c) == 1) {
+            return c;
         }
     }
     
@@ -379,40 +372,34 @@ const letters = "programming";
 
                             <div class="bg-darkgray p-4 rounded-lg">
                                 <h4 class="text-lg font-medium text-white mb-2">Example Usage:</h4>
-                                <pre class="bg-gray-100 text-gray-900 p-2 rounded"><code>console.log(firstNonRepeatingChar("leetcode"));    // "l"
-console.log(firstNonRepeatingChar("aabbcc"));     // null
-console.log(firstNonRepeatingChar("aabbc"));      // "c"</code></pre>
+                                <pre class="bg-gray-100 text-gray-900 p-2 rounded"><code>System.out.println(firstNonRepeatingChar("leetcode"));    // 'l'
+System.out.println(firstNonRepeatingChar("aabbcc"));     // null
+System.out.println(firstNonRepeatingChar("aabbc"));      // 'c'
+</code></pre>
                             </div>
                         </div>
 
                         <div class="space-y-4">
                             <h3 class="text-xl font-medium text-primary">Optimized Single-Pass Solution</h3>
                             <div class="bg-darkgray rounded-lg p-4">
-                                <pre class="text-gray-100"><code>function firstNonRepeatingCharOptimized(str) {
-    const charInfo = new Map();
-    
-    // Single pass: track both count and first position
-    for (let i = 0; i < str.length; i++) {
-        const char = str[i];
-        if (!charInfo.has(char)) {
-            charInfo.set(char, { count: 1, firstIndex: i });
+                                <pre class="text-gray-100"><code>public static Character firstNonRepeatingCharOptimized(String str) {
+    Map&lt;Character, int[]&gt; charInfo = new HashMap&lt;&gt;();
+    for (int i = 0; i < str.length(); i++) {
+        char c = str.charAt(i);
+        if (!charInfo.containsKey(c)) {
+            charInfo.put(c, new int[]{1, i});
         } else {
-            const info = charInfo.get(char);
-            info.count++;
+            charInfo.get(c)[0]++;
         }
     }
-    
-    // Find character with count 1 and minimum index
-    let result = null;
-    let minIndex = str.length;
-    
-    for (const [char, info] of charInfo) {
-        if (info.count === 1 && info.firstIndex < minIndex) {
-            result = char;
-            minIndex = info.firstIndex;
+    Character result = null;
+    int minIndex = str.length();
+    for (Map.Entry&lt;Character, int[]&gt; entry : charInfo.entrySet()) {
+        if (entry.getValue()[0] == 1 && entry.getValue()[1] < minIndex) {
+            result = entry.getKey();
+            minIndex = entry.getValue()[1];
         }
     }
-    
     return result;
 }</code></pre>
                             </div>

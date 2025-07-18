@@ -150,16 +150,18 @@
       rather than contain them is crucial for working with linked data structures.</p>
 
     <div class="code-block">
-      // Example of object references in JavaScript
-      let obj1 = { value: 10 };
-      let obj2 = obj1; // obj2 references the same object
-
+      // Example of object references in Java (reference assignment)
+      class MyObject {
+      int value;
+      MyObject(int value) { this.value = value; }
+      }
+      MyObject obj1 = new MyObject(10);
+      MyObject obj2 = obj1; // obj2 references the same object
       obj2.value = 20;
-      console.log(obj1.value); // Outputs: 20
-
+      System.out.println(obj1.value); // Outputs: 20
       // Creating a new object breaks the reference
-      obj2 = { value: 30 };
-      console.log(obj1.value); // Still outputs: 20
+      obj2 = new MyObject(30);
+      System.out.println(obj1.value); // Still outputs: 20
     </div>
 
     <p>Understanding these reference concepts is essential when manipulating linked list nodes, as changing one node can
@@ -186,17 +188,21 @@
     </ul>
 
     <div class="code-block">
-      // Basic Node structure for a singly linked list
+      // Basic Node structure for a singly linked list (Java)
       class Node {
-      constructor(value) {
+      int value;
+      Node next;
+      Node(int value) {
       this.value = value;
       this.next = null;
       }
       }
-
-      // Basic LinkedList class
+      // Basic LinkedList class (Java)
       class LinkedList {
-      constructor() {
+      Node head;
+      Node tail;
+      int length;
+      LinkedList() {
       this.head = null;
       this.tail = null;
       this.length = 0;
@@ -230,63 +236,58 @@
       programming principles help organize the code and create a clean API for working with linked lists.</p>
 
     <div class="code-block">
-      // Complete LinkedList implementation
+      // Complete LinkedList implementation (Java)
       class Node {
-      constructor(value) {
+      int value;
+      Node next;
+      Node(int value) {
       this.value = value;
       this.next = null;
       }
       }
-
       class LinkedList {
-      constructor() {
+      Node head;
+      Node tail;
+      int length;
+      LinkedList() {
       this.head = null;
       this.tail = null;
       this.length = 0;
       }
-
       // Add to the end of the list
-      append(value) {
-      const newNode = new Node(value);
-
-      if (!this.head) {
+      public LinkedList append(int value) {
+      Node newNode = new Node(value);
+      if (this.head == null) {
       this.head = newNode;
       this.tail = newNode;
       } else {
       this.tail.next = newNode;
       this.tail = newNode;
       }
-
       this.length++;
       return this;
       }
-
       // Add to the beginning of the list
-      prepend(value) {
-      const newNode = new Node(value);
-
-      if (!this.head) {
+      public LinkedList prepend(int value) {
+      Node newNode = new Node(value);
+      if (this.head == null) {
       this.head = newNode;
       this.tail = newNode;
       } else {
       newNode.next = this.head;
       this.head = newNode;
       }
-
       this.length++;
       return this;
       }
-
       // Print the list (for debugging)
-      printList() {
-      const array = [];
-      let currentNode = this.head;
-
-      while (currentNode) {
-      array.push(currentNode.value);
+      public java.util.List&lt;Integer&gt; printList() {
+      java.util.List&lt;Integer&gt; array = new java.util.ArrayList&lt;&gt;();
+      Node currentNode = this.head;
+      while (currentNode != null) {
+      array.add(currentNode.value);
       currentNode = currentNode.next;
       }
-
       return array;
       }
       }
@@ -346,7 +347,7 @@
     </ul>
 
     <div class="code-block">
-      // Example planning pseudocode for insert method
+      // Example planning pseudocode for insert method (Java comments)
       /*
       insertAt(index, value):
       1. Validate index is within bounds (0 to length)
@@ -376,66 +377,50 @@
     <p>This video demonstrates implementing the core functionality of a linked list, focusing on common operations:</p>
 
     <div class="code-block">
-      // Implementation of key linked list methods
+      // Implementation of key linked list methods (Java)
       class LinkedList {
       // ... constructor and previous methods ...
-
       // Get node at specific index
-      getNodeAt(index) {
+      public Node getNodeAt(int index) {
       if (index &lt; 0 || index &gt;= this.length) return null;
-
-      let current = this.head;
-      for (let i = 0; i &lt; index; i++) {
+      Node current = this.head;
+      for (int i = 0; i &lt; index; i++) {
       current = current.next;
       }
       return current;
       }
-
       // Insert at specific position
-      insertAt(index, value) {
+      public LinkedList insertAt(int index, int value) {
       if (index &lt; 0 || index &gt; this.length) return this;
-      if (index === 0) return this.prepend(value);
-      if (index === this.length) return this.append(value);
-
-      const newNode = new Node(value);
-      const prevNode = this.getNodeAt(index - 1);
-
+      if (index == 0) return this.prepend(value);
+      if (index == this.length) return this.append(value);
+      Node newNode = new Node(value);
+      Node prevNode = this.getNodeAt(index - 1);
       newNode.next = prevNode.next;
       prevNode.next = newNode;
       this.length++;
-
       return this;
       }
-
       // Remove at specific position
-      removeAt(index) {
+      public Integer removeAt(int index) {
       if (index &lt; 0 || index &gt;= this.length) return null;
-
       // Remove head
-      if (index === 0) {
-      const removed = this.head;
+      if (index == 0) {
+      Node removed = this.head;
       this.head = this.head.next;
-
-      // If we removed the last item
-      if (this.length === 1) {
+      if (this.length == 1) {
       this.tail = null;
       }
-
       this.length--;
       return removed.value;
       }
-
       // Remove other position
-      const prevNode = this.getNodeAt(index - 1);
-      const removed = prevNode.next;
-
+      Node prevNode = this.getNodeAt(index - 1);
+      Node removed = prevNode.next;
       prevNode.next = removed.next;
-
-      // If we removed the tail
-      if (index === this.length - 1) {
+      if (index == this.length - 1) {
       this.tail = prevNode;
       }
-
       this.length--;
       return removed.value;
       }
@@ -479,19 +464,16 @@
     </ul>
 
     <div class="code-block">
-      // Example: Finding the middle node using the "tortoise and hare" approach
-      function findMiddle(linkedList) {
-      if (!linkedList.head) return null;
-
-      let slow = linkedList.head;
-      let fast = linkedList.head;
-
+      // Example: Finding the middle node using the "tortoise and hare" approach (Java)
+      public static Node findMiddle(LinkedList linkedList) {
+      if (linkedList.head == null) return null;
+      Node slow = linkedList.head;
+      Node fast = linkedList.head;
       // Fast pointer moves twice as fast as slow
-      while (fast && fast.next) {
+      while (fast != null &amp;&amp; fast.next != null) {
       slow = slow.next;
       fast = fast.next.next;
       }
-
       // When fast reaches the end, slow is at the middle
       return slow;
       }
