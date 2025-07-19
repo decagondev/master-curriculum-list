@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DS3 Module 3 - Linear Algebra</title>
-    <link rel="stylesheet" href="../../../css/style.css">
+    <link rel="stylesheet" href="../../../css/style.css" />
 </head>
 
 <body>
@@ -24,7 +24,9 @@
                     </div>
                 </li>
                 <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
-                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
+                <li>
+                    <a href="../../sprint-challenge/index.html">Sprint Challenge</a>
+                </li>
             </ul>
         </nav>
     </header>
@@ -34,9 +36,12 @@
 
         <section class="content-box">
             <h2>Module Overview</h2>
-            <p>In this module, you will learn about the fundamentals of linear algebra and its applications in data
-                science. You'll explore vectors, matrices, linear transformations, and how they relate to linear
-                regression models. These concepts form the mathematical foundation for many machine learning algorithms.
+            <p>
+                In this module, you will learn about the fundamentals of linear
+                algebra and its applications in data science. You'll explore vectors,
+                matrices, linear transformations, and how they relate to linear
+                regression models. These concepts form the mathematical foundation for
+                many machine learning algorithms.
             </p>
         </section>
 
@@ -44,16 +49,1165 @@
             <h2>Learning Objectives</h2>
             <ul>
                 <li>Define a Vector and Calculate a Vector Length and Dot Product</li>
-                <li>Explain Cosine Similarity and Compute the Similarity Between Two Vectors</li>
-                <li>Define a Matrix and Calculate a Matrix Dot Product, Transpose, and Inverse</li>
-                <li>Use Linear Algebra to Solve for Linear Regression Coefficients</li>
+                <li>
+                    Explain Cosine Similarity and Compute the Similarity Between Two
+                    Vectors
+                </li>
+                <li>
+                    Define a Matrix and Calculate a Matrix Dot Product, Transpose, and
+                    Inverse
+                </li>
+                <li>
+                    Use Linear Algebra to Solve for Linear Regression Coefficients
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>
+                Objective 01 - Define a Vector and Calculate a Vector Length and Dot
+                Product
+            </h2>
+            <h3>Overview</h3>
+            <p>
+                We're finally getting to the topic you have been waiting for: linear
+                algebra. This module aims not to teach you a lot of linear algebra but
+                instead to introduce you to the basics to begin to apply those
+                concepts to your work.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                We're going to introduce the notation used in linear algebra and
+                repeat the Python calculations so that you will have practice with
+                both. You do not need to work through the material in this section by
+                hand, but please do so if that helps you better understand the
+                concepts!
+            </p>
+            <h3>Vectors</h3>
+            <p>
+                You may have already encountered vectors in a science or math class: a
+                vector has magnitude and direction. That type of vector was probably a
+                two-dimensional vector that was easy to graph on paper and then
+                measure its properties. As we'll see later in this section, it's
+                relatively easy to plot two- and three-dimensional vectors. But first,
+                let's look at the notation and create some vectors.
+            </p>
+            <div style="display: flex; align-items: center; gap: 10px">
+                <p>Two-dimensional vector:</p>
+                <img src="https://i.upmath.me/svg/%5Cvec%7Ba%7D%20%3D%20%5Cbegin%7Bbmatrix%7D7%20%26%209%5Cend%7Bbmatrix%7D"
+                    alt="\vec{a} = \begin{bmatrix}7 &amp; 9\end{bmatrix}" loading="lazy"
+                    style="background-color: aqua; padding: 10px" />
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px">
+                <p>Three-dimensional vector:</p>
+                <img src="https://i.upmath.me/svg/%5Cvec%7Bb%7D%20%3D%20%5Cbegin%7Bbmatrix%7D4%20%26%207%20%26%202%5Cend%7Bbmatrix%7D"
+                    alt="\vec{b} = \begin{bmatrix}4 &amp; 7 &amp; 2\end{bmatrix}" loading="lazy"
+                    style="background-color: aqua; padding: 10px" />
+            </div>
+            <p>
+                A characteristic of a vector is its dimension. Of course, a vector can
+                have infinite dimensions, but we're going to stick to vectors with
+                much lower dimensions. Here's an example of an 11-dimension vector:
+            </p>
+            <p>
+                <span class="math_equation_latex fade-in-equation"><span class="MathJax_Preview"
+                        style="color: inherit"></span><span class="MathJax_SVG" id="MathJax-Element-1-Frame"
+                        tabindex="0" style="font-size: 100%; display: inline-block; position: relative"
+                        data-mathml='&lt;math xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;mrow class="MJX-TeXAtom-ORD"&gt;&lt;mover&gt;&lt;mi&gt;c&lt;/mi&gt;&lt;mo stretchy="false"&gt;&amp;#x2192;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mo stretchy="false"&gt;[&lt;/mo&gt;&lt;mn&gt;3&lt;/mn&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mn&gt;4&lt;/mn&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mn&gt;5&lt;/mn&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mn&gt;9&lt;/mn&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mn&gt;6&lt;/mn&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mn&gt;5&lt;/mn&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mn&gt;3&lt;/mn&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mn&gt;5&lt;/mn&gt;&lt;mo stretchy="false"&gt;]&lt;/mo&gt;&lt;/math&gt;'
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="24.209ex"
+                            height="2.725ex" viewBox="0 -852.5 10423.2 1173.4" role="img" focusable="false"
+                            style="vertical-align: -0.745ex" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-63" x="18" y="0"></use>
+                                <use xlink:href="#MJMAIN-20D7" x="526" y="7"></use>
+                                <use xlink:href="#MJMAIN-3D" x="804" y="0"></use>
+                                <use xlink:href="#MJMAIN-5B" x="1860" y="0"></use>
+                                <use xlink:href="#MJMAIN-33" x="2139" y="0"></use>
+                                <use xlink:href="#MJMAIN-31" x="2889" y="0"></use>
+                                <use xlink:href="#MJMAIN-34" x="3640" y="0"></use>
+                                <use xlink:href="#MJMAIN-31" x="4390" y="0"></use>
+                                <use xlink:href="#MJMAIN-35" x="5141" y="0"></use>
+                                <use xlink:href="#MJMAIN-39" x="5891" y="0"></use>
+                                <use xlink:href="#MJMAIN-32" x="6642" y="0"></use>
+                                <use xlink:href="#MJMAIN-36" x="7392" y="0"></use>
+                                <use xlink:href="#MJMAIN-35" x="8143" y="0"></use>
+                                <use xlink:href="#MJMAIN-33" x="8893" y="0"></use>
+                                <use xlink:href="#MJMAIN-35" x="9644" y="0"></use>
+                                <use xlink:href="#MJMAIN-5D" x="10144" y="0"></use>
+                            </g>
+                        </svg>
+                        <span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <mrow class="MJX-TeXAtom-ORD">
+                                    <mover>
+                                        <mi>c</mi>
+                                        <mo stretchy="false">→</mo>
+                                    </mover>
+                                </mrow>
+                                <mo>=</mo>
+                                <mo stretchy="false">[</mo>
+                                <mn>3</mn>
+                                <mtext>&nbsp;</mtext>
+                                <mn>1</mn>
+                                <mtext>&nbsp;</mtext>
+                                <mn>4</mn>
+                                <mtext>&nbsp;</mtext>
+                                <mn>1</mn>
+                                <mtext>&nbsp;</mtext>
+                                <mn>5</mn>
+                                <mtext>&nbsp;</mtext>
+                                <mn>9</mn>
+                                <mtext>&nbsp;</mtext>
+                                <mn>2</mn>
+                                <mtext>&nbsp;</mtext>
+                                <mn>6</mn>
+                                <mtext>&nbsp;</mtext>
+                                <mn>5</mn>
+                                <mtext>&nbsp;</mtext>
+                                <mn>3</mn>
+                                <mtext>&nbsp;</mtext>
+                                <mn>5</mn>
+                                <mo stretchy="false">]</mo>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-1">
+              \vec{c}=[3 \space1\space 4\space1\space 5\space 9\space 2\space 6\space 5\space 3\space 5]
+            </script>
+                </span>
+            </p>
+            <p>
+                Let's rewrite our vectors, but this time we'll express them in Python.
+                The numpy library you have already been using has a data structure
+                called an array, which is essentially a vector.
+            </p>
+            <pre><code>import numpy as np
+
+# Two-dimensonal vector
+my_2dvector = np.array([7, 9])
+print('2D vector:', my_2dvector)
+
+# Three-dimensonal vector
+my_3dvector = np.array([4, 7, 2])
+print('3D vector:', my_3dvector)
+</code></pre>
+            <pre>
+2D vector: [7 9]
+3D vector: [4 7 2]</pre>
+            <p>
+                We can also plot the two- and three-dimensional vectors.
+                Unfortunately, because we live in a three-dimensional world, we can't
+                easily visualize the dimensions beyond that. But that doesn't mean the
+                higher dimensional vectors aren't helpful - they are, and we'll be
+                using them throughout the course.
+            </p>
+            <div style="display: flex; align-items: center; gap: 10px">
+                <p>First, we'll plot our two-dimensional vector :</p>
+                <img src="https://i.upmath.me/svg/%5Cvec%7Ba%7D%20%3D%20%5Cbegin%7Bbmatrix%7D7%20%26%209%5Cend%7Bbmatrix%7D"
+                    alt="\vec{a} = \begin{bmatrix}7 &amp; 9\end{bmatrix}" loading="lazy"
+                    style="background-color: aqua; padding: 10px" />
+            </div>
+            <p>
+                Think of it as extending seven units in the x-direction and none-units
+                in the y-direction.
+            </p>
+            <pre><code>import matplotlib.pyplot as plt
+%matplotlib inline
+
+fig, ax = plt.subplots(1,1)
+ax.arrow(0, 0, 7, 9, width=.075)
+ax.set_xlim([0, 10]); ax.set_ylim([0, 10])
+
+#plt.show()
+
+plt.clf()
+</code></pre>
+            <pre>
+&lt;Figure size 432x288 with 0 Axes&gt;
+mod4_obj1_vector1.png</pre>
+            <p>
+                <img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_1/sprint_3/new/mod4_obj1_vector1.png"
+                    alt="mod4_obj1_vector1.png" loading="lazy" />
+            </p>
+            <p>
+                Then we'll plot our three-dimensional vector. Again, think of it as
+                extending four units in the x-direction, seven units in the
+                y-direction, and two units in the z-direction.
+            </p>
+            <pre><code>from mpl_toolkits import mplot3d
+
+# 3D vector
+c = [4,7,2]
+vector = np.array([[0, 0, 0, c[0], c[1], c[2]]])
+# Create variables for plotting
+X, Y, Z, U, V, W = zip(*vector)
+# Plot!
+ax = plt.axes(projection='3d')
+ax.quiver(X, Y, Z, U, V, W, length=1)
+ax.set_xlim([0, 10]); ax.set_ylim([0, 10]); ax.set_zlim([0, 10])
+
+plt.clf()
+</code></pre>
+            <pre>&lt;Figure size 432x288 with 0 Axes&gt;</pre>
+            <p>
+                <img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_1/sprint_3/new/mod4_obj1_vector3D.png"
+                    alt="mod4_obj1_vector3D.png" loading="lazy" />
+            </p>
+            <p>
+                Plotting a 2D vector was pretty easy; plotting the 3D vector begins to
+                involve more code. But it's important to visualize even these simple
+                vectors.
+            </p>
+            <h3>Row and Column vectors</h3>
+            <div style="display: flex; align-items: center; gap: 10px">
+                <p>Vectors are defined as a row vector:</p>
+                <img src="https://i.upmath.me/svg/%5Cvec%7Ba%7D%20%3D%20%5Cbegin%7Bbmatrix%7D8%20%26%206%20%26%207%20%26%205%20%26%203%20%26%200%20%26%209%5Cend%7Bbmatrix%7D"
+                    alt="\vec{a} = \begin{bmatrix}8 &amp; 6 &amp; 7 &amp; 5 &amp; 3 &amp; 0 &amp; 9\end{bmatrix}"
+                    loading="lazy" style="background-color: aqua; padding: 10px" />
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px">
+                <p>And they can be defined as a column vector:</p>
+                <img src="https://i.upmath.me/svg/%5Cvec%7Ba%7D%20%3D%20%5Cbegin%7Bbmatrix%7D8%20%5C%5C%206%20%5C%5C%207%20%5C%5C%205%20%5C%5C%203%20%5C%5C%200%20%5C%5C%209%5Cend%7Bbmatrix%7D"
+                    alt="\vec{a} = \begin{bmatrix}8 \\ 6 \\ 7 \\ 5 \\ 3 \\ 0 \\ 9\end{bmatrix}" loading="lazy"
+                    style="background-color: aqua; padding: 10px" />
+            </div>
+            <p>
+                Now we'll look at these same vectors expressed as numpy arrays in
+                Python.
+            </p>
+            <pre><code># Row vector
+my_row_vector = np.array([8,6,7,5,3,0,9])
+print('Row vector:', my_row_vector)
+
+# Column vector
+# reshape(-1,1): specifies one column, unknown rows 
+my_column_vector = np.array([8,6,7,5,3,0,9]).reshape(-1,1)
+print('Column vector:\n', my_column_vector)
+</code></pre>
+            <pre>
+Row vector: [8 6 7 5 3 0 9]
+Column vector:
+ [[8]
+ [6]
+ [7]
+ [5]
+ [3]
+ [0]
+ [9]]
+            </pre>
+            <h3>Vector Math</h3>
+            <h4>Vector length</h4>
+            <p>
+                We can also do math with vectors. As we said earlier, vectors have a
+                magnitude and direction. The magnitude of a vectors is just it's
+                length. We determine the length by taking the sum of the squares of
+                each element and then take the square root:
+            </p>
+            <div style="display: flex; align-items: center; gap: 10px">
+                <p>Three-dimensional vector:</p>
+                <img src="https://i.upmath.me/svg/%5Cvec%7Bb%7D%20%3D%20%5Cbegin%7Bbmatrix%7D4%20%26%207%20%26%202%5Cend%7Bbmatrix%7D"
+                    alt="\vec{b} = \begin{bmatrix}4 &amp; 7 &amp; 2\end{bmatrix}" loading="lazy"
+                    style="background-color: aqua; padding: 10px" />
+            </div>
+            <p>
+                <img src="https://i.upmath.me/svg/%7C%7C%5Cvec%7Bb%7D%7C%7C%20%3D%20%5Csqrt%7Bb_1%5E2%20%2B%20b_2%5E2%20%2B%20b_3%5E2%7D%20%3D%20%5Csqrt%7B4%5E2%20%2B%207%5E2%20%2B%202%5E2%7D%20%3D%20%5Csqrt%7B16%2B49%2B4%7D%20%3D%20%5Csqrt%7B69%7D%20%3D%208.3"
+                    alt="||\vec{b}|| = \sqrt{b_1^2 + b_2^2 + b_3^2} = \sqrt{4^2 + 7^2 + 2^2} = \sqrt{16+49+4} = \sqrt{69} = 8.3"
+                    align="center" loading="lazy" style="background-color: aqua; padding: 10px" />
+            </p>
+
+            <h4>Vector dot product</h4>
+            <p>
+                The dot product is a kind of multiplication where we're applying one
+                vector to another. It can also be thought of as applying the
+                directional growth of one vector to another.
+            </p>
+            <p></p>
+            <p>
+                We'll calculate the dot product for vectors
+                <span class="math_equation_latex fade-in-equation"><span class="MathJax_Preview"
+                        style="color: inherit"></span><span class="MathJax_SVG" id="MathJax-Element-2-Frame"
+                        tabindex="0" style="font-size: 100%; display: inline-block; position: relative"
+                        data-mathml='&lt;math xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;mrow class="MJX-TeXAtom-ORD"&gt;&lt;mover&gt;&lt;mi&gt;b&lt;/mi&gt;&lt;mo stretchy="false"&gt;&amp;#x2192;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;/math&gt;'
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1.094ex"
+                            height="2.725ex" viewBox="0 -1065.1 471 1173.4" role="img" focusable="false"
+                            style="vertical-align: -0.252ex" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-62" x="20" y="0"></use>
+                                <use xlink:href="#MJMAIN-20D7" x="470" y="259"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <mrow class="MJX-TeXAtom-ORD">
+                                    <mover>
+                                        <mi>b</mi>
+                                        <mo stretchy="false">→</mo>
+                                    </mover>
+                                </mrow>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-2">
+              \vec{b}
+            </script>
+                </span>
+                and
+                <span class="math_equation_latex fade-in-equation"><span class="MathJax_Preview"
+                        style="color: inherit"></span><span class="MathJax_SVG" id="MathJax-Element-3-Frame"
+                        tabindex="0" style="font-size: 100%; display: inline-block; position: relative"
+                        data-mathml='&lt;math xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;mrow class="MJX-TeXAtom-ORD"&gt;&lt;mover&gt;&lt;mi&gt;c&lt;/mi&gt;&lt;mo stretchy="false"&gt;&amp;#x2192;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;/math&gt;'
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1.223ex"
+                            height="2.108ex" viewBox="0 -799.3 526.6 907.6" role="img" focusable="false"
+                            style="vertical-align: -0.252ex" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-63" x="18" y="0"></use>
+                                <use xlink:href="#MJMAIN-20D7" x="526" y="7"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <mrow class="MJX-TeXAtom-ORD">
+                                    <mover>
+                                        <mi>c</mi>
+                                        <mo stretchy="false">→</mo>
+                                    </mover>
+                                </mrow>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-3">
+              \vec{ c}
+            </script>
+                </span>
+                :
+            </p>
+            <p>
+                <img src="https://i.upmath.me/svg/%0A%5Cvec%7Bb%7D%20%3D%20%5Cbegin%7Bbmatrix%7D4%20%26%207%20%26%202%5Cend%7Bbmatrix%7D%0A%5Cqquad%0A%5Cvec%7Bc%7D%20%3D%20%5Cbegin%7Bbmatrix%7D%206%20%26%201%20%26%207%5Cend%7Bbmatrix%7D%0A"
+                    alt="
+                    \vec{b} = \begin{bmatrix}4 &amp; 7 &amp; 2\end{bmatrix}
+                    \qquad
+                    \vec{c} = \begin{bmatrix} 6 &amp; 1 &amp; 7\end{bmatrix}
+                    " align="center" loading="lazy" style="background-color: aqua; padding: 10px" />
+            </p>
+            <p>The dot product notation looks like this:</p>
+            <p>
+                <img src="https://i.upmath.me/svg/%5Cvec%7Bb%7D%20%5Ccdot%20%5Cvec%7Bc%7D" alt="\vec{b} \cdot \vec{c}"
+                    align="center" loading="lazy" style="background-color: aqua; padding: 10px" />
+            </p>
+
+            <p>
+                It represents the sum of the element-wise multiplication of the two
+                vectors:
+            </p>
+            <p style="background-color: aqua; padding: 0 10px">
+                <img src="
+                https://i.upmath.me/svg/%5Cvec%7Bb%7D%20%5Ccdot%20%5Cvec%7Bc%7D%20%3D%20b_%7B1%7Dc_%7B1%7D%20%2B%20b_%7B2%7Dc_%7B2%7D%20%2B%20b_%7B3%7Dc_%7B3%7D"
+                    alt="\vec{b} \cdot \vec{c} = b_{1}c_{1} + b_{2}c_{2} + b_{3}c_{3}" loading="lazy" />
+                <img src="https://i.upmath.me/svg/%20%3D%20(4)(6)%20%2B%20(7)(1)%20%2B%20(2)(7)%20"
+                    alt=" = (4)(6) + (7)(1) + (2)(7) " loading="lazy" />
+                <img src="https://i.upmath.me/svg/%20%3D%2024%20%2B%207%20%2B%2014%20" alt=" = 24 + 7 + 14 "
+                    loading="lazy" />
+                <img src="https://i.upmath.me/svg/%20%3D%2045%20" alt=" = 45 " loading="lazy" />
+            </p>
+            <p>
+                We can also do vector math in Python. Let's reproduce the vector
+                length and dot product calculations we just did, only using numpy.
+            </p>
+            <pre><code># Vector length
+b = np.array([4, 7, 2])
+np.linalg.norm(b)
+</code></pre>
+            <pre>8.306623862918075</pre>
+            <pre><code># Dot product of two arrays (vectors)
+b = np.array([4, 7, 2])
+c = np.array([6, 1, 7])
+np.dot(b, c)
+</code></pre>
+            <pre>45</pre>
+            <p>Both of our calculations agree!</p>
+            <h3>Challenge</h3>
+            <p>Now it's your turn. Here are a few tasks to practice:</p>
+            <ul>
+                <li>
+                    plot a vector (make sure to change the limits on your plot if
+                    needed)
+                </li>
+                <li>create and print out both row and column vectors (in Python)</li>
+                <li>calculate the length of your vector (in Python)</li>
+                <li>take the dot product of two vectors (in Python)</li>
+            </ul>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://youtu.be/fNk_zzaMoSs" target="_blank" rel="noopener noreferrer">3Blue1Brown -
+                        Vectors, what even are they?</a>
+                </li>
+                <li>
+                    <a href="https://medium.com/analytics-vidhya/8-basic-things-about-linear-algebra-that-every-data-scientist-should-know-c5a266587cac"
+                        target="_blank" rel="noopener noreferrer">8 Basic things about Linear Algebra that Every Data
+                        Scientist
+                        should know</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>
+                Objective 02 - Explain Cosine Similarity and Compute the Similarity
+                Between Two Vectors
+            </h2>
+            <h3>Overview</h3>
+            <p>
+                Now that we've had some practice with vectors and a few associated
+                math operations, we can start learning about more exciting concepts.
+                In some situations, we may want to know more than the length of a
+                vector or its dot product with another vector. For example, comparing
+                the similarity of vectors is vital in natural language processing,
+                where a vector can represent words themselves.
+            </p>
+            <p>
+                To compare the similarity of two vectors, we need to determine
+                something called the cosine similarity.
+            </p>
+            <h3>Cosine similarity</h3>
+            <p>
+                We use cosine similarity when we want to compare vectors and how
+                similar they are. The angle between vectors is a measure of their
+                similarity. First, let's look at vectors that point in the same
+                direction and those in the opposite direction.
+            </p>
+            <pre><code># Import libraries
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline</code></pre>
+            <pre><code># Plot identical and opposite vectors
+
+fig, [ax1, ax2, ax3] = plt.subplots(1,3, figsize=(12,3))
+
+# vector1 = [2, 4]; vector2 = [4, 8]
+# Same direction, y is twice as long
+ax1.arrow(0, 0, 2, 4, color='k', width=.15)
+ax1.arrow(0, 0, 4, 8, color='orange', width=.075)
+ax1.set_xlim([-1, 10]); ax1.set_ylim([-1, 10])
+ax1.set_title("Vectors: same direction")
+
+# vector1 = [0, 4]; vector2 = [4, 0]
+# Right angle vectors
+ax2.arrow(0, 0, 0, 4, color='k', width=.075)
+ax2.arrow(0, 0, 4, 0, color='orange', width=.075)
+ax2.set_xlim([-1, 10]); ax2.set_ylim([-1, 10])
+ax2.set_title("Vectors: perpendicular")
+
+# vector1 = [-2, -2]; vector2 = [2, 2]
+# Same length, opposite direction
+ax3.arrow(4, 4, -2, -2, color='k', width=.075)
+ax3.arrow(4, 4, 2, 2, color='orange', width=.075)
+ax3.set_xlim([-1, 10]); ax3.set_ylim([-1, 10])
+ax3.set_title("Vectors: opposite direction")
+
+plt.savefig('/Users/nicole/data_science_LS/data-science-canvas-images/unit_1/sprint_3/new/mod4_obj2_vector_angles.png',
+           transparent=False, dpi=100)
+
+#plt.show()
+plt.clf()</code></pre>
+            <pre><code>&lt;Figure size 864x216 with 0 Axes&gt;</code></pre>
+            <p>
+                <img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_1/sprint_3/new/mod4_obj2_vector_angles.png"
+                    alt="mod4_obj2_vector_angles.png" loading="lazy" />
+            </p>
+            <p>
+                On the plot on the left, the vectors point in the same direction. The
+                orange (lighter colored) vector is twice as long as the black vector.
+                The angle between the vectors is 0. On the right, the vectors have the
+                same length but point in the opposite direction. The angle between
+                them is 180 degrees. The middle plot has perpendicular (or orthogonal)
+                vectors to each other, and the angle between them is 90 degrees.
+            </p>
+            <p>
+                Remember that the cosine is the angle between the hypotenuse and the
+                adjacent side of a triangle.
+            </p>
+            <h3>cosine</h3>
+            <p>
+                The cosine of the angle is written as the length of the adjacent side
+                over the length of the hypotenuse:
+            </p>
+            <p>
+                <img src="https://i.upmath.me/svg/%20%5Ccos%20%5Ctheta%20%3D%20%5Cfrac%7Badjacent%7D%7Bhypotenuse%7D%20"
+                    alt=" \cos \theta = \frac{adjacent}{hypotenuse} " align="center" loading="lazy"
+                    style="background-color: aqua; padding: 10px" />
+            </p>
+            <p>Cosine function for different values of \(\theta\):</p>
+            <ul style="background-color: aqua; padding: 0 10px">
+                <li>
+                    <img src="https://i.upmath.me/svg/%20%5Ccos%200%20%3D%201%20" alt=" \cos 0 = 1 " align="center"
+                        loading="lazy" />
+                </li>
+                <li>
+                    <img src="https://i.upmath.me/svg/%20%5Ccos%2090%20%3D%200%20" alt=" \cos 90 = 0 " align="center"
+                        loading="lazy" />
+                </li>
+                <li>
+                    <img src="https://i.upmath.me/svg/%20%5Ccos%20180%20%3D%20-1" alt=" \cos 180 = -1" align="center"
+                        loading="lazy" />
+                </li>
+            </ul>
+            <p>
+                Let's plot a pair of vectors where the angle between them is not 0,
+                90, or 180 degrees:
+            </p>
+            <pre><code># Vector plots
+
+x = np.array([6, 4])
+y = np.array([3, 7])
+
+fig, ax = plt.subplots(1,1)
+ax.arrow(0, 0, x[0], x[1], color='k', width=.075)
+ax.arrow(0, 0, y[0], y[1], color='orange', width=.075)
+ax.set_xlim([-1, 10]); ax.set_ylim([-1, 10])
+
+plt.show()
+plt.clf()</code></pre>
+            <pre><code>&lt;Figure size 432x288 with 0 Axes&gt;</code></pre>
+            <p>
+                <img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_1/sprint_3/new/mod4_obj2_vector_angles2.png"
+                    alt="mod4_obj2_vector_angles2.png" loading="lazy" />
+            </p>
+            <p>
+                These vectors point in different directions. We can calculate the
+                cosine of the angle between these vectors (or any two vectors) with
+                the following equation:
+            </p>
+            <p>
+                For vectors
+                <img src="https://i.upmath.me/svg/%5Cmathbf%20%7BA%7D" alt="\mathbf {A}" loading="lazy"
+                    style="background-color: aqua; padding: 10px" />
+                and
+                <img src="https://i.upmath.me/svg/%5Cmathbf%20%7BB%7D" alt="\mathbf {B}" loading="lazy"
+                    style="background-color: aqua; padding: 10px" />:
+            </p>
+            <p>
+                <img src="https://i.upmath.me/svg/%5Cmathbf%20%7BA%7D%20%5Ccdot%20%5Cmathbf%20%7BB%7D%20%3D%5Cleft%5C%7C%5Cmathbf%20%7BA%7D%20%5Cright%5C%7C%5Cleft%5C%7C%5Cmathbf%20%7BB%7D%20%5Cright%5C%7C%5Ccos%20%5Ctheta"
+                    alt="\mathbf {A} \cdot \mathbf {B} =\left\|\mathbf {A} \right\|\left\|\mathbf {B} \right\|\cos \theta"
+                    align="center" loading="lazy" style="background-color: aqua; padding: 10px" />
+            </p>
+            <p>
+                Solving for
+                <span class="math_equation_latex fade-in-equation"><span class="MathJax_Preview"
+                        style="color: inherit"></span><span class="MathJax_SVG" id="MathJax-Element-1-Frame"
+                        tabindex="0" style="font-size: 100%; display: inline-block; position: relative"
+                        data-mathml='&lt;math xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;mi&gt;cos&lt;/mi&gt;&lt;mo&gt;&amp;#x2061;&lt;/mo&gt;&lt;mi&gt;&amp;#x03B8;&lt;/mi&gt;&lt;/math&gt;'
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="4.589ex"
+                            height="2.108ex" viewBox="0 -799.3 1975.7 907.6" role="img" focusable="false"
+                            style="vertical-align: -0.252ex" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMAIN-63"></use>
+                                <use xlink:href="#MJMAIN-6F" x="444" y="0"></use>
+                                <use xlink:href="#MJMAIN-73" x="945" y="0"></use>
+                                <use xlink:href="#MJMATHI-3B8" x="1506" y="0"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <mi>cos</mi>
+                                <mo>⁡</mo>
+                                <mi>θ</mi>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-1">
+              \cos \theta
+            </script>
+                </span>
+                we get
+            </p>
+            <p>
+                <img src="https://i.upmath.me/svg/%5Ccos%20%5Ctheta%3D%20%5Cfrac%7B%5Cmathbf%20%7BA%7D%20%5Ccdot%20%5Cmathbf%20%7BB%7D%20%7D%7B%5Cleft%5C%7C%5Cmathbf%20%7BA%7D%20%5Cright%5C%7C%5Cleft%5C%7C%5Cmathbf%20%7BB%7D%20%5Cright%5C%7C%7D"
+                    alt="\cos \theta= \frac{\mathbf {A} \cdot \mathbf {B} }{\left\|\mathbf {A} \right\|\left\|\mathbf {B} \right\|}"
+                    align="center" loading="lazy" style="background-color: aqua; padding: 10px" />
+            </p>
+            <p>
+                The quantity
+                <img src="https://i.upmath.me/svg/%5Cmathbf%20%7BA%7D%20%5Ccdot%20%5Cmathbf%20%7BB%7D"
+                    alt="\mathbf {A} \cdot \mathbf {B}" loading="lazy" style="background-color: aqua; padding: 10px" />
+                is the dot product and
+                <img src="https://i.upmath.me/svg/%5Cleft%5C%7C%5Cmathbf%20%7BA%7D%20%5Cright%5C%7C%5Cleft%5C%7C%5Cmathbf%20%7BB%7D%20%5Cright%5C%7C"
+                    alt="\left\|\mathbf {A} \right\|\left\|\mathbf {B} \right\|" loading="lazy"
+                    style="background-color: aqua; padding: 10px" />
+                is the product of the lengths of the vectors.
+            </p>
+            <p>
+                Let's use Python to calculate the cosine of the angle between these
+                vectors.
+            </p>
+            <pre><code># Calculate cosine theta
+
+# Vectors
+x = np.array([6, 4])
+y = np.array([3, 7])
+
+# Cosine theta (cosine similarity)
+np.dot(x, y) / (np.linalg.norm(x) * np.linalg.norm(y))</code></pre>
+            <pre><code>0.8376105968386142</code></pre>
+            <p>
+                Our value for
+                <img src="https://i.upmath.me/svg/%5Ccos%20%5Ctheta%20%3D%200.84" alt="\cos \theta = 0.84"
+                    loading="lazy" style="background-color: aqua; padding: 10px" />
+                is between -1 and 1 as we expected.
+                <span style="
+              color: var(--ic-brand-font-color-dark);
+              font-family: inherit;
+              font-size: 1rem;
+            ">If the vectors had an angle of 0, we’d have a result of 1; since
+                    these vectors have an angle a little bit more than 0 degrees, the
+                    value for </span><img style="
+              color: var(--ic-brand-font-color-dark);
+              font-family: inherit;
+              font-size: 1rem;
+              background-color: aqua;
+              padding: 10px;
+              margin: 0;
+            " src="https://i.upmath.me/svg/%5Ccos%20%5Ctheta" alt="\cos \theta" loading="lazy" /><span
+                    style="font-size: 1rem; background-color: aqua; padding: 10px">
+                    is slightly smaller than 1.</span>
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                Try doing your own
+                <img src="https://i.upmath.me/svg/%5Ccos%20%5Ctheta" alt="\cos \theta" loading="lazy"
+                    style="background-color: aqua; padding: 10px; margin: 0" />
+                calculations. You should try to plot the vectors first and then
+                calculate the cosine similarity and see if it agrees with what you
+                think it should be.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://www.youtube.com/watch?v=fNk_zzaMoSs" target="_blank"
+                        rel="noopener noreferrer">3Blue1Brown - Vectors, what even are they?</a>
+                </li>
+                <li>
+                    <a href="https://medium.com/analytics-vidhya/8-basic-things-about-linear-algebra-that-every-data-scientist-should-know-c5a266587cac"
+                        target="_blank" rel="noopener noreferrer">8 Basic things about Linear Algebra that Every Data
+                        Scientist
+                        should know</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>
+                Objective 03 - Define a Matrix and Calculate a Matrix Dot Product,
+                Transpose, and Inverse
+            </h2>
+            <h3>Overview</h3>
+            <p>
+                Now that we've practiced some mathematical operations with vectors, we
+                can continue to expand our linear algebra knowledge and move onto
+                matrices. As with vectors, you've probably also worked with matrices
+                in Python without really focusing on what they were.
+            </p>
+            <p>
+                Remember the column vector from earlier in the module? We can think of
+                a column vector as a one-dimensional matrix. If we add more columns,
+                then we have additional dimensions and a matrix.
+            </p>
+            <p style="display: flex; align-items: center; gap: 10px">
+                Column vector:
+                <img src="https://i.upmath.me/svg/%5Cvec%7Ba%7D%20%3D%20%5Cbegin%7Bbmatrix%7D1%20%5C%5C%204%20%5C%5C%207%20%5Cend%7Bbmatrix%7D"
+                    alt="\vec{a} = \begin{bmatrix}1 \\ 4 \\ 7 \end{bmatrix}" loading="lazy"
+                    style="background-color: aqua; padding: 10px" />
+            </p>
+            <p>
+                Let's combine some more column vectors (not addition but just adding
+                more columns):
+            </p>
+            <p>
+                <img src="https://i.upmath.me/svg/%5Ctext%7BCombining%20this%20vector%7D%5Cbegin%7Bbmatrix%7D1%20%5C%5C%204%20%5C%5C%207%20%5Cend%7Bbmatrix%7D%20%5Ctext%7Band%20this%20one%7D%20%5Cbegin%7Bbmatrix%7D2%20%5C%5C%205%20%5C%5C%208%20%5Cend%7Bbmatrix%7D%20%5Ctext%7Bresults%20in%20this%20matrix%7D"
+                    alt="\text{Combining this vector}\begin{bmatrix}1 \\ 4 \\ 7 \end{bmatrix} \text{and this one} \begin{bmatrix}2 \\ 5 \\ 8 \end{bmatrix} \text{results in this matrix}"
+                    align="center" loading="lazy" style="background-color: aqua; padding: 10px" />
+            </p>
+            <p>
+                <img src="https://i.upmath.me/svg/%0AM%20%3D%20%5Cbegin%7Bbmatrix%7D%0A1%20%26%202%20%5C%5C%0A4%20%26%205%20%5C%5C%0A7%20%26%208%0A%5Cend%7Bbmatrix%7D%0A"
+                    alt="
+M = \begin{bmatrix}
+1 &amp; 2 \\
+4 &amp; 5 \\
+7 &amp; 8
+\end{bmatrix}
+" align="center" loading="lazy" style="background-color: aqua; padding: 10px" />
+            </p>
+            <p>Matrices are represented with an upper case letter:</p>
+            <img src="https://i.upmath.me/svg/%0AM%20%3D%20%5Cbegin%7Bbmatrix%7D%0A1%20%26%202%20%26%203%20%5C%5C%0A4%20%26%205%20%26%206%20%5C%5C%0A7%20%26%208%20%26%209%0A%5Cend%7Bbmatrix%7D%0A"
+                alt="
+M = \begin{bmatrix}
+1 &amp; 2 &amp; 3 \\
+4 &amp; 5 &amp; 6 \\
+7 &amp; 8 &amp; 9
+\end{bmatrix}
+" align="center" loading="lazy" style="background-color: aqua; padding: 10px" />
+
+            <p>
+                We create matrices in Python using numpy and adding additional column
+                dimensions. Recall that the dimension of a vector is just its length.
+                So we'll have a matrix if we add additional rows to a row vector or
+                additional columns to a column vector. Because we have both, number of
+                rows and a number of columns, we need to talk about the matrix as 'n'
+                rows by 'm' columns; a 2x2 matrix would have two rows and two columns.
+            </p>
+            <p>Let's create some matrices of different dimensions.</p>
+            <pre><code>import numpy as np
+
+# Two dimensional numpy array (2x3)
+matrix1 = np.array([[ 1, 2, 3],[ 4, 5, 6]])
+print('2x3 matrix:\n', matrix1)
+
+# 3x3 numpy array
+matrix2 = np.array([[ 1, 2, 3],[ 4, 5, 6], [7, 8, 9]])
+print('\n3x3 matrix:\n', matrix2)</code></pre>
+            <pre><code>2x3 matrix:
+ [[1 2 3]
+ [4 5 6]]
+
+3x3 matrix:
+ [[1 2 3]
+ [4 5 6]
+ [7 8 9]]
+</code></pre>
+            <h3>Matrix Math</h3>
+            <p>
+                We'll go over a few basic matrix operations. Of course, there are many
+                more, but there are several excellent resources available for further
+                review.
+            </p>
+            <h4>Matrix multiplication</h4>
+            <p>
+                We accomplish matrix multiplication by calculating the dot product
+                between the rows of the first matrix and the columns of the second
+                matrix. This image from
+                <a href="https://www.mathsisfun.com/algebra/matrix-multiplying.html" target="_blank"
+                    rel="noopener noreferrer">Math is Fun</a>
+                is a good illustration.
+            </p>
+            <p>
+                <img src="https://www.mathsisfun.com/algebra/images/matrix-multiply-a.svg" alt="" loading="lazy" />
+            </p>
+            <p>
+                Let's multiply two matrices and then check the results with Python.
+            </p>
+            <p style="background-color: aqua;padding: 10px; margin: 0;">
+                <img src="https://i.upmath.me/svg/%0AX%20%3D%20%5Cbegin%7Bbmatrix%7D%0A1%20%26%204%20%26%208%20%5C%5C%0A2%20%26%203%20%26%201%20%5C%5C%0A%5Cend%7Bbmatrix%7D%0A"
+                    alt="
+                X = \begin{bmatrix}
+                1 &amp; 4 &amp; 8 \\
+                2 &amp; 3 &amp; 1 \\
+                \end{bmatrix}
+                " align="center" loading="lazy" />
+            </p>
+            <p style="background-color: aqua;padding: 10px; margin: 0;">
+                <img src="https://i.upmath.me/svg/%0AY%20%3D%20%5Cbegin%7Bbmatrix%7D%0A1%20%26%206%20%5C%5C%0A2%20%26%203%20%5C%5C%0A5%20%26%207%0A%5Cend%7Bbmatrix%7D%0A"
+                    alt="
+                    Y = \begin{bmatrix}
+                    1 &amp; 6 \\
+                    2 &amp; 3 \\
+                    5 &amp; 7
+                    \end{bmatrix}
+                    " align="center" loading="lazy" />
+            </p>
+            <p style="background-color: aqua;padding: 10px; margin: 0;">
+                <img src="https://i.upmath.me/svg/%0AX%20Y%20%3D%20%5Cbegin%7Bbmatrix%7D%0A(1)(1)%2B(4)(2)%2B(8)(5)%20%26%20(1)(6)%2B(4)(3)%2B(8)(7)%20%5C%5C%0A(2)(1)%2B(3)(2)%2B(1)(5)%20%26%20(2)(6)%2B(3)(3)%2B(1)(7)%0A%5Cend%7Bbmatrix%7D%0A"
+                    alt="
+                        X Y = \begin{bmatrix}
+                        (1)(1)+(4)(2)+(8)(5) &amp; (1)(6)+(4)(3)+(8)(7) \\
+                        (2)(1)+(3)(2)+(1)(5) &amp; (2)(6)+(3)(3)+(1)(7)
+                        \end{bmatrix}
+                        " align="center" loading="lazy" />
+            </p>
+            <p style="background-color: aqua;padding: 10px; margin: 0;">
+                <img src="https://i.upmath.me/svg/%0AX%20Y%20%3D%20%5Cbegin%7Bbmatrix%7D%0A49%20%26%2074%20%5C%5C%0A13%20%26%2029%0A%5Cend%7Bbmatrix%7D%0A"
+                    alt="
+                            X Y = \begin{bmatrix}
+                            49 &amp; 74 \\
+                            13 &amp; 28
+                            \end{bmatrix}
+                            " align="center" loading="lazy" />
+            </p>
+
+            <pre><code># Check matrix multiplication with Python
+
+X = np.array([[1,4,8],[2,3,1]])
+Y = np.array([[1,6],[2,3],[5,7]])
+
+X_Y = np.matmul(X, Y)
+print('X * Y:\n', X_Y)</code></pre>
+            <pre><code>X * Y:
+ [[49 74]
+ [13 28]]
+</code></pre>
+            <h3>Matrix Transpose</h3>
+            <p>
+                The transpose of a matrix is essentially swapping the rows and
+                columns.
+            </p>
+            <p><img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Matrix_transpose.gif"
+                    alt="Wikipedia Matrix Transpose" loading="lazy"></p>
+            <p>We write the transpose with a superscript T: <img src="https://i.upmath.me/svg/M%5ET" alt="M^T"
+                    loading="lazy" style="background-color: aqua;padding: 10px; margin: 0;">.</p>
+            <p>We can easily take the transpose of a matrix in numpy.</p>
+            <pre><code>A = np.array([[1, 2], [3, 4],[5, 6]])
+print('Original matrix:\n', A)
+
+A_T = np.transpose(A)
+print('Transposed matrix:\n', A_T)</code></pre>
+            <pre><code>Original matrix:
+ [[1 2]
+ [3 4]
+ [5 6]]
+Transposed matrix:
+ [[1 3 5]
+ [2 4 6]]
+</code></pre>
+            <h3>Inverse of a Matrix</h3>
+            <p>In the same way that a number can have a <code>reciprocal</code>, where</p>
+            <p><code>4 has the inverse 1/4</code>.</p>
+            <p>a matrix can have an inverse, where</p>
+            <p><code>A has the inverse A^{-1}</code>.</p>
+            <p>You use a superscript because you cannot divide by a matrix.</p>
+            <h3>Identity Matrix</h3>
+            <p>
+                The identity matrix is a specific diagonal matrix where there are only
+                ones on the main diagonal and zeros everywhere else. This matrix acts
+                a lot like the number 1: if we multiply any matrix by its identity
+                matrix, the original matrix will remain unchanged. Here's an example
+                of a 3x3 identity matrix.
+            </p>
+            <p><img src="https://i.upmath.me/svg/%0AI_3%20%3D%20%5Cbegin%7Bbmatrix%7D%0A1%20%26%200%20%26%200%20%5C%5C%0A0%20%26%201%20%26%200%20%5C%5C%0A0%20%26%200%20%26%201%0A%5Cend%7Bbmatrix%7D%0A"
+                    alt="
+                I_3 = \begin{bmatrix}
+                1 &amp; 0 &amp; 0 \\
+                0 &amp; 1 &amp; 0 \\
+                0 &amp; 0 &amp; 1
+                \end{bmatrix}
+                " align="center" loading="lazy" style="background-color: aqua;padding: 10px; margin: 0;"></p>
+            <h3>Challenge</h3>
+            <p>
+                For this challenge, practice creating some matrices in Python (numpy
+                arrays) and then calculate the:
+            </p>
+            <ul>
+                <li>matrix multiplication</li>
+                <li>multiplying by the identity matrix</li>
+                <li>calculating the transpose</li>
+            </ul>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://www.intmath.com/matrices-determinants/matrix-multiplication-examples.php"
+                        target="_blank" rel="noopener noreferrer">Matrix Multiplication Examples</a>
+                </li>
+                <li>
+                    <a href="https://towardsdatascience.com/linear-algebra-basics-dot-product-and-matrix-multiplication-2a7624942810"
+                        target="_blank" rel="noopener noreferrer">Linear Algebra Basics: Dot Product and Matrix
+                        Multiplication</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>
+                Objective 04 - Use Linear Algebra to Solve for Linear Regression
+                Coefficients
+            </h2>
+            <h3>Overview</h3>
+            <p>
+                The material in this sprint has been a combination of exploring linear
+                regression and making inferential statements. And we've also
+                introduced some linear algebra basics. Now we will combine the two and
+                look at how to state a linear regression model with vectors and
+                matrices.
+            </p>
+            <h3>Linear Regression</h3>
+            <p>
+                Recall the form of the linear regression equation (for one independent
+                variable):
+            </p>
+            <pre>
+y = b_0 + b_1x
+            </pre>
+            <p>
+                Now we're going to consider each individual data point we have in our
+                data set - we'll start with the first, then second, etc.:
+            </p>
+            <pre>
+y_1 = b_0 + b_1x_1
+
+y_2 = b_0 + b_1x_2
+
+y_3 = b_0 + b_1x_3
+            </pre>
+            <p>we can generalize by using i for each data point:</p>
+            <pre>
+y_i = b_0 + b_1x_i
+            </pre>
+            <p>
+                Let's write our target (dependent) variables as a vector and our
+                independent variable also as a vector.
+            </p>
+            <pre>
+\[
+\begin{bmatrix} y_1 \\ y_2 \\ y_3 \\ \vdots \\ y_i \end{bmatrix} = 
+\begin{bmatrix} b_0 \\ b_0 \\ b_0 \\ \vdots \\ b_0  \end{bmatrix} +
+\begin{bmatrix} b_1x_1 \\ b_1x_2 \\ b_1x_3 \\ \vdots \\ b_1x_i  \end{bmatrix}
+\]
+            </pre>
+            <p>
+                We can further simplify this equation by pulling the b coefficients
+                out of the matrix, and writing them in their own vector:
+            </p>
+            <pre>
+\[
+\begin{bmatrix} b_0 \\ b_1 \end{bmatrix}
+\]
+            </pre>
+            <p>The equation now has this form:</p>
+            <pre>
+\[
+\begin{bmatrix}y_1 \\ y_2 \\ y_3 \\ \vdots \\ y_i \end{bmatrix} = 
+\begin{bmatrix}1 & x_1 \\ 1 & x_2 \\ 1 & x_3 \\ \vdots \\ 1 & x_i  \end{bmatrix}
+\begin{bmatrix}b_0 \\ b_1 \end{bmatrix}
+\]
+            </pre>
+            <p>We can write this in matrix form as:</p>
+            <pre>
+Y = BX
+            </pre>
+            <h3>Solve for the linear regression coefficient</h3>
+            <p>
+                Now, let's put to use what we've learned working with matrices and
+                solve for B. Okay, this involves quite a lot of linear algebra and
+                some calculus. What we want is the least-squares solution to the above
+                equation. Remember the ordinal least-square (OLS) model we used in the
+                previous modules? The least-squares solution is:
+            </p>
+            <pre>
+B = (X^T X)^{-1}X^TY
+            </pre>
+            <p>where X^T is the transpose of X.</p>
+            <p>
+                Now let's load in the car crash data set, create the X matrix and Y
+                vector and solve for the coefficients for the linear regression.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                First, we need the data. Recall that we are looking at the
+                relationship between alcohol impairment (alcohol) and the total number
+                of accidents (total).
+            </p>
+            <pre><code>import pandas as pd
+import seaborn as sns
+
+# Load the car crash dataset
+crashes = sns.load_dataset("car_crashes")
+
+crashes.head()
+</code></pre>
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>total</th>
+                        <th>speeding</th>
+                        <th>alcohol</th>
+                        <th>not_distracted</th>
+                        <th>no_previous</th>
+                        <th>ins_premium</th>
+                        <th>ins_losses</th>
+                        <th>abbrev</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0</td>
+                        <td>18.8</td>
+                        <td>7.332</td>
+                        <td>5.640</td>
+                        <td>18.048</td>
+                        <td>15.040</td>
+                        <td>784.55</td>
+                        <td>145.08</td>
+                        <td>AL</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>18.1</td>
+                        <td>7.421</td>
+                        <td>4.525</td>
+                        <td>16.290</td>
+                        <td>17.014</td>
+                        <td>1053.48</td>
+                        <td>133.93</td>
+                        <td>AK</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>18.6</td>
+                        <td>6.510</td>
+                        <td>5.208</td>
+                        <td>15.624</td>
+                        <td>17.856</td>
+                        <td>899.47</td>
+                        <td>110.35</td>
+                        <td>AZ</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>22.4</td>
+                        <td>4.032</td>
+                        <td>5.824</td>
+                        <td>21.056</td>
+                        <td>21.280</td>
+                        <td>827.34</td>
+                        <td>142.39</td>
+                        <td>AR</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>12.0</td>
+                        <td>4.200</td>
+                        <td>3.360</td>
+                        <td>10.920</td>
+                        <td>10.680</td>
+                        <td>878.41</td>
+                        <td>165.63</td>
+                        <td>CA</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                Now, we'll put the data into the appropriately shaped vector and
+                matrix. We have two columns in the X matrix: a column of ones and a
+                column with the data points for the alcohol feature.
+            </p>
+            <pre><code># Create independent (feature) matrix
+import numpy as np
+
+# Create the ones column
+ones = np.repeat(1,len(crashes)).reshape(-1,1)
+
+# Select a column and reshape to add an additional column
+alcohol = np.array(crashes['alcohol']).reshape(-1,1)
+
+# "Glue" the columns together
+X = np.concatenate((ones, alcohol), axis=1)
+
+# Look at the shape
+print('The feature matrix has a shape:', X.shape)
+
+# Create the dependent (target) vector
+Y = np.array(crashes['total']).reshape(-1,1)
+
+print('The target vector has a shape:', Y.shape)
+</code></pre>
+            <pre>
+The feature matrix has a shape: (51, 2)
+The target vector has a shape: (51, 1)
+            </pre>
+            <p>Now we can make Python do all of the linear algebra for us!</p>
+            <pre><code># Calculate X transpose
+X_T = np.transpose(X)
+
+# Calculate X transpose multiplied by X
+X_T_X = np.matmul(X_T,X)
+
+print('X transpose multiplied by X:\n', X_T_X)
+
+# Calculate the inverse of X_T_X
+X_T_X_inv = np.linalg.inv(X_T_X)
+
+print('\nInverse of X transpose multiplied by X):\n', X_T_X_inv)
+
+#Calculate X transpose Y
+X_T_Y = np.matmul(X_T,Y)
+
+print('\nX transpose multiplied by Y:\n', X_T_Y)
+
+# Finally - calculate B =  = (X'X)^-1 multiplied by X'Y
+
+B = np.matmul(X_T_X_inv,X_T_Y)
+
+print('\nThe regression coefficients B are:\n', B)
+</code></pre>
+            <pre>
+X transpose multiplied by X:
+ [[  51.        249.226   ]
+ [ 249.226    1367.408738]]
+
+Inverse of X transpose multiplied by X):
+ [[ 0.17935002 -0.03268861]
+ [-0.03268861  0.00668919]]
+
+X transpose multiplied by Y:
+ [[ 805.3  ]
+ [4239.177]]
+
+The regression coefficients B are:
+ [[5.85777615]
+ [2.0325063 ]]
+            </pre>
+            <p>
+                Let's compare these coefficients to the ones we find using the
+                scikit-learn LinearRegression() model.
+            </p>
+            <pre><code># Import the predictor class
+from sklearn.linear_model import LinearRegression
+
+# Instantiate the class (with default parameters)
+model = LinearRegression()
+
+# Change the format slightly of X (we just need one column, no ones)
+X = np.array(crashes['alcohol']).reshape(-1,1)
+
+# Fit the model
+model.fit(X, Y)
+
+# Intercept (b_0)
+print('The intercept(b_0): ', model.intercept_)
+
+# Slope (b_1)
+print('The slope (b_1):', model.coef_)
+</code></pre>
+            <pre>
+The intercept(b_0):  [5.85777615]
+The slope (b_1): [[2.0325063]]
+            </pre>
+            <p>
+                Well look at that - the result of doing the calculation "by hand"
+                (writing out the linear algebra) agrees with the scikit-learn
+                regression model. But since the computer uses linear algebra "under
+                the hood", we would hope everything agrees.
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                Since we covered a lot of content in this objective, the best thing to
+                do is review the above. First, go over the steps to write the linear
+                regression equation in matrix form and make sense. Then, look through
+                the code for how B was determined (you don't need to look up the
+                derivation, but some resources at the end provide further
+                information).
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://online.stat.psu.edu/stat462/node/132/" target="_blank" rel="noopener noreferrer">A
+                        Matrix Formulation of the Multiple Regression Model</a>
+                </li>
+                <li>
+                    <a href="https://www.stat.cmu.edu/~cshalizi/mreg/15/lectures/04/lecture-04.pdf" target="_blank"
+                        rel="noopener noreferrer">The Regression Model in Matrix Form (derivation)</a>
+                </li>
             </ul>
         </section>
 
         <section class="content-box">
             <h2>Guided Project</h2>
-            <p>Open <strong>DS_133_Linear_Algebra.ipynb</strong> in the GitHub repository below to follow along with the
-                guided project:</p>
+            <p>
+                Open <strong>DS_133_Linear_Algebra.ipynb</strong> in the GitHub
+                repository below to follow along with the guided project:
+            </p>
             <div class="resource-links">
                 <a href="https://github.com/bloominstituteoftechnology/DS-Unit-1-Sprint-3-Linear-Algebra/tree/master/module3-linear-algebra"
                     class="resource-link" target="_blank" rel="noopener noreferrer">GitHub: Linear Algebra</a>
@@ -69,7 +1223,10 @@
 
         <section class="content-box">
             <h2>Module Assignment</h2>
-            <p>Complete the Module 3 assignment to practice linear algebra techniques you've learned.</p>
+            <p>
+                Complete the Module 3 assignment to practice linear algebra techniques
+                you've learned.
+            </p>
             <div class="resource-links">
                 <a href="https://github.com/bloominstituteoftechnology/DS-Unit-1-Sprint-3-Linear-Algebra/blob/master/module3-linear-algebra/DS_133_Linear_Algebra_Assignment_AG.ipynb"
                     class="resource-link" target="_blank" rel="noopener noreferrer">Module 3 Assignment</a>
@@ -88,17 +1245,22 @@
 
             <h3>Documentation and Tutorials</h3>
             <ul>
-                <li><a href="https://numpy.org/doc/stable/reference/routines.linalg.html" target="_blank"
-                        rel="noopener noreferrer">NumPy Linear Algebra</a></li>
-                <li><a href="https://www.khanacademy.org/math/linear-algebra" target="_blank"
-                        rel="noopener noreferrer">Khan
-                        Academy: Linear Algebra</a></li>
+                <li>
+                    <a href="https://numpy.org/doc/stable/reference/routines.linalg.html" target="_blank"
+                        rel="noopener noreferrer">NumPy Linear Algebra</a>
+                </li>
+                <li>
+                    <a href="https://www.khanacademy.org/math/linear-algebra" target="_blank"
+                        rel="noopener noreferrer">Khan Academy: Linear Algebra</a>
+                </li>
             </ul>
 
             <h3>Videos</h3>
             <ul>
-                <li><a href="https://www.3blue1brown.com/topics/linear-algebra" target="_blank"
-                        rel="noopener noreferrer">3Blue1Brown: Linear Algebra</a></li>
+                <li>
+                    <a href="https://www.3blue1brown.com/topics/linear-algebra" target="_blank"
+                        rel="noopener noreferrer">3Blue1Brown: Linear Algebra</a>
+                </li>
             </ul>
         </section>
     </main>
