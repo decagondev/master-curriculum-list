@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Module 3: Bayesian Statistics - Data Science Sprint 2</title>
-    <link rel="stylesheet" href="../../../css/style.css">
+    <link rel="stylesheet" href="../../../css/style.css" />
 </head>
 
 <body>
@@ -24,7 +24,9 @@
                     </div>
                 </li>
                 <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
-                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
+                <li>
+                    <a href="../../sprint-challenge/index.html">Sprint Challenge</a>
+                </li>
             </ul>
         </nav>
     </header>
@@ -34,27 +36,399 @@
 
         <section class="content-box">
             <h2>Module Overview</h2>
-            <p>In this module, we'll explore an alternative approach to statistics: the Bayesian perspective. Unlike the
-                frequentist approach we've been using so far, Bayesian statistics treats probability as a measure of
-                belief that can be updated as new evidence emerges.</p>
-            <p>Bayesian statistics provides a powerful framework for reasoning about uncertainty and making predictions
-                based on incomplete information. It allows us to incorporate prior knowledge and update our beliefs in
-                light of new data, which is particularly valuable in real-world scenarios where perfect information is
-                rarely available.</p>
+            <p>
+                In this module, we'll explore an alternative approach to statistics:
+                the Bayesian perspective. Unlike the frequentist approach we've been
+                using so far, Bayesian statistics treats probability as a measure of
+                belief that can be updated as new evidence emerges.
+            </p>
+            <p>
+                So far, all statistics we've studied are frequentist statistics -
+                drawing conclusions about an entire population or process by
+                generalizing from the frequency or proportion of observed data.
+                Frequentist statistics is well established and is still the default in
+                most situations - but Bayesian statistics is an increasingly popular
+                approach and an arguably better model for our brains and how we form
+                and update beliefs based on evidence.
+            </p>
         </section>
 
         <section class="content-box">
             <h2>Learning Objectives</h2>
             <ul>
                 <li>Understand conditional probability</li>
-                <li>Compare and contrast Frequentists and Bayesian philosophical approaches</li>
+                <li>
+                    Compare and contrast Frequentists and Bayesian philosophical
+                    approaches
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 01 - Understand Conditional Probability Notation and Be Able to Apply Them</h2>
+            <h3>Overview</h3>
+            <p>
+                We're going to change gears in this module and look at a different way of thinking about probability and
+                inferential statistics, called Bayesian statistics.
+                But before we can dive into the Bayesian world, we need to review some additional concepts in
+                probability, specifically conditional probability.
+            </p>
+
+            <h3>Conditional Probability</h3>
+            <p>
+                First, let's review some mathematical notations for probabilities that will be useful for the rest of
+                this module.
+            </p>
+            <p>
+                To illustrate the examples, we will use a deck of cards.
+            </p>
+            <p>
+                A deck of cards has 52 cards: 13 cards each of four different symbols (clubs, spades, hearts, diamonds),
+                two colors (black - clubs, spades, and red - hearts, diamonds), and four of each number/“face” (Ace-10
+                and Jack, Queen, and King).
+            </p>
+            <p>
+                Let's list a few examples so we can see how probabilities are written (assume we start with a complete
+                deck each time):
+            </p>
+            <ul>
+                <li>randomly drawing a red card is 26/52; P(red card) = 26/52 (or 13/26)</li>
+                <li>randomly drawing a heart is 13/52; P(hearts) = 13/52</li>
+                <li>randomly drawing a Queen is 4/52; P(Queen) = 4/52 (or 1/13)</li>
+                <li>randomly drawing a 7 of diamonds is 1/52; P(7 diamonds) = 1/52</li>
+            </ul>
+            <p>
+                Now, let's look at the probability when a card is drawn and not replaced. First, the probability of
+                randomly drawing a red card is P(red card) = 26/52. If you draw a red card, there are now only 25 red
+                cards left in the deck. So the probability of drawing a red card again is 25/51. This second probability
+                is conditional on a red card being drawn first and not replaced. We could write this more formally as:
+            </p>
+            <ul>
+                <li>Event A = red card and Event B = red card</li>
+                <li>P(A) is the probability of drawing a red card from a complete deck P(A) = 26/52</li>
+                <li>P(B|A) is read as the “Probability of B given A” and is equal to P(B|A) = 25/51</li>
+            </ul>
+            <p>
+                The total probability of drawing two red cards is P(A and B) = P(A) * P(B|A).
+            </p>
+            <p>
+                This is equal to P(A and B) = (26/52) * (25/51) = 25/102 or about 24.5%
+            </p>
+
+            <h3>Rearrange</h3>
+            <p>
+                We can use algebraic properties to rearrange the terms on each side of the equation.
+            </p>
+            <ul>
+                <li>Start with: P(A and B) = P(A) * P(B|A)</li>
+                <li>Switch sides: P(A) * P(B|A) = P(A and B)</li>
+                <li>Divide each side by P(A): P(B|A) = P(A and B) / P(A)</li>
+            </ul>
+            <p>
+                Now we have an equation that reads, “The probability of B given A is equal to the probability of A and B
+                divided by the probability of A."
+            </p>
+            <p>
+                Let's work through a few more examples in the next section before moving onto the suggested challenge.
+            </p>
+
+            <h3>Follow Along</h3>
+            <p>
+                Consider the following set-up, where we have a collection of marbles with the colors and quantities
+                specified in the table:
+            </p>
+            <h4>Marble Data</h4>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>size</th>
+                            <th>color</th>
+                            <th>amber</th>
+                            <th>bronze</th>
+                            <th>cobalt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>small</td>
+                            <td>7</td>
+                            <td>2</td>
+                            <td>6</td>
+                            <td>15</td>
+                        </tr>
+                        <tr>
+                            <td>medium</td>
+                            <td>8</td>
+                            <td>4</td>
+                            <td>3</td>
+                            <td>15</td>
+                        </tr>
+                        <tr>
+                            <td>large</td>
+                            <td>2</td>
+                            <td>4</td>
+                            <td>7</td>
+                            <td>13</td>
+                        </tr>
+                        <tr>
+                            <td>total</td>
+                            <td>17</td>
+                            <td>10</td>
+                            <td>16</td>
+                            <td>43</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <ul>
+                <li>What is the probability that we'll draw a medium cobalt marble?<br>P(M) = 3/43</li>
+                <li>What is the probability we'll draw a large bronze marble?<br>P(large-bronze) = 4/43</li>
+                <li>What is the probability we'll draw a small marble after drawing a large marble?<br>P(L and S) = P(L)
+                    * P(S|L)<br>P(L and S) = 13/43 * 15/42 = 65/602 (about 11%)</li>
+                <li>What is the probability of drawing a small cobalt marble and then a large cobalt marble?<br>P(SC and
+                    LC) = P(SC) * P(LC|SC)<br>P(SC and LC) = 6/43 * 7/42 = 1/43 (about 2%)</li>
+                <li>What is the probability of drawing two medium amber marbles?<br>P(MA and MA) = P(MA) *
+                    P(MA|MA)<br>P(MA and MA) = 8/43 * 7/42 = 4/129 (about 3%)</li>
+            </ul>
+
+            <h3>Challenge</h3>
+            <p>
+                Using the table above, try out some other combinations of marble selections and calculate the
+                probabilities.
+            </p>
+
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://www.probabilisticworld.com/frequentist-bayesian-approaches-inferential-statistics/"
+                        target="_blank" rel="noopener noreferrer">Frequentist and Bayesian Approaches in Statistics</a>
+                </li>
+                <li><a href="https://people.richland.edu/james/lecture/m170/ch05-cnd.html" target="_blank"
+                        rel="noopener noreferrer">Stats: Conditional Probability</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Compare and Contrast Frequentist and Bayesian Approaches to Inference</h2>
+            <h3>Overview</h3>
+            <p>
+                In the first objective, we hinted at the two different ways of thinking about probability and
+                statistics. These two approaches are called “frequentist” and “Bayesian.” So far in this unit, we have
+                been viewing probabilities (and the statistics calculated from them) from the frequentist side of
+                things. Let's review our interpretations so far and then look in more detail at how the Bayesian
+                interpretation is different.
+            </p>
+
+            <h3>Frequentist Interpretation</h3>
+            <p>
+                Our examples so far have focused on the probabilities of dice rolls and coin tosses, and the statistical
+                significance of the different results. From the frequentist perspective, only these types of events
+                (repeatable and random) can have probabilities determined by looking at many events over time. But this
+                interpretation doesn't cover all needs or uses in statistics; there are cases where having a “belief” in
+                the occurrence of some event is applicable. This belief is called a prior belief and is part of the
+                basis for the Bayesian interpretation of probability.
+            </p>
+
+            <h3>Bayesian Interpretation</h3>
+            <p>
+                A Bayesian approach uses previous results to assign a probability to events like the outcome of a
+                presidential election, which is something that isn't repeatable thousands of times. This type of
+                prediction involves using prior information, data, or other information to inform the current
+                prediction. For example, various fields of experimental research use Bayesian statistics to make
+                predictions based on their prior experimental results. These are two example situations where we don't
+                have a way to repeatedly repeat the experiment to determine the probability of the event or result
+                occurring.
+            </p>
+
+            <h3>Conditional Probabilities</h3>
+            <p>
+                We looked at conditional probabilities in the last objective, where calculating the likelihood of some
+                event depends on the probability of a different event having occurred. Next, we will formally write out
+                the Bayes' Theorem with our new understanding of using prior knowledge, also called “priors.”
+            </p>
+
+            <h3>Follow Along</h3>
+            <p>
+                Using the probabilities of two events E1 and E2, Bayes' Theorem can be stated as:
+            </p>
+            <pre><code>P(E1 | E2) = P(E2 | E1) * P(E1) / P(E2)</code></pre>
+            <p>where:</p>
+            <ul>
+                <li><strong>P(E1):</strong> Prior probability</li>
+                <li><strong>P(E2):</strong> Evidence</li>
+                <li><strong>P(E2 | E1):</strong> Likelihood</li>
+                <li><strong>P(E1 | E2):</strong> Posterior probability</li>
+            </ul>
+
+            <h4>Prior probability</h4>
+            <p>
+                The prior probability of an event is its probability obtained from some information known beforehand.
+                But what does “before” or prior mean? We can think of this value as the probability of the event, given
+                the information that's already known. Let's use an example where we would like to determine the
+                probability of the weather being sunny. The prior probability would be the knowledge of how many times
+                it has been sunny on this particular calendar date.
+            </p>
+
+            <h4>Evidence</h4>
+            <p>
+                We can use current evidence to update our prediction. For example, the evidence for our sunny weather
+                example could be the probability of the atmospheric pressure being high - P(High Pressure). This
+                equation is the probability of having high pressure, whether it's cloudy or sunny.
+            </p>
+
+            <h4>Likelihood</h4>
+            <p>
+                The likelihood represents a conditional probability, where the occurrence of one event depends on the
+                other event having also occurred. In the weather example, this is the probability of having high
+                pressure with it also being sunny.
+            </p>
+
+            <h4>Posterior probability</h4>
+            <p>
+                The term on the left is the posterior probability (or “after” probability) or also just the “posterior.”
+                It represents the updated prior probability after taking into account some new piece of information.
+            </p>
+
+            <p>
+                Putting all these terms together, the equation would look like this:
+            </p>
+            <pre><code>P(Sunny | High Pressure) = P(High Pressure | Sunny) * P(Sunny) / P(High Pressure)</code></pre>
+
+            <h3>Calculate the probability</h3>
+            <p>
+                We can assign probabilities to each of the above quantities and then calculate the posterior
+                probability. For example, let's assume the probability of sunny weather is P(Sunny) = 0.5; the
+                probability of high pressure is P(High Pressure) = 0.7; and the probability of high pressure if it's
+                sunny is P(High Pressure | Sunny) = 0.9.
+            </p>
+            <p>
+                <code>P(Sunny | High Pressure) = (0.9 * 0.5) / 0.7 = 0.64</code> which is a 64% percent probability that
+                it will be sunny if there is also high pressure.
+            </p>
+
+            <h3>Challenge</h3>
+            <p>
+                Set up your Bayesian situation and identify the prior probability, evidence, likelihood, and posterior
+                probability. It would be helpful to write it out, as we have shown in the example above.
+            </p>
+
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://www.probabilisticworld.com/frequentist-bayesian-approaches-inferential-statistics/"
+                        target="_blank" rel="noopener noreferrer">
+                        Frequentist and Bayesian Approaches in Statistics
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.probabilisticworld.com/what-is-bayes-theorem/" target="_blank"
+                        rel="noopener noreferrer">
+                        What Is Bayes' Theorem? A Friendly Introduction
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 03 - Use Bayes' Theorem to Update a Prior Probability Iteratively (Remove)</h2>
+            <h3>Overview</h3>
+            <p>
+                We've now seen Bayes' Theorem and how to write it out with mathematical notation. And we've done a lot
+                of coding to compute t-tests, chi-square tests, and p-values. So, now it's time to put Bayes' theorem
+                into practice and use it to update a prior probability.
+            </p>
+
+            <h3>Follow Along</h3>
+            <p>
+                We'll use an example of the probability of getting heads or tails on a coin toss. The example code comes
+                from <a href="https://www.probabilisticworld.com/calculating-coin-bias-bayes-theorem/" target="_blank"
+                    rel="noopener noreferrer">this website</a>, and can
+                also be downloaded there to experiment with on your computer.
+            </p>
+            <p>
+                This example code includes a way to create a biased coin that prefers one side over the other. Our job
+                is to demonstrate that we can determine the bias by flipping the coin and updating after each flip.
+            </p>
+            <pre><code># The example code is from this website: 
+# https://www.probabilisticworld.com/calculating-coin-bias-bayes-theorem/
+
+# Import the usual libraries
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Set the number of flips
+N = 15000
+
+# Set the bias of the coin
+BIAS_HEADS = 0.6
+
+# The range of biases the coin could have 
+# (0, 0.01, 0.02, ... 0.98, 0.99, 1)
+bias_range = np.linspace(0, 1, 101)
+
+# Uniform prior distribution
+# (start with coins that have the same bias)
+prior_bias_heads = np.ones(len(bias_range)) / len(bias_range)
+
+# Create a random series of 0's and 1's (coin flips) with the bias
+flip_series = (np.random.rand(N) <= BIAS_HEADS).astype(int)
+
+# For each flip, calculate the probabilities and update
+for flip in flip_series:
+    likelihood = bias_range**flip * (1-bias_range)**(1-flip)
+    evidence = np.sum(likelihood * prior_bias_heads)
+    prior_bias_heads = likelihood * prior_bias_heads / evidence
+
+# Create the plot
+plt.figure(figsize=(8,6))
+plt.plot(bias_range, prior_bias_heads)
+plt.xlabel('Heads Bias')
+plt.ylabel('P(Heads Bias)')
+
+plt.clf() #comment/delete to show plot</code></pre>
+            <pre><code>&lt;Figure size 576x432 with 0 Axes&gt;</code></pre>
+            <img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_1/sprint_2/mod4_obj3_coin_bias.png"
+                alt="coin_bias" loading="lazy">
+            <p>
+                We can see that the bias is estimated correctly! First, we set the bias as 0.6 and generated coins with
+                this bias. Then by going through each flip in the series of biased flips, we updated the probabilities,
+                eventually resulting in the predictions confirming the bias.
+            </p>
+
+            <h3>Challenge</h3>
+            <p>
+                Using the above code, try changing a few of the parameters and seeing how your bias probability changes:
+            </p>
+            <ul>
+                <li>Set the number of flips to a lower number and see if the result is still accurate</li>
+                <li>Change the bias and see that it correctly predicts the new value</li>
+                <li>Experiment to see if changing the bias and number of flips together has any affect on the results
+                </li>
+            </ul>
+
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://www.probabilisticworld.com/calculating-coin-bias-bayes-theorem/" target="_blank"
+                        rel="noopener noreferrer">
+                        Coin Bias Calculation Using Bayes' Theorem
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.quantstart.com/articles/Bayesian-Statistics-A-Beginners-Guide/" target="_blank"
+                        rel="noopener noreferrer">
+                        Bayesian Statistics: A Beginner's Guide
+                    </a>
+                </li>
             </ul>
         </section>
 
         <section class="content-box">
             <h2>Guided Project</h2>
-            <p>Open <strong>DS_123_Bayesian_Inference.ipynb</strong> in the GitHub repository below to follow along with
-                the guided project:</p>
+            <p>
+                Open <strong>DS_123_Bayesian_Inference.ipynb</strong> in the GitHub
+                repository below to follow along with the guided project:
+            </p>
             <div class="resource-links">
                 <a href="https://github.com/bloominstituteoftechnology/DS-Unit-1-Sprint-2-Statistics/tree/master/module3-bayesian"
                     class="resource-link" target="_blank" rel="noopener noreferrer">GitHub: Bayesian Statistics</a>
@@ -70,7 +444,10 @@
 
         <section class="content-box">
             <h2>Module Assignment</h2>
-            <p>Complete the Module 3 assignment to practice Bayesian statistics techniques you've learned.</p>
+            <p>
+                Complete the Module 3 assignment to practice Bayesian statistics
+                techniques you've learned.
+            </p>
             <div class="resource-links">
                 <a href="https://github.com/bloominstituteoftechnology/DS-Unit-1-Sprint-2-Statistics/blob/master/module3-bayesian/DS_123_Bayesian_Inference_Assignment_AG.ipynb"
                     class="resource-link" target="_blank" rel="noopener noreferrer">Module 3 Assignment</a>
@@ -89,19 +466,26 @@
 
             <h3>Bayesian Statistics Resources</h3>
             <ul>
-                <li><a href="https://betterexplained.com/articles/an-intuitive-and-short-explanation-of-bayes-theorem/"
-                        target="_blank" rel="noopener noreferrer">An Intuitive Explanation of Bayes' Theorem</a></li>
-                <li><a href="https://www.analyticsvidhya.com/blog/2016/06/bayesian-statistics-beginners-simple-english/"
-                        target="_blank" rel="noopener noreferrer">Bayesian Statistics for Beginners</a></li>
-                <li><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html" target="_blank"
-                        rel="noopener noreferrer">Seeing Theory: Bayesian Inference</a></li>
+                <li>
+                    <a href="https://betterexplained.com/articles/an-intuitive-and-short-explanation-of-bayes-theorem/"
+                        target="_blank" rel="noopener noreferrer">An Intuitive Explanation of Bayes' Theorem</a>
+                </li>
+                <li>
+                    <a href="https://www.analyticsvidhya.com/blog/2016/06/bayesian-statistics-beginners-simple-english/"
+                        target="_blank" rel="noopener noreferrer">Bayesian Statistics for Beginners</a>
+                </li>
+                <li>
+                    <a href="https://seeing-theory.brown.edu/bayesian-inference/index.html" target="_blank"
+                        rel="noopener noreferrer">Seeing Theory: Bayesian Inference</a>
+                </li>
             </ul>
 
             <h3>Interactive Learning</h3>
             <ul>
-                <li><a href="https://www.youtube.com/watch?v=HZGCoVF3YvM" target="_blank"
-                        rel="noopener noreferrer">3Blue1Brown:
-                        Bayes' Theorem (YouTube)</a></li>
+                <li>
+                    <a href="https://www.youtube.com/watch?v=HZGCoVF3YvM" target="_blank"
+                        rel="noopener noreferrer">3Blue1Brown: Bayes' Theorem (YouTube)</a>
+                </li>
             </ul>
         </section>
     </main>
