@@ -90,7 +90,7 @@
                 length, the weight of the penguin increases by about 1000 g (1 kg). One of our penguins has a flipper
                 length of 220 mm and we also know his weight is 5000 g. We observe another penguin to have a flipper
                 length of 190 mm; what is the approximate weight of this second penguin? We know we have an increase of
-                1000g/20mm. The second penguin’s flippers are 30mm shorter so the weight would be 5000g - 1500g = 3500g.
+                1000g/20mm. The second penguin's flippers are 30mm shorter so the weight would be 5000g - 1500g = 3500g.
             </p>
             <p>
                 We just used a baseline (1000g/20mm) and made a prediction based on that starting point.
@@ -116,11 +116,12 @@ sns.regplot(x="flipper_length_mm", y="body_mass_g", data=penguins, fit_reg=True)
 
 plt.show()
 </code></pre>
-            <p>mod1_obj1_penguin_reg1</p>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_1/mod1_obj1_penguin_reg1.png"
+                    alt="mod1_obj1_penguin_reg1" loading="lazy"></p>
             <p>
-                Because seaborn doesn't display the actual equation for the regression, we'll check our answer the
-                old-fashioned way by adding grid lines to the plot. You could also use the scikit-learn linear
-                regression estimator, which we'll work through later in the module.
+                Because <code>seaborn</code> doesn't display the actual equation for the regression, we'll check our
+                answer the old-fashioned way by adding grid lines to the plot. You could also use the scikit-learn
+                linear regression estimator, which we'll work through later in the module.
             </p>
             <pre><code># Plot the same data as above but with added lines for our "guess"
 ax = sns.regplot(x="flipper_length_mm", y="body_mass_g", data=penguins, fit_reg=True)
@@ -129,7 +130,8 @@ plt.axhline(y=3500, color='red', linewidth=0.75)
 
 plt.show()
 </code></pre>
-            <p>mod1_obj1_penguin_reg2</p>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_1/mod1_obj1_penguin_reg2.png"
+                    alt="mod1_obj1_penguin_reg2" loading="lazy"></p>
             <p>
                 Where the lines intersect is what we guessed our penguin's weight to be, based on our prior knowledge of
                 a general flipper length to weight ratio. The intersection is pretty close to the best-fit line (linear
@@ -144,7 +146,7 @@ plt.show()
             <h3>Additional Resources</h3>
             <ul>
                 <li>
-                    <a href="https://www.fast.ai/posts/2017-12-18-cosine-ann.html" target="_blank"
+                    <a href="https://www.mlpowered.com/posts/start-with-a-stupid-model/" target="_blank"
                         rel="noopener noreferrer">
                         Always Start with a Stupid Model
                     </a>
@@ -156,7 +158,8 @@ plt.show()
             <h2>Objective 02 - Use scikit-learn for linear regression</h2>
             <h3>Overview</h3>
             <p>
-                In the previous objectives, we used seaborn to fit a simple linear regression to a dataset containing
+                In the previous objectives, we used <code>seaborn</code> to fit a simple linear regression to a dataset
+                containing
                 penguin weight and flipper lengths. In the example, we compared our baseline (the ratio of weight to
                 flipper length) to the actual best-line fit in the plot.
             </p>
@@ -177,12 +180,174 @@ plt.show()
                 and the associated coefficients. Linear regression fits a line to data where the equation of the line is
                 given by
             </p>
+            <p><span class="MathJax_Preview" style="color: inherit;"></span>
+            <div class="MathJax_SVG_Display" style="text-align: center;"><span class="MathJax_SVG"
+                    id="MathJax-Element-1-Frame" tabindex="0"
+                    style="font-size: 100%; display: inline-block; position: relative;"
+                    data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x03B2;&lt;/mi&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/msub&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x03B2;&lt;/mi&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/msub&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/math&gt;"
+                    role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="13.164ex"
+                        height="2.478ex" viewBox="0 -799.3 5667.8 1067.1" role="img" focusable="false"
+                        style="vertical-align: -0.622ex;" aria-hidden="true">
+                        <g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)">
+                            <use xlink:href="#MJMATHI-79" x="0" y="0"></use>
+                            <use xlink:href="#MJMAIN-3D" x="775" y="0"></use>
+                            <g transform="translate(1831,0)">
+                                <use xlink:href="#MJMATHI-3B2" x="0" y="0"></use>
+                                <use transform="scale(0.707)" xlink:href="#MJMAIN-30" x="801" y="-213"></use>
+                            </g>
+                            <use xlink:href="#MJMAIN-2B" x="3074" y="0"></use>
+                            <g transform="translate(4074,0)">
+                                <use xlink:href="#MJMATHI-3B2" x="0" y="0"></use>
+                                <use transform="scale(0.707)" xlink:href="#MJMAIN-31" x="801" y="-213"></use>
+                            </g>
+                            <use xlink:href="#MJMATHI-78" x="5095" y="0"></use>
+                        </g>
+                    </svg><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math
+                            xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                            <mi>y</mi>
+                            <mo>=</mo>
+                            <msub>
+                                <mi>β</mi>
+                                <mn>0</mn>
+                            </msub>
+                            <mo>+</mo>
+                            <msub>
+                                <mi>β</mi>
+                                <mn>1</mn>
+                            </msub>
+                            <mi>x</mi>
+                        </math></span></span></div>
+            <script type="math/tex; mode=display" id="MathJax-Element-1">y = \beta_0 + \beta_1x</script>
+            </p>
             <p>
-                <em>When we fit a line, we’re trying to find the coefficients <b>&beta;</b> and <b>&alpha;</b>. The
+                <em>When we fit a line, we're trying to find the coefficients <b>&beta;</b> and <b>&alpha;</b>. The
                     parameter <b>&alpha;</b> is the intercept (when <b>x = 0</b>, the intercept is the <b>y</b> value)
                     and <b>&beta;</b> is the slope. The results of the model fit will return the slope and
                     intercept.</em>
             </p>
+            <p>When we fit a line, we're trying to find the coefficients <span
+                    class="math_equation_latex fade-in-equation" style="null"><span class="MathJax_Preview"
+                        style="color: inherit;"></span><span class="MathJax_SVG" id="MathJax-Element-2-Frame"
+                        tabindex="0" style="font-size: 100%; display: inline-block; position: relative;"
+                        data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x03B2;&lt;/mi&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/msub&gt;&lt;/math&gt;"
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="2.37ex"
+                            height="2.478ex" viewBox="0 -799.3 1020.4 1067.1" role="img" focusable="false"
+                            style="vertical-align: -0.622ex;" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-3B2" x="0" y="0"></use>
+                                <use transform="scale(0.707)" xlink:href="#MJMAIN-30" x="801" y="-213"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <msub>
+                                    <mi>β</mi>
+                                    <mn>0</mn>
+                                </msub>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-2">\beta_0</script>
+                </span>&nbsp;and <span class="math_equation_latex fade-in-equation" style="null"><span
+                        class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax_SVG"
+                        id="MathJax-Element-3-Frame" tabindex="0"
+                        style="font-size: 100%; display: inline-block; position: relative;"
+                        data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x03B2;&lt;/mi&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/msub&gt;&lt;/math&gt;"
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="2.37ex"
+                            height="2.478ex" viewBox="0 -799.3 1020.4 1067.1" role="img" focusable="false"
+                            style="vertical-align: -0.622ex;" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-3B2" x="0" y="0"></use>
+                                <use transform="scale(0.707)" xlink:href="#MJMAIN-31" x="801" y="-213"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <msub>
+                                    <mi>β</mi>
+                                    <mn>1</mn>
+                                </msub>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-3">\beta_1</script>
+                </span>. The parameter <span class="math_equation_latex fade-in-equation" style="null"><span
+                        class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax_SVG"
+                        id="MathJax-Element-4-Frame" tabindex="0"
+                        style="font-size: 100%; display: inline-block; position: relative;"
+                        data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x03B2;&lt;/mi&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/msub&gt;&lt;/math&gt;"
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="2.37ex"
+                            height="2.478ex" viewBox="0 -799.3 1020.4 1067.1" role="img" focusable="false"
+                            style="vertical-align: -0.622ex;" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-3B2" x="0" y="0"></use>
+                                <use transform="scale(0.707)" xlink:href="#MJMAIN-30" x="801" y="-213"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <msub>
+                                    <mi>β</mi>
+                                    <mn>0</mn>
+                                </msub>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-4">\beta_0</script>
+                </span> is the intercept (when <span class="math_equation_latex fade-in-equation" style="null"><span
+                        class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax_SVG"
+                        id="MathJax-Element-5-Frame" tabindex="0"
+                        style="font-size: 100%; display: inline-block; position: relative;"
+                        data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/math&gt;"
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="5.591ex"
+                            height="1.985ex" viewBox="0 -746.2 2407.1 854.5" role="img" focusable="false"
+                            style="vertical-align: -0.252ex;" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-78" x="0" y="0"></use>
+                                <use xlink:href="#MJMAIN-3D" x="850" y="0"></use>
+                                <use xlink:href="#MJMAIN-30" x="1906" y="0"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <mi>x</mi>
+                                <mo>=</mo>
+                                <mn>0</mn>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-5">x=0</script>
+                </span>, the intercept is the <span class="math_equation_latex fade-in-equation" style="null"><span
+                        class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax_SVG"
+                        id="MathJax-Element-6-Frame" tabindex="0"
+                        style="font-size: 100%; display: inline-block; position: relative;"
+                        data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;/math&gt;"
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1.155ex"
+                            height="1.861ex" viewBox="0 -533.5 497.5 801.3" role="img" focusable="false"
+                            style="vertical-align: -0.622ex;" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-79" x="0" y="0"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <mi>y</mi>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-6">y</script>
+                </span> value) and <span class="math_equation_latex fade-in-equation" style="null"><span
+                        class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax_SVG"
+                        id="MathJax-Element-7-Frame" tabindex="0"
+                        style="font-size: 100%; display: inline-block; position: relative;"
+                        data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x03B2;&lt;/mi&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/msub&gt;&lt;/math&gt;"
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="2.37ex"
+                            height="2.478ex" viewBox="0 -799.3 1020.4 1067.1" role="img" focusable="false"
+                            style="vertical-align: -0.622ex;" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-3B2" x="0" y="0"></use>
+                                <use transform="scale(0.707)" xlink:href="#MJMAIN-31" x="801" y="-213"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <msub>
+                                    <mi>β</mi>
+                                    <mn>1</mn>
+                                </msub>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-7">\beta_1</script>
+                </span> is the slope. The results of the model fit will return the slope and intercept.</p>
             <p>
                 In the next objective we'll focus more on the meaning of the coefficients. Right now the goal is to
                 learn how to use the scikit-learn tool to fit a simple model.
@@ -238,101 +403,120 @@ print('Shape of the dataset (after removing NaNs): ', penguins.shape)
 # Display the first five rows
 display(penguins.head())
 </code></pre>
-            <p>
-                Shape of the dataset (before removing NaNs): (344, 7)<br>
-                Shape of the dataset (after removing NaNs): (333, 7)
-            </p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>species</th>
-                        <th>island</th>
-                        <th>bill_length_mm</th>
-                        <th>bill_depth_mm</th>
-                        <th>flipper_length_mm</th>
-                        <th>body_mass_g</th>
-                        <th>sex</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Adelie</td>
-                        <td>Torgersen</td>
-                        <td>39.1</td>
-                        <td>18.7</td>
-                        <td>181.0</td>
-                        <td>3750.0</td>
-                        <td>Male</td>
-                    </tr>
-                    <tr>
-                        <td>Adelie</td>
-                        <td>Torgersen</td>
-                        <td>39.5</td>
-                        <td>17.4</td>
-                        <td>186.0</td>
-                        <td>3800.0</td>
-                        <td>Female</td>
-                    </tr>
-                    <tr>
-                        <td>Adelie</td>
-                        <td>Torgersen</td>
-                        <td>40.3</td>
-                        <td>18.0</td>
-                        <td>195.0</td>
-                        <td>3250.0</td>
-                        <td>Female</td>
-                    </tr>
-                    <tr>
-                        <td>Adelie</td>
-                        <td>Torgersen</td>
-                        <td>36.7</td>
-                        <td>19.3</td>
-                        <td>193.0</td>
-                        <td>3450.0</td>
-                        <td>Female</td>
-                    </tr>
-                    <tr>
-                        <td>Adelie</td>
-                        <td>Torgersen</td>
-                        <td>39.3</td>
-                        <td>20.6</td>
-                        <td>190.0</td>
-                        <td>3650.0</td>
-                        <td>Male</td>
-                    </tr>
-                </tbody>
-            </table>
+            <pre><code>Shape of the dataset (before removing NaNs): (344, 7)
+Shape of the dataset (after removing NaNs): (333, 7)</code></pre>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>species</th>
+                            <th>island</th>
+                            <th>bill_length_mm</th>
+                            <th>bill_depth_mm</th>
+                            <th>flipper_length_mm</th>
+                            <th>body_mass_g</th>
+                            <th>sex</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Adelie</td>
+                            <td>Torgersen</td>
+                            <td>39.1</td>
+                            <td>18.7</td>
+                            <td>181.0</td>
+                            <td>3750.0</td>
+                            <td>Male</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Adelie</td>
+                            <td>Torgersen</td>
+                            <td>39.5</td>
+                            <td>17.4</td>
+                            <td>186.0</td>
+                            <td>3800.0</td>
+                            <td>Female</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Adelie</td>
+                            <td>Torgersen</td>
+                            <td>40.3</td>
+                            <td>18.0</td>
+                            <td>195.0</td>
+                            <td>3250.0</td>
+                            <td>Female</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Adelie</td>
+                            <td>Torgersen</td>
+                            <td>36.7</td>
+                            <td>19.3</td>
+                            <td>193.0</td>
+                            <td>3450.0</td>
+                            <td>Female</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Adelie</td>
+                            <td>Torgersen</td>
+                            <td>39.3</td>
+                            <td>20.6</td>
+                            <td>190.0</td>
+                            <td>3650.0</td>
+                            <td>Male</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <h3>Representing Data</h3>
             <p>
-                In the previous Sprints, we discussed how organizing our data in a particular format, makes it easier to
-                clean it for machine learning. Now we get to see the benefit of having such formatted data as we prepare
+                In the previous Sprints, we discussed how organizing our data in a particular format, makes it
+                easier to
+                clean it for machine learning. Now we get to see the benefit of having such formatted data as we
+                prepare
                 to use it with scikit-learn.
             </p>
             <p>
-                In the above table, we have 333 rows of data (after filtering), where each row is an observation of a
+                In the above table, we have 333 rows of data (after filtering), where each row is an observation of
+                a
                 single penguin. The rows are sometimes called samples; think of each row as a sample of observations
                 about a penguin. We also have seven columns that correspond to the information that describes each
                 sample. In the columns we are describing the species, home island, and physical characters of our
-                samples (penguins). Features are often numeric like (body_mass_g, flipper_length_mm) but not always. The
-                species, island, and sex columns are all described by string variables.
+                samples (penguins). Features are often numeric like (<code>body_mass_g</code>,
+                <code>flipper_length_mm</code>) but not always.
+                The <code>species</code>, <code>island</code>, and <code>sex</code> columns are all described by string
+                variables.
             </p>
             <h3>Feature Matrix and Target Array</h3>
             <p>
-                Before we can input our data into a scikit-learn model, we have to separate it into a feature matrix and
-                target array. First, we need to decide what we're trying to predict from this dataset. We've already fit
-                a simple linear regression model to the flipper_length_mm and body_mass_g variables, so we'll continue
-                with those two variables. We want to use the flipper length to predict the weight of the penguin. The
+                Before we can input our data into a scikit-learn model, we have to separate it into a feature matrix
+                and
+                target array. First, we need to decide what we're trying to predict from this dataset. We've already
+                fit
+                a simple linear regression model to the <code>flipper_length_mm</code> and <code>body_mass_g</code>
+                variables, so we'll continue with those two variables. We want to use the flipper length to predict
+                the weight of the penguin.
+                The
                 terminology we use is as follows: our feature (flipper length) will be used to predict the target
                 (weight).
             </p>
             <p>
-                For this simple linear regression example, we are only predicting one target variable; the target is an
+                For this simple linear regression example, we are only predicting one target variable; the target is
+                an
                 array with a length equal to the number of rows in the feature matrix.
             </p>
-            <h4>features</h4>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_1/mod1_obj2_features.gif"
+                    alt="features" loading="lazy"></p>
             <p>
-                In the following code, we'll create our feature matrix and target vector/array. It's customary to use a
-                capital (uppercase) X, for the features, and a lowercase y, for the target vector. We'll add the name
+                In the following code, we'll create our feature matrix and target vector/array. It's customary to
+                use a
+                capital (uppercase) X, for the features, and a lowercase y, for the target vector. We'll add the
+                name
                 penguins to our variable names to make it easier to remember the data we are fitting.
             </p>
             <pre><code># Create the feature matrix
@@ -348,26 +532,31 @@ print("The shape of the target array/vector: ", y_penguins.shape)
                 The shape of the target array/vector: (333,)
             </p>
             <p>
-                We can see that these are both one-dimensional arrays of 333 elements, which is what we expected. Our
+                We can see that these are both one-dimensional arrays of 333 elements, which is what we expected.
+                Our
                 data is now ready to be input in a scikit-learn model.
             </p>
             <h3>Scikit-learn Predictor</h3>
             <p>
                 The scikit-learn predictor is the object that learns from the data. There is a standard process to
-                follow to use the predictor object. Our example will be for a linear regression but we can apply these
+                follow to use the predictor object. Our example will be for a linear regression but we can apply
+                these
                 steps to any of the scikit-learn predictors (classification, regression, and clustering).
             </p>
             <ol>
                 <li>
                     <strong>Import the model class</strong><br>
-                    We already know we're trying to fit a linear model to our data, so we'll use a regression algorithm.
+                    We already know we're trying to fit a linear model to our data, so we'll use a regression
+                    algorithm.
                     <pre><code>from sklearn.linear_model import LinearRegression
 </code></pre>
                 </li>
                 <li>
                     <strong>Instantiate the class</strong><br>
-                    The term instantiate is a fancy way to say you are creating an instance of a class. We imported the
-                    predictor class but that's it; we need to create an instance of that class to actually do anything.
+                    The term instantiate is a fancy way to say you are creating an instance of a class. We imported
+                    the
+                    predictor class but that's it; we need to create an instance of that class to actually do
+                    anything.
                     With this step, we also determine the hyperparameters or model parameters we would like to use.
                     <p>
                         To create an instance of LinearRegression() predictor, we use the following code:
@@ -392,8 +581,10 @@ model
                 </li>
                 <li>
                     <strong>Arrange data</strong><br>
-                    Part of this step was already completed above, but all predictors require the feature matrix to be
-                    in the form of a two-dimensional matrix. We can reshape the one-dimensional array by adding a new
+                    Part of this step was already completed above, but all predictors require the feature matrix to
+                    be
+                    in the form of a two-dimensional matrix. We can reshape the one-dimensional array by adding a
+                    new
                     axis with the np.newaxis function.
                     <pre><code># Ensure X_penguins is a NumPy array if it's a pandas Series
 if isinstance(X_penguins, pd.Series):
@@ -416,8 +607,10 @@ print(X_penguins_2D.shape)
                 </li>
                 <li>
                     <strong>Fit the model</strong><br>
-                    We have a model predictor imported, the class instantiated, and our data in the correct format. The
-                    next step is to fit our model! Using the fit() method associated with the model, the model results
+                    We have a model predictor imported, the class instantiated, and our data in the correct format.
+                    The
+                    next step is to fit our model! Using the fit() method associated with the model, the model
+                    results
                     will be stored in model-specific attributes.
                     <pre><code># Fit the model
 model.fit(X_penguins_2D, y_penguins)
@@ -450,8 +643,10 @@ print(f'\nbody_mass_g = {model.coef_[0]} x flipper_length_mm + ({model.intercept
             </ol>
             <h3>Challenge</h3>
             <p>
-                In the original data set there are other physical measurements on penguins that we can perform a linear
-                regression on. Bill length and depth measure the characteristics of a penguin's beak. Using two of these
+                In the original data set there are other physical measurements on penguins that we can perform a
+                linear
+                regression on. Bill length and depth measure the characteristics of a penguin's beak. Using two of
+                these
                 measurements, fit a linear regression model to see how much the two variables might display a linear
                 relationship.
             </p>
@@ -491,7 +686,7 @@ print(f'\nbody_mass_g = {model.coef_[0]} x flipper_length_mm + ({model.intercept
             </p>
             <pre><code>y = mx + b</code></pre>
             <p>
-                When we fit a line, we’re trying to find the coefficients <code>m</code> and <code>b</code>. The
+                When we fit a line, we're trying to find the coefficients <code>m</code> and <code>b</code>. The
                 parameter <code>b</code> is the intercept (when <code>x = 0</code>, the intercept is the <code>y</code>
                 value) and <code>m</code> is the slope. The scikit-learn estimator process determines the values for
                 <code>m</code> and <code>b</code> that describe a line that best "fits" the data. How the model actually
