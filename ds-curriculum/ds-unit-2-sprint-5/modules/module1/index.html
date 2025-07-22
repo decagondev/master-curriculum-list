@@ -49,6 +49,762 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - Begin with baselines for regression</h2>
+            <h3>Overview</h3>
+            <p>
+                In this module we're going to be focusing on regression. Regression analysis is used to determine the
+                relationship between a continuous dependent variable and an independent variable(s). In machine
+                learning, regression is often used to make predictions. We're going to start by introducing linear
+                regression with continuous variables and work through using scikit-learn to fit a linear regression
+                model to some practice datasets.
+            </p>
+            <p>
+                Before we practice model fitting using regression, we need to understand the concept of a baseline.
+            </p>
+            <h3>Baselines</h3>
+            <p>
+                A common definition of a baseline is a starting point from which to make comparisons. If we fit a model
+                to our data, we need to have a starting place to compare our results to.
+            </p>
+            <p>
+                There are different metrics we can use as our baseline. Some that we'll consider in this module are:
+                using a "rule of thumb" (using previous knowledge or commonly known information), descriptive statistics
+                (such as the mean, minimum, or maximum or the variable), and fitting a simple model (such as a linear
+                regression that can serve as a baseline for a more complicated model).
+            </p>
+            <p>
+                Using an example dataset, let's look at how to determine the type of baseline that is appropriate for
+                the data and the type of model we would like to fit.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                For this next exercise, we're going to step into the role of a penguin researcher. For our research,
+                we'd like to be able to predict the weight of a penguin (the mass) based on the length of the flippers
+                (these are analogous to a bird's wings). The length of a flipper is easier to observe than other less
+                obvious physical characteristics and so we'd like to use it to easily predict the penguin's weight.
+            </p>
+            <h3>Baseline</h3>
+            <p>
+                Since we're serving as (temporary) penguin researchers, we have some experience with judging the weight
+                of a penguin by the flipper length. We know that on average, for about every 20 mm increase in flipper
+                length, the weight of the penguin increases by about 1000 g (1 kg). One of our penguins has a flipper
+                length of 220 mm and we also know his weight is 5000 g. We observe another penguin to have a flipper
+                length of 190 mm; what is the approximate weight of this second penguin? We know we have an increase of
+                1000g/20mm. The second penguin's flippers are 30mm shorter so the weight would be 5000g - 1500g = 3500g.
+            </p>
+            <p>
+                We just used a baseline (1000g/20mm) and made a prediction based on that starting point.
+            </p>
+            <h3>Check the Baseline</h3>
+            <p>
+                As penguin researchers, we have some data available to us. The next step is to plot our data and then do
+                a simple regression to fit a line; we'll expand on this step in the next objective.
+            </p>
+            <p>
+                The seaborn plotting library has conveniently made the penguin data available. Once we import seaborn,
+                we can easily load the dataset into a DataFrame.
+            </p>
+            <pre><code># Import seaborn and matplotlib with the standard aliases
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the example penguins dataset
+penguins = sns.load_dataset("penguins")
+
+# Create a "regplot"
+sns.regplot(x="flipper_length_mm", y="body_mass_g", data=penguins, fit_reg=True)
+
+plt.show()
+</code></pre>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_1/mod1_obj1_penguin_reg1.png"
+                    alt="mod1_obj1_penguin_reg1" loading="lazy"></p>
+            <p>
+                Because <code>seaborn</code> doesn't display the actual equation for the regression, we'll check our
+                answer the old-fashioned way by adding grid lines to the plot. You could also use the scikit-learn
+                linear regression estimator, which we'll work through later in the module.
+            </p>
+            <pre><code># Plot the same data as above but with added lines for our "guess"
+ax = sns.regplot(x="flipper_length_mm", y="body_mass_g", data=penguins, fit_reg=True)
+plt.axvline(x=190, color='red', linewidth=0.75)
+plt.axhline(y=3500, color='red', linewidth=0.75)
+
+plt.show()
+</code></pre>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_1/mod1_obj1_penguin_reg2.png"
+                    alt="mod1_obj1_penguin_reg2" loading="lazy"></p>
+            <p>
+                Where the lines intersect is what we guessed our penguin's weight to be, based on our prior knowledge of
+                a general flipper length to weight ratio. The intersection is pretty close to the best-fit line (linear
+                regression fit by seaborn) - our baseline guess wasn't too bad!
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                Using the penguin data set, try selecting a different flipper length and then use the ratio of
+                1000g/20mm to predict the weight of the penguin. As a stretch goal, you can plot your guess using the
+                same code as above, and see how well our baseline does.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://www.mlpowered.com/posts/start-with-a-stupid-model/" target="_blank"
+                        rel="noopener noreferrer">
+                        Always Start with a Stupid Model
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Use scikit-learn for linear regression</h2>
+            <h3>Overview</h3>
+            <p>
+                In the previous objectives, we used <code>seaborn</code> to fit a simple linear regression to a dataset
+                containing
+                penguin weight and flipper lengths. In the example, we compared our baseline (the ratio of weight to
+                flipper length) to the actual best-line fit in the plot.
+            </p>
+            <p>
+                Throughout this unit we're going to be using the tools available in the scikit-learn library. Most
+                likely you've already come across this library and even used some of the tools, either in Unit 1 or
+                during your own learning.
+            </p>
+            <p>
+                Right now, we're going to work through an example using scikit-learn to fit a linear regression model,
+                using the same dataset from the previous objective. While some of this material may be review, it's
+                still important to go through each of the steps, both for practice and to address concepts that we might
+                have missed.
+            </p>
+            <h3>Linear Regression</h3>
+            <p>
+                Before we get into how to use scikit-learn to fit a model, we'll do a quick review of linear regression
+                and the associated coefficients. Linear regression fits a line to data where the equation of the line is
+                given by
+            </p>
+            <p><span class="MathJax_Preview" style="color: inherit;"></span>
+            <div class="MathJax_SVG_Display" style="text-align: center;"><span class="MathJax_SVG"
+                    id="MathJax-Element-1-Frame" tabindex="0"
+                    style="font-size: 100%; display: inline-block; position: relative;"
+                    data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x03B2;&lt;/mi&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/msub&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x03B2;&lt;/mi&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/msub&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/math&gt;"
+                    role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="13.164ex"
+                        height="2.478ex" viewBox="0 -799.3 5667.8 1067.1" role="img" focusable="false"
+                        style="vertical-align: -0.622ex;" aria-hidden="true">
+                        <g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)">
+                            <use xlink:href="#MJMATHI-79" x="0" y="0"></use>
+                            <use xlink:href="#MJMAIN-3D" x="775" y="0"></use>
+                            <g transform="translate(1831,0)">
+                                <use xlink:href="#MJMATHI-3B2" x="0" y="0"></use>
+                                <use transform="scale(0.707)" xlink:href="#MJMAIN-30" x="801" y="-213"></use>
+                            </g>
+                            <use xlink:href="#MJMAIN-2B" x="3074" y="0"></use>
+                            <g transform="translate(4074,0)">
+                                <use xlink:href="#MJMATHI-3B2" x="0" y="0"></use>
+                                <use transform="scale(0.707)" xlink:href="#MJMAIN-31" x="801" y="-213"></use>
+                            </g>
+                            <use xlink:href="#MJMATHI-78" x="5095" y="0"></use>
+                        </g>
+                    </svg><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math
+                            xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                            <mi>y</mi>
+                            <mo>=</mo>
+                            <msub>
+                                <mi>β</mi>
+                                <mn>0</mn>
+                            </msub>
+                            <mo>+</mo>
+                            <msub>
+                                <mi>β</mi>
+                                <mn>1</mn>
+                            </msub>
+                            <mi>x</mi>
+                        </math></span></span></div>
+            <script type="math/tex; mode=display" id="MathJax-Element-1">y = \beta_0 + \beta_1x</script>
+            </p>
+            <p>
+                <em>When we fit a line, we're trying to find the coefficients <b>&beta;</b> and <b>&alpha;</b>. The
+                    parameter <b>&alpha;</b> is the intercept (when <b>x = 0</b>, the intercept is the <b>y</b> value)
+                    and <b>&beta;</b> is the slope. The results of the model fit will return the slope and
+                    intercept.</em>
+            </p>
+            <p>When we fit a line, we're trying to find the coefficients <span
+                    class="math_equation_latex fade-in-equation" style="null"><span class="MathJax_Preview"
+                        style="color: inherit;"></span><span class="MathJax_SVG" id="MathJax-Element-2-Frame"
+                        tabindex="0" style="font-size: 100%; display: inline-block; position: relative;"
+                        data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x03B2;&lt;/mi&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/msub&gt;&lt;/math&gt;"
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="2.37ex"
+                            height="2.478ex" viewBox="0 -799.3 1020.4 1067.1" role="img" focusable="false"
+                            style="vertical-align: -0.622ex;" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-3B2" x="0" y="0"></use>
+                                <use transform="scale(0.707)" xlink:href="#MJMAIN-30" x="801" y="-213"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <msub>
+                                    <mi>β</mi>
+                                    <mn>0</mn>
+                                </msub>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-2">\beta_0</script>
+                </span>&nbsp;and <span class="math_equation_latex fade-in-equation" style="null"><span
+                        class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax_SVG"
+                        id="MathJax-Element-3-Frame" tabindex="0"
+                        style="font-size: 100%; display: inline-block; position: relative;"
+                        data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x03B2;&lt;/mi&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/msub&gt;&lt;/math&gt;"
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="2.37ex"
+                            height="2.478ex" viewBox="0 -799.3 1020.4 1067.1" role="img" focusable="false"
+                            style="vertical-align: -0.622ex;" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-3B2" x="0" y="0"></use>
+                                <use transform="scale(0.707)" xlink:href="#MJMAIN-31" x="801" y="-213"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <msub>
+                                    <mi>β</mi>
+                                    <mn>1</mn>
+                                </msub>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-3">\beta_1</script>
+                </span>. The parameter <span class="math_equation_latex fade-in-equation" style="null"><span
+                        class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax_SVG"
+                        id="MathJax-Element-4-Frame" tabindex="0"
+                        style="font-size: 100%; display: inline-block; position: relative;"
+                        data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x03B2;&lt;/mi&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/msub&gt;&lt;/math&gt;"
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="2.37ex"
+                            height="2.478ex" viewBox="0 -799.3 1020.4 1067.1" role="img" focusable="false"
+                            style="vertical-align: -0.622ex;" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-3B2" x="0" y="0"></use>
+                                <use transform="scale(0.707)" xlink:href="#MJMAIN-30" x="801" y="-213"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <msub>
+                                    <mi>β</mi>
+                                    <mn>0</mn>
+                                </msub>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-4">\beta_0</script>
+                </span> is the intercept (when <span class="math_equation_latex fade-in-equation" style="null"><span
+                        class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax_SVG"
+                        id="MathJax-Element-5-Frame" tabindex="0"
+                        style="font-size: 100%; display: inline-block; position: relative;"
+                        data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/math&gt;"
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="5.591ex"
+                            height="1.985ex" viewBox="0 -746.2 2407.1 854.5" role="img" focusable="false"
+                            style="vertical-align: -0.252ex;" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-78" x="0" y="0"></use>
+                                <use xlink:href="#MJMAIN-3D" x="850" y="0"></use>
+                                <use xlink:href="#MJMAIN-30" x="1906" y="0"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <mi>x</mi>
+                                <mo>=</mo>
+                                <mn>0</mn>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-5">x=0</script>
+                </span>, the intercept is the <span class="math_equation_latex fade-in-equation" style="null"><span
+                        class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax_SVG"
+                        id="MathJax-Element-6-Frame" tabindex="0"
+                        style="font-size: 100%; display: inline-block; position: relative;"
+                        data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;/math&gt;"
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1.155ex"
+                            height="1.861ex" viewBox="0 -533.5 497.5 801.3" role="img" focusable="false"
+                            style="vertical-align: -0.622ex;" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-79" x="0" y="0"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <mi>y</mi>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-6">y</script>
+                </span> value) and <span class="math_equation_latex fade-in-equation" style="null"><span
+                        class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax_SVG"
+                        id="MathJax-Element-7-Frame" tabindex="0"
+                        style="font-size: 100%; display: inline-block; position: relative;"
+                        data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x03B2;&lt;/mi&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/msub&gt;&lt;/math&gt;"
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="2.37ex"
+                            height="2.478ex" viewBox="0 -799.3 1020.4 1067.1" role="img" focusable="false"
+                            style="vertical-align: -0.622ex;" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-3B2" x="0" y="0"></use>
+                                <use transform="scale(0.707)" xlink:href="#MJMAIN-31" x="801" y="-213"></use>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <msub>
+                                    <mi>β</mi>
+                                    <mn>1</mn>
+                                </msub>
+                            </math></span></span>
+                    <script type="math/tex" id="MathJax-Element-7">\beta_1</script>
+                </span> is the slope. The results of the model fit will return the slope and intercept.</p>
+            <p>
+                In the next objective we'll focus more on the meaning of the coefficients. Right now the goal is to
+                learn how to use the scikit-learn tool to fit a simple model.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                The following steps show the same process you will follow with the scikit-learn API (application
+                programming interface; how we interact with the many tools in the scikit-learn predictor) to fit many
+                different types of models. The model type, model complexity, data type, and size of the data set will
+                not affect the following steps:
+            </p>
+            <h4>Scikit-learn API</h4>
+            <ol>
+                <li>Load the data set and "clean” if needed (not specifically part of scikit-learn but essential to the
+                    DS process)</li>
+                <li>Create features and target(s) from the data</li>
+                <li>Import the model and instantiate the class</li>
+                <li>Fit the model</li>
+                <li>Apply your model; use the model to predict new values</li>
+            </ol>
+            <p>
+                In the above process, the data loading, cleaning, and preparing for modeling can be done all at once
+                before any of the other steps. Creating features and target(s) can also be completed right before you
+                fit the model; the important thing to remember is to have the data in the correct form before fitting.
+            </p>
+            <h3>Load Data</h3>
+            <p>
+                As in the previous objective, we'll use the penguin data set available from the seaborn library. When we
+                import seaborn, all of the associated datasets are included; we don't need to download any other data or
+                load files from our local system.
+            </p>
+            <p>
+                We also need to make sure we remove any NaN values now. The model-fitting algorithm requires that we
+                input clean data or data that is free of missing values.
+            </p>
+            <pre><code># Import pandas and seaborn
+import pandas as pd
+import numpy as np
+import seaborn as sns
+
+# Load the data into a DataFrame
+penguins = sns.load_dataset("penguins")
+
+# Print the shape of the DataFrame
+print('Shape of the dataset (before removing NaNs): ', penguins.shape)
+
+# Drop NaNs
+penguins.dropna(inplace=True)
+
+# Print the shape of the DataFrame
+print('Shape of the dataset (after removing NaNs): ', penguins.shape)
+
+# Display the first five rows
+display(penguins.head())
+</code></pre>
+            <pre><code>Shape of the dataset (before removing NaNs): (344, 7)
+Shape of the dataset (after removing NaNs): (333, 7)</code></pre>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>species</th>
+                            <th>island</th>
+                            <th>bill_length_mm</th>
+                            <th>bill_depth_mm</th>
+                            <th>flipper_length_mm</th>
+                            <th>body_mass_g</th>
+                            <th>sex</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Adelie</td>
+                            <td>Torgersen</td>
+                            <td>39.1</td>
+                            <td>18.7</td>
+                            <td>181.0</td>
+                            <td>3750.0</td>
+                            <td>Male</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Adelie</td>
+                            <td>Torgersen</td>
+                            <td>39.5</td>
+                            <td>17.4</td>
+                            <td>186.0</td>
+                            <td>3800.0</td>
+                            <td>Female</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Adelie</td>
+                            <td>Torgersen</td>
+                            <td>40.3</td>
+                            <td>18.0</td>
+                            <td>195.0</td>
+                            <td>3250.0</td>
+                            <td>Female</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Adelie</td>
+                            <td>Torgersen</td>
+                            <td>36.7</td>
+                            <td>19.3</td>
+                            <td>193.0</td>
+                            <td>3450.0</td>
+                            <td>Female</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Adelie</td>
+                            <td>Torgersen</td>
+                            <td>39.3</td>
+                            <td>20.6</td>
+                            <td>190.0</td>
+                            <td>3650.0</td>
+                            <td>Male</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3>Representing Data</h3>
+            <p>
+                In the previous Sprints, we discussed how organizing our data in a particular format, makes it
+                easier to
+                clean it for machine learning. Now we get to see the benefit of having such formatted data as we
+                prepare
+                to use it with scikit-learn.
+            </p>
+            <p>
+                In the above table, we have 333 rows of data (after filtering), where each row is an observation of
+                a
+                single penguin. The rows are sometimes called samples; think of each row as a sample of observations
+                about a penguin. We also have seven columns that correspond to the information that describes each
+                sample. In the columns we are describing the species, home island, and physical characters of our
+                samples (penguins). Features are often numeric like (<code>body_mass_g</code>,
+                <code>flipper_length_mm</code>) but not always.
+                The <code>species</code>, <code>island</code>, and <code>sex</code> columns are all described by string
+                variables.
+            </p>
+            <h3>Feature Matrix and Target Array</h3>
+            <p>
+                Before we can input our data into a scikit-learn model, we have to separate it into a feature matrix
+                and
+                target array. First, we need to decide what we're trying to predict from this dataset. We've already
+                fit
+                a simple linear regression model to the <code>flipper_length_mm</code> and <code>body_mass_g</code>
+                variables, so we'll continue with those two variables. We want to use the flipper length to predict
+                the weight of the penguin.
+                The
+                terminology we use is as follows: our feature (flipper length) will be used to predict the target
+                (weight).
+            </p>
+            <p>
+                For this simple linear regression example, we are only predicting one target variable; the target is
+                an
+                array with a length equal to the number of rows in the feature matrix.
+            </p>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_1/mod1_obj2_features.gif"
+                    alt="features" loading="lazy"></p>
+            <p>
+                In the following code, we'll create our feature matrix and target vector/array. It's customary to
+                use a
+                capital (uppercase) X, for the features, and a lowercase y, for the target vector. We'll add the
+                name
+                penguins to our variable names to make it easier to remember the data we are fitting.
+            </p>
+            <pre><code># Create the feature matrix
+X_penguins = penguins['flipper_length_mm']
+print("The shape of the feature matrix: ", X_penguins.shape)
+
+# Create the target array/vector
+y_penguins = penguins['body_mass_g']
+print("The shape of the target array/vector: ", y_penguins.shape)
+</code></pre>
+            <p>
+                The shape of the feature matrix: (333,)<br>
+                The shape of the target array/vector: (333,)
+            </p>
+            <p>
+                We can see that these are both one-dimensional arrays of 333 elements, which is what we expected.
+                Our
+                data is now ready to be input in a scikit-learn model.
+            </p>
+            <h3>Scikit-learn Predictor</h3>
+            <p>
+                The scikit-learn predictor is the object that learns from the data. There is a standard process to
+                follow to use the predictor object. Our example will be for a linear regression but we can apply
+                these
+                steps to any of the scikit-learn predictors (classification, regression, and clustering).
+            </p>
+            <ol>
+                <li>
+                    <strong>Import the model class</strong><br>
+                    We already know we're trying to fit a linear model to our data, so we'll use a regression
+                    algorithm.
+                    <pre><code>from sklearn.linear_model import LinearRegression
+</code></pre>
+                </li>
+                <li>
+                    <strong>Instantiate the class</strong><br>
+                    The term instantiate is a fancy way to say you are creating an instance of a class. We imported
+                    the
+                    predictor class but that's it; we need to create an instance of that class to actually do
+                    anything.
+                    With this step, we also determine the hyperparameters or model parameters we would like to use.
+                    <p>
+                        To create an instance of LinearRegression() predictor, we use the following code:
+                    </p>
+                    <pre><code># Import the predictor class
+from sklearn.linear_model import LinearRegression
+
+# Instantiate the class (with default parameters)
+model = LinearRegression()
+
+# Display the model parameters
+model
+</code></pre>
+                    <p>
+                        LinearRegression()
+                    </p>
+                    <p>
+                        The LinearRegression() predictor has four parameters that we can set. For now, let's use the
+                        default setting but you can read more about the parameters here<span>Links to an external
+                            site.</span>.
+                    </p>
+                </li>
+                <li>
+                    <strong>Arrange data</strong><br>
+                    Part of this step was already completed above, but all predictors require the feature matrix to
+                    be
+                    in the form of a two-dimensional matrix. We can reshape the one-dimensional array by adding a
+                    new
+                    axis with the np.newaxis function.
+                    <pre><code># Ensure X_penguins is a NumPy array if it's a pandas Series
+if isinstance(X_penguins, pd.Series):
+    X_penguins = X_penguins.to_numpy()
+
+# Display the shape of X_penguins
+print('Original features matrix: ', X_penguins.shape)
+
+# Add a new axis to create a column vector
+X_penguins_2D = X_penguins[:, np.newaxis]
+print(X_penguins_2D.shape)
+</code></pre>
+                    <p>
+                        Original features matrix: (333,)<br>
+                        (333, 1)
+                    </p>
+                    <p>
+                        Our feature matrix is now a two-dimensional array and we can move to the next step.
+                    </p>
+                </li>
+                <li>
+                    <strong>Fit the model</strong><br>
+                    We have a model predictor imported, the class instantiated, and our data in the correct format.
+                    The
+                    next step is to fit our model! Using the fit() method associated with the model, the model
+                    results
+                    will be stored in model-specific attributes.
+                    <pre><code># Fit the model
+model.fit(X_penguins_2D, y_penguins)
+</code></pre>
+                    <p>
+                        LinearRegression()
+                    </p>
+                </li>
+                <li>
+                    <strong>Look at the coefficients</strong><br>
+                    As reviewed above, the coefficients describe the slope and intercept. We can access these
+                    coefficients with the following attributes:
+                    <pre><code># Slope (also called the model coefficient)
+print(model.coef_)
+
+# Intercept
+print(model.intercept_)
+
+# In equation form
+print(f'\nbody_mass_g = {model.coef_[0]} x flipper_length_mm + ({model.intercept_})')
+</code></pre>
+                    <p>
+                        [50.15326594]<br>
+                        -5872.092682842825
+                    </p>
+                    <p>
+                        body_mass_g = 50.15326594224113 x flipper_length_mm + (-5872.092682842825)
+                    </p>
+                </li>
+            </ol>
+            <h3>Challenge</h3>
+            <p>
+                In the original data set there are other physical measurements on penguins that we can perform a
+                linear
+                regression on. Bill length and depth measure the characteristics of a penguin's beak. Using two of
+                these
+                measurements, fit a linear regression model to see how much the two variables might display a linear
+                relationship.
+            </p>
+            <p>
+                Follow these suggested steps:
+            </p>
+            <ul>
+                <li>Load the data set and remove the NaN values.</li>
+                <li>Choose two variables to explore and plot them to check the relationship visually.</li>
+                <li>Create the feature matrix and target array.</li>
+                <li>Import the LinearRegression class and instantiate the model.</li>
+                <li>Fit the model and then print out the coefficients</li>
+            </ul>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="#">Glossary of Common Terms and API Elements<span>Links to an external site.</span></a>
+                </li>
+                <li>
+                    <a href="#">sklearn.linear_model.LinearRegression<span>Links to an external site.</span></a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 03 - Explain the coefficients from a linear regression</h2>
+            <h3>Overview</h3>
+            <p>
+                In the previous objective we briefly introduced the concept of linear regression and the coefficients
+                returned by the model. However, we missed one important part of the process: plotting our results! Let's
+                do that now.
+            </p>
+            <h3>Linear Regression Coefficients</h3>
+            <p>
+                Remember that we are fitting a line to two variables, an independent variable (x axis) and dependent
+                variable (y axis). The form of the equation of this line is given by
+            </p>
+            <pre><code>y = mx + b</code></pre>
+            <p>
+                When we fit a line, we're trying to find the coefficients <code>m</code> and <code>b</code>. The
+                parameter <code>b</code> is the intercept (when <code>x = 0</code>, the intercept is the <code>y</code>
+                value) and <code>m</code> is the slope. The scikit-learn estimator process determines the values for
+                <code>m</code> and <code>b</code> that describe a line that best "fits" the data. How the model actually
+                calculates the best fit is something that we will cover in the upcoming modules.
+            </p>
+            <p>
+                In the next example, we'll fit the same data set as we did previously (using the scikit-learn estimator)
+                and then plot the results of our model.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                Using the steps outlined in the previous objective, we'll load our data and fit a linear regression.
+            </p>
+            <pre><code># Import pandas and seaborn
+import pandas as pd
+import numpy as np
+import seaborn as sns
+
+# Load the data into a DataFrame
+penguins = sns.load_dataset("penguins")
+
+# Drop NaNs
+penguins.dropna(inplace=True)
+# Create the 2-D features matrix
+X_penguins = penguins['flipper_length_mm']
+X_penguins_2D = X_penguins[:, np.newaxis]
+
+# Create the target array
+y_penguins = penguins['body_mass_g']
+# Import the estimator class
+from sklearn.linear_model import LinearRegression
+
+# Instantiate the class (with default parameters)
+model = LinearRegression()
+
+# Dispay the model parameters
+model
+LinearRegression()
+# Display the shape of X_penguins
+print('Original features matrix: ', X_penguins.shape)
+
+# Add a new axis to create a column vector
+X_penguins_2D = X_penguins[:, np.newaxis]
+print(X_penguins_2D.shape)
+Original features matrix:  (333,)
+(333, 1)
+# Fit the model
+model.fit(X_penguins_2D, y_penguins)
+LinearRegression()
+</code></pre>
+            <h4>Look at the coefficients</h4>
+            <p>
+                As reviewed above, the coefficients describe the slope and intercept. We access these coefficients with
+                the following attributes:
+            </p>
+            <pre><code># Slope (also called the model coefficient)
+print(model.coef_)
+
+# Intercept
+print(model.intercept_)
+
+# In equation form
+print(f'\nbody_mass_g = {model.coef_[0]} x flipper_length_mm + ({model.intercept_})')
+[50.15326594]
+-5872.092682842825
+
+body_mass_g = 50.15326594224113 x flipper_length_mm + (-5872.092682842825)
+</code></pre>
+            <p>
+                We now have coefficients of a line! Let's plot this line along with our data. Even though we used
+                seaborn earlier, we'll keep this plot simple and stick to using the basic matplotlib tools. First, we
+                need to generate the line so there is something to plot.
+            </p>
+            <pre><code># Generate the line from the model coefficients
+x_line = np.linspace(170,240)
+y_line = model.coef_*x_line + model.intercept_
+# Import plotting libraries
+import matplotlib.pyplot as plt
+
+# Create the figure and axes objects
+fig, ax = plt.subplots(1)
+ax.scatter(x = X_penguins, y = y_penguins, label="Observed data")
+ax.plot(x_line, y_line, color='g', label="linear regression model")
+ax.set_xlabel('Penguin flipper length (mm)')
+ax.set_ylabel('Penguin weight (g)')
+ax.legend()
+
+plt.show()
+mod1_obj3_penguin_reg_sklearn
+</code></pre>
+            <h3>Challenge</h3>
+            <p>
+                In the original data set, there are other physical measurements on the penguins that we can perform a
+                linear regression on and then plot the resulting best-fit line.
+            </p>
+            <p>
+                Follow these suggested steps:
+            </p>
+            <ul>
+                <li>Load the data set and remove the NaN values.</li>
+                <li>Choose two variables to explore and plot them to check the relationship visually.</li>
+                <li>Create the feature matrix and target array.</li>
+                <li>Import the LinearRegression() class and instantiate the model.</li>
+                <li>Fit the model and then print out the coefficients</li>
+                <li>Plot the model fit along with the data set; does it look like a nice fit to the data?</li>
+            </ul>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="#">Glossary of Common Terms and API Elements<span>Links to an external site.</span></a>
+                </li>
+                <li>
+                    <a href="#">sklearn.linear_model.LinearRegression<span>Links to an external site.</span></a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
             <h2>Guided Project</h2>
             <p>Open <strong>JDS_SHR_211_guided_project_notes.ipynb</strong> in the GitHub repository below to follow
                 along with the guided project:</p>
