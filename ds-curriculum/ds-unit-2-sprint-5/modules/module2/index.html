@@ -50,6 +50,104 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - Implement a train-test split with scikit-learn</h2>
+            <h3>Overview</h3>
+            <p>In the first module of this unit, we fit a linear regression model to a sample data set. We used all the data we had available to train our model. We know we can make accurate predictions for a penguin's weight given its flipper length. But what if we encounter a new group of penguins? We know our model predicts the weight for our current group, but we need to know how well our model can predict for new data.</p>
+            <p>When we are working with a data set, there isn't a special part that is meant for testing. It's up to you, the Data Scientist, to know how to take a single data set and divide it in a way that allows for testing. This is where the train-test split process comes in.</p>
+            <h3>Train-test Split</h3>
+            <p>The idea of a train-test split is to train on some percentage of the data set (fit the model on the training set) and then test with the data not yet seen by the model (test set). We can also refer to this method as using a holdout set or a subset which we "hold back" from training.</p>
+            <p>The next question is what size or ratio to use for the training and testing sets? It depends on a few factors, including the size of your data set, but a good starting place is an 80/20 split: 80% is used to train the model and the remaining 20% is used to test the model. The scikit-learn default is 75% training and 25% testing, which is also a good starting place.</p>
+            <p>There are other ratios of training-testing data that are used, and it depends somewhat on the size of your data set, the type of model you are training, and if you are using any sort of cross-validation metrics. We'll go into more detail about cross-validation at the end of this sprint.</p>
+            <h3>Scikit-learn Train-test</h3>
+            <p>While you could manually implement a train-test split by randomly selecting the specific number of elements from your data set, scikit-learn has a utility that splits arrays or matrices into random train and test subsets. In the following section, we'll use this to create training and testing sets from the penguin data set.</p>
+            <h3>Follow Along</h3>
+            <p>Following the same process that we used to fit a linear regression in the previous module, we'll add in the extra step of a train-test split.</p>
+            <pre><code># Import pandas and seaborn
+import pandas as pd
+import numpy as np
+import seaborn as sns
+
+# Load the data into a DataFrame
+penguins = sns.load_dataset("penguins")
+
+# Drop NaNs
+penguins.dropna(inplace=True)
+
+# Create the 2-D features matrix
+X_penguins = penguins['flipper_length_mm']
+X_penguins_2D = X_penguins[:, np.newaxis]
+
+# Create the target vector
+y_penguins = penguins['body_mass_g']
+</code></pre>
+            <h3>Create Training and Test Sets</h3>
+            <p>Using the feature matrix and target vector we just created, we'll split the data set with an 80/20 ratio using the test_size parameter of 0.2. The random_state parameter is used to return the same set of training and testing data each time. If you want a different random set each time, you can leave this parameter out.</p>
+            <pre><code># Import the train_test_split utility
+from sklearn.model_selection import train_test_split
+
+# Create the training and test sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X_penguins_2D, y_penguins, test_size=0.2, random_state=42)
+
+print('The training and testing feature: ', X_train.shape, y_train.shape)
+print('The training and testing target: ', X_test.shape, y_test.shape)
+</code></pre>
+            <pre><code>The training and testing feature:  (266, 1) (266,)
+The training and testing target:  (67, 1) (67,)
+</code></pre>
+            <pre><code># Import the predictor class
+from sklearn.linear_model import LinearRegression
+
+# Instantiate the class (with default parameters)
+model = LinearRegression()
+
+# Fit the model
+model.fit(X_train, y_train)
+</code></pre>
+            <pre><code>LinearRegression(copy_X=True, fit_intercept=True, n_jobs=None, normalize=False)
+</code></pre>
+            <pre><code># Slope (also called the model coefficient)
+print(model.coef_)
+
+# Intercept
+print(model.intercept_)
+
+# Print in equation form
+print(f'\nbody_mass_g = {model.coef_[0]} x flipper_length_mm + ({model.intercept_})')
+</code></pre>
+            <pre><code>[50.41798199]
+-5919.258741821233
+
+body_mass_g = 50.41798199462178 x flipper_length_mm + (-5919.258741821233)
+</code></pre>
+            <h3>Making predictions</h3>
+            <p>Now that we have a test set, we can perform a test on the accuracy of the model. There are several different evaluation metrics that can be used to assess the performance of our model, some of which we will go over in the next sprint.</p>
+            <p>For now, we'll use a test set and the model prediction and look at the r2_score or R-squared value. R-squared is a statistical measure of how close the data are to the fitted regression line. A value of 100% (or 1) means that the model explains all of the variation around the mean; the best-fit line would go through all of the data points.</p>
+            <pre><code># Use the test set for prediction
+y_predict = model.predict(X_test)
+
+# Calculate the accuracy score
+from sklearn.metrics import r2_score
+r2_score(y_test, y_predict)
+</code></pre>
+            <pre><code>0.7938115564401114
+</code></pre>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html" target="_blank" rel="noopener noreferrer">scikit-learn: train_test_split</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+        </section>
+
+        <section class="content-box">
+        </section>
+
+        <section class="content-box">
+        </section>
+
+        <section class="content-box">
             <h2>Guided Project</h2>
             <p>Open <strong>JDS_SHR_212_guided_project_notes.ipynb</strong> in the GitHub repository below to follow
                 along with the guided project:</p>
