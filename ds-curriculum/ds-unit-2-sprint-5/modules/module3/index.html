@@ -1,94 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DS5 Module 3 - Ridge Regression</title>
-    <link rel="stylesheet" href="../../../css/style.css">
-</head>
+    <link rel="stylesheet" href="../../../css/style.css" />
+  </head>
 
-<body>
+  <body>
     <header>
-        <nav>
-            <div class="logo">Data Science Unit 2</div>
-            <ul>
-                <li><a href="../../index.html">Home</a></li>
-                <li class="dropdown">
-                    <a href="#" class="active">Modules</a>
-                    <div class="dropdown-content">
-                        <a href="../module1/index.html">Module 1: Linear Regression 1</a>
-                        <a href="../module2/index.html">Module 2: Linear Regression 2</a>
-                        <a href="../module3/index.html" class="active">Module 3: Ridge Regression</a>
-                        <a href="../module4/index.html">Module 4: Logistic Regression</a>
-                    </div>
-                </li>
-                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
-                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
-            </ul>
-        </nav>
+      <nav>
+        <div class="logo">Data Science Unit 2</div>
+        <ul>
+          <li><a href="../../index.html">Home</a></li>
+          <li class="dropdown">
+            <a href="#" class="active">Modules</a>
+            <div class="dropdown-content">
+              <a href="../module1/index.html">Module 1: Linear Regression 1</a>
+              <a href="../module2/index.html">Module 2: Linear Regression 2</a>
+              <a href="../module3/index.html" class="active"
+                >Module 3: Ridge Regression</a
+              >
+              <a href="../module4/index.html">Module 4: Logistic Regression</a>
+            </div>
+          </li>
+          <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+          <li>
+            <a href="../../sprint-challenge/index.html">Sprint Challenge</a>
+          </li>
+        </ul>
+      </nav>
     </header>
 
     <main class="container">
-        <h1>Module 3: Ridge Regression</h1>
+      <h1>Module 3: Ridge Regression</h1>
 
-        <section class="content-box">
-            <h2>Module Overview</h2>
-            <p>In this module, you will build on your regression knowledge with ridge regression. You'll learn about
-                one-hot encoding, feature selection, and how regularization can improve model performance. These
-                techniques will help you handle categorical variables and build more effective models with many
-                features.</p>
-        </section>
+      <section class="content-box">
+        <h2>Module Overview</h2>
+        <p>
+          In this module, you will build on your regression knowledge with ridge
+          regression. You'll learn about one-hot encoding, feature selection,
+          and how regularization can improve model performance. These techniques
+          will help you handle categorical variables and build more effective
+          models with many features.
+        </p>
+      </section>
 
-        <section class="content-box">
-            <h2>Learning Objectives</h2>
-            <ul>
-                <li>Implement one-hot encoding of categorical features</li>
-                <li>Implement a univariate feature selection process</li>
-                <li>Express and explain the intuition and interpretation of ridge regression</li>
-                <li>Use sklearn to fit and interpret ridge regression models</li>
-            </ul>
-        </section>
+      <section class="content-box">
+        <h2>Learning Objectives</h2>
+        <ul>
+          <li>Implement one-hot encoding of categorical features</li>
+          <li>Implement a univariate feature selection process</li>
+          <li>
+            Express and explain the intuition and interpretation of ridge
+            regression
+          </li>
+          <li>Use sklearn to fit and interpret ridge regression models</li>
+        </ul>
+      </section>
 
-        <section class="content-box">
-            <h2>Objective 01 - Implement one-hot encoding of categorical features</h2>
-            <h3>Overview</h3>
-            <p>In the previous two modules, we focused only on numerical features. In the penguin data set however, there were also several other features like biological sex, penguin species, and island of origin. We did not use these non-numeric columns - but what if we had wanted add those features while building the model?</p>
-            <p>This type of data, known as categorical data, is composed of specific values that belong to a finite set of categories or classes. For example, the column labeled "sex" has two values: male and female. This is a specific type of data called a binary variable. It would be a simple process to convert the "male" values to 0 and the "female" values to 1. We would then have a numeric vector that can be used as input for a model.</p>
-            <p>What if we had a column that had more than two categories? We could do something called "ordinal encoding" where we assign an integer to each class. For example, there could be other values in the "sex" column to indicate an indeterminate value or just unknown. We could assign these values to a class equal to '3'. Then, our ordinal encoding would be 1, 2, 3 (female, male, unknown/other).</p>
-            <p>There is a problem with this method: it implies some ranking of the categories. How we assigned the ordinal values was random: we could have assigned 'unknown'= 1, 'female'= 2, and 'male'= 3. So the ordering of the classes doesn't have any meaning.</p>
-            <h3>One-hot encoding</h3>
-            <p>To get around this "ranking" issue we can use one-hot encoding. Instead of using ordinal integers we can create new feature vectors by encoding with a 0 or 1. Using the above example, we could take the single "sex" column that contains three categories and convert it to three columns, with values of '0' or '1'. The following tables show this more clearly.</p>
-            <h4>Original feature column</h4>
-            <table>
-                <tr>
-                    <th>sex</th>
-                </tr>
-                <tr><td>male</td></tr>
-                <tr><td>male</td></tr>
-                <tr><td>female</td></tr>
-                <tr><td>other</td></tr>
-                <tr><td>male</td></tr>
-                <tr><td>female</td></tr>
-            </table>
-            <h4>One-hot encoded column</h4>
-            <table>
-                <tr>
-                    <th>male</th>
-                    <th>female</th>
-                    <th>other</th>
-                </tr>
-                <tr><td>1</td><td>0</td><td>0</td></tr>
-                <tr><td>1</td><td>0</td><td>0</td></tr>
-                <tr><td>0</td><td>1</td><td>0</td></tr>
-                <tr><td>0</td><td>0</td><td>1</td></tr>
-                <tr><td>1</td><td>0</td><td>0</td></tr>
-                <tr><td>0</td><td>1</td><td>0</td></tr>
-            </table>
-            <p>We now have three feature vectors, each with a '1' corresponding to when that class is present. Each value can't belong to more than one class at a time, so the cell that is "on" (has a '1') is the "hot" cell.</p>
-            <h3>Follow Along</h3>
-            <p>We're going to work through an example using scikit-learn utilities to one-hot encode the "species" column in the penguin data set. Let's load the data, and look at the data frame and the number of classes in the species column.</p>
-<pre><code>import seaborn as sns
+      <section class="content-box">
+        <h2>
+          Objective 01 - Implement one-hot encoding of categorical features
+        </h2>
+        <h3>Overview</h3>
+        <p>
+          In the previous two modules, we focused only on numerical features. In
+          the penguin data set however, there were also several other features
+          like biological sex, penguin species, and island of origin. We did not
+          use these non-numeric columns - but what if we had wanted add those
+          features while building the model?
+        </p>
+        <p>
+          This type of data, known as categorical data, is composed of specific
+          values that belong to a finite set of categories or classes. For
+          example, the column labeled "sex" has two values: male and female.
+          This is a specific type of data called a binary variable. It would be
+          a simple process to convert the "male" values to 0 and the "female"
+          values to 1. We would then have a numeric vector that can be used as
+          input for a model.
+        </p>
+        <p>
+          What if we had a column that had more than two categories? We could do
+          something called "ordinal encoding" where we assign an integer to each
+          class. For example, there could be other values in the "sex" column to
+          indicate an indeterminate value or just unknown. We could assign these
+          values to a class equal to '3'. Then, our ordinal encoding would be 1,
+          2, 3 (female, male, unknown/other).
+        </p>
+        <p>
+          There is a problem with this method: it implies some ranking of the
+          categories. How we assigned the ordinal values was random: we could
+          have assigned 'unknown'= 1, 'female'= 2, and 'male'= 3. So the
+          ordering of the classes doesn't have any meaning.
+        </p>
+        <h3>One-hot encoding</h3>
+        <p>
+          To get around this "ranking" issue we can use one-hot encoding.
+          Instead of using ordinal integers we can create new feature vectors by
+          encoding with a 0 or 1. Using the above example, we could take the
+          single "sex" column that contains three categories and convert it to
+          three columns, with values of '0' or '1'. The following tables show
+          this more clearly.
+        </p>
+        <h4>Original feature column</h4>
+        <table>
+          <tr>
+            <th>sex</th>
+          </tr>
+          <tr>
+            <td>male</td>
+          </tr>
+          <tr>
+            <td>male</td>
+          </tr>
+          <tr>
+            <td>female</td>
+          </tr>
+          <tr>
+            <td>other</td>
+          </tr>
+          <tr>
+            <td>male</td>
+          </tr>
+          <tr>
+            <td>female</td>
+          </tr>
+        </table>
+        <h4>One-hot encoded column</h4>
+        <table>
+          <tr>
+            <th>male</th>
+            <th>female</th>
+            <th>other</th>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+          </tr>
+        </table>
+        <p>
+          We now have three feature vectors, each with a '1' corresponding to
+          when that class is present. Each value can't belong to more than one
+          class at a time, so the cell that is "on" (has a '1') is the "hot"
+          cell.
+        </p>
+        <h3>Follow Along</h3>
+        <p>
+          We're going to work through an example using scikit-learn utilities to
+          one-hot encode the "species" column in the penguin data set. Let's
+          load the data, and look at the data frame and the number of classes in
+          the species column.
+        </p>
+        <pre><code>import seaborn as sns
 
 # Bring in the penguins!
 penguins = sns.load_dataset("penguins")
@@ -97,66 +187,81 @@ display(penguins.head())
 # Find the number of classes in species
 penguins['species'].unique()
 </code></pre>
-            <table>
-                <tr>
-                    <th>species</th>
-                    <th>island</th>
-                    <th>bill_length_mm</th>
-                    <th>bill_depth_mm</th>
-                    <th>flipper_length_mm</th>
-                    <th>body_mass_g</th>
-                    <th>sex</th>
-                </tr>
-                <tr>
-                    <td>Adelie</td>
-                    <td>Torgersen</td>
-                    <td>39.1</td>
-                    <td>18.7</td>
-                    <td>181.0</td>
-                    <td>3750.0</td>
-                    <td>Male</td>
-                </tr>
-                <tr>
-                    <td>Adelie</td>
-                    <td>Torgersen</td>
-                    <td>39.5</td>
-                    <td>17.4</td>
-                    <td>186.0</td>
-                    <td>3800.0</td>
-                    <td>Female</td>
-                </tr>
-                <tr>
-                    <td>Adelie</td>
-                    <td>Torgersen</td>
-                    <td>40.3</td>
-                    <td>18.0</td>
-                    <td>195.0</td>
-                    <td>3250.0</td>
-                    <td>Female</td>
-                </tr>
-                <tr>
-                    <td>Adelie</td>
-                    <td>Torgersen</td>
-                    <td>NaN</td>
-                    <td>NaN</td>
-                    <td>NaN</td>
-                    <td>NaN</td>
-                    <td>NaN</td>
-                </tr>
-                <tr>
-                    <td>Adelie</td>
-                    <td>Torgersen</td>
-                    <td>36.7</td>
-                    <td>19.3</td>
-                    <td>193.0</td>
-                    <td>3450.0</td>
-                    <td>Female</td>
-                </tr>
-            </table>
-<pre><code>array(['Adelie', 'Chinstrap', 'Gentoo'], dtype=object)
+        <div class="table-responsive">
+          <table class="custom-table">
+            <tr>
+              <th></th>
+              <th>species</th>
+              <th>island</th>
+              <th>bill_length_mm</th>
+              <th>bill_depth_mm</th>
+              <th>flipper_length_mm</th>
+              <th>body_mass_g</th>
+              <th>sex</th>
+            </tr>
+            <tr>
+              <td>0</td>
+              <td>Adelie</td>
+              <td>Torgersen</td>
+              <td>39.1</td>
+              <td>18.7</td>
+              <td>181.0</td>
+              <td>3750.0</td>
+              <td>Male</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Adelie</td>
+              <td>Torgersen</td>
+              <td>39.5</td>
+              <td>17.4</td>
+              <td>186.0</td>
+              <td>3800.0</td>
+              <td>Female</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Adelie</td>
+              <td>Torgersen</td>
+              <td>40.3</td>
+              <td>18.0</td>
+              <td>195.0</td>
+              <td>3250.0</td>
+              <td>Female</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Adelie</td>
+              <td>Torgersen</td>
+              <td>NaN</td>
+              <td>NaN</td>
+              <td>NaN</td>
+              <td>NaN</td>
+              <td>NaN</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Adelie</td>
+              <td>Torgersen</td>
+              <td>36.7</td>
+              <td>19.3</td>
+              <td>193.0</td>
+              <td>3450.0</td>
+              <td>Female</td>
+            </tr>
+          </table>
+        </div>
+        <pre><code>array(['Adelie', 'Chinstrap', 'Gentoo'], dtype=object)
 </code></pre>
-            <p>We have three species listed, which is a good number of categories to demonstrate with. The species values are string objects, which is accepted as input to the sklearn.preprocessing.OneHotEncoder() transformer. We need to reshape the array so that it's 2D using the np.newaxis method as before.</p>
-<pre><code># Imports
+        <p>
+          We have three species listed, which is a good number of categories to
+          demonstrate with. The species values are string objects, which is
+          accepted as input to the
+          <code>sklearn.preprocessing.OneHotEncoder()</code>
+          transformer. We need to reshape the array so that it's 2D using the
+          <code>np.newaxis</code> method as before.
+        </p>
+        <pre><code># Imports
 import numpy as np
 
 # Select and reshape input array
@@ -174,7 +279,7 @@ onehot = enc.fit_transform(species)
 # Display every 25th row
 onehot[::25]
 </code></pre>
-<pre><code>array([[1., 0., 0.],
+        <pre><code>array([[1., 0., 0.],
        [1., 0., 0.],
        [1., 0., 0.],
        [1., 0., 0.],
@@ -189,86 +294,174 @@ onehot[::25]
        [0., 0., 1.],
        [0., 0., 1.]])
 </code></pre>
-            <p>The species column values, containing three classes, is now an array of three vectors. In each of the columns we can see there is only one "hot" cell ('1') and the rest are zeros.</p>
-            <h3>Challenge</h3>
-            <p>In the penguins data set there is another column ("island") that can be one-hot encoded. Following the same process as above, one-hot encode this column. As a stretch goal, you can concatenate the one-hot encoded array with the original DataFrame. This will be useful when we want to use the dataset in a model where you need to provide a single feature matrix; each one-hot encoded column will be treated as a feature.</p>
-            <h3>Additional Resources</h3>
-            <ul>
-                <li>Scikit-learn: <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html" target="_blank" rel="noopener noreferrer">One-hot encoder</a>Links to an external site.</li>
-            </ul>
-        </section>
+        <p>
+          The species column values, containing three classes, is now an array
+          of three vectors. In each of the columns we can see there is only one
+          "hot" cell ('1') and the rest are zeros.
+        </p>
+        <h3>Challenge</h3>
+        <p>
+          In the penguins data set there is another column ("island") that can
+          be one-hot encoded. Following the same process as above, one-hot
+          encode this column. As a stretch goal, you can concatenate the one-hot
+          encoded array with the original DataFrame. This will be useful when we
+          want to use the dataset in a model where you need to provide a single
+          feature matrix; each one-hot encoded column will be treated as a
+          feature.
+        </p>
+        <h3>Additional Resources</h3>
+        <ul>
+          <li>
+            <a
+              href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Scikit-learn: One-hot encoder</a
+            >
+          </li>
+        </ul>
+      </section>
 
-        <section class="content-box">
-        </section>
+      <section class="content-box"></section>
 
-        <section class="content-box">
-        </section>
+      <section class="content-box"></section>
 
-        <section class="content-box">
-        </section>
+      <section class="content-box"></section>
 
-        <section class="content-box">
-            <h2>Guided Project</h2>
-            <p>Open <strong>JDS_SHR_213_guided_project_notes.ipynb</strong> in the GitHub repository below to follow
-                along with the guided project:</p>
-            <div class="resource-links">
-                <a href="https://github.com/bloominstituteoftechnology/DS-Unit-2-Linear-Models/tree/master/module3-ridge-regression"
-                    class="resource-link" target="_blank" rel="noopener noreferrer">GitHub: Ridge Regression</a>
-                <a href="https://docs.google.com/presentation/d/1fJM43S_KhYbWq-IkN-5RoDXqPYREBu1w7PnrEOBwfBs/present?slide=id.g125f5691cb9_0_0"
-                    class="resource-link" target="_blank" rel="noopener noreferrer">Slides</a>
-            </div>
+      <section class="content-box">
+        <h2>Guided Project</h2>
+        <p>
+          Open <strong>JDS_SHR_213_guided_project_notes.ipynb</strong> in the
+          GitHub repository below to follow along with the guided project:
+        </p>
+        <div class="resource-links">
+          <a
+            href="https://github.com/bloominstituteoftechnology/DS-Unit-2-Linear-Models/tree/master/module3-ridge-regression"
+            class="resource-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            >GitHub: Ridge Regression</a
+          >
+          <a
+            href="https://docs.google.com/presentation/d/1fJM43S_KhYbWq-IkN-5RoDXqPYREBu1w7PnrEOBwfBs/present?slide=id.g125f5691cb9_0_0"
+            class="resource-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Slides</a
+          >
+        </div>
 
-            <h2>Guided Project Video</h2>
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Sprint 5 Ridge Regression Video"
-                    src="https://fast.wistia.net/embed/iframe/5dv5ewdq7y" width="640" height="360" allow="fullscreen"
-                    loading="lazy"></iframe>
-            </div>
-        </section>
+        <h2>Guided Project Video</h2>
+        <div class="video-container">
+          <iframe
+            class="wistia_embed"
+            title="Sprint 5 Ridge Regression Video"
+            src="https://fast.wistia.net/embed/iframe/5dv5ewdq7y"
+            width="640"
+            height="360"
+            allow="fullscreen"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </section>
 
-        <section class="content-box">
-            <h2>Module Assignment</h2>
-            <p>Complete the Module 3 assignment to practice ridge regression techniques you've learned.</p>
-            <div class="resource-links">
-                <a href="https://github.com/bloominstituteoftechnology/DS-Unit-2-Linear-Models/blob/master/module3-ridge-regression/LS_DS_213_assignment.ipynb"
-                    class="resource-link" target="_blank" rel="noopener noreferrer">Module 3 Assignment</a>
-            </div>
+      <section class="content-box">
+        <h2>Module Assignment</h2>
+        <p>
+          Complete the Module 3 assignment to practice ridge regression
+          techniques you've learned.
+        </p>
+        <div class="resource-links">
+          <a
+            href="https://github.com/bloominstituteoftechnology/DS-Unit-2-Linear-Models/blob/master/module3-ridge-regression/LS_DS_213_assignment.ipynb"
+            class="resource-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Module 3 Assignment</a
+          >
+        </div>
 
-            <h2>Assignment Solution Video</h2>
-            <div class="video-container">
-                <iframe class="wistia_embed" title="Ridge Regression - Module Project Solution Video"
-                    src="https://fast.wistia.net/embed/iframe/avqu762xug" width="640" height="360" allow="fullscreen"
-                    loading="lazy"></iframe>
-            </div>
-        </section>
+        <h2>Assignment Solution Video</h2>
+        <div class="video-container">
+          <iframe
+            class="wistia_embed"
+            title="Ridge Regression - Module Project Solution Video"
+            src="https://fast.wistia.net/embed/iframe/avqu762xug"
+            width="640"
+            height="360"
+            allow="fullscreen"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </section>
 
-        <section class="content-box">
-            <h2>Resources</h2>
+      <section class="content-box">
+        <h2>Resources</h2>
 
-            <h3>Documentation and Tutorials</h3>
-            <ul>
-                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html"
-                        target="_blank" rel="noopener noreferrer">Scikit-learn: OneHotEncoder</a></li>
-                <li><a href="https://scikit-learn.org/stable/modules/feature_selection.html" target="_blank"
-                        rel="noopener noreferrer">Scikit-learn: Feature Selection</a></li>
-                <li><a href="https://scikit-learn.org/stable/modules/linear_model.html#ridge-regression" target="_blank"
-                        rel="noopener noreferrer">Scikit-learn: Ridge Regression</a></li>
-                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html"
-                        target="_blank" rel="noopener noreferrer">Scikit-learn: Ridge Class</a></li>
-            </ul>
+        <h3>Documentation and Tutorials</h3>
+        <ul>
+          <li>
+            <a
+              href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Scikit-learn: OneHotEncoder</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://scikit-learn.org/stable/modules/feature_selection.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Scikit-learn: Feature Selection</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://scikit-learn.org/stable/modules/linear_model.html#ridge-regression"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Scikit-learn: Ridge Regression</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Scikit-learn: Ridge Class</a
+            >
+          </li>
+        </ul>
 
-            <h3>Articles and Readings</h3>
-            <ul>
-                <li><a href="https://towardsdatascience.com/ridge-regression-for-better-usage-2f19b3a202db"
-                        target="_blank" rel="noopener noreferrer">Ridge Regression for Better Usage</a></li>
-                <li><a href="https://machinelearningmastery.com/ridge-regression-with-python/" target="_blank"
-                        rel="noopener noreferrer">Ridge Regression with Python</a></li>
-                <li><a href="https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/"
-                        target="_blank" rel="noopener noreferrer">Feature Selection with Real and Categorical Data</a>
-                </li>
-            </ul>
-        </section>
+        <h3>Articles and Readings</h3>
+        <ul>
+          <li>
+            <a
+              href="https://towardsdatascience.com/ridge-regression-for-better-usage-2f19b3a202db"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Ridge Regression for Better Usage</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://machinelearningmastery.com/ridge-regression-with-python/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Ridge Regression with Python</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Feature Selection with Real and Categorical Data</a
+            >
+          </li>
+        </ul>
+      </section>
     </main>
-</body>
-
+  </body>
 </html>
