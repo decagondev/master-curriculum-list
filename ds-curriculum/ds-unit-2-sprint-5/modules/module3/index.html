@@ -322,7 +322,91 @@ onehot[::25]
         </ul>
       </section>
 
-      <section class="content-box"></section>
+      <section class="content-box">
+        <h2>Objective 02 - Implement a univariate feature selection process</h2>
+        <h3>Overview</h3>
+        <p>
+          We've discussed the concepts of feature engineering and feature selection in the earlier Sprints. Now that we are becoming more familiar with a variety of machine learning topics, it's time to come back to this important concept and learn how to select the features we would like to include in our models.
+        </p>
+        <p>
+          In the previous module we discussed the concepts of underfitting-overfitting models and the relationship to the bias-variance trade-off. We can expand this concept and focus on how the number of features we use in a model impacts the results. For example, consider the case where we are using a complicated model with a lot of features. When we look at how the model performs on the testing set, we might decide it's not a good fit and find a need to make the model simpler.
+        </p>
+        <p>
+          One method to reduce model complexity is by using fewer features. This decreases the number of parameters that need to be fit by the model and increases the chance that the model will generalize well. So, how do we determine which features, and how many, to keep in our model?
+        </p>
+        <p>
+          One of the more popular approaches to feature selection is the univariate feature selection process. The name originates from the process of looking at each feature individually and measuring the strength of its relationship with the target feature. For a linear regression, we would take each independent feature and separately measure the strength of the linear correlation with the dependent variable.
+        </p>
+        <p>
+          We'll work through an example with the penguin data set (yes, again - it's a nice data set to work on!).
+        </p>
+        <h3>Follow Along</h3>
+        <p>
+          We remember from the penguin data set that we have six features and one target. In our uses we have been using the numeric features to predict the body mass of the penguins. We're going to continue with the numeric features for this next example.
+        </p>
+        <pre><code># Import pandas and seaborn
+import pandas as pd
+import numpy as np
+import seaborn as sns
+
+# Load the data into a DataFrame
+penguins = sns.load_dataset("penguins")
+
+# Drop NaNs
+penguins.dropna(inplace=True)
+
+# Create the features matrix
+features = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm']
+X = penguins[features]
+
+# Create the target array
+y = penguins['body_mass_g']
+
+# Import the train_test_split utility
+from sklearn.model_selection import train_test_split
+
+# Create the training and test sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+</code></pre>
+        <h3>Using SelectKBest</h3>
+        <p>
+          The utility we're using to select the best features is the SelectKBest method from the sklearn.feature_selection module. The name of the method makes it easier to remember what it does: select the k best features where k is an integer.
+        </p>
+        <pre><code># Import the feature selector utility
+from sklearn.feature_selection import SelectKBest, f_regression
+
+# Create the selector object with the best k=1 features
+selector = SelectKBest(score_func=f_regression, k=1)
+
+# Run the selector on the training data
+X_train_selected = selector.fit_transform(X_train, y_train)
+
+# Find the features that was selected
+selected_mask = selector.get_support()
+all_features = X_train.columns
+selected_feature = all_features[selected_mask]
+
+print('The selected feature: ', selected_feature[0])
+</code></pre>
+        <pre><code>The selected feature:  flipper_length_mm</code></pre>
+        <p>
+          The flipper length seems to be the best feature to include when trying to predict the penguin's body mass.
+        </p>
+        <h3>Challenge</h3>
+        <p>
+          We only selected the single best feature; try the same process as above but set k=2 and see which are the two best features. You can also use the one-hot encoded feature columns from the previous objective as additional features. Are any of those columns a good feature when trying to predict body mass?
+        </p>
+        <h3>Additional Resources</h3>
+        <ul>
+          <li>
+            <a href="https://scikit-learn.org/stable/modules/feature_selection.html#univariate-feature-selection" target="_blank" rel="noopener noreferrer">Univariate Feature Selection</a>
+          </li>
+          <li>
+            <a href="https://scikit-learn.org/stable/auto_examples/feature_selection/plot_select_from_model_boston.html" target="_blank" rel="noopener noreferrer">Univariate Feature Selection: Example</a>
+          </li>
+        </ul>
+      </section>
 
       <section class="content-box"></section>
 
