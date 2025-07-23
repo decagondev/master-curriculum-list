@@ -34,9 +34,10 @@
 
         <section class="content-box">
             <h2>Module Overview</h2>
-            <p>In this module, you will learn about inference for linear regression. You'll learn how to test for
-                statistical significance between quantitative variables, conduct t-tests for slope parameters, build
-                confidence intervals, and identify violations of linear regression assumptions.</p>
+            <p>In this module, we will learn to set up a hypothesis test for the slope term for a linear regression
+                model and how this allows us to determine if there is a statistically significant relationship between
+                the two variables. Finally, we'll discuss sampling variability and the limits of the conclusions we can
+                draw with our data.</p>
         </section>
 
         <section class="content-box">
@@ -50,6 +51,514 @@
                     Confidence Interval for the Slope Term</li>
                 <li>Identify Violations of the Assumptions for Linear Regression and Articulate Why Correlation Does Not
                     Imply Causation Inference for Linear Regression</li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 01 - Identify the Appropriate Hypotheses to Test for a Statistically Significant Association
+                Between Two Quantitative Variables</h2>
+            <h3>Overview</h3>
+            <p>
+                The previous module focused on describing the relationship between two variables, calculating a
+                correlation, and fitting a linear regression model to the data. The correlation coefficient and the
+                residuals will inform about the strength of the correlation between the two. But, we haven't yet looked
+                at the statistical significance of how the variables are related.
+            </p>
+            <p>
+                The focus of this module will be on this topic, and we'll start with hypothesis testing!
+            </p>
+            <h3>What are we testing?</h3>
+            <p>
+                We have fit a linear regression to two variables and then plotted the line on our dataset. The slope
+                parameter represents how the two variables are related. If the slope were zero, we would say there are
+                zero relationships between the variables. As one increases, the other stays at a constant value.
+            </p>
+            <p>
+                We're going to introduce a new dataset for this module: <a
+                    href="https://fivethirtyeight.com/features/which-state-has-the-worst-drivers/" target="_blank"
+                    rel="noopener noreferrer">the car crashes dataset from 539</a>. The variables that we'll consider
+                are the total number of drivers involved in fatal
+                collisions and the factors of speeding and alcohol impairment.
+            </p>
+            <p>
+                <strong>Column descriptions:</strong>
+            </p>
+            <ul>
+                <li><strong>total</strong> (Number of Drivers Involved in Fatal Collisions Per Billion Miles)</li>
+                <li><strong>speeding</strong> (Percentage of Drivers Involved in Fatal Collisions Who Were Speeding)
+                </li>
+                <li><strong>alcohol</strong> (Percentage of Drivers Involved in Fatal Collisions Who Were
+                    Alcohol-Impaired)</li>
+            </ul>
+            <p>
+                Let's load and view this data first and then discuss sample and population statistics.
+            </p>
+            <pre><code>import seaborn as sns
+
+# Load the car crash dataset
+crashes = sns.load_dataset("car_crashes")
+
+# Limit the data to only the columns we need
+crashes = crashes[["total", "speeding", "alcohol"]]
+
+# Display the first few rows
+crashes.head()</code></pre>
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>total</th>
+                        <th>speeding</th>
+                        <th>alcohol</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0</td>
+                        <td>18.8</td>
+                        <td>7.332</td>
+                        <td>5.640</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>18.1</td>
+                        <td>7.421</td>
+                        <td>4.525</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>18.6</td>
+                        <td>6.510</td>
+                        <td>5.208</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>22.4</td>
+                        <td>4.032</td>
+                        <td>5.824</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>12.0</td>
+                        <td>4.200</td>
+                        <td>3.360</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                To start, we're going to compare the variables <code>total</code> and <code>alcohol</code>. We'll first
+                implement a linear regression (find the best-fit line) and then look at how we should interpret the
+                results using inferential statistics.
+            </p>
+            <pre><code>import seaborn as sns
+import matplotlib.pyplot as plt
+
+crashes = sns.load_dataset("car_crashes")
+crashes = crashes[["total", "speeding", "alcohol"]]
+
+# Make the scatter plot
+sns.lmplot(data=crashes, x="alcohol", y="total", ci=None)
+
+# Display the scatter plot
+plt.show()</code></pre>
+            <img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_1/sprint_3/new/mod2_obj1_car_scatter.png"
+                alt="A graph showing linear regression between the data points total and alcohol." width="500"
+                height="500" loading="lazy">
+            <p>
+                Remember the equation for a line was y = b<sub>0</sub> + b<sub>1</sub>x
+            </p>
+            <p>
+                For our data, we fit the intercept (b<sub>0</sub>) and the slope (b<sub>1</sub>). Now we will make a
+                statistical statement about the slope parameter.
+            </p>
+            <p>
+                But first, we need to set up our hypothesis and to do that we'll review the terms population and sample.
+            </p>
+            <ul>
+                <li><strong>population</strong>: the entire group that we would like to draw conclusions about</li>
+                <li><strong>sample</strong>: the subset of the population</li>
+            </ul>
+            <p>
+                In our dataset above, we're looking at just a sample of drivers; we don't have all the data for all
+                drivers and all of their accident records.
+            </p>
+            <h3>Hypothesis Testing: sample and population means</h3>
+            <p>
+                What we're doing with hypothesis testing is to compare a sample mean to some hypothetical population
+                mean. Then, we'd like to evaluate with some level of certainty if we can reject the null hypothesis. In
+                other words, we're testing the hypothetical mean of the population (to reject the null hypothesis or
+                not) and using the sample to do the testing.
+            </p>
+            <p>
+                But we aren't looking at the sample mean here - we're looking at the slope of the relationship between
+                our variables. So, if these two variables (<code>total</code> and <code>alcohol</code>) are entirely
+                unrelated, the slope would be 0 (a flat line). We can then write our null hypothesis as:
+            </p>
+            <p>
+                <strong>null hypothesis = slope is equal to zero</strong>
+            </p>
+            <p>
+                The alternative hypothesis in this case would be that the two variables are related:
+            </p>
+            <p>
+                <strong>alternative hypothesis = slope is not equal to zero.</strong>
+            </p>
+            <p>
+                In the Guided Project, you will learn how to express the null and alternative hypotheses mathematically.
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                Think about a different dataset (you don't need to actually import it) and write out a null hypothesis
+                and alternative hypothesis.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://www.kaggle.com/fivethirtyeight/fivethirtyeight-bad-drivers-dataset?select=README.md"
+                        target="_blank" rel="noopener noreferrer">Kaggle: Bad drivers dataset</a></li>
+                <li><a href="https://medium.com/@khemsok97/explaining-linear-regression-with-hypothesis-testing-and-confidence-interval-aba454e4775e"
+                        target="_blank" rel="noopener noreferrer">Explaining Linear Regression with Hypothesis
+                        Testing</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Conduct and Interpret a t-test for the Slope Parameter and Make the Connection Between
+                the t-test for a Population Mean and Slope Coefficient</h2>
+            <h3>Overview</h3>
+            <p>
+                In the last objective, we looked at two variables from our car crash dataset. We can see that there is a
+                relationship between the variables. We stated our null hypothesis and alternative hypothesis. So, now
+                let's perform the hypothesis test.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                In the previous module, we used the <code>scikit-learn</code> LinearRegression() library to fit our
+                model. While this helped provide a preview on predictive modeling, we need more statistical information
+                on our linear models.
+            </p>
+            <p>
+                So instead we'll use the <a
+                    href="https://www.statsmodels.org/dev/generated/statsmodels.regression.linear_model.OLS.html"
+                    target="_blank" rel="noopener noreferrer">statsmodel</a> library and the Ordinary Least Squares
+                model.
+            </p>
+            <p>
+                We'll load our data, fit the model, and then look at the output.
+            </p>
+            <pre><code>import pandas as pd
+import seaborn as sns
+
+# Load the car crash dataset
+crashes = sns.load_dataset("car_crashes")
+
+mycols = ['total', 'speeding', 'alcohol']
+
+crashes = crashes[mycols]
+crashes.head()</code></pre>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>total</th>
+                            <th>speeding</th>
+                            <th>alcohol</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>18.8</td>
+                            <td>7.332</td>
+                            <td>5.640</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>18.1</td>
+                            <td>7.421</td>
+                            <td>4.525</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>18.6</td>
+                            <td>6.510</td>
+                            <td>5.208</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>22.4</td>
+                            <td>4.032</td>
+                            <td>5.824</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>12.0</td>
+                            <td>4.200</td>
+                            <td>3.360</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <pre><code>import warnings
+warnings.filterwarnings('ignore')
+import statsmodels.api as sm
+
+Y = crashes['total']
+X = crashes['alcohol']
+
+# Create the model with the X, Y data
+X = sm.add_constant(X)
+model = sm.OLS(Y, X)
+
+# Fit the model
+results = model.fit()
+
+# Look at the results that include the t-statistic
+print(results.t_test([1, 0]))
+</code></pre>
+            <pre>
+                             Test for Constraints                             
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+c0             5.8578      0.921      6.357      0.000       4.006       7.709
+==============================================================================
+            </pre>
+            <p>
+                Yay! We fit our linear model, we have the slope (coef in the table), standard error (std err) and the
+                t-value (t). Remember from the previous sprint how the t-statistics is calculated:
+            </p>
+            <p><img src="https://i.upmath.me/svg/%20t%20%3D%20%5Cfrac%7B%5Cbar%7Bx%7D%20-%20%5Cmu_0%7D%7BSE%7D%20"
+                    alt=" t = \frac{\bar{x} - \mu_0}{SE} " align="center" loading="lazy" class="eq-img"></p>
+            <p>
+                where <span style="font-style:italic;">&#772;x</span> is the sample mean, &mu;<sub>0</sub> is the mean
+                under the null hypothesis and SE is the standard error. Because we are performing the hypothesis test on
+                the slope parameter, we adjust the t-statistic:
+            </p>
+            <p><img src="https://i.upmath.me/svg/%20t%20%3D%20%5Cfrac%7Bb_1%20-%20%5Cbeta_1%7D%7BSE%7D%20"
+                    alt=" t = \frac{b_1 - \beta_1}{SE} " align="center" loading="lazy" class="eq-img"></p>
+            <p>
+                where b<sub>1</sub> is the slope in the sample, &beta;<sub>1</sub> is the slope under the null
+                hypothesis and SE is the standard error.
+            </p>
+            <p>
+                Remember that we stated the null hypothesis as there is no relationship between the variables, so the
+                slope (&beta;<sub>1</sub>) is equal to zero. Let's plug in the numbers and compare what we calculate as
+                the t-statistic to the output in the table above.
+            </p>
+            <p><img src="https://i.upmath.me/svg/t%20%3D%20%5Cfrac%7B5.8578%20-%200%7D%7B0.921%7D%20%3D%206.36"
+                    alt="t = \frac{5.8578 - 0}{0.921} = 6.36" align="center" loading="lazy" class="eq-img"></p>
+            <p>
+                It worked! The t-statistic we just calculated agrees with the value of t in the table.
+            </p>
+            <p>
+                We also don't need to calculate the p-value as it's also given in the table. Because the p value is
+                essentially zero (or rounds to zero) we can reject the null hypothesis. In other words we reject the
+                statement that there is no relationship between the variables.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://www.statsmodels.org/dev/generated/statsmodels.regression.linear_model.OLS.html"
+                        target="_blank" rel="noopener noreferrer">statsmodel API</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 03 - Identify the Appropriate Parts of the Output of a Linear Regression Model and Use Them to
+                Build a Confidence Interval for the Slope Term</h2>
+            <h3>Overview</h3>
+            <p>
+                We're going to continue with our car crash dataset. Remember that we have not fit a model and performed
+                a t-test on the slope parameter. The slope measures the relationship between the total number of car
+                crashes and if alcohol use by the driver was a factor. So that's it, right? Not exactly. We want to know
+                how well we know the value for the slope or the confidence we have in the value. If we took a different
+                sample of car crash data, we would likely get an additional slope value.
+            </p>
+            <p>
+                Now is when confidence intervals come into play!
+            </p>
+            <h3>Confidence Intervals</h3>
+            <pre><code>import seaborn as sns
+
+# Load the car crash dataset
+crashes = sns.load_dataset("car_crashes")
+crashes = crashes[['total', 'speeding', 'alcohol']]
+crashes.head()</code></pre>
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>total</th>
+                        <th>speeding</th>
+                        <th>alcohol</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0</td>
+                        <td>18.8</td>
+                        <td>7.332</td>
+                        <td>5.640</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>18.1</td>
+                        <td>7.421</td>
+                        <td>4.525</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>18.6</td>
+                        <td>6.510</td>
+                        <td>5.208</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>22.4</td>
+                        <td>4.032</td>
+                        <td>5.824</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>12.0</td>
+                        <td>4.200</td>
+                        <td>3.360</td>
+                    </tr>
+                </tbody>
+            </table>
+            <pre><code>import seaborn as sns
+import statsmodels.api as sm
+
+crashes = sns.load_dataset("car_crashes")
+crashes = crashes[['total', 'speeding', 'alcohol']]
+
+Y = crashes['total']
+X = crashes['alcohol']
+
+# Create the model with the X, Y data
+X = sm.add_constant(X)
+model = sm.OLS(Y, X)
+
+# Fit the model
+results = model.fit()
+
+# Look at the results that include the t-statistic
+print(results.t_test([1, 0]))</code></pre>
+            <pre><code>                             Test for Constraints                             
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+c0             5.8578      0.921      6.357      0.000       4.006       7.709
+==============================================================================</code></pre>
+            <p>
+                On the far right of this table, we see a 95% confidence interval (the lower and upper bounds). We would
+                write our slope coefficient as 95% confident that the value lies between 4.006 and 7.709.
+            </p>
+            <h3>Plotting Confidence Intervals</h3>
+            <p>
+                We can use the abilities of the seaborn plotting library to plot the confidence interval on our plot.
+                But first, we specify at what confidence level we would like to display by using the <code>ci</code>
+                argument.
+            </p>
+            <h4>Create the scatter plot with the confidence interval</h4>
+            <pre><code>import seaborn as sns
+import matplotlib.pyplot as plt
+
+crashes = sns.load_dataset("car_crashes")
+crashes = crashes[['total', 'speeding', 'alcohol']]
+
+# Create the scatter plot with the confidence interval
+sns.lmplot(data=crashes, x='alcohol', y='total', ci=95)
+
+plt.show()</code></pre>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_1/sprint_3/new/mod2_obj3_car_scatter_CI.png"
+                    alt="A scatter plot with a confidence interval. The data shows the relationship between total and alcohol."
+                    width="500" height="500" loading="lazy"></p>
+            <p>
+                The "true" slope of the line is somewhere within the shaded region.
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                Using the same dataset, try changing the confidence interval on the last plot. If you make the
+                confidence interval bigger (e.g., a more significant number like 99%), will the shaded region increase
+                or decrease? How will reducing the confidence level affect the size of the shaded region?
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://www.statsmodels.org/stable/api.html" target="_blank"
+                        rel="noopener noreferrer">Statsmodels API</a></li>
+                <li><a href="https://seaborn.pydata.org/generated/seaborn.lmplot.html" target="_blank"
+                        rel="noopener noreferrer">Seaborn: lmplot</a></li>
+                <li><a href="https://medium.com/@khemsok97/explaining-linear-regression-with-hypothesis-testing-and-confidence-interval-aba454e4775e"
+                        target="_blank" rel="noopener noreferrer">Explaining Linear Regression with Hypothesis
+                        Testing</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 04 - Identify Violations of the Assumptions for Linear Regression and Articulate Why
+                Correlation Does Not Imply Causation Inference for Linear Regression</h2>
+            <h3>Overview</h3>
+            <p>
+                Now that we have sufficiently covered how to fit a linear regression model, it's essential to know when
+                not to use one! The following list describes a few cases when linear regression models should be
+                avoided.
+            </p>
+            <h3>Linear Regression: When not to use it</h3>
+            <ul>
+                <li>Categorical data (like a classification)</li>
+                <li>Modeling non-linear relationships</li>
+                <li>Outliers (without adjusting for them)</li>
+            </ul>
+            <p>
+                Let's go over a few of these examples now, with real datasets, and see what happens when we fit a linear
+                regression model.
+            </p>
+            <h3>Follow Along</h3>
+            <h4>Categorical Variables</h4>
+            <p>
+                Not all data is suitable for fitting a linear model. If we have data where we're trying to predict to
+                which class an observation belongs, we should fit a classification model (we'll learn about these in
+                future Sprints). The following dataset and plot are examples of data better suited to a classification
+                model.
+            </p>
+            <pre><code>import matplotlib.pyplot as plt
+import seaborn as sns
+
+dots = sns.load_dataset("dots")
+sns.lmplot(data=dots, x="time", y="coherence", ci=95)
+
+plt.show()</code></pre>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_1/sprint_3/new/mod2_obj4_categorical.png"
+                    alt="A graph that shows categorical variables. Each data point belongs to a cluster of data points in it's respective category. "
+                    width="500" height="500" loading="lazy"></p>
+            <p>
+                These two variables are not well suited for fitting a linear model. The slope would be zero for each
+                line at a different coherence level. These two variables could be used as part of a classification
+                model, with coherence as one of the features. Always plot your data before you fit a model!
+            </p>
+            <h4>Non-linear Data</h4>
+            <p>
+                Let's look at another example. The hourly temperature in most temperate climate locations varies from an
+                overnight low to a daily high. While we could easily model this type of data, a linear regression would
+                not be a good choice.
+            </p>
+            <pre><code>import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+
+temps = pd.read_csv("denver_temps.csv")
+sns.lmplot(data=temps, x="time", y="temperature", ci=95)
+
+plt.show()</code></pre>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_1/sprint_3/new/mod2_obj4_nonlinear.png"
+                    alt="A graph of non-linear data. The graphs shows the relationship between temperature and time. "
+                    width="500" height="500" loading="lazy"></p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://machinelearningmastery.com/classification-versus-regression-in-machine-learning/"
+                        target="_blank" rel="noopener noreferrer">Classification Versus Regression in Machine
+                        Learning</a></li>
             </ul>
         </section>
 
