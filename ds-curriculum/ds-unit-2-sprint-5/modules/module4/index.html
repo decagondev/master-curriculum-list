@@ -806,9 +806,10 @@ plt.show()
         <p>
           So far, we've looked at the function and coefficients used to fit a
           logistic regression. In this objective we're going to go more into
-          detail about how to use the scikit learn <code>LogisticRegression</code> predictor.
-          We'll also cover how to fit this model using the two features in the
-          dataset and how to interpret these results.
+          detail about how to use the scikit learn
+          <code>LogisticRegression</code> predictor. We'll also cover how to fit
+          this model using the two features in the dataset and how to interpret
+          these results.
         </p>
         <h3>Follow Along</h3>
         <p>
@@ -881,8 +882,9 @@ display(geyser.head())
         <p>
           Now that we have our geyser class encoded, we can follow the usual
           model fitting procedure. First, we create the feature matrix and
-          target array. Then we import the <code>LogisticRegression</code> model, instantiate
-          the predictor class, and fit the model.
+          target array. Then we import the
+          <code>LogisticRegression</code> model, instantiate the predictor
+          class, and fit the model.
         </p>
         <pre><code># Import logistic regression predictor
 from sklearn.linear_model import LogisticRegression
@@ -899,8 +901,8 @@ y = geyser['kind_binary']
 # Fit the model using the default parameters
 model = LogisticRegression()
 model.fit(X, y)</code></pre>
-<pre><code>LogisticRegression()</code></pre>
-<pre><code># Import the cross validation method
+        <pre><code>LogisticRegression()</code></pre>
+        <pre><code># Import the cross validation method
 from sklearn.model_selection import cross_val_score
 
 # Implement a cross-validation with k=5
@@ -920,9 +922,9 @@ The mean CV score is:  0.977979797979798
         </p>
         <p>
           Now, how much can we improve our model by using an additional feature
-          in fitting our model? We still have the <code>waiting</code> column which is the
-          amount of time that passes between eruptions. Let's add that feature
-          to the feature matrix, fit the model, and calculate the
+          in fitting our model? We still have the <code>waiting</code> column
+          which is the amount of time that passes between eruptions. Let's add
+          that feature to the feature matrix, fit the model, and calculate the
           cross-validation score.
         </p>
         <pre><code># Create new feature matrix
@@ -971,7 +973,241 @@ The mean CV score is (two features):  1.0
         </ul>
       </section>
 
-      <section class="content-box"></section>
+      <section class="content-box">
+        <h2>Objective 05 - Use scikit-learn pipelines</h2>
+        <h3>Overview</h3>
+        <p>
+          In previous modules, we processed our data and fit the model in
+          separate steps. We completed each step separately in order to better
+          understand the process. Sometimes there are a number of steps needed
+          before the model is fit, including encoding, imputing missing values,
+          standardizing, and normalizing variables.
+        </p>
+        <p>
+          Each of these steps also needs to be applied to both the training data
+          and the testing data, making for many extra lines of code. In order to
+          streamline the preprocessing and model fitting, we can use a
+          scikit-learn method called a pipeline.
+        </p>
+        <h3>Pipeline</h3>
+        <p>
+          The scikit-learn pipeline is used to apply a list of preprocessing
+          steps and the final estimator, all in one step. Another important
+          advantage of using a pipeline is that the same steps can be applied to
+          data in the same fold of a cross-validation.
+        </p>
+        <h3>Follow Along</h3>
+        <p>
+          There are two ways to use the scikit-learn pipeline tool. The main one
+          is to use <code>sklearn.pipeline.Pipeline()</code>, where each step in
+          the pipeline is tuple of the name and transformer or estimator. For
+          example, creating a pipeline using the <code>StandardScaler</code> and
+          the <code>SVC</code> estimator would result in
+          <code
+            >pipe = Pipeline([('scaler', StandardScaler()), ('svc',
+            SVC())])</code
+          >.
+        </p>
+        <p>
+          An easier implementation is to use the
+          <code>sklearn.pipeline.make_pipeline()</code> convenience function.
+          Instead of a list of tuples, this function just accepts the
+          transformers and estimators; the names are set to the lowercase of
+          their types automatically. An example of this function is:
+          <code>make_pipe = make_pipeline(StandardScaler(), SVC())</code>.
+        </p>
+        <h3>Implement a Pipeline</h3>
+        <p>
+          Going back to our well-loved penguin data set, we're going to use a
+          pipeline to pre-process and fit a model to predict which class a
+          penguin belongs to (male or female). Let's load in the data and
+          discuss each step as we work through the pipeline.
+        </p>
+        <pre><code># Load in the data!
+
+import pandas as pd
+import seaborn as sns
+
+penguins = sns.load_dataset("penguins")
+
+# Remove NaNs and nulls
+penguins.dropna(inplace=True)
+
+display(penguins.head())
+</code></pre>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>species</th>
+              <th>island</th>
+              <th>bill_length_mm</th>
+              <th>bill_depth_mm</th>
+              <th>flipper_length_mm</th>
+              <th>body_mass_g</th>
+              <th>sex</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Adelie</td>
+              <td>Torgersen</td>
+              <td>39.1</td>
+              <td>18.7</td>
+              <td>181.0</td>
+              <td>3750.0</td>
+              <td>Male</td>
+            </tr>
+            <tr>
+              <td>Adelie</td>
+              <td>Torgersen</td>
+              <td>39.5</td>
+              <td>17.4</td>
+              <td>186.0</td>
+              <td>3800.0</td>
+              <td>Female</td>
+            </tr>
+            <tr>
+              <td>Adelie</td>
+              <td>Torgersen</td>
+              <td>40.3</td>
+              <td>18.0</td>
+              <td>195.0</td>
+              <td>3250.0</td>
+              <td>Female</td>
+            </tr>
+            <tr>
+              <td>Adelie</td>
+              <td>Torgersen</td>
+              <td>36.7</td>
+              <td>19.3</td>
+              <td>193.0</td>
+              <td>3450.0</td>
+              <td>Female</td>
+            </tr>
+            <tr>
+              <td>Adelie</td>
+              <td>Torgersen</td>
+              <td>39.3</td>
+              <td>20.6</td>
+              <td>190.0</td>
+              <td>3650.0</td>
+              <td>Male</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          We have a few features to choose from to fit our model. Let's use
+          <code>species</code>, <code>bill_length_mm</code>,
+          <code>bill_depth_mm</code>, <code>flipper_length_mm</code>, and
+          <code>body_mass_g</code>. Our target will be the <code>sex</code> of
+          the penguin.
+        </p>
+        <h3>Feature Matrix</h3>
+        <p>
+          We have one categorical feature (<code>species</code>) and four
+          numeric features. We'll use one-hot encoding to transform the
+          <code>species</code> column into three one-hot encoded columns. And
+          the target array (<code>sex</code>) will also be encoded with the
+          label encoder. That won't be part of the preprocessing of the
+          features; we'll do that separately before we apply our pipeline steps
+          and fit the model.
+        </p>
+        <p>
+          In the following code we will use the
+          <code>OneHotEncoder()</code> method for the
+          <code>species</code> column. When we use this method we also need to
+          use the <code>ColumnTransformer()</code> method to apply the one-hot
+          encoder to our specified column.
+        </p>
+        <pre><code># Imports!
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+
+# Set-up the one-hot encoder method
+categorical_features = ['species']
+categorical_transformer = Pipeline(steps=[('onehot', OneHotEncoder())])
+
+# Set up our preprocessor/column transformer
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('cat', categorical_transformer, categorical_features)])
+
+# Append classifier to preprocessing pipeline.
+# Now we have a full prediction pipeline.
+clf = Pipeline(steps=[('preprocessor', preprocessor),
+                      ('classifier', LogisticRegression())])
+</code></pre>
+        <h3>Feature Matrix and Target Array</h3>
+        <p>
+          We need to select our features and encode our target array. These
+          steps are pretty simple and do not need to be part of the
+          preprocessing pipeline.
+        </p>
+        <pre><code># Select features
+features = ['species', 'bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g']
+X = penguins[features]
+
+# Encode the 'sex' column
+from sklearn import preprocessing
+le = preprocessing.LabelEncoder()
+penguins['sex_encode'] = le.fit_transform(penguins['sex'])
+
+# Set target array
+y = penguins['sex_encode']
+</code></pre>
+        <p>
+          Now that we have our feature matrix (still in categorical form) and a
+          label encoded target array, we can apply the pipeline and actually fit
+          the model!
+        </p>
+        <pre><code># Apply the pipeline
+
+# Separate into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+
+# Fit the model with our logistic regression classifier
+clf.fit(X_train, y_train)
+print("model score: %.3f" % clf.score(X_test, y_test))
+</code></pre>
+        <pre><code>model score: 0.440
+</code></pre>
+        <p>
+          With just one line of code we one-hot encoded our specified features
+          and fit a logistic regression model to our data. Using the pipeline
+          allowed us to apply the same transformations to our training and
+          testing data sets without having to repeat those steps.
+        </p>
+        <h3>Challenge</h3>
+        <p>
+          Using the above code example, let's see if you can improve the model
+          score. In the <code>LogisticRegression()</code> part, try to change
+          the inverse of regularization strength parameter <code>C</code>. You
+          could also adjust the number of features used in the model to see how
+          that affects the accuracy.
+        </p>
+        <h3>Additional Resources</h3>
+        <ul>
+          <li>
+            <a
+              href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Scikit-learn: Pipeline</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://scikit-learn.org/stable/auto_examples/compose/plot_column_transformer_mixed_types.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Scikit-learn: Column Transformer</a
+            >
+          </li>
+        </ul>
+      </section>
 
       <section class="content-box"></section>
 
