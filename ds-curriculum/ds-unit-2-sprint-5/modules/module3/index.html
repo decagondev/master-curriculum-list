@@ -561,7 +561,98 @@ print('The selected feature: ', selected_feature[0])
         </ul>
       </section>
 
-      <section class="content-box"></section>
+      <section class="content-box">
+        <h2>Objective 04 - Use sklearn to fit and interpret ridge regression models</h2>
+        <h3>Overview</h3>
+        <p>
+          In the previous objective, we looked at a simple example of how the introduction of bias reduces the variance in a model. Now, we're going to implement three different models: a linear regression, a linear regression with a number of polynomial features, and a ridge regression.
+        </p>
+        <h3>Follow Along</h3>
+        <p>
+          Let's look at our examples. First, we'll generate a data set to practice with. Let's pretend that this data represents the number of ice cream cones sold according to the hour after the shop opened. We would like to fit this data to predict how much ice cream will be sold later in the day.
+        </p>
+        <pre><code># Generate the practice data set
+import numpy as np
+
+np.random.seed(15)
+x = 5 * np.random.rand(50)
+y = abs(0.5*np.sin(x) + 0.5 * np.random.rand(50))*10
+
+# Create the feature matrix 
+X = x[:, np.newaxis]
+
+# Fit a linear regression model
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+model.fit(X, y)
+
+# Create the data for the model (best-fit line)
+xfit = np.linspace(0, 5, 1000)
+Xfit = xfit[:, np.newaxis]
+yfit = model.predict(Xfit)
+# Fit a linear regression with polynomial features
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import make_pipeline
+
+poly_model = make_pipeline(PolynomialFeatures(15),
+                           LinearRegression())
+
+# Create the data for the model (best-fit line)
+poly_model.fit(x[:, np.newaxis], y)
+yfit_poly = poly_model.predict(xfit[:, np.newaxis])
+# Fit a ridge regression with polynomial features
+from sklearn.linear_model import Ridge
+from sklearn.preprocessing import StandardScaler
+
+ridge_model = make_pipeline(PolynomialFeatures(15),
+                            StandardScaler(),
+                            Ridge(alpha = 0.05))
+
+ridge_model.fit(x[:, np.newaxis], y)
+
+# Create the data for the model (best-fit line)
+yfit_ridge = ridge_model.predict(xfit[:, np.newaxis])
+</code></pre>
+        <p>
+          Now we'll create a plot with our practice data and all three models.
+        </p>
+        <pre><code>import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(10,5))
+ax.scatter(x,y)
+
+ax.plot(xfit, yfit, linestyle='--', label='linear regression')
+ax.plot(xfit, yfit_poly, linestyle = '-.', label='linear regression (polynomial)')
+ax.plot(xfit, yfit_ridge, label='ridge regression')
+
+ax.set_ylim([0, 10])
+
+ax.set_xlabel('Hours after opening')
+ax.set_ylabel('Ice cream sales')
+ax.legend()
+
+plt.show()
+mod3_obj4_ridge
+</code></pre>
+        <p>
+          In the above plot, we can see that the linear regression with a number of polynomial features (15) tries to fit all the little increases and decreases in the data set. We wouldn't want to try to predict what future ice cream sales would look like with the orange dash-dot line. The model fit by using ridge regression (solid green line) is a better fit to the data and captures the decrease in sales 4-5 hours after opening. Even though the ridge regression model uses the same degree polynomial as the orange dash-dot line, the parameters are penalized by the ridge regression alpha parameter.
+        </p>
+        <h3>Challenge</h3>
+        <p>
+          With the code example above, try selecting a different value for alpha. The larger the value, the more the parameters are penalized and the less likely they are to affect the model. You can also experiment and set alpha=0 and see what the resulting model is.
+        </p>
+        <h3>Additional Resources</h3>
+        <ul>
+          <li>
+            <a
+              href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Scikit learn: Ridge Regression</a
+            >
+          </li>
+        </ul>
+      </section>
 
       <section class="content-box">
         <h2>Guided Project</h2>
