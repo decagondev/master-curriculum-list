@@ -66,32 +66,67 @@
         <h2>Objective 01 - Implement a train-validate-test split</h2>
         <h3>Overview</h3>
         <p>
-          In the previous module we used a train-test split, where we hold back a subset of the data to use for testing the model. When we train a model we also need to evaluate the model. Recall that if we evaluate on the training data we're not getting an accurate estimate of the true performance of the model. For this reason, we need to use test data that the model has not yet seen.
+          In the previous module we used a train-test split, where we hold back
+          a subset of the data to use for testing the model. When we train a
+          model we also need to evaluate the model. Recall that if we evaluate
+          on the training data we're not getting an accurate estimate of the
+          true performance of the model. For this reason, we need to use test
+          data that the model has not yet seen.
         </p>
         <p>
-          Sometimes it's useful to be able to have an intermediate step where the model can be evaluated without using the set-aside test set. This is where a validation set is useful. Consider the situation where we take a subset of our data and set it aside as the test set - we won't touch this data until we're ready to evaluate a final model.
+          Sometimes it's useful to be able to have an intermediate step where
+          the model can be evaluated without using the set-aside test set. This
+          is where a validation set is useful. Consider the situation where we
+          take a subset of our data and set it aside as the test set - we won't
+          touch this data until we're ready to evaluate a final model.
         </p>
         <p>
-          With the remaining data, we can divide it into training and validation sets. We then train the model on the training data and evaluate it on the validation data. Another advantage of using a validation set is that it can be used to tune the model or adjust the hyperparameters. Iterations of tuning and model fitting are used to find the final model, which is then evaluated using the test set.
+          With the remaining data, we can divide it into training and validation
+          sets. We then train the model on the training data and evaluate it on
+          the validation data. Another advantage of using a validation set is
+          that it can be used to tune the model or adjust the hyperparameters.
+          Iterations of tuning and model fitting are used to find the final
+          model, which is then evaluated using the test set.
         </p>
         <h3>Train-validate-test</h3>
-        <p>
-          Some general definitions are:
-        </p>
+        <p>Some general definitions are:</p>
         <ul>
-          <li><strong>training dataset</strong>: the sample of data used to fit the model</li>
-          <li><strong>validation dataset</strong>: the sample of data used to evaluate the model and possibly to adjust the hyperparameters</li>
-          <li><strong>testing dataset</strong>: the sample of data used for final model testing; not to be used for anything other than testing so that the result is unbiased</li>
+          <li>
+            <strong>training dataset</strong>: the sample of data used to fit
+            the model
+          </li>
+          <li>
+            <strong>validation dataset</strong>: the sample of data used to
+            evaluate the model and possibly to adjust the hyperparameters
+          </li>
+          <li>
+            <strong>testing dataset</strong>: the sample of data used for final
+            model testing; not to be used for anything other than testing so
+            that the result is unbiased
+          </li>
         </ul>
         <p>
-          One last point to make is that sometimes you won't even have access the test set! If you are participating in a Kaggle competition, for example, you cannot view the actual target values for the test data, and can only generate the predictions for your submission. The number of test prediction submissions might be limited, or you might not want to make numerous test submissions just to evaluate or tune your model.
+          One last point to make is that sometimes you won't even have access
+          the test set! If you are participating in a Kaggle competition, for
+          example, you cannot view the actual target values for the test data,
+          and can only generate the predictions for your submission. The number
+          of test prediction submissions might be limited, or you might not want
+          to make numerous test submissions just to evaluate or tune your model.
         </p>
         <p>
-          In this next section, we'll create our own train-validation-test data sets. We'll follow the guideline of using 60% for training, 20% for validation, and 20% for testing.
+          In this next section, we'll create our own train-validation-test data
+          sets. We'll follow the guideline of using 60% for training, 20% for
+          validation, and 20% for testing.
         </p>
         <h3>Follow Along</h3>
         <p>
-          We haven't yet worked with the Iris dataset in this module, so we'll start there. In the following example, we load the data and then separate out the feature <code>petal_width</code> and the target <code>petal_length</code>. Having plotted this data earlier, we know there is a linear relationship between the petal width and length: the wider the petal, the greater the length. We'll use a linear model to predict our target.
+          We haven't yet worked with the Iris dataset in this module, so we'll
+          start there. In the following example, we load the data and then
+          separate out the feature <code>petal_width</code> and the target
+          <code>petal_length</code>. Having plotted this data earlier, we know
+          there is a linear relationship between the petal width and length: the
+          wider the petal, the greater the length. We'll use a linear model to
+          predict our target.
         </p>
         <pre><code># Import numpy and seaborn
 import numpy as np
@@ -104,56 +139,67 @@ x = iris['petal_width']
 X = np.array(x)[:, np.newaxis]
 y = iris['petal_length']
 </code></pre>
-        <table>
-          <thead>
-            <tr>
-              <th>sepal_length</th>
-              <th>sepal_width</th>
-              <th>petal_length</th>
-              <th>petal_width</th>
-              <th>species</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>5.1</td>
-              <td>3.5</td>
-              <td>1.4</td>
-              <td>0.2</td>
-              <td>setosa</td>
-            </tr>
-            <tr>
-              <td>4.9</td>
-              <td>3.0</td>
-              <td>1.4</td>
-              <td>0.2</td>
-              <td>setosa</td>
-            </tr>
-            <tr>
-              <td>4.7</td>
-              <td>3.2</td>
-              <td>1.3</td>
-              <td>0.2</td>
-              <td>setosa</td>
-            </tr>
-            <tr>
-              <td>4.6</td>
-              <td>3.1</td>
-              <td>1.5</td>
-              <td>0.2</td>
-              <td>setosa</td>
-            </tr>
-            <tr>
-              <td>5.0</td>
-              <td>3.6</td>
-              <td>1.4</td>
-              <td>0.2</td>
-              <td>setosa</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>sepal_length</th>
+                <th>sepal_width</th>
+                <th>petal_length</th>
+                <th>petal_width</th>
+                <th>species</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0</td>
+                <td>5.1</td>
+                <td>3.5</td>
+                <td>1.4</td>
+                <td>0.2</td>
+                <td>setosa</td>
+              </tr>
+              <tr>
+                <td>1</td>
+                <td>4.9</td>
+                <td>3.0</td>
+                <td>1.4</td>
+                <td>0.2</td>
+                <td>setosa</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>4.7</td>
+                <td>3.2</td>
+                <td>1.3</td>
+                <td>0.2</td>
+                <td>setosa</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>4.6</td>
+                <td>3.1</td>
+                <td>1.5</td>
+                <td>0.2</td>
+                <td>setosa</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>5.0</td>
+                <td>3.6</td>
+                <td>1.4</td>
+                <td>0.2</td>
+                <td>setosa</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <p>
-          First, we'll hold back a subset of the data just for the test data. We'll do this with the scikit-learn utility. We'll call it something different from "train" so that we don't confuse it with the actual training data later.
+          First, we'll hold back a subset of the data just for the test data.
+          We'll do this with the scikit-learn utility. We'll call it something
+          different from "train" so that we don't confuse it with the actual
+          training data later.
         </p>
         <pre><code># Import the train_test_split utility
 from sklearn.model_selection import train_test_split
@@ -163,7 +209,10 @@ X_remain, X_test, y_remain, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42)
 </code></pre>
         <p>
-          Then we'll create a training set and validation set from the remaining data. We could have done this in one step but we're breaking it down here so it's easier to see that we removed a test subset and will not accidentally use it for evaluation until we're ready to test.
+          Then we'll create a training set and validation set from the remaining
+          data. We could have done this in one step but we're breaking it down
+          here so it's easier to see that we removed a test subset and will not
+          accidentally use it for evaluation until we're ready to test.
         </p>
         <pre><code># Create the train and validation datasets
 
@@ -180,9 +229,7 @@ print('Test data set samples:', len(X_test))
 Validation data set samples: 30
 Test data set samples: 30
 </code></pre>
-        <p>
-          Now we can fit our model and evaluate it on our validation set.
-        </p>
+        <p>Now we can fit our model and evaluate it on our validation set.</p>
         <pre><code># Import the predictor and instantiate the class
 from sklearn.linear_model import LinearRegression
 
@@ -202,11 +249,15 @@ r2_score(y_val, y_predict)
         <pre><code>0.9589442606386026
 </code></pre>
         <p>
-          Well, that's a pretty good model score (R-squared), which we expect because we know the Iris dataset has a strong linear trend between the petal width and petal length. Now would be the time to change any of the model hyperparameters and evaluate on the validation set again. We'll continue with the default model parameters for now. Hyperparameter tuning is something that will be introduced in the later Sprints.
+          Well, that's a pretty good model score (R-squared), which we expect
+          because we know the Iris dataset has a strong linear trend between the
+          petal width and petal length. Now would be the time to change any of
+          the model hyperparameters and evaluate on the validation set again.
+          We'll continue with the default model parameters for now.
+          Hyperparameter tuning is something that will be introduced in the
+          later Sprints.
         </p>
-        <p>
-          Now, let's use the test set we held back above.
-        </p>
+        <p>Now, let's use the test set we held back above.</p>
         <pre><code># Use the TEST set for prediction
 y_predict_test = model.predict(X_test)
 
@@ -217,39 +268,42 @@ r2_score(y_test, y_predict_test)
         <pre><code>0.9287783612248339
 </code></pre>
         <p>
-          The R-squared score is a little lower than it was for the validate set. If we were to run the model and test again with a different random seed, the scores would be different and the test score might be higher.
+          The R-squared score is a little lower than it was for the validate
+          set. If we were to run the model and test again with a different
+          random seed, the scores would be different and the test score might be
+          higher.
         </p>
         <h3>Challenge</h3>
         <p>
-          Using the same data set as in the example, try changing the <code>random_state</code> parameter to see how the validate and test model scores change.
+          Using the same data set as in the example, try changing the
+          <code>random_state</code> parameter to see how the validate and test
+          model scores change.
         </p>
         <h3>Additional Resources</h3>
         <ul>
           <li>
-            <a href="https://machinelearningmastery.com/difference-test-validation-datasets/" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://machinelearningmastery.com/difference-test-validation-datasets/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               What is the Difference Between Test and Validation Datasets?<!--Links to an external site.-->
             </a>
           </li>
         </ul>
       </section>
 
-      <section class="content-box">
-      </section>
+      <section class="content-box"></section>
 
-      <section class="content-box">
-      </section>
+      <section class="content-box"></section>
 
-      <section class="content-box">
-      </section>
+      <section class="content-box"></section>
 
-      <section class="content-box">
-      </section>
+      <section class="content-box"></section>
 
-      <section class="content-box">
-      </section>
+      <section class="content-box"></section>
 
-      <section class="content-box">
-      </section>
+      <section class="content-box"></section>
 
       <section class="content-box">
         <h2>Guided Project</h2>
