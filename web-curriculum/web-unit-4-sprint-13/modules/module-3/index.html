@@ -21,7 +21,6 @@
                         <a href="../module-4/index.html">Module 4: Deployment & Best Practices</a>
                     </div>
                 </li>
-                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
                 <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
                 <li class="dropdown">
                     <a href="#">Resources</a>
@@ -37,50 +36,270 @@
     <main class="container">
         <section class="welcome">
             <h1>Module 3 - Express Middleware</h1>
+            <div class="content-box module3-accent">
+                <h2>What is Middleware?</h2>
+                <p>There are different types of middleware; for our purposes, we'll group them into three different categories:</p>
 
-            <div class="content-box module3-accent" id="objectives">
-                <h2>Objectives</h2>
+                <ul>
+                    <li>Built-in middleware</li>
+                    <li>Third-party middleware</li>
+                    <li>Custom middleware</li>
+                </ul>
 
-                <p>In this module, you'll learn about middleware in Express. Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application's request-response cycle. Middleware functions can perform tasks, modify request and response objects, end the request-response cycle, or call the next middleware in the stack.</p>
+                <h3>Built-in Middleware</h3>
+                <p>Built-in middleware is included with Express but not added to the application automatically. Like the other types, we need to opt-in to using it in our application.</p>
 
+                <p>We saw an example of built-in middleware when we added support for parsing JSON content out of the request body using <code>server.use(express.json());</code>.</p>
+
+                <p>Every type of middleware works in the same way. We tell Express about the middleware we want to turn on for our application by making a call to <code>.use()</code> on our server and passing <code>.use()</code> the piece of middleware we want to apply. This line must come after the server has been created by calling <code>express()</code>.</p>
+
+                <h3>Third-party Middleware</h3>
+                <p>Third-party middleware are npm modules that we can install and then import into our applications using <code>require()</code>. There are thousands of middleware modules we can use. There is no need to write our own in most cases.</p>
+
+                <p>Some popular middleware modules are:</p>
+
+                <ul>
+                    <li>morgan<a href="https://github.com/expressjs/morgan">Links to an external site</a>.</li>
+                    <li>cors<a href="https://github.com/expressjs/cors">Links to an external site</a>.</li>
+                    <li>helmet<a href="https://github.com/helmetjs/helmet">Links to an external site</a>.</li>
+                </ul>
+
+                <h3>Custom Middleware</h3>
+                <p>Custom middleware is functions we write to perform specific tasks. We'll learn more about how to write and use them in the next section.</p>
                 <div class="note-box">
-                    <h3>Middleware Functions</h3>
-                    <ul>
-                        <li>Execute code during the request-response cycle</li>
-                        <li>Can modify request and response objects</li>
-                        <li>Can end the request-response cycle</li>
-                        <li>Can call the next middleware in the stack</li>
-                        <li>Play a crucial role in building modular, maintainable Express applications</li>
-                    </ul>
+                    <h3>How to Build It</h3>
+                    <p>One thing that is not immediately obvious is that route handlers are middleware. Let's see this in action.</p>
+
+                    <p>Suppose a client visits a non-existent endpoint in our current implementation. In that case, they will get a default message when a resource is not found on the server. In the case of a browser, it's Cannot Get /urlWeTriedToAccess. This default message makes for a poor user experience. So please code along as we write a request handler that responds with a custom message for invalid URLs.</p>
+
+                    <pre><code>function(req, res) {
+  res.status(404).send("Ain't nobody got time for that!");
+};</code></pre>
+
+                    <p>This code is not complete yet, but you can see that it is, in fact, a request handler function. We know because the homies (req and res) are there.</p>
+
+                    <p>Now let's just use it as if it was middleware:</p>
+
+                    <pre><code>server.use(function(req, res) {
+  res.status(404).send("Ain't nobody got time for that!");
+});</code></pre>
+
+                    <p>Almost there! The last step is adding this status after each route handler. That way, if the preceding middleware or route handlers do not respond to the request, this will become our catch-all and respond with the correct HTTP status code and a helpful message.</p>
+
+                    <p>Now, requests to non-existent endpoints will result in a better experience for our clients.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/67gj9hua12" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h2>Write Custom Middleware</h2>
+                <p>Writing custom middleware is a two-step process:</p>
+
+                <ol>
+                    <li>Write a function that will receive three or four arguments.</li>
+                    <li>Add it to the middleware queue.</li>
+                </ol>
+
+                <p>Let's tackle the first part with an example. We'll write middleware that logs information about every request that comes into our server. We'll be displaying the information in the console window to keep things simple.</p>
+
+                <pre><code>function logger(req, res, next) {
+  console.log(
+    `[${new Date().toISOString()}] ${req.method} to ${req.url} from ${req.get(
+      'Origin'
+    )}`
+  );
+
+  next();
+}</code></pre>
+
+                <p>We can see that a middleware function takes three parameters:</p>
+
+                <ul>
+                    <li>the request object</li>
+                    <li>the response object</li>
+                    <li>a function that points to the next middleware in the queue</li>
+                </ul>
+
+                <p>By convention, we name the third parameter next. Please stick to that convention in your code.</p>
+
+                <p>Any middleware in the queue CAN modify both the request and response objects, but it's NOT required. So, in this case, we are not making changes to either.</p>
+
+                <p>Any middleware in the queue can stop the request and send a response back to the client. When that happens, the rest of the middleware, including the route handlers, will not work. We'll see an example of this in the code-along section.</p>
+
+                <p>Calling the next() function signals to Express that the middleware has finished, and it should call the next middleware function. If next() is not called and a response is not sent back to the client, the request will hang, and clients will get a timeout error. So, make sure always to call next() or use one of the methods that send a response back like res.send() or res.json().</p>
+
+                <p>Now let's add our shiny middleware to the queue! Right after server.use(express.json()); add the following line.</p>
+
+                <pre><code>server.use(logger);</code></pre>
+
+                <p>Hitting any of our endpoints will display some information about the request in the console.</p>
+
+                <p>Congratulations, you know how to write custom middleware for Express!</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Any middleware in the queue can stop the request and send a response back to the client. The rest of the middleware, including the route handlers, will not be executed when that happens. Let's see this in action by writing our very own authentication middleware, but first, a bit of a story (any similarity to an actual story is a pure coincidence).</p>
+
+                    <p>Imagine you're next to a lake where a dangerous creature dwells, and it is moving towards you with ill intentions. Luckily, next to you is a sealed door that leads to safety. But, unfortunately, to open the door, you need to provide the right password. So let's implement the API for that.</p>
+
+                    <p>Start by defining a function that shows our current predicament at the console as the application loads.</p>
+
+                    <pre><code>function atGate(req, res, next) {
+  console.log('At the gate, about to be eaten`);
+
+  next();
+}</code></pre>
+
+                    <p>Then add it as the first middleware in the queue.</p>
+
+                    <pre><code>server.use(atGate);</code></pre>
+
+                    <p>This middleware is what's called global or application-wide middleware. It applies to every endpoint in our server. Therefore, accessing any route in our server should display the message on the console.</p>
+
+                    <p>Now let's add the authentication middleware that only grants access if we hit the correct route; picking any other route is futile, so be careful!</p>
+
+                    <pre><code>function auth(req, res, next) {
+  if (req.url === '/mellon') {
+    next();
+  } else {
+    res.send('You shall not pass!');
+  }
+}</code></pre>
+
+                    <p>Now let's add a route handler that leads to safety:</p>
+
+                    <pre><code>server.get('/mellon', auth, (req, res) => {
+  console.log('Gate opening...');
+  console.log('Inside and safe');
+  res.send('Welcome Traveler!');
+});</code></pre>
+
+                    <p>What's new here is that we are adding our middleware as the second parameter and the route handler as the third. Using middleware this way is what we call local middleware or route middleware. It just means we are using middleware locally and only applies to the endpoint where it's added.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/zc6ucko8r6" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h2>Write Error Handling Middleware</h2>
+                <p>When our application encounters an error in the middle of executing middleware code, we can choose to hand over control to error handling middleware by calling next() with one argument. It is a standard convention to make that argument be an error object like this: next(new Error("error message")).</p>
+
+                <p>This middleware type takes four arguments: error, req, res, and next. We pass the first argument when calling next(new Error('error message here')). When the error handling code is finished, we can choose to end the request or call next without arguments to continue to the next regular middleware.</p>
+
+                <p>Error handling middleware can be placed anywhere in the stack, but it makes the most sense to put it at the end. Suppose the intention is for middleware to handle errors that may occur elsewhere in the queue. In that case, it needs to run after the rest of the middleware has run.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's see this error-handling middleware in code. First, let's write an endpoint that sends a file to the client in response to a GET request to the /download endpoint.</p>
+
+                    <pre><code>const express = require('express');
+const path = require('path');
+
+const server = express();
+
+server.get('/download', (req, res) => {
+  const filePath = path.join(__dirname, 'index.html');
+  res.sendFile(filePath);
+});
+
+server.listen(5000);</code></pre>
+
+                    <p>If we run our server and make a GET request to /download, the server will crash since there is no index.html file to send. We need to rewrite our endpoint and take advantage of the fact that res.sendFile supports passing a callback function as a second argument. This callback function will run after the file is sent. It will also run if there is an error in the process of sending the file.</p>
+
+                    <pre><code>// note we added the third parameter here: next
+server.get('/download', (req, res, next) => {
+  const filePath = path.join(__dirname, 'index.html');
+  res.sendFile(filePath, err => {
+    // if there is an error the callback function will get an error as it's first argument
+    if (err) {
+      // we could handle the error here or pass it down to error-handling middleware like so:
+      next(err); // call the next error-handling middleware in the queue
+    } else {
+      console.log('File sent successfully');
+    }
+  });
+});</code></pre>
+
+                    <p>Now let's add error-handling middleware to our server. We can create the middleware function and then use it like any other middleware or do it inline. Below an example of using it inline.</p>
+
+                    <pre><code>server.use((err, req, res, next) => {
+  console.error(err);
+
+  res
+    .status(500)
+    .json({ message: 'There was an error performing the required operation' });
+});</code></pre>
+
+                    <p>This middleware will only get called if any other middleware or route handler that comes before it has called next() with an argument like in the /download endpoint above.</p>
+
+                    <p>The complete code for our server now look like so:</p>
+
+                    <pre><code>const express = require('express');
+const path = require('path');
+
+const server = express();
+
+server.get('/download', (req, res, next) => {
+  const filePath = path.join(__dirname, 'index.html');
+  res.sendFile(filePath, err => {
+    // if there is an error the callback function will get an error as it's first argument
+    if (err) {
+      // we could handle the error here or pass it down to error-handling middleware like so:
+      next(err); // call the next error-handling middleware in the queue
+    } else {
+      console.log('File sent successfully');
+    }
+  });
+});
+
+server.use((err, req, res, next) => {
+  console.error(err);
+
+  res
+    .status(500)
+    .json({ message: 'There was an error performing the required operation' });
+});
+
+server.listen(5000);</code></pre>
+
+                    <p>Open your browser and visit <a href="http://localhost:5000/download" target="_blank">http://localhost:5000/download</a>, and the error message coming from our error-handling middleware should display.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/zk17r55iwj" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
                 </div>
             </div>
 
-            <div class="module-cards">
-                <div class="module-card module3-accent">
-                    <h3>Guided Project</h3>
-                    <p>Learn how to implement custom middleware in Express applications.</p>
-                    <a href="guided-project.html" class="btn">View Guided Project</a>
-                </div>
-
-                <div class="module-card module3-accent">
-                    <h3>Assignment</h3>
-                    <p>Practice creating and using middleware for authentication and validation.</p>
-                    <a href="assignment.html" class="btn">View Assignment</a>
-                </div>
-
-                <div class="module-card module3-accent">
-                    <h3>Objectives</h3>
-                    <p>Review the learning objectives for this module.</p>
-                    <a href="objectives.html" class="btn">View Objectives</a>
-                </div>
+            <div class="content-box module3-accent">
+                <h2>Guided Project</h2>
+              <p><a href="https://github.com/bloominstituteoftechnology/node-api3-guided" target="_blank" rel="noopener">Express Middleware Starter Code</a></p>
+              <p><a href="https://github.com/bloominstituteoftechnology/node-api3-guided-solution" target="_blank" rel="noopener">Express Middleware Solution</a></p>
+              <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/f8mwzdk9fk" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+              </div>
             </div>
+
+            <div class="content-box module3-accent">
+                <h2>Module 3 Project: Express Middleware</h2>
+
+            
+                <p>The module project contains advanced problems that will challenge and stretch your understanding of the module's content. The project has built-in tests for you to check your work, and the solution video is available in case you need help or want to see how we solved each challenge, but remember, there is always more than one way to solve a problem. Before reviewing the solution video, be sure to attempt the project and try solving the challenges yourself.</p>
+                
+
+                <h3>Instructions</h3>
+
+                <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
+                <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/node-api3-project" target="_blank">Node API 3</a></p>
+
+                <ul>
+                    <li>Fork the repository,</li>
+                    <li>clone it to your machine, and</li>
+                    <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
+                    <li>submit your completed project to the BloomTech Portal</li>
+                </ul>
+
+                <h3>Solution</h3>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/rk3gg16ewo" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
 
             <section class="resource-section">
                 <h2 class="resource-section-title">Additional Resources</h2>
                 <div class="resource-links">
-                    <a href="../../index.html" class="resource-link">
-                        Return to Home
-                    </a>
                     <a href="https://expressjs.com/en/guide/using-middleware.html" target="_blank" rel="noopener noreferrer" class="resource-link">
                         Express Middleware Guide
                     </a>

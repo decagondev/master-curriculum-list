@@ -10,3 +10,6 @@ Find an appropriate free-use image on Unsplash for this entry.
 
  style="max-width: 100%; height: auto; display: block;">
 <!-- <strong><i> -->
+
+            <div class="table-responsive">
+                <table class="custom-table">
