@@ -282,6 +282,211 @@ fig.show()</code></pre>
         </section>
 
         <section class="content-box">
+            <h2>Objective 02 - implement ordinal encoding with high-cardinality categoricals</h2>
+            <h3>Overview</h3>
+            <p>
+                In a previous module we looked at one-hot encoding, where we created separate columns for each class
+                represented in the data. Each column is a series of '0' and '1' to indicate if that class is represented
+                in the given row. If we had numerous classes in one of the feature columns, the size of the resulting
+                one-hot encoded DataFrame would grow very large. For example, if we had a column with 100 different
+                classes, we would need an additional 100 columns to represent the one-hot encoding.
+            </p>
+            <p>
+                Data with a large number of classes is said to have high cardinality. One solution to use for data with
+                high cardinality is to ordinal encode the classes. This would assume that the values in the data have
+                some relationship to each other, as they are being "ordered". For our example here we'll assume the
+                values are not related.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                To make this example easier to follow, we'll generate some data and use both the label encoder and the
+                ordinal encoder.
+            </p>
+            <pre><code># Imports
+import numpy as np
+import pandas as pd             
+
+# Create the DataFrame
+df = pd.DataFrame({
+    'color':["a", "c", "a", "a", "b", "b", "d", "d", "c"], 
+    'outcome':[1, 2, 0, 0, 1, 1, 3, 3, 2]})
+
+# set up X and y
+X = df.drop('outcome', axis = 1)
+y = df.drop('color', axis = 1)</code></pre>
+            <pre><code># Label encoding
+from sklearn.preprocessing import LabelEncoder
+
+label_enc = LabelEncoder()
+encoded = label_enc.fit_transform(np.ravel(X)) 
+
+print("\n The result of transforming X with LabelEncoder:")
+print(encoded)
+print(type(encoded))</code></pre>
+            <pre><code>The result of transforming X with LabelEncoder:
+[0 2 0 0 1 1 3 3 2]
+&lt;class 'numpy.ndarray'&gt;</code></pre>
+            <pre><code># Ordinal encoding
+from sklearn.preprocessing import OrdinalEncoder
+
+ordinal_enc = OrdinalEncoder()
+ordinal_enc.fit_transform(X, y['outcome'])</code></pre>
+            <pre><code>array([[0.],
+       [2.],
+       [0.],
+       [0.],
+       [1.],
+       [1.],
+       [3.],
+       [3.],
+       [2.]])
+</code></pre>
+            <h3>Challenge</h3>
+            <p>
+                Try creating your own data set to practice some encoding!
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: Ordinal Encoder</a>
+                </li>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/preprocessing.html#preprocessing-categorical-features"
+                        target="_blank" rel="noopener noreferrer">Preprocessing Categorical Features</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 03 - understand how categorical encodings affect trees differently compared to linear models
+            </h2>
+            <h3>Overview</h3>
+            <p>
+                When a decision tree model is fit, the algorithm needs to decide how to make the split. When the tree is
+                splitting on categorical values, it has to consider all possible pair subsets. If there are a lot of
+                classes in the categorical variables, this splitting decision becomes more complicated and
+                computationally intensive.
+            </p>
+            <p>
+                If we use one-hot encoding on our categorical variables, we can also introduce another problem with the
+                sparse matrices that result from the encoding. If the data contains both continuous numeric features and
+                one-hot encoded categorical features, then the continuous variables will be assigned higher feature
+                importance because splitting on them will reduce the variance or impurity more than the categorical
+                variables.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                To explore how categorical encodings affect different types of models, we're going to work with a
+                dataset that has a number of categorical features. The mushroom dataset is available from the UCI
+                Machine Learning website<span>Links to an external site.</span>
+            </p>
+            <p>
+                This dataset includes descriptions of 23 species of gilled mushrooms found in North America. From the
+                properties of each type of mushroom we are trying to predict which class it belongs to: definitely
+                edible or definitely poisonous. Let's load in the data and get started.
+            </p>
+            <pre><code># Imports
+import pandas as pd
+import numpy as np
+
+# Load the data (saved on GitHub)
+url = 'https://tinyurl.com/y884c98f'
+mushrooms = pd.read_csv(url)
+mushrooms.head()</code></pre>
+            <pre><code>class	cap-shape	cap-surface	cap-color	bruises	odor	gill-attachment	gill-spacing	gill-size	gill-color	...	stalk-surface-below-ring	stalk-color-above-ring	stalk-color-below-ring	veil-type	veil-color	ring-number	ring-type	spore-print-color	population	habitat
+0	p	x	s	n	t	p	f	c	n	k	...	s	w	w	p	w	o	p	k	s	u
+1	e	x	s	y	t	a	f	c	b	k	...	s	w	w	p	w	o	p	n	n	g
+2	e	b	s	w	t	l	f	c	b	n	...	s	w	w	p	w	o	p	n	n	m
+3	p	x	y	w	t	p	f	c	n	n	...	s	w	w	p	w	o	p	k	s	u
+4	e	x	s	g	f	n	f	w	b	k	...	s	w	w	p	w	o	e	n	a	g
+5 rows × 23 columns</code></pre>
+            <p>
+                As we can see, most of the variables in this data set are categorical. We'll need to encode them to use
+                in the models. To compare how different types of models handle encoded categorical variables, we'll use
+                both a logistic regression and a tree-based model.
+            </p>
+            <pre><code># Create the feature matrix (drop the target column)
+X = mushrooms.drop('class', axis=1)
+
+# Create and encode the target column
+from sklearn import preprocessing
+le = preprocessing.LabelEncoder()
+y = le.fit_transform(mushrooms['class'])</code></pre>
+            <pre><code># Imports
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder
+
+# Use the decision tree classifier 
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+
+# Set-up the one-hot encoder
+categorical_features = X.columns
+categorical_transformer = Pipeline(steps=[('onehot', OneHotEncoder())])
+
+# Set up our preprocessor/column transformer
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('cat', categorical_transformer, categorical_features)])
+
+# Add the classifier to the preprocessing pipeline
+pipeline = Pipeline(steps=[('preprocessor', preprocessor),
+                      ('classifier', DecisionTreeClassifier())])
+# Apply the pipeline
+
+# Separate into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+
+# Fit the model with our decision tree classifier
+pipeline.fit(X_train, y_train)
+print("Decision tree model score: %.3f" % pipeline.score(X_test, y_test))</code></pre>
+            <pre><code>Decision tree model score: 1.000</code></pre>
+            <pre><code># Use the logistic regression classifier 
+from sklearn.linear_model import LogisticRegression
+
+# Add the classifier to the preprocessing pipeline
+pipeline_logreg = Pipeline(steps=[('preprocessor', preprocessor),
+                      ('classifier', LogisticRegression())])
+
+# Apply the pipeline
+
+# Separate into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+
+# Fit the model with our logistic regression classifier
+pipeline_logreg.fit(X_train, y_train)
+print("Logistic regression model score: %.3f" % pipeline_logreg.score(X_test, y_test))</code></pre>
+            <pre><code>Logistic regression model score: 1.000</code></pre>
+            <pre><code># Set-up the ordinal encoder
+
+from sklearn.preprocessing import OrdinalEncoder
+categorical_features = X.columns
+categorical_transformer = Pipeline(steps=[('ordinal', OrdinalEncoder())])
+
+# Set up our preprocessor/column transformer
+preprocessor_ord = ColumnTransformer(
+    transformers=[
+        ('cat', categorical_transformer, categorical_features)])
+
+# Add the classifier to the preprocessing pipeline
+pipeline_ord = Pipeline(steps=[('preprocessor_ord', preprocessor_ord),
+                      ('classifier', DecisionTreeClassifier())])
+# Fit the model with our decision tree classifier
+pipeline_ord.fit(X_train, y_train)
+print("Decision tree model score (ordinal encoded): %.3f" % pipeline_ord.score(X_test, y_test))</code></pre>
+            <pre><code>Decision tree model score (ordinal encoded): 1.000</code></pre>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="#">Categorical Variables<span>Links to an external site.</span></a>
+                </li>
+                <li>
+                    <a href="#">Beyond one-hot: An Exploration of Categorical Variables<span>Links to an external
+                            site.</span></a>
+                </li>
+            </ul>
         </section>
 
         <section class="content-box">
