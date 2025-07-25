@@ -379,7 +379,7 @@ ordinal_enc.fit_transform(X, y['outcome'])</code></pre>
             <p>
                 To explore how categorical encodings affect different types of models, we're going to work with a
                 dataset that has a number of categorical features. The mushroom dataset is available from the UCI
-                Machine Learning website<span>Links to an external site.</span>
+                Machine Learning website
             </p>
             <p>
                 This dataset includes descriptions of 23 species of gilled mushrooms found in North America. From the
@@ -480,16 +480,151 @@ print("Decision tree model score (ordinal encoded): %.3f" % pipeline_ord.score(X
             <h3>Additional Resources</h3>
             <ul>
                 <li>
-                    <a href="#">Categorical Variables<span>Links to an external site.</span></a>
+                    <a href="#">Categorical Variables</a>
                 </li>
                 <li>
-                    <a href="#">Beyond one-hot: An Exploration of Categorical Variables<span>Links to an external
-                            site.</span></a>
+                    <a href="#">Beyond one-hot: An Exploration of Categorical Variables</a>
                 </li>
             </ul>
         </section>
 
         <section class="content-box">
+            <h2>Objective 04 - understand how tree ensembles reduce overfitting compared to a single decision tree with
+                unlimited depth</h2>
+            <h3>Overview</h3>
+            <p>In the first objective of this module we discussed how decision trees can tend to overfit on the training
+                data. Ensemble methods like the random forest help to reduce this by averaging results from numerous
+                models. Now we'll look more closely at the accuracy of both the decision tree model and random forest
+                model for different depths.</p>
+            <p>We'll be visiting the penguins data set again and predict the class (sex) that each penguin belongs to.
+                Lets compare the predictions of tree-based models with that of a logistic regression model. We will use
+                both the RandomForestClassifier and the DecisionTreeClassifier, and plot the accuracy against the depth
+                of the tree.</p>
+            <h3>Follow Along</h3>
+            <pre><code># Import libraries and load in the data
+import pandas as pd
+import seaborn as sns
+
+penguins = sns.load_dataset("penguins")
+
+# Remove NaNs and nulls
+penguins.dropna(inplace=True)
+
+display(penguins.head())</code></pre>
+            <pre><code>species	island	bill_length_mm	bill_depth_mm	flipper_length_mm	body_mass_g	sex
+0	Adelie	Torgersen	39.1	18.7	181.0	3750.0	Male
+1	Adelie	Torgersen	39.5	17.4	186.0	3800.0	Female
+2	Adelie	Torgersen	40.3	18.0	195.0	3250.0	Female
+4	Adelie	Torgersen	36.7	19.3	193.0	3450.0	Female
+5	Adelie	Torgersen	39.3	20.6	190.0	3650.0	Male</code></pre>
+            <p>Let's use only the numeric columns to predict the class (male or female). We'll use a logistic
+                regression, decision tree, and random forest.</p>
+            <pre><code># Create feature matrix
+X = penguins.drop(['species', 'island', 'sex'], axis=1)
+
+# Create the target array
+from sklearn import preprocessing
+le = preprocessing.LabelEncoder()
+y = le.fit_transform(penguins['sex'])
+
+# Create training and testing data
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+# Import the classifiers
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+# Fit the model with a logistic regression classifier
+
+logreg = LogisticRegression()
+logreg.fit(X_train, y_train)
+print("Logistic regression model score: %.3f" % logreg.score(X_test, y_test))</code></pre>
+            <pre><code>Logistic regression model score: 0.798</code></pre>
+            <pre><code># Fit the model with a decision tree classifier
+
+tree = DecisionTreeClassifier()
+tree.fit(X_train, y_train)
+print("Decision tree model score: %.3f" % tree.score(X_test, y_test))</code></pre>
+            <pre><code>Decision tree model score: 0.821</code></pre>
+            <pre><code># Fit the model with a random forest classifier
+
+trees_rand = RandomForestClassifier()
+trees_rand.fit(X_train, y_train)
+print("Random forest model score: %.3f" % trees_rand.score(X_test, y_test))</code></pre>
+            <pre><code>Random forest model score: 0.893</code></pre>
+            <h4>Look at accuracy for a different number of trees</h4>
+            <pre><code># Fit the model with a decision tree classifier
+
+tree = DecisionTreeClassifier(max_depth=100)
+tree.fit(X_train, y_train)
+print("Decision tree model score: %.3f" % tree.score(X_test, y_test))
+
+print("Decision tree model score: %.3f" % tree.score(X_train, y_train))</code></pre>
+            <pre><code>Decision tree model score: 0.821
+Decision tree model score: 1.000</code></pre>
+            <h4>Look at training accuracy vs. test accuracy</h4>
+            <pre><code># Decision tree
+accuracy_train = []
+accuracy_test = []
+
+for i in range(1, 160, 5):
+    tree = DecisionTreeClassifier(max_depth=i)
+    tree.fit(X_train, y_train)
+    accuracy_test.append(tree.score(X_test, y_test))
+    accuracy_train.append(tree.score(X_train, y_train))</code></pre>
+            <pre><code># Look at training accuracy vs. test accuracy
+
+# Random forest
+rf_accuracy_train = []
+rf_accuracy_test = []
+
+for i in range(1, 160, 5):
+    tree = RandomForestClassifier(max_depth=i)
+    tree.fit(X_train, y_train)
+    rf_accuracy_test.append(tree.score(X_test, y_test))
+    rf_accuracy_train.append(tree.score(X_train, y_train))</code></pre>
+            <h4>Plot the results of the train vs. test accuracy</h4>
+            <pre><code>import matplotlib.pyplot as plt
+
+fig, (ax1, ax2) = plt.subplots(1,2, figsize=(10,5))
+
+xvals = range(1, 160, 5)
+ax1.plot(xvals, accuracy_train, color='b', label='train')
+ax1.plot(xvals, accuracy_test, color='red', label='test')
+ax1.legend()
+
+ax2.plot(xvals, rf_accuracy_train, color='b', label='train')
+ax2.plot(xvals, rf_accuracy_test, color='red', label='test')
+ax2.legend()
+
+ax1.set_ylim([0.65, 1.02])
+ax2.set_ylim([0.65, 1.02])
+
+ax1.set_xlabel('Number of nodes (max depth of the tree)')
+ax2.set_xlabel('Number of nodes (max depth of the tree)')
+ax1.set_ylabel('Accuracy')
+ax1.set_title('Decision Tree')
+ax2.set_title('Random Forest')
+
+fig.show()</code></pre>
+            <pre><code>&lt;Figure size 720x360 with 0 Axes&gt;
+mod2_obj4_accuracy.png</code></pre>
+            <h3>Challenge</h3>
+            <p>In this challenge, look at how the training and testing accuracy changes by setting the number of trees
+                used in the random forest classifier (the n_estimators parameter). If n_estimators=1 then you would have
+                a single decision tree classifier. The accuracy should increase with increasing trees.</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: RandomForestClassifier</a>
+                </li>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: DecisionTreeClassifier</a>
+                </li>
+            </ul>
         </section>
 
         <section class="content-box">
