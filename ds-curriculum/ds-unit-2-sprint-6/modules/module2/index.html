@@ -54,6 +54,240 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - use scikit-learn for random forests</h2>
+            <h3>Overview</h3>
+            <p>
+                We've covered some advantages of using decision trees over other types of models, including how easy
+                they are to to implement and interpret. One disadvantage however, with a decision tree is that they tend
+                to overfit or model the training data too closely. Because of this, they don't generalize well to new
+                data.
+            </p>
+            <p>
+                To solve the problem of overfitting we can use the results returned from more than one decision tree. A
+                random forest is an ensemble method where many decision trees are trained. Combining the results of two
+                (or more) decision trees improves the fit. We train a decision tree on a random subset of the data,
+                combine the results with other randomly-trained trees, and thus have a random forest.
+            </p>
+            <h3>Random Forest</h3>
+            <p>
+                We've already trained a decision tree on the wine quality data set. It's time for a random forest to see
+                if we can improve on the accuracy. The <code>RandomForestClassifier</code> is implemented in almost the
+                same way as the <code>DecisionTreeClassifier</code>.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                The wine data set is available in the scikit-learn <code>datasets</code> library.
+            </p>
+            <pre><code># Import libraries and data sets
+from sklearn.datasets import load_wine
+import pandas as pd
+
+# Load the data and convert to a DataFrame
+data = load_wine()
+df_wine = pd.DataFrame(data.data, columns=data.feature_names)
+df_wine['target'] = pd.Series(data.target)
+df_wine.head()</code></pre>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>alcohol</th>
+                            <th>malic_acid</th>
+                            <th>ash</th>
+                            <th>alcalinity_of_ash</th>
+                            <th>magnesium</th>
+                            <th>total_phenols</th>
+                            <th>flavanoids</th>
+                            <th>nonflavanoid_phenols</th>
+                            <th>proanthocyanins</th>
+                            <th>color_intensity</th>
+                            <th>hue</th>
+                            <th>od280/od315_of_diluted_wines</th>
+                            <th>proline</th>
+                            <th>target</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>14.23</td>
+                            <td>1.71</td>
+                            <td>2.43</td>
+                            <td>15.6</td>
+                            <td>127.0</td>
+                            <td>2.80</td>
+                            <td>3.06</td>
+                            <td>0.28</td>
+                            <td>2.29</td>
+                            <td>5.64</td>
+                            <td>1.04</td>
+                            <td>3.92</td>
+                            <td>1065.0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>13.20</td>
+                            <td>1.78</td>
+                            <td>2.14</td>
+                            <td>11.2</td>
+                            <td>100.0</td>
+                            <td>2.65</td>
+                            <td>2.76</td>
+                            <td>0.26</td>
+                            <td>1.28</td>
+                            <td>4.38</td>
+                            <td>1.05</td>
+                            <td>3.40</td>
+                            <td>1050.0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>13.16</td>
+                            <td>2.36</td>
+                            <td>2.67</td>
+                            <td>18.6</td>
+                            <td>101.0</td>
+                            <td>2.80</td>
+                            <td>3.24</td>
+                            <td>0.30</td>
+                            <td>2.81</td>
+                            <td>5.68</td>
+                            <td>1.03</td>
+                            <td>3.17</td>
+                            <td>1185.0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>14.37</td>
+                            <td>1.95</td>
+                            <td>2.50</td>
+                            <td>16.8</td>
+                            <td>113.0</td>
+                            <td>3.85</td>
+                            <td>3.49</td>
+                            <td>0.24</td>
+                            <td>2.18</td>
+                            <td>7.80</td>
+                            <td>0.86</td>
+                            <td>3.45</td>
+                            <td>1480.0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>13.24</td>
+                            <td>2.59</td>
+                            <td>2.87</td>
+                            <td>21.0</td>
+                            <td>118.0</td>
+                            <td>2.80</td>
+                            <td>2.69</td>
+                            <td>0.39</td>
+                            <td>1.82</td>
+                            <td>4.32</td>
+                            <td>1.04</td>
+                            <td>2.93</td>
+                            <td>735.0</td>
+                            <td>0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p></p>
+            <pre><code># Separate into features and target
+
+X = df_wine.drop('target', axis=1)
+y = df_wine['target']
+
+# Import train_test_split function
+from sklearn.model_selection import train_test_split
+
+# Split dataset into training set and test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)</code></pre>
+            <pre><code>#Import Random Forest Model
+from sklearn.ensemble import RandomForestClassifier
+
+#Create a Gaussian Classifier
+rf_classifier=RandomForestClassifier(n_estimators=100)
+
+#Train the model using the training sets y_pred=clf.predict(X_test)
+rf_classifier.fit(X_train,y_train)
+
+y_pred=rf_classifier.predict(X_test)
+# Fit the model with our logistic regression classifier
+
+print("model score: %.3f" % rf_classifier.score(X_test, y_test))
+</code></pre>
+            <pre><code>model score: 0.978</code></pre>
+            <p>
+                Now we can compare this to the results of the decision tree model we fit in the previous objective.
+            </p>
+            <pre><code># Use the decision tree classifier 
+from sklearn.tree import DecisionTreeClassifier
+
+# Instantiate the classifier
+dt_classifier=DecisionTreeClassifier()
+
+# Train the model using the training sets
+dt_classifier.fit(X_train,y_train)
+
+# Find the model score
+print("Decision tree model score: %.3f" % dt_classifier.score(X_test, y_test))
+</code></pre>
+            <pre><code>Decision tree model score: 0.911</code></pre>
+            <p>
+                The decision tree model didn't perform as well as the random forest model, which was expected. Let's
+                compare the feature importance for the models side-by-side.
+            </p>
+            <pre><code># Plot the feature importances
+import matplotlib.pyplot as plt
+
+rf_importances = pd.Series(rf_classifier.feature_importances_, X.columns)
+dt_importances = pd.Series(dt_classifier.feature_importances_, X.columns)
+
+# Plot top n feature importances
+n = 13
+fig, (ax1, ax2) = plt.subplots(1,2,figsize=(12,n/2))
+ax1.set_title(f'Decision Tree: Top {n} features')
+ax2.set_title(f'Random Forest: Top {n} features')
+dt_importances.sort_values()[-n:].plot.barh(ax=ax1)
+rf_importances.sort_values()[-n:].plot.barh(ax=ax2)
+
+fig.show()</code></pre>
+            <pre><code>&lt;Figure size 864x468 with 0 Axes&gt;</code></pre>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_2/mod2_obj1_rf_tree_wine.png"
+                    alt="mod2_obj1_rf_tree_wine.png" loading="lazy"></p>
+            <h3>Challenge</h3>
+            <p>
+                As with the challenge in the previous objective, try using different parameters in the
+                <code>RandomForestClassifier</code> and observing how the model results change. Some parameters to
+                adjust are the <code>max_depth</code> and the <code>num_estimators</code>. Are the feature importances
+                different?
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn.ensemble.RandomForestClassifier"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: RandomForestClassifier</a>
+                </li>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html#sklearn.tree.DecisionTreeClassifier"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: DecisionTreeClassifier</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+        </section>
+
+        <section class="content-box">
+        </section>
+
+        <section class="content-box">
             <h2>Guided Project</h2>
             <p>Open <strong>JDS_SHR_222_guided_project_notes.ipynb</strong> in the GitHub repository below to follow
                 along with the guided project:</p>
