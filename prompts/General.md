@@ -13,3 +13,5 @@ Find an appropriate free-use image on Unsplash for this entry.
 
             <div class="table-responsive">
                 <table class="custom-table">
+
+git add . && git commit -m "DS Sp_6 Mod_1-1.1" && git pull && git push
