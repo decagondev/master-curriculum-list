@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DS6 Module 1 - Decision Trees</title>
-    <link rel="stylesheet" href="../../../css/style.css">
+    <link rel="stylesheet" href="../../../css/style.css" />
 </head>
 
 <body>
@@ -24,7 +24,9 @@
                     </div>
                 </li>
                 <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
-                <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
+                <li>
+                    <a href="../../sprint-challenge/index.html">Sprint Challenge</a>
+                </li>
             </ul>
         </nav>
     </header>
@@ -34,12 +36,20 @@
 
         <section class="content-box">
             <h2>Module Overview</h2>
-            <p>In this module, you will learn about decision trees, one of the most intuitive and widely used machine
-                learning algorithms. Decision trees are versatile models that can be used for both classification and
-                regression tasks, making them essential tools in a data scientist's toolkit.</p>
-            <p>You'll explore how decision trees work, from the basic concepts of node splitting to practical
-                implementation using scikit-learn. You'll also learn about the strengths and limitations of decision
-                trees, setting the foundation for more advanced tree-based methods in later modules.</p>
+            <p>
+                In this module, you will learn about decision trees, one of the most
+                intuitive and widely used machine learning algorithms. Decision trees
+                are versatile models that can be used for both classification and
+                regression tasks, making them essential tools in a data scientist's
+                toolkit.
+            </p>
+            <p>
+                You'll explore how decision trees work, from the basic concepts of
+                node splitting to practical implementation using scikit-learn. You'll
+                also learn about the strengths and limitations of decision trees,
+                setting the foundation for more advanced tree-based methods in later
+                modules.
+            </p>
         </section>
 
         <section class="content-box">
@@ -52,9 +62,272 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - clean data with outliers and missing values</h2>
+            <h3>Overview</h3>
+            <p>
+                Cleaning data is an important task when we are beginning any machine learning or data science project.
+                Real-world data is often messy, with missing values, outliers, incorrect values, and many other issues.
+                In this objective we're going to focus on two of the more common problems: outliers and missing values.
+            </p>
+            <p>
+                An outlier is a data point that is different from the rest of your data set in some way. It can be the
+                result of an error, corrupted data, or a true value that just happens to be different from the rest.
+                When dealing with outliers we first need to identify them and then remove or adjust them. It's important
+                to do this because model training and performance can be affected by outliers, especially if you don't
+                know what type or how many are present in your data.
+            </p>
+            <h3>Identifying Outliers</h3>
+            <p>
+                There are a number of different methods used to identify outliers. In this objective we're not going to
+                go into great detail because these methods depend on the type of data you are working with and also the
+                type of model(s) you are trying to fit. There are however a few basic methods that generally apply when
+                detecting outliers. One of the most common is to perform a statistical analysis to identify data points
+                that are statistically different from the rest. For example, you might assume your data is normally
+                distributed and look for values that are a certain distance from the mean. Extreme values are easy to
+                find and filter out this way if needed.
+            </p>
+            <p>
+                Another method is to just look at the data. This is something you have likely already done - visualizing
+                your data is an important first step. Depending on the type of data you are working with, a scatter plot
+                or histogram are useful tools to help identify outliers. Some types of plots, such as boxplots, are also
+                a great way to visualize the descriptive statistics of a data set.
+            </p>
+            <h3>Handling Outliers</h3>
+            <p>
+                Once you identify outliers, you need to decide what to do with them. If you don't have a big data set,
+                taking away even just a few data points could affect your model results. Also, some outliers are
+                actually real data and might need to be included in your analysis. However, there are times where the
+                outliers need to be removed, or at least be transformed into a different value.
+            </p>
+            <p>
+                If you have a large data set and you identify extreme values using statistical methods, it's probably
+                safe to just remove them. If you want or need to keep as much data as possible, you could also transform
+                the outliers. A common method is to apply a log transform where you take the logarithm of an outlier to
+                reduce its effect on analysis.
+            </p>
+            <p>
+                Outliers aren't the only problem we encounter with real-world data. Often the outliers could be missing
+                values that were replaced with a zero or some other value. Removing or changing these values is
+                important if we want our analysis and models to accurately represent our data.
+            </p>
+            <h3>Missing Values</h3>
+            <p>
+                It would be rare to find a data set that doesn't have missing values. Because there are different ways
+                to handle missing values, sometimes we end up with NaN values, but other times there could be a 0 or a
+                999 or even some random string. It's also important to figure out why there is a missing value. Is it
+                because the data wasn't recorded or is it because it didn't make sense to put a value there? For
+                example, a survey might ask for the age of the youngest child in the house. If a household doesn't have
+                any children, this value might be left empty.
+            </p>
+            <p>
+                Missing values can be handled in different ways depending on why they are missing. The above example
+                would be suitable for replacing with NaN. But what if there is a row of data, where the column "number
+                of children" is non-zero but the age of the youngest is missing? This data could have been recorded but
+                wasn't.
+                Working with missing data and determining what to do with it will require you to actually look at your
+                data and to read any associated documentation. The more important your project, the more closely you
+                will want to look at the missing values.
+            </p>
+            <p>
+                In the next section, we'll look at a practice data set and identify some outliers and missing values and
+                work through a few examples of how to handle them.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                We're going to make use of another data set available in the seaborn library. The "planets" data is from
+                the NASA exoplanet catalogLinks to an external site.Links to an external site. and contains information
+                like the planet's distance from Earth, the planet's mass, and discovery date. This data set contains
+                missing values so it will provide us with a good practice set. We can also use this data to check for
+                outliers or extreme data points that we might not want to include in our analysis.
+            </p>
+            <p>
+                We'll start by loading the data, looking at the descriptive statistics, and making some plots.
+            </p>
+            <pre><code># Imports
+import seaborn as sns
+
+# Load the data
+planets = sns.load_dataset("planets")
+display(planets.head())
+
+# Display some of the general information
+display(planets.info())
+</code></pre>
+            <table>
+                <thead>
+                    <tr>
+                        <th>method</th>
+                        <th>number</th>
+                        <th>orbital_period</th>
+                        <th>mass</th>
+                        <th>distance</th>
+                        <th>year</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Radial Velocity</td>
+                        <td>1</td>
+                        <td>269.300</td>
+                        <td>7.10</td>
+                        <td>77.40</td>
+                        <td>2006</td>
+                    </tr>
+                    <tr>
+                        <td>Radial Velocity</td>
+                        <td>1</td>
+                        <td>874.774</td>
+                        <td>2.21</td>
+                        <td>56.95</td>
+                        <td>2008</td>
+                    </tr>
+                    <tr>
+                        <td>Radial Velocity</td>
+                        <td>1</td>
+                        <td>763.000</td>
+                        <td>2.60</td>
+                        <td>19.84</td>
+                        <td>2011</td>
+                    </tr>
+                    <tr>
+                        <td>Radial Velocity</td>
+                        <td>1</td>
+                        <td>326.030</td>
+                        <td>19.40</td>
+                        <td>110.62</td>
+                        <td>2007</td>
+                    </tr>
+                    <tr>
+                        <td>Radial Velocity</td>
+                        <td>1</td>
+                        <td>516.220</td>
+                        <td>10.50</td>
+                        <td>119.47</td>
+                        <td>2009</td>
+                    </tr>
+                </tbody>
+            </table>
+            <pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 1035 entries, 0 to 1034
+Data columns (total 6 columns):
+ #   Column          Non-Null Count  Dtype  
+---  ------          --------------  -----  
+ 0   method          1035 non-null   object 
+ 1   number          1035 non-null   int64  
+ 2   orbital_period  992 non-null    float64
+ 3   mass            513 non-null    float64
+ 4   distance        808 non-null    float64
+ 5   year            1035 non-null   int64  
+dtypes: float64(3), int64(2), object(1)
+memory usage: 48.6+ KB
+</code></pre>
+            <p>
+                There are a total of 1035 entries in this dataset, and some columns have a non-null count of less than
+                1035. We definitely have some missing data. We will try to identity what values are missing and where
+                they are located before deciding the next steps.
+            </p>
+            <pre><code># Count the missing values
+print(planets.isnull().sum())
+</code></pre>
+            <pre><code>method              0
+number              0
+orbital_period     43
+mass              522
+distance          227
+year                0
+dtype: int64
+</code></pre>
+            <p>
+                There are quite a few missing values in the mass column. For a data set like this, it's probably because
+                there is no data available for that particular observation. In that case, we would likely want to drop
+                rows that have missing values.
+            </p>
+            <pre><code># Drop all rows with missing values
+planets_drop = planets.dropna(axis=0, how='any')
+display(planets_drop.info())
+</code></pre>
+            <pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+Int64Index: 498 entries, 0 to 784
+Data columns (total 6 columns):
+ #   Column          Non-Null Count  Dtype  
+---  ------          --------------  -----  
+ 0   method          498 non-null    object 
+ 1   number          498 non-null    int64  
+ 2   orbital_period  498 non-null    float64
+ 3   mass            498 non-null    float64
+ 4   distance        498 non-null    float64
+ 5   year            498 non-null    int64  
+dtypes: float64(3), int64(2), object(1)
+memory usage: 27.2+ KB
+</code></pre>
+            <p>
+                We'll make a scatter plot of a few of the values. It would be a somewhat cluttered plot if we used all
+                of our variables, so we'll only look at the orbital period, mass, and distance.
+            </p>
+            <pre><code>import matplotlib.pyplot as plt
+
+# Create axes and figure objects
+fig, (ax1, ax2) = plt.subplots(1,2, figsize=(12, 5))
+
+# Plot one set of variables
+sns.scatterplot(x="orbital_period", y="distance",       
+                data=planets_drop, ax=ax1)
+
+# Plot another variable against the orbital period
+sns.scatterplot(x="orbital_period", y="mass",           
+                data=planets_drop, ax=ax2)
+
+fig.show()
+</code></pre>
+            <p>
+                Two scatter plot graphs. The first shows the relationship between distance and orbital period. The
+                second shows the relationship between mass and orbital period.
+            </p>
+            <p>
+                We have a few data points that might be outliers, but they could also be planets that just have very
+                long orbital periods. We'll make some box plots to see how these outlying values compare to the median
+                of the distributions.
+            </p>
+            <pre><code># Box plot
+
+# Create axes and figure objects
+fig, (ax1, ax2, ax3) = plt.subplots(1,3, figsize=(12, 5));
+
+sns.boxplot(y=planets_drop["orbital_period"], ax=ax1)
+sns.boxplot(y=planets_drop["mass"], ax=ax2)
+sns.boxplot(y=planets_drop["distance"], ax=ax3)
+
+fig.show()
+</code></pre>
+            <p>
+                Three box plot graphs showing the following data points from left to right: orbital period, mass, and
+                distance.
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                For this challenge, you can choose to explore a dataset you are already somewhat familiar with. Check
+                for missing values, think about what you should do with them, and then make some plots to help identify
+                outliers.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>Kaggle Data Cleaning ChallengeLinks to an external site.Links to an external site.</li>
+                <li>NASA Exoplanet CatalogLinks to an external site.Links to an external site.</li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+        </section>
+
+        <section class="content-box">
+        </section>
+
+        <section class="content-box">
             <h2>Guided Project</h2>
-            <p>Open <strong>JDS_SHR_221_guided_project_notes.ipynb</strong> in the GitHub repository below to follow
-                along with the guided project:</p>
+            <p>
+                Open <strong>JDS_SHR_221_guided_project_notes.ipynb</strong> in the
+                GitHub repository below to follow along with the guided project:
+            </p>
             <div class="resource-links">
                 <a href="https://github.com/bloominstituteoftechnology/DS-Unit-2-Kaggle-Challenge/tree/main/module1-decision-trees"
                     class="resource-link" target="_blank" rel="noopener noreferrer">GitHub: Decision Trees</a>
@@ -72,23 +345,39 @@
 
         <section class="content-box">
             <h2>Module Assignment</h2>
-            <p>Complete the Module 1 assignment to practice decision tree techniques you've learned.</p>
+            <p>
+                Complete the Module 1 assignment to practice decision tree techniques
+                you've learned.
+            </p>
             <div class="resource-links">
                 <a href="https://github.com/bloominstituteoftechnology/DS-Unit-2-Kaggle-Challenge/blob/main/module1-decision-trees/LS_DS_221_assignments.ipynb"
                     class="resource-link" target="_blank" rel="noopener noreferrer">Module 1 Assignment</a>
             </div>
 
-            <p>It's Kaggle competition time! In this assignment, you'll apply what you've learned about decision trees
-                to a real-world dataset.</p>
+            <p>
+                It's Kaggle competition time! In this assignment, you'll apply what
+                you've learned about decision trees to a real-world dataset.
+            </p>
 
             <h3>Getting Started with Kaggle</h3>
-            <p>If this is your first time using Kaggle, here's how to get started:</p>
+            <p>
+                If this is your first time using Kaggle, here's how to get started:
+            </p>
             <ul>
-                <li><strong>Create an Account:</strong> Visit <a href="https://www.kaggle.com/account/login"
-                        target="_blank" rel="noopener noreferrer">Kaggle.com</a> and register with your email</li>
-                <li><strong>Join the Competition:</strong> Navigate to the competition page and click "Join Competition"
+                <li>
+                    <strong>Create an Account:</strong> Visit
+                    <a href="https://www.kaggle.com/account/login" target="_blank"
+                        rel="noopener noreferrer">Kaggle.com</a>
+                    and register with your email
                 </li>
-                <li><strong>Download Data:</strong> Go to the "Data" tab and download the dataset files</li>
+                <li>
+                    <strong>Join the Competition:</strong> Navigate to the competition
+                    page and click "Join Competition"
+                </li>
+                <li>
+                    <strong>Download Data:</strong> Go to the "Data" tab and download
+                    the dataset files
+                </li>
             </ul>
             <p>Watch this walkthrough video for detailed instructions:</p>
             <div class="video-container">
@@ -120,21 +409,30 @@
 
             <h3>Documentation</h3>
             <ul>
-                <li><a href="https://scikit-learn.org/stable/modules/tree.html" target="_blank"
-                        rel="noopener noreferrer">Scikit-learn: Decision Trees</a></li>
-                <li><a href="https://scikit-learn.org/stable/modules/impute.html" target="_blank"
-                        rel="noopener noreferrer">Scikit-learn: Imputation of missing values</a></li>
-                <li><a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/missing_data.html" target="_blank"
-                        rel="noopener noreferrer">Pandas: Working with missing data</a></li>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/tree.html" target="_blank"
+                        rel="noopener noreferrer">Scikit-learn: Decision Trees</a>
+                </li>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/impute.html" target="_blank"
+                        rel="noopener noreferrer">Scikit-learn: Imputation of missing values</a>
+                </li>
+                <li>
+                    <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/missing_data.html" target="_blank"
+                        rel="noopener noreferrer">Pandas: Working with missing data</a>
+                </li>
             </ul>
 
             <h3>Tutorials</h3>
             <ul>
-                <li><a href="https://www.kaggle.com/code/prashant111/decision-tree-classifier-tutorial" target="_blank"
-                        rel="noopener noreferrer">Kaggle: Decision Trees Tutorial</a></li>
-                <li><a href="https://www.kaggle.com/alexisbcook/missing-values" target="_blank"
-                        rel="noopener noreferrer">Kaggle:
-                        Handling Missing Values</a></li>
+                <li>
+                    <a href="https://www.kaggle.com/code/prashant111/decision-tree-classifier-tutorial" target="_blank"
+                        rel="noopener noreferrer">Kaggle: Decision Trees Tutorial</a>
+                </li>
+                <li>
+                    <a href="https://www.kaggle.com/alexisbcook/missing-values" target="_blank"
+                        rel="noopener noreferrer">Kaggle: Handling Missing Values</a>
+                </li>
             </ul>
         </section>
     </main>
