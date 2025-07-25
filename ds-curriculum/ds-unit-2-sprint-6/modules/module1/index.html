@@ -333,6 +333,108 @@ fig.show()
         </section>
 
         <section class="content-box">
+            <h2>Objective 02 - use scikit-learn for decision trees</h2>
+            <h3>Overview</h3>
+            <p>
+                Decision trees are a type of supervised learning that can be used for both classification and regression
+                problems. Their advantages are that they are easy to understand and visualize, and can handle both
+                numeric and categorical data.
+            </p>
+            <h3>Decision Tree Basics</h3>
+            <p>
+                A decision tree algorithm is pretty straightforward. We have a data set that we split or fork by asking
+                a series of questions. The data is evaluated at each question, or node, and then split according to the
+                answer to that question. Each split is called a branch, and each branch ends in a node.
+            </p>
+            <p>
+                So how do we decide what to split the node on? Since decision trees can be used for both regression and
+                classification tasks, we use two different methods to split on a node. For a regression task with
+                continuous variables, we minimize the variance of the values. For a classification task, the Gini
+                impurity is used to measure the "purity" of the split. If all the values belong to one class the node
+                has the maximum purity.
+            </p>
+            <p>
+                A decision tree can have as many layers as needed. Usually a node has two branches, but it can have
+                more. We stop branching when there is no reduction in either the variance or the Gini impurity value.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                We'll implement a decision tree in scikit-learn with the penguins data from the previous objective. We
+                want to classify each penguin as male or female based on the physical characteristics and the species.
+            </p>
+            <pre><code># Imports!
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder
+
+# Use the decision tree classifier 
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+
+# Set-up the one-hot encoder method
+categorical_features = ['species']
+categorical_transformer = Pipeline(steps=[('onehot', OneHotEncoder())])
+
+# Set up our preprocessor/column transformer
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('cat', categorical_transformer, categorical_features)])
+
+# Add the classifier to the preprocessing pipeline
+pipeline = Pipeline(steps=[('preprocessor', preprocessor),
+                      ('classifier', DecisionTreeClassifier())])</code></pre>
+            <pre><code># Load in the data!
+
+import pandas as pd
+import seaborn as sns
+
+penguins = sns.load_dataset("penguins")
+penguins.dropna(inplace=True)
+
+# Select features
+features = ['species', 'bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g']
+X = penguins[features]
+
+# Encode the 'sex' column
+from sklearn import preprocessing
+le = preprocessing.LabelEncoder()
+penguins['sex_encode'] = le.fit_transform(penguins['sex'])
+
+# Set target array
+y = penguins['sex_encode']
+
+# Apply the pipeline
+
+# Separate into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+
+# Fit the model with our logistic regression classifier
+pipeline.fit(X_train, y_train)
+print("model score: %.3f" % pipeline.score(X_test, y_test))
+</code></pre>
+            <pre><code>model score: 0.417
+</code></pre>
+            <p>
+                It looks like we have a model that performs slightly better than the logistic regression model from
+                earlier!
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                The decision tree classifier has several parameters that can be adjusted. Another extension on this
+                objective would be to change the features that the model is trained on. Try removing the encoded
+                categorical columns and train only using the numeric columns.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/tree.html#tree" target="_blank"
+                        rel="noopener noreferrer">Scikit-learn User Guide: Decision Tree</a>
+                </li>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html#sklearn.tree.DecisionTreeClassifier"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: Decision Tree Classifier</a>
+                </li>
+            </ul>
         </section>
 
         <section class="content-box">
