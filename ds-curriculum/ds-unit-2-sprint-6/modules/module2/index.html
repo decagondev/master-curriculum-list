@@ -378,8 +378,9 @@ ordinal_enc.fit_transform(X, y['outcome'])</code></pre>
             <h3>Follow Along</h3>
             <p>
                 To explore how categorical encodings affect different types of models, we're going to work with a
-                dataset that has a number of categorical features. The mushroom dataset is available from the UCI
-                Machine Learning website
+                dataset that has a number of categorical features. The mushroom dataset is available from the <a
+                    href="https://archive.ics.uci.edu/ml/datasets/Mushroom" target="_blank"
+                    rel="noopener noreferrer">UCI Machine Learning website</a>.
             </p>
             <p>
                 This dataset includes descriptions of 23 species of gilled mushrooms found in North America. From the
@@ -394,13 +395,159 @@ import numpy as np
 url = 'https://tinyurl.com/y884c98f'
 mushrooms = pd.read_csv(url)
 mushrooms.head()</code></pre>
-            <pre><code>class	cap-shape	cap-surface	cap-color	bruises	odor	gill-attachment	gill-spacing	gill-size	gill-color	...	stalk-surface-below-ring	stalk-color-above-ring	stalk-color-below-ring	veil-type	veil-color	ring-number	ring-type	spore-print-color	population	habitat
-0	p	x	s	n	t	p	f	c	n	k	...	s	w	w	p	w	o	p	k	s	u
-1	e	x	s	y	t	a	f	c	b	k	...	s	w	w	p	w	o	p	n	n	g
-2	e	b	s	w	t	l	f	c	b	n	...	s	w	w	p	w	o	p	n	n	m
-3	p	x	y	w	t	p	f	c	n	n	...	s	w	w	p	w	o	p	k	s	u
-4	e	x	s	g	f	n	f	w	b	k	...	s	w	w	p	w	o	e	n	a	g
-5 rows × 23 columns</code></pre>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>class</th>
+                            <th>cap-shape</th>
+                            <th>cap-surface</th>
+                            <th>cap-color</th>
+                            <th>bruises</th>
+                            <th>odor</th>
+                            <th>gill-attachment</th>
+                            <th>gill-spacing</th>
+                            <th>gill-size</th>
+                            <th>gill-color</th>
+                            <th>...</th>
+                            <th>stalk-surface-below-ring</th>
+                            <th>stalk-color-above-ring</th>
+                            <th>stalk-color-below-ring</th>
+                            <th>veil-type</th>
+                            <th>veil-color</th>
+                            <th>ring-number</th>
+                            <th>ring-type</th>
+                            <th>spore-print-color</th>
+                            <th>population</th>
+                            <th>habitat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>p</td>
+                            <td>x</td>
+                            <td>s</td>
+                            <td>n</td>
+                            <td>t</td>
+                            <td>p</td>
+                            <td>f</td>
+                            <td>c</td>
+                            <td>n</td>
+                            <td>k</td>
+                            <td>...</td>
+                            <td>s</td>
+                            <td>w</td>
+                            <td>w</td>
+                            <td>p</td>
+                            <td>w</td>
+                            <td>o</td>
+                            <td>p</td>
+                            <td>k</td>
+                            <td>s</td>
+                            <td>u</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>e</td>
+                            <td>x</td>
+                            <td>s</td>
+                            <td>y</td>
+                            <td>t</td>
+                            <td>a</td>
+                            <td>f</td>
+                            <td>c</td>
+                            <td>b</td>
+                            <td>k</td>
+                            <td>...</td>
+                            <td>s</td>
+                            <td>w</td>
+                            <td>w</td>
+                            <td>p</td>
+                            <td>w</td>
+                            <td>o</td>
+                            <td>p</td>
+                            <td>n</td>
+                            <td>n</td>
+                            <td>g</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>e</td>
+                            <td>b</td>
+                            <td>s</td>
+                            <td>w</td>
+                            <td>t</td>
+                            <td>l</td>
+                            <td>f</td>
+                            <td>c</td>
+                            <td>b</td>
+                            <td>n</td>
+                            <td>...</td>
+                            <td>s</td>
+                            <td>w</td>
+                            <td>w</td>
+                            <td>p</td>
+                            <td>w</td>
+                            <td>o</td>
+                            <td>p</td>
+                            <td>n</td>
+                            <td>n</td>
+                            <td>m</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>p</td>
+                            <td>x</td>
+                            <td>y</td>
+                            <td>w</td>
+                            <td>t</td>
+                            <td>p</td>
+                            <td>f</td>
+                            <td>c</td>
+                            <td>n</td>
+                            <td>n</td>
+                            <td>...</td>
+                            <td>s</td>
+                            <td>w</td>
+                            <td>w</td>
+                            <td>p</td>
+                            <td>w</td>
+                            <td>o</td>
+                            <td>p</td>
+                            <td>k</td>
+                            <td>s</td>
+                            <td>u</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>e</td>
+                            <td>x</td>
+                            <td>s</td>
+                            <td>g</td>
+                            <td>f</td>
+                            <td>n</td>
+                            <td>f</td>
+                            <td>w</td>
+                            <td>b</td>
+                            <td>k</td>
+                            <td>...</td>
+                            <td>s</td>
+                            <td>w</td>
+                            <td>w</td>
+                            <td>p</td>
+                            <td>w</td>
+                            <td>o</td>
+                            <td>e</td>
+                            <td>n</td>
+                            <td>a</td>
+                            <td>g</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>5 rows × 23 columns</p>
             <p>
                 As we can see, most of the variables in this data set are categorical. We'll need to encode them to use
                 in the models. To compare how different types of models handle encoded categorical variables, we'll use
