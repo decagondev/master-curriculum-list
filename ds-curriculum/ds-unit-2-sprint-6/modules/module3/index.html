@@ -51,6 +51,133 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - implement cross-validation with independent test set</h2>
+            <h3>Overview</h3>
+            <p>
+                In the first sprint for this unit, we introduced the concept of using a validation set. This method
+                provides a way to check or evaluate your model before needing to use a final test set. As a test set
+                isn't always available (such as for a Kaggle competition), validation sets fill in the gap.
+            </p>
+            <p>
+                There are some limitations to using a single validation set. One important consideration is that you
+                will get different results (model scores) with different validation sets. A way around this is to use
+                more than one validation set. There are a few different ways to do this.
+            </p>
+            <h3>Cross-validation</h3>
+            <p>
+                The method of cross-validation is where we divide the data into equal-sized sets. Several trials are
+                done, where all but one of the sets are used for training and the remaining hold out set is used for
+                testing. For each trial, a different set is used for testing. The specific method we will discuss in
+                this objective is called k-fold cross-validation.
+            </p>
+            <h3>K-fold Cross-Validation</h3>
+            <p>
+                For this method we divide the rows of our data set into k equally-sized sets or “folds”. As an example,
+                imagine that we have split our data into 5 random folds (20% in each fold). We will then proceed to
+                train our model and validate it k (5) times. Each time one of the folds will serve as our validation
+                dataset and the other four will be used as our training data. Each of the 5 folds take a turn being the
+                validation dataset, meaning that we will train and validate our model 5 times with a different
+                validation set each time. In this way we’re able to use our data to its fullest extent both for training
+                and validation.
+            </p>
+            <p>
+                If we had simply done an 80%-20% train-validation-split there’s a chance that we would have been unlucky
+                in the rows that were selected to make up that 20% validation set. With cross-validation this is less of
+                a worry because we will calculate performance metrics for each of the 5 iterations and then average them
+                to create our model’s final score.
+            </p>
+            <h4>5-fold Cross Validation</h4>
+            <h3>Cross-validation and Pipelines</h3>
+            <p>
+                As was introduced in lecture, we could hold out a validation set by separating data into training,
+                validation, and testing. In this case we train the model with the training set, validate the model
+                parameters with the validation set, and then do the final testing on the test set.
+            </p>
+            <p>
+                One issue with this method is that if you need to standardize your variables and you standardize before
+                splitting into training and testing sets, you will inadvertently leak some knowledge to the testing set.
+                For example, if you are standardizing by subtracting the mean and dividing by the standard deviation,
+                your test data will know these statistics about the rest of the data.
+            </p>
+            <p>
+                For cross-validation, if you standardize your data before dividing into k-fold cross-validation sets,
+                your test/validation set in each fold will also know something about the training data. To avoid the
+                problem of data leakage, separate your training/testing set or cross-validation sets and then
+                standardize. The scikit-learn Pipeline tool makes this process easy, by applying any preprocessing or
+                standardization steps separately, to the training and testing data.
+            </p>
+            <p>
+                In the next section, we will assemble a pipeline and then fit our model using k-fold cross-validation to
+                determine the accuracy.
+            </p>
+            <h3>Follow Along</h3>
+            <pre><code># Import libraries
+import numpy as np
+from sklearn import datasets
+from sklearn.model_selection import KFold, cross_val_score
+from sklearn.pipeline import make_pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+# Load the digits data
+
+# The deafult with 10 classes (digits 0-9)
+digits = datasets.load_digits(n_class=10)
+
+# Create the feature matrix
+features = digits.data
+print('The shape of the feature matrix: ', features.shape)
+
+# Create the target array
+target = digits.target
+print('The shape of the target array: ', target.shape)
+print('The unique classes in the target: ', np.unique(target))
+</code></pre>
+            <pre><code>The shape of the feature matrix:  (1797, 64)
+The shape of the target array:  (1797,)
+The unique classes in the target:  [0 1 2 3 4 5 6 7 8 9]</code></pre>
+            <pre><code># Instantiate the standardizier
+standardizer = StandardScaler()
+
+# Instantiate the classifier
+logreg = LogisticRegression(max_iter=150)
+
+# Create the pipeline
+pipeline = make_pipeline(standardizer, logreg)
+
+# Instantiate the k-fold cross-validation 
+kfold_cv = KFold(n_splits=5, shuffle=True, random_state=11)
+# Fit the model using k-fold cross-validation
+cv_scores = cross_val_score(pipeline, features, target,
+                           cv=kfold_cv, scoring='accuracy')
+# Print the mean score
+print('All cv scores: ', cv_scores)
+
+# Print the mean score
+print('Mean of all cv scores: ', cv_scores.mean())
+</code></pre>
+            <pre><code>All cv scores:  [0.97222222 0.96944444 0.95543175 0.97493036 0.98050139]
+Mean of all cv scores:  0.9705060352831941</code></pre>
+            <p>
+                Above we displayed all the scores and also the mean of the scores.
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                Look at the number of folds in the k-fold cross validation - how does changing the value affect the
+                accuracy of the model?
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: Standard Scaler</a></li>
+                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: Logistic Regression</a></li>
+                <li><a href="https://scikit-learn.org/stable/datasets/toy_dataset.html#digits-dataset" target="_blank"
+                        rel="noopener noreferrer">Scikit-learn: Digits Dataset</a></li>
+                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: KFold</a></li>
+                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_val_score.html"
+                        target="_blank" rel="noopener noreferrer">Evaluate a score by cross-validation</a></li>
+            </ul>
         </section>
 
         <section class="content-box">
