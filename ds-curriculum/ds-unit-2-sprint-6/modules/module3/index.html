@@ -51,6 +51,297 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - implement cross-validation with independent test set</h2>
+            <h3>Overview</h3>
+            <p>
+                In the first sprint for this unit, we introduced the concept of using a validation set. This method
+                provides a way to check or evaluate your model before needing to use a final test set. As a test set
+                isn't always available (such as for a Kaggle competition), validation sets fill in the gap.
+            </p>
+            <p>
+                There are some limitations to using a single validation set. One important consideration is that you
+                will get different results (model scores) with different validation sets. A way around this is to use
+                more than one validation set. There are a few different ways to do this.
+            </p>
+            <h3>Cross-validation</h3>
+            <p>
+                The method of cross-validation is where we divide the data into equal-sized sets. Several trials are
+                done, where all but one of the sets are used for training and the remaining hold out set is used for
+                testing. For each trial, a different set is used for testing. The specific method we will discuss in
+                this objective is called k-fold cross-validation.
+            </p>
+            <h3>K-fold Cross-Validation</h3>
+            <p>
+                For this method we divide the rows of our data set into k equally-sized sets or “folds”. As an example,
+                imagine that we have split our data into 5 random folds (20% in each fold). We will then proceed to
+                train our model and validate it k (5) times. Each time one of the folds will serve as our validation
+                dataset and the other four will be used as our training data. Each of the 5 folds take a turn being the
+                validation dataset, meaning that we will train and validate our model 5 times with a different
+                validation set each time. In this way we’re able to use our data to its fullest extent both for training
+                and validation.
+            </p>
+            <p>
+                If we had simply done an 80%-20% train-validation-split there’s a chance that we would have been unlucky
+                in the rows that were selected to make up that 20% validation set. With cross-validation this is less of
+                a worry because we will calculate performance metrics for each of the 5 iterations and then average them
+                to create our model’s final score.
+            </p>
+            <h4>5-fold Cross Validation</h4>
+            <h3>Cross-validation and Pipelines</h3>
+            <p>
+                As was introduced in lecture, we could hold out a validation set by separating data into training,
+                validation, and testing. In this case we train the model with the training set, validate the model
+                parameters with the validation set, and then do the final testing on the test set.
+            </p>
+            <p>
+                One issue with this method is that if you need to standardize your variables and you standardize before
+                splitting into training and testing sets, you will inadvertently leak some knowledge to the testing set.
+                For example, if you are standardizing by subtracting the mean and dividing by the standard deviation,
+                your test data will know these statistics about the rest of the data.
+            </p>
+            <p>
+                For cross-validation, if you standardize your data before dividing into k-fold cross-validation sets,
+                your test/validation set in each fold will also know something about the training data. To avoid the
+                problem of data leakage, separate your training/testing set or cross-validation sets and then
+                standardize. The scikit-learn Pipeline tool makes this process easy, by applying any preprocessing or
+                standardization steps separately, to the training and testing data.
+            </p>
+            <p>
+                In the next section, we will assemble a pipeline and then fit our model using k-fold cross-validation to
+                determine the accuracy.
+            </p>
+            <h3>Follow Along</h3>
+            <pre><code># Import libraries
+import numpy as np
+from sklearn import datasets
+from sklearn.model_selection import KFold, cross_val_score
+from sklearn.pipeline import make_pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+# Load the digits data
+
+# The deafult with 10 classes (digits 0-9)
+digits = datasets.load_digits(n_class=10)
+
+# Create the feature matrix
+features = digits.data
+print('The shape of the feature matrix: ', features.shape)
+
+# Create the target array
+target = digits.target
+print('The shape of the target array: ', target.shape)
+print('The unique classes in the target: ', np.unique(target))
+</code></pre>
+            <pre><code>The shape of the feature matrix:  (1797, 64)
+The shape of the target array:  (1797,)
+The unique classes in the target:  [0 1 2 3 4 5 6 7 8 9]</code></pre>
+            <pre><code># Instantiate the standardizier
+standardizer = StandardScaler()
+
+# Instantiate the classifier
+logreg = LogisticRegression(max_iter=150)
+
+# Create the pipeline
+pipeline = make_pipeline(standardizer, logreg)
+
+# Instantiate the k-fold cross-validation 
+kfold_cv = KFold(n_splits=5, shuffle=True, random_state=11)
+# Fit the model using k-fold cross-validation
+cv_scores = cross_val_score(pipeline, features, target,
+                           cv=kfold_cv, scoring='accuracy')
+# Print the mean score
+print('All cv scores: ', cv_scores)
+
+# Print the mean score
+print('Mean of all cv scores: ', cv_scores.mean())
+</code></pre>
+            <pre><code>All cv scores:  [0.97222222 0.96944444 0.95543175 0.97493036 0.98050139]
+Mean of all cv scores:  0.9705060352831941</code></pre>
+            <p>
+                Above we displayed all the scores and also the mean of the scores.
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                Look at the number of folds in the k-fold cross validation - how does changing the value affect the
+                accuracy of the model?
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: Standard Scaler</a></li>
+                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: Logistic Regression</a></li>
+                <li><a href="https://scikit-learn.org/stable/datasets/toy_dataset.html#digits-dataset" target="_blank"
+                        rel="noopener noreferrer">Scikit-learn: Digits Dataset</a></li>
+                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: KFold</a></li>
+                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_val_score.html"
+                        target="_blank" rel="noopener noreferrer">Evaluate a score by cross-validation</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - use scikit-learn for hyperparameter optimization</h2>
+            <h3>Overview</h3>
+            <p>
+                So far in this unit when we fit various models, we have provided the hyperparameters. For example, these
+                parameters have included values for the depth of a decision tree, the number of trees in a random
+                forest, and the regularization parameter in a logistic regression model. In general, we call these
+                parameters the hyperparameters. When we want to find the optimal set of hyperparameters for a model, the
+                process is often called hyperparameter tuning.
+            </p>
+            <p>
+                In this next section we'll go over an example of varying one hyperparameter and how it affects the
+                accuracy score of the model. Then, we'll use a few additional scikit-learn tools to implement a search
+                over a specified set of hyperparameters.
+            </p>
+            <h3>Follow Along</h3>
+            <pre><code># Import necessary modules
+import numpy as np
+import pandas as pd
+
+from sklearn import datasets
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import validation_curve
+# Load the digits data
+
+# The deafult with 10 classes (digits 0-9)
+digits = datasets.load_digits(n_class=10)
+
+# Create the feature matrix
+X = digits.data
+print('The shape of the feature matrix: ', X.shape)
+
+# Create the target array
+y = digits.target
+print('The shape of the target array: ', y.shape)
+print('The unique classes in the target: ', np.unique(y))</code></pre>
+            <pre><code>The shape of the feature matrix:  (1797, 64)
+The shape of the target array:  (1797,)
+The unique classes in the target:  [0 1 2 3 4 5 6 7 8 9]</code></pre>
+            <p>
+                Using the decision tree classifier from the previous objective we'll vary the maximum depth of the tree
+                and look at the accuracy score. The training scores should approach 1 (100% accuracy) as we expect. The
+                testing scores will approach the accuracy of the model but likely won't be close to 100%, unless we have
+                a really good model.
+            </p>
+            <pre><code># Create the validation_curve
+depth = range(1, 30, 3)
+train_scores, test_scores = validation_curve(
+    DecisionTreeClassifier(), X, y, param_name="max_depth", param_range=depth,
+    scoring="accuracy", n_jobs=1)
+
+train_scores_mean = np.mean(train_scores, axis=1)
+test_scores_mean = np.mean(test_scores, axis=1)
+# Plot the validation curve
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(8,8))
+
+ax.plot(depth, train_scores_mean, label="Training score",
+             color="darkorange", lw=2)
+ax.plot(depth, test_scores_mean, label="Cross-validation score",
+             color="navy", lw=2)
+
+ax.set_title("Validation Curve with Decision Tree Classifier")
+ax.set_xlabel("Max Tree Depth")
+ax.set_ylabel("Score (accuracy)")
+ax.set_ylim(0.0, 1.1)
+
+ax.legend(loc='lower right')
+
+plt.show()
+
+fig.clf()</code></pre>
+            <pre><code>&lt;Figure size 576x576 with 0 Axes&gt;
+mod3_obj2_validation.png</code></pre>
+            <h3>Interpret the Curve</h3>
+            <p>
+                In the curve above we varied one hyperparameter to see if the model was overfitting or underfitting on
+                that hyperparameter. In this case, there is a big difference between the accuracy score when we validate
+                or test the model. This might imply that the model isn't generalizing well to new data and is possibly
+                overfit.
+            </p>
+            <h3>Parameter Search</h3>
+            <p>
+                In the previous example creating the validation curve, we provide a range of max_depth values. What if
+                we want to vary more than one of the hyperparameters? We can do this two ways: a grid search or a
+                randomized search. For a grid search, we create a "grid" of all possible values for the hyperparameters
+                we'd like to test. The model with the best performance score and corresponding hyperparameters is the
+                best model.
+            </p>
+            <p>
+                A randomized search of the hyperparameters is what the name implies: a random search through the
+                hyperparameter’s space. This way of finding the best hyperparameters is less computationally intensive
+                as the set of hyperparameters is randomly selected. This way, the set of all possible hyperparameters
+                doesn't need to be tested, saving some time. In the following example, we'll implement a random search
+                through a specified set of hyperparameters using the RandomizedSearchCV method.
+            </p>
+            <pre><code># Import necessary modules
+from scipy.stats import randint
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import RandomizedSearchCV
+
+# Setup the hyperparameters and distributions to sample from: param_dist
+param_dist = {"max_depth": [3, None],
+              "max_features": randint(1, 9),
+              "min_samples_leaf": randint(1, 9),
+              "criterion": ["gini", "entropy"]}
+
+# Instantiate a Decision Tree classifier: tree
+tree = DecisionTreeClassifier()
+
+# Instantiate the RandomizedSearchCV object: tree_cv
+tree_cv = RandomizedSearchCV(tree, param_dist, cv=5)
+
+# Fit it to the data
+tree_cv.fit(X, y)
+
+# Print the tuned hyperparameters and score
+print("Tuned Decision Tree Hyperparameters: {}".format(tree_cv.best_params_))
+print("Best score is {}".format(tree_cv.best_score_))</code></pre>
+            <pre><code>Tuned Decision Tree Hyperparameters: {'criterion': 'gini', 'max_depth': None, 'max_features': 6, 'min_samples_leaf': 3}
+Best score is 0.7234323738780564</code></pre>
+            <pre><code># Display cv results by ranking the test scores
+import pandas as pd
+pd.DataFrame(tree_cv.cv_results_).sort_values(by='rank_test_score').T</code></pre>
+            <pre><code>9	3	1	7	5	0	4	8	2	6
+mean_fit_time	0.00188484	0.00163159	0.00123582	0.00147305	0.00102773	0.00140185	0.0010972	0.000984192	0.000993443	0.000655413
+std_fit_time	5.92436e-05	0.000126334	0.000208453	5.81125e-05	5.62396e-05	0.000326925	7.84401e-05	0.000110772	0.000157567	1.80916e-05
+mean_score_time	0.000305796	0.000300074	0.000295067	0.000323391	0.000301218	0.000357866	0.000329018	0.000301647	0.000326633	0.000283813
+std_score_time	1.35375e-06	8.79968e-06	8.61427e-06	1.5025e-05	3.67381e-06	7.75536e-05	5.05528e-05	2.14838e-05	6.78774e-05	9.40905e-06
+param_criterion	gini	entropy	gini	entropy	gini	entropy	gini	gini	entropy	entropy
+param_max_depth	None	None	None	None	None	None	3	3	3	3
+param_max_features	6	4	3	2	2	1	8	5	3	1
+param_min_samples_leaf	3	6	8	2	6	3	7	8	3	2
+params	{'criterion': 'gini', 'max_depth': None, 'max_...	{'criterion': 'entropy', 'max_depth': None, 'm...	{'criterion': 'gini', 'max_depth': None, 'max_...	{'criterion': 'entropy', 'max_depth': None, 'm...	{'criterion': 'gini', 'max_depth': None, 'max_...	{'criterion': 'entropy', 'max_depth': None, 'm...	{'criterion': 'gini', 'max_depth': 3, 'max_fea...	{'criterion': 'gini', 'max_depth': 3, 'max_fea...	{'criterion': 'entropy', 'max_depth': 3, 'max_...	{'criterion': 'entropy', 'max_depth': 3, 'max_...
+split0_test_score	0.766667	0.686111	0.652778	0.630556	0.583333	0.508333	0.408333	0.425	0.419444	0.316667
+split1_test_score	0.672222	0.638889	0.636111	0.608333	0.552778	0.502778	0.375	0.338889	0.413889	0.305556
+split2_test_score	0.718663	0.70195	0.688022	0.707521	0.537604	0.559889	0.45961	0.373259	0.373259	0.272981
+split3_test_score	0.752089	0.749304	0.579387	0.587744	0.623955	0.604457	0.428969	0.445682	0.350975	0.183844
+split4_test_score	0.707521	0.629526	0.665738	0.662953	0.604457	0.612813	0.470752	0.367688	0.272981	0.286908
+mean_test_score	0.723432	0.681156	0.644407	0.639421	0.580426	0.557654	0.428533	0.390104	0.36611	0.273191
+std_test_score	0.033433	0.0437108	0.0366709	0.0422064	0.0318712	0.0462212	0.0347051	0.0392834	0.0530673	0.0471353
+rank_test_score	1	2	3	4	5	6	7	8	9	10</code></pre>
+            <h3>Challenge</h3>
+            <p>
+                Try out a hyperparameter search for yourself. Look at the parameters that you have adjusted and see how
+                the results are different when they are changed.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.validation_curve.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: Validation Curve</a>
+                </li>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: Grid Search</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
             <h2>Guided Project</h2>
             <p>Open <strong>JDS_SHR_223_guided_project_notes.ipynb</strong> in the GitHub repository below to follow
                 along with the guided project:</p>
