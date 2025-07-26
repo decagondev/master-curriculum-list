@@ -181,6 +181,164 @@ Mean of all cv scores:  0.9705060352831941</code></pre>
         </section>
 
         <section class="content-box">
+            <h2>Objective 02 - use scikit-learn for hyperparameter optimization</h2>
+            <h3>Overview</h3>
+            <p>
+                So far in this unit when we fit various models, we have provided the hyperparameters. For example, these
+                parameters have included values for the depth of a decision tree, the number of trees in a random
+                forest, and the regularization parameter in a logistic regression model. In general, we call these
+                parameters the hyperparameters. When we want to find the optimal set of hyperparameters for a model, the
+                process is often called hyperparameter tuning.
+            </p>
+            <p>
+                In this next section we'll go over an example of varying one hyperparameter and how it affects the
+                accuracy score of the model. Then, we'll use a few additional scikit-learn tools to implement a search
+                over a specified set of hyperparameters.
+            </p>
+            <h3>Follow Along</h3>
+            <pre><code># Import necessary modules
+import numpy as np
+import pandas as pd
+
+from sklearn import datasets
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import validation_curve
+# Load the digits data
+
+# The deafult with 10 classes (digits 0-9)
+digits = datasets.load_digits(n_class=10)
+
+# Create the feature matrix
+X = digits.data
+print('The shape of the feature matrix: ', X.shape)
+
+# Create the target array
+y = digits.target
+print('The shape of the target array: ', y.shape)
+print('The unique classes in the target: ', np.unique(y))</code></pre>
+            <pre><code>The shape of the feature matrix:  (1797, 64)
+The shape of the target array:  (1797,)
+The unique classes in the target:  [0 1 2 3 4 5 6 7 8 9]</code></pre>
+            <p>
+                Using the decision tree classifier from the previous objective we'll vary the maximum depth of the tree
+                and look at the accuracy score. The training scores should approach 1 (100% accuracy) as we expect. The
+                testing scores will approach the accuracy of the model but likely won't be close to 100%, unless we have
+                a really good model.
+            </p>
+            <pre><code># Create the validation_curve
+depth = range(1, 30, 3)
+train_scores, test_scores = validation_curve(
+    DecisionTreeClassifier(), X, y, param_name="max_depth", param_range=depth,
+    scoring="accuracy", n_jobs=1)
+
+train_scores_mean = np.mean(train_scores, axis=1)
+test_scores_mean = np.mean(test_scores, axis=1)
+# Plot the validation curve
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(8,8))
+
+ax.plot(depth, train_scores_mean, label="Training score",
+             color="darkorange", lw=2)
+ax.plot(depth, test_scores_mean, label="Cross-validation score",
+             color="navy", lw=2)
+
+ax.set_title("Validation Curve with Decision Tree Classifier")
+ax.set_xlabel("Max Tree Depth")
+ax.set_ylabel("Score (accuracy)")
+ax.set_ylim(0.0, 1.1)
+
+ax.legend(loc='lower right')
+
+plt.show()
+
+fig.clf()</code></pre>
+            <pre><code>&lt;Figure size 576x576 with 0 Axes&gt;
+mod3_obj2_validation.png</code></pre>
+            <h3>Interpret the Curve</h3>
+            <p>
+                In the curve above we varied one hyperparameter to see if the model was overfitting or underfitting on
+                that hyperparameter. In this case, there is a big difference between the accuracy score when we validate
+                or test the model. This might imply that the model isn't generalizing well to new data and is possibly
+                overfit.
+            </p>
+            <h3>Parameter Search</h3>
+            <p>
+                In the previous example creating the validation curve, we provide a range of max_depth values. What if
+                we want to vary more than one of the hyperparameters? We can do this two ways: a grid search or a
+                randomized search. For a grid search, we create a "grid" of all possible values for the hyperparameters
+                we'd like to test. The model with the best performance score and corresponding hyperparameters is the
+                best model.
+            </p>
+            <p>
+                A randomized search of the hyperparameters is what the name implies: a random search through the
+                hyperparameter’s space. This way of finding the best hyperparameters is less computationally intensive
+                as the set of hyperparameters is randomly selected. This way, the set of all possible hyperparameters
+                doesn't need to be tested, saving some time. In the following example, we'll implement a random search
+                through a specified set of hyperparameters using the RandomizedSearchCV method.
+            </p>
+            <pre><code># Import necessary modules
+from scipy.stats import randint
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import RandomizedSearchCV
+
+# Setup the hyperparameters and distributions to sample from: param_dist
+param_dist = {"max_depth": [3, None],
+              "max_features": randint(1, 9),
+              "min_samples_leaf": randint(1, 9),
+              "criterion": ["gini", "entropy"]}
+
+# Instantiate a Decision Tree classifier: tree
+tree = DecisionTreeClassifier()
+
+# Instantiate the RandomizedSearchCV object: tree_cv
+tree_cv = RandomizedSearchCV(tree, param_dist, cv=5)
+
+# Fit it to the data
+tree_cv.fit(X, y)
+
+# Print the tuned hyperparameters and score
+print("Tuned Decision Tree Hyperparameters: {}".format(tree_cv.best_params_))
+print("Best score is {}".format(tree_cv.best_score_))</code></pre>
+            <pre><code>Tuned Decision Tree Hyperparameters: {'criterion': 'gini', 'max_depth': None, 'max_features': 6, 'min_samples_leaf': 3}
+Best score is 0.7234323738780564</code></pre>
+            <pre><code># Display cv results by ranking the test scores
+import pandas as pd
+pd.DataFrame(tree_cv.cv_results_).sort_values(by='rank_test_score').T</code></pre>
+            <pre><code>9	3	1	7	5	0	4	8	2	6
+mean_fit_time	0.00188484	0.00163159	0.00123582	0.00147305	0.00102773	0.00140185	0.0010972	0.000984192	0.000993443	0.000655413
+std_fit_time	5.92436e-05	0.000126334	0.000208453	5.81125e-05	5.62396e-05	0.000326925	7.84401e-05	0.000110772	0.000157567	1.80916e-05
+mean_score_time	0.000305796	0.000300074	0.000295067	0.000323391	0.000301218	0.000357866	0.000329018	0.000301647	0.000326633	0.000283813
+std_score_time	1.35375e-06	8.79968e-06	8.61427e-06	1.5025e-05	3.67381e-06	7.75536e-05	5.05528e-05	2.14838e-05	6.78774e-05	9.40905e-06
+param_criterion	gini	entropy	gini	entropy	gini	entropy	gini	gini	entropy	entropy
+param_max_depth	None	None	None	None	None	None	3	3	3	3
+param_max_features	6	4	3	2	2	1	8	5	3	1
+param_min_samples_leaf	3	6	8	2	6	3	7	8	3	2
+params	{'criterion': 'gini', 'max_depth': None, 'max_...	{'criterion': 'entropy', 'max_depth': None, 'm...	{'criterion': 'gini', 'max_depth': None, 'max_...	{'criterion': 'entropy', 'max_depth': None, 'm...	{'criterion': 'gini', 'max_depth': None, 'max_...	{'criterion': 'entropy', 'max_depth': None, 'm...	{'criterion': 'gini', 'max_depth': 3, 'max_fea...	{'criterion': 'gini', 'max_depth': 3, 'max_fea...	{'criterion': 'entropy', 'max_depth': 3, 'max_...	{'criterion': 'entropy', 'max_depth': 3, 'max_...
+split0_test_score	0.766667	0.686111	0.652778	0.630556	0.583333	0.508333	0.408333	0.425	0.419444	0.316667
+split1_test_score	0.672222	0.638889	0.636111	0.608333	0.552778	0.502778	0.375	0.338889	0.413889	0.305556
+split2_test_score	0.718663	0.70195	0.688022	0.707521	0.537604	0.559889	0.45961	0.373259	0.373259	0.272981
+split3_test_score	0.752089	0.749304	0.579387	0.587744	0.623955	0.604457	0.428969	0.445682	0.350975	0.183844
+split4_test_score	0.707521	0.629526	0.665738	0.662953	0.604457	0.612813	0.470752	0.367688	0.272981	0.286908
+mean_test_score	0.723432	0.681156	0.644407	0.639421	0.580426	0.557654	0.428533	0.390104	0.36611	0.273191
+std_test_score	0.033433	0.0437108	0.0366709	0.0422064	0.0318712	0.0462212	0.0347051	0.0392834	0.0530673	0.0471353
+rank_test_score	1	2	3	4	5	6	7	8	9	10</code></pre>
+            <h3>Challenge</h3>
+            <p>
+                Try out a hyperparameter search for yourself. Look at the parameters that you have adjusted and see how
+                the results are different when they are changed.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.validation_curve.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: Validation Curve</a>
+                </li>
+                <li>
+                    <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: Grid Search</a>
+                </li>
+            </ul>
         </section>
 
         <section class="content-box">
