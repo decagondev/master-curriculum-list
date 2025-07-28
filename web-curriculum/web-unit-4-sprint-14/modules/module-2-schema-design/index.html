@@ -32,70 +32,347 @@
         <section class="welcome">
             <h1>Module 2: Schema Design</h1>
 
-            <div class="content-box">
-                <h2>Module Overview</h2>
-                <p>Master database schema design, migrations, and seeding with Knex.js.</p>
+            <div class="content-box module2-accent">
+                <h2>Using SQLite on an Existing Database</h2>
+                <p>SQLite Studio is an application that allows us to create, open, view, and modify SQLite databases. To fully understand what SQLite Studio is and how it works, we must also understand the Database Management Systems (DBMS) concept.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <h4>What is a DBMS?</h4>
+                    <p>To manage digital databases we use specialized software called DataBase Management Systems (DBMS). These systems typically run on servers and are managed by DataBase Administrators (DBAs).</p>
 
-                <h2>Learning Objectives</h2>
+                    <p>In less technical terms, we need a type of software that will allow us to create, access, and generally manage our databases. In the world of relational databases, we specifically use Relational Database Management Systems (RDBMs). Some examples are Postgres, SQLite, MySQL, and Oracle.</p>
+
+                    <p>Choosing a DBMS determines everything from how you set up your database, where and how the data is stored, and what SQL commands you can use. Most systems share the core of the SQL language that you've already learned.</p>
+
+                    <p>In other words, you can expect SELECT, UPDATE, INSERT, WHERE , and the like to be the same across all DBMSs, but the subtleties of the language may vary.</p>
+
+                    <h4>What is SQLite?</h4>
+                    <p>SQLite is the DBMS we primarily use at BloomTech. As the name suggests, it is a more lightweight system and thus easier to set up than others.</p>
+
+                    <p>SQLite allows us to store databases as single files. Many of the challenges and guided projects in Lambda have a .db3 extension. That is the database.</p>
+
+                    <p>SQLite is not a database (like relational, graph, or document are databases) but rather a database management system.</p>
+
+                    <h4>Opening an existing database in SQLite Studio</h4>
+                    <p>One useful visual interface we might use with an SQLite database is called SQLite Studio. Install SQLite Studio <a href="https://sqlitestudio.pl/" target="_blank" rel="noopener noreferrer">here</a>.</p>
+
+                    <p>Once installed, we can use SQLite Studio to open any .db3 file from a previous lesson. We may view the tables, view the data, and even make changes to the database.</p>
+
+                    <p>For a more detailed look at SQLite Studio, follow along in the video above.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/g7cr0z2d5e" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h2>Explain What a Database Schema is</h2>
+               
+                    <p>A database schema is the shape of our database. It defines what tables we'll have, which columns should exist within the tables, and any restrictions on each column.</p>
+
+                    <p>A well-designed database schema keeps the data well organized and can help ensure high-quality data.</p>
+
+                    <p>While schema design is usually left to Database Administrators (DBAs), understanding schema helps when designing APIs and database logic. And in a smaller team, this step may fall on the developer.</p>
+               <div class="note-box">
+                <h3>How to Build It</h3>
+                    <h4>Schema Design in SQLite Studio</h4>
+                    <p>For a look at schema design in SQLite Studio, follow along in the video above.</p>
+
+                    <h4>Table Design Considerations</h4>
+                    <p>When designing a single table, we need to ask three things:</p>
+                    <ul>
+                        <li>What fields (or columns) are present?</li>
+                        <li>What type of data do we expect for each field?</li>
+                        <li>Are there other restrictions needed for each column?</li>
+                    </ul>
+
+                    <p>Looking at the following schema diagram for an accounts table, we can answer each other those questions:</p>
+
+                    <table>
+                        <tr>
+                            <th>field</th>
+                            <th>data type</th>
+                            <th>metadata</th>
+                        </tr>
+                        <tr>
+                            <td>id</td>
+                            <td>unsigned integer</td>
+                            <td>primary key, auto-increments, generated by database</td>
+                        </tr>
+                        <tr>
+                            <td>name</td>
+                            <td>string</td>
+                            <td>required, unique</td>
+                        </tr>
+                        <tr>
+                            <td>budget</td>
+                            <td>numeric</td>
+                            <td>required</td>
+                        </tr>
+                    </table>
+
+                    <h4>Table Fields</h4>
+                    <p>Choosing which fields to include in a table is relatively straightforward. What information needs to be tracked regarding this resource? In the real world, this is determined by the intended use of the product or app.</p>
+
+                    <p>However, this is one requirement every table should satisfy: a primary key. A primary key is a way to identify each entry in the database uniquely. It is most often represented as an auto-incrementing integer called id or [tablename]Id</p>
+
+                    <h4>Datatypes</h4>
+                    <p>Each field must also have a specified datatype. The data type available depends on our DBMS. Some supported datatype in SQLite include:</p>
+                    <ul>
+                        <li>Null: Missing or unknown information.</li>
+                        <li>Integer: Whole numbers.</li>
+                        <li>Real: Any number, including decimals.</li>
+                        <li>Text: Character data.</li>
+                        <li>*Blob: a large binary object that can be used to store miscellaneous data.</li>
+                    </ul>
+
+                    <p>Any data inserted into the table must match the data types determined in schema design.</p>
+
+                    <h4>Constraints</h4>
+                    <p>Beyond data types, we may add additional constraints on each field. Some examples include:</p>
+                    <ul>
+                        <li>Not Null: The field cannot be left empty</li>
+                        <li>Unique: No two records can have the same value in this field</li>
+                        <li>Primary key: - Indicates this field is the primary key. Both the not null and unique constraints will be enforced.</li>
+                        <li>Default: - Sets a default value if none is provided.</li>
+                    </ul>
+
+                    <p>As with data types, any data that does not satisfy the schema constraints will be rejected from the database.</p>
+
+                    <h4>Multi-Table Design</h4>
+                    <p>Another critical component of schema design is to understand how different tables relate to each other. This will be covered in a later lesson.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/p4x3qz3euq" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+               </div>
+               <h2>Create and Use Knex Migrations</h2>
+                
+                    <p>Knex provides a schema builder, which allows us to write code to design our database schema. However, beyond thinking about columns and constraints, we must also consider updates.</p>
+
+                    <p>When a schema needs to be updated, a developer must feel confident that the changes go into effect everywhere. This means schema updates on the developer's local machine, on any testing or staging versions, on the production database, and then on any other developer's local machines. This is where migrations come into play.</p>
+
+                    <p>A database migration describes changes made to the structure of a database. Migrations include things like adding new objects, adding new tables, and modifying existing objects or tables.</p>
+                    <div class="note-box">
+                        <h3>How to Build It</h3>
+                        <h4>Knex Cli</h4>
+                        <p>To use migrations (and to make Knex setup easier), we need to use knex cli. Install knex globally with <code>npm install -g knex</code>.</p>
+
+                        <p>This allows you to use Knex commands within any repo that has Knex as a local dependency. If you have any issues with this global install, you can use the <code>npx knex</code> command instead.</p>
+
+                        <h4>Initializing Knex</h4>
+                        <p>To start, add the knex and sqlite3 libraries to your repository.</p>
+
+                        <pre><code>npm install knex sqlite3</code></pre>
+
+                        <p>We've seen how to use manually create a config object to get started with Knex, but the best practice is to use the following command:</p>
+
+                        <pre><code>knex init</code></pre>
+
+                        <p>Or, if Knex isn't globally installed:</p>
+
+                        <pre><code>npx knex init</code></pre>
+
+                        <p>This command will generate a file in your root folder called knexfile.js. It will be auto populated with three config objects, based on different environments. We can delete all except for the development object.</p>
+
+                        <pre><code>module.exports = {
+
+  development: {
+    client: 'sqlite3',
+    connection: {
+      filename: './dev.sqlite3'
+    }
+  }
+
+};</code></pre>
+
+                        <p>We'll need to update the location (or desired location) of the database as well as add the useNullAsDefault option. The latter option prevents crashes when working with sqlite3.</p>
+
+                        <pre><code>module.exports = {
+
+  development: {
+    // our DBMS driver
+    client: 'sqlite3',
+    // the location of our db
+    connection: {
+      filename: './data/database_file.db3',
+    },
+    // necessary when using sqlite3
+    useNullAsDefault: true
+  }
+
+};</code></pre>
+
+                        <p>Now, wherever we configure our database, we may use the following syntax instead of hardcoding in a config object.</p>
+
+                        <pre><code>const knex = require('knex');
+
+const config = require('../knexfile.js');
+
+// we must select the development object from our knexfile
+const db = knex(config.development);
+
+// export for use in codebase
+module.exports = db;</code></pre>
+
+                        <h4>Knex Migrations</h4>
+                        <p>Once our knexfile is set up, we can begin creating migrations. Though it's not required, we are going to add an addition option to the config object to specify a directory for the migration files.</p>
+
+                        <pre><code>development: {
+    client: 'sqlite3',
+    connection: {
+      filename: './data/produce.db3',
+    },
+    useNullAsDefault: true,
+    // generates migration files in a data/migrations/ folder
+    migrations: {
+      directory: './data/migrations'
+    }
+  }</code></pre>
+
+                        <p>We can generate a new migration with the following command:</p>
+
+                        <pre><code>knex migrate:make [migration-name]</code></pre>
+
+                        <p>If we needed to create an accounts table, we might run:</p>
+
+                        <pre><code>knex migrate:make create-accounts</code></pre>
+
+                        <p>Note that inside data/migrations/ a new file has appeared. Migrations have a timestamp in their filenames automatically. Wither you like this or not, do not edit migration names.</p>
+
+                        <p>The migration file should have both an up and a down function. Within the up function, we write the ended database changes. Within the down function, we write the code to undo the up functions. This allows us to undo any changes made to the schema if necessary.</p>
+
+                        <pre><code>exports.up = function(knex, Promise) {
+  // don't forget the return statement
+  return knex.schema.createTable('accounts', tbl => {
+    // creates a primary key called id
+    tbl.increments();
+    // creates a text field called name which is both required and unique
+    tbl.text('name', 128).unique().notNullable();
+    // creates a numeric field called budget which is required
+    tbl.decimal('budget').notNullable();
+  });
+};
+
+exports.down = function(knex, Promise) {
+  // drops the entire table
+  return knex.schema.dropTableIfExists('accounts');
+};</code></pre>
+
+                        <p>References for these methods are found in the schema builder section of the <a href="https://knexjs.org/#Schema" target="_blank" rel="noopener noreferrer">Knex docs</a>.</p>
+
+                        <p>At this point, the table is not yet created. To run this (and any other) migrations, use the command:</p>
+
+                        <pre><code>knex migrate:latest</code></pre>
+
+                        <p>Note if the database does not exist, this command will auto-generate one. We can use SQLite Studio to confirm that the accounts table has been created.</p>
+
+                        <h4>Changes and Rollbacks</h4>
+                        <p>If we realize you need to update your schema later down the road, you shouldn't edit the migration file. Instead, you will want to create a new migration with the command:</p>
+
+                        <pre><code>knex migrate:make accounts-schema-update</code></pre>
+
+                        <p>Once we've written our updates into this file, we save and close with:</p>
+
+                        <pre><code>knex migrate:latest</code></pre>
+
+                        <p>If we migrate our database and then quickly realize something isn't right, we can edit the migration file. However, first, we need to rollback (or undo) our last migration with:</p>
+
+                        <pre><code>knex migrate:rollback</code></pre>
+
+                        <p>Finally, we are free to rerun that file with <code>knex migrate latest</code>.</p>
+
+                        <p>Note: A rollback should not be used to edit an old migration file once that file has been accepted into a main branch. However, an entire team may use a rollback to return to a previous version of a database.</p>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/1lbr8y0t1s" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                    <h2>Create and Use Knex Seeds</h2>
+                    <p>Often we want to pre-populate our database with sample data for testing. Seeds allow us to add and reset sample data easily.</p>
+                    <div class="note-box">
+                        <h3>How to Build It</h3>
+                        <h4>Creating and Running Seeds</h4>
+                        <p>The Knex command-line tool offers a way to seed our database; in other words, pre-populate our tables.</p>
+
+                        <p>Similarly to migrations, we want to customize where our seed files are generated using our knexfile:</p>
+
+                        <pre><code>development: {
+    client: 'sqlite3',
+    connection: {
+      filename: './data/produce.db3',
+    },
+    useNullAsDefault: true,
+    // generates migration files in a data/migrations/ folder
+    migrations: {
+      directory: './data/migrations'
+    },
+    seeds: {
+      directory: './data/seeds'
+    }
+  }</code></pre>
+
+                        <p>To create a seed run:</p>
+                        <pre><code>knex seed:make 001-seedName</code></pre>
+
+                        <p>Numbering is a good idea because Knex doesn't attach a timestamp to the name like migrate does. By adding numbers to the file name, we can control the order in which they run.</p>
+
+                        <p>We want to create seeds for our accounts table:</p>
+                        <pre><code>knex seed:make 001-accounts</code></pre>
+
+                        <p>A file will appear in the designated seed folder.</p>
+
+                        <pre><code>exports.seed = function(knex, Promise) {
+  // we want to remove all data before seeding
+  // truncate will reset the primary key each time
+  return knex('accounts').truncate()
+    .then(function () {
+      // add data into insert
+      return knex('accounts').insert([
+        { name: 'Stephenson', budget: 10000 },
+        { name: 'Gordon & Gale', budget: 40400 },
+      ]);
+    });
+};</code></pre>
+
+                        <p>Run the seed files by typing:</p>
+                        <pre><code>knex seed:run</code></pre>
+
+                        <p>You can now use SQLite Studio to confirm that the accounts table has two entries.</p>
+                        <div class="video-container">
+                            <iframe src="https://fast.wistia.net/embed/iframe/vgsrn4icxb" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            
+
+            <div class="content-box module2-accent">
+                <h2>Guided Project</h2>
+              <p><a href="https://github.com/bloominstituteoftechnology/node-db2-guided" target="_blank" rel="noopener">Database Schema Design Starter Code</a></p>
+              <p><a href="https://github.com/bloominstituteoftechnology/node-db2-guided-solution" target="_blank" rel="noopener">Database Schema Design Solution</a></p>
+              <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/yua0wtr9lx" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+              </div>
+            </div>
+
+            <div class="content-box module2-accent">
+                <h2>Module 2 Project: Database Schema Design</h2>
+
+                
+                <p>The module project contains advanced problems that will challenge and stretch your understanding of the module's content. The project has built-in tests for you to check your work, and the solution video is available in case you need help or want to see how we solved each challenge, but remember, there is always more than one way to solve a problem. Before reviewing the solution video, be sure to attempt the project and try solving the challenges yourself.</p>
+                
+
+                <h3>Instructions</h3>
+
+                <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
+                <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/node-db2-project" target="_blank">Database Schema Design</a></p>
+
                 <ul>
-                    <li>Design efficient database schemas</li>
-                    <li>Create and manage database migrations</li>
-                    <li>Implement seeds for development and testing</li>
-                    <li>Apply best practices for schema design</li>
+                    <li>Fork the repository,</li>
+                    <li>clone it to your machine, and</li>
+                    <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
+                    <li>submit your completed project to the BloomTech Portal</li>
                 </ul>
-            </div>
 
-            <div class="content-box">
-                <h2>Module Content</h2>
-
-                <div class="content-section">
-                    <h3>1. Database Schema Design</h3>
-                    <p>Learn the principles of database schema design:</p>
-                    <ul>
-                        <li>Identifying entities and relationships</li>
-                        <li>Data types and constraints</li>
-                        <li>Primary and foreign keys</li>
-                        <li>Indexes and performance considerations</li>
-                    </ul>
+                <h3>Solution</h3>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/3b4mk5id5d" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
-
-                <div class="content-section">
-                    <h3>2. Migrations with Knex.js</h3>
-                    <p>Learn to create and manage database migrations:</p>
-                    <ul>
-                        <li>Creating migration files</li>
-                        <li>Implementing up and down functions</li>
-                        <li>Running migrations</li>
-                        <li>Rolling back changes</li>
-                    </ul>
-                </div>
-
-                <div class="content-section">
-                    <h3>3. Seed Data</h3>
-                    <p>Understand how to seed a database with initial data:</p>
-                    <ul>
-                        <li>Creating seed files</li>
-                        <li>Inserting test data</li>
-                        <li>Managing seed order for related tables</li>
-                        <li>Using seeds for development and testing</li>
-                    </ul>
-                </div>
-
-                <div class="content-section">
-                    <h3>4. Schema Design Best Practices</h3>
-                    <p>Apply best practices for database schema design:</p>
-                    <ul>
-                        <li>Naming conventions</li>
-                        <li>Avoiding redundancy</li>
-                        <li>Using appropriate data types</li>
-                        <li>Planning for future growth</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="video-container">
-                <iframe width="560" height="315" src="https://fast.wistia.net/embed/iframe/yua0wtr9lx"
-                    title="Schema Design Introduction" frameborder="0" allow="fullscreen" allowfullscreen></iframe>
             </div>
 
             <section class="resource-section">
@@ -113,18 +390,8 @@
                         rel="noopener noreferrer" class="resource-link">
                         SQLite Primary Key Tutorial
                     </a>
-                    <a href="https://github.com/bloominstituteoftechnology/node-db2-guided" target="_blank"
-                        rel="noopener noreferrer" class="resource-link">
-                        Guided Project Repository
-                    </a>
                 </div>
             </section>
-
-            <div class="note-box">
-                <h3>Reminder</h3>
-                <p>Schema design is crucial for database performance and maintainability. Take time to properly plan
-                    your database structure before implementation.</p>
-            </div>
         </section>
     </main>
 </body>
