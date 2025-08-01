@@ -32,70 +32,491 @@
         <section class="welcome">
             <h1>Module 4: Data Modeling</h1>
 
-            <div class="content-box">
-                <h2>Module Overview</h2>
-                <p>Understand data normalization and create complex table relationships.</p>
+            <div class="content-box module4-accent">
+                <h2>Data Normalization</h2>
+                <p>Normalization is the process of designing or refactoring database tables for maximum consistency and minimum redundancy.</p>
 
-                <h2>Learning Objectives</h2>
+                <p>With objects, we're used to denormalized data, stored with ease of use and speed in mind. Non-normalized tables are considered ineffective in relational databases.</p>
+                
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Data normalization is a deep topic in database design. To begin thinking about it, we'll explore a few basic guidelines and some data examples that violate these rules.</p>
+
+                    <h4>Normalization Guidelines</h4>
+                    <ul>
+                        <li>Each record has a primary key</li>
+                        <li>No fields are repeated</li>
+                        <li>All fields relate directly to the key data</li>
+                        <li>Each field entry contains a single data point</li>
+                        <li>There are no redundant entries</li>
+                    </ul>
+
+                    <h4>Denormalized Data</h4>
+                    <table>
+                        <tr>
+                            <td>farm_name</td>
+                            <td>animal1</td>
+                            <td>animal2</td>
+                            <td>animal3</td>
+                        </tr>
+                        <tr>
+                            <td>Beech Ranch</td>
+                            <td>pigs</td>
+                            <td>chickens</td>
+                            <td>goats</td>
+                        </tr>
+                        <tr>
+                            <td>Morton Farms</td>
+                            <td>horses</td>
+                            <td>chickens</td>
+                            <td>cows</td>
+                        </tr>
+                    </table>
+
+                    <p>This table has two issues. There is no proper id field (as multiple farms may have the same name) and multiple fields are representing the same type of data: animals.</p>
+
+                    <table>
+                        <tr>
+                            <td>farm_id</td>
+                            <td>farm_name</td>
+                            <td>animals</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Beech Ranch</td>
+                            <td>pigs, chickens, goats</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Morton Farms</td>
+                            <td>horses, chickens, cows</td>
+                        </tr>
+                    </table>
+
+                    <p>While we have now eliminated the first two issues, we now have multiple entries in one field, separated by commas. This isn't good either, as it's another example of denormalization. There is no "array" data type in a relational database, so each field must contain only one data point.</p>
+
+                    <table>
+                        <tr>
+                            <td>animal_id</td>
+                            <td>animal</td>
+                            <td>farm_name</td>
+                            <td>ann_revenue</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>pig</td>
+                            <td>Beech Ranch</td>
+                            <td>65000</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>chicken</td>
+                            <td>Beech Ranch</td>
+                            <td>65000</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>goat</td>
+                            <td>Beech Ranch</td>
+                            <td>65000</td>
+                        </tr>
+                    </table>
+
+                    <p>Now we've solved the multiple fields issue, but we created repeating data (the farm field), which is also an example of denormalization. We can also see that if we were tracking additional ranch information (such as annual revenue), that field is only vaguely related to the animal information.</p>
+
+                    <p>When these issues begin arising in your schema design, it means that you should separate information into two or more tables.</p>
+
+                    <h4>Anomalies</h4>
+                    <p>Obeying the above guidelines prevent anomalies in your database when inserting, updating, or deleting. For example, imagine if the revenue of Beech Ranch changed. With our denormalized schema, it may get updated in some records but not others:</p>
+
+                    <table>
+                        <tr>
+                            <td>animal_id</td>
+                            <td>animal</td>
+                            <td>farm_name</td>
+                            <td>ann_revenue</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>pig</td>
+                            <td>Beech Ranch</td>
+                            <td>45000</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>chicken</td>
+                            <td>Beech Ranch</td>
+                            <td>65000</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>goat</td>
+                            <td>Beech Ranch</td>
+                            <td>65000</td>
+                        </tr>
+                    </table>
+
+                    <p>Similarly, if Beech Ranch shut down, there would be three (if not more) records that needed to be deleted to remove a single farm.</p>
+
+                    <p>Thus a denormalized table opens the door for contradictory, confusing, and unusable data.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/4zwissfn27" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h2>Table Relationships</h2>
+                <p>There are three types of relationships:</p>
+
                 <ul>
-                    <li>Understand data normalization principles</li>
-                    <li>Apply normal forms to database design</li>
-                    <li>Design and implement complex relationships</li>
-                    <li>Balance normalization with performance considerations</li>
+                    <li>One to one</li>
+                    <li>One to many</li>
+                    <li>Many to many</li>
                 </ul>
+
+                <p>Determining how data is related can provide guidelines for table representation and guide the use of foreign keys to connect said tables.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <h3>One to One Relationships</h3>
+                    <p>Imagine we are storing the financial projections for a series of farms.</p>
+
+                    <p>We may wish to attach fields like farm name, address, description, projected revenue, and projected expenses. We could divide these fields into two categories: information related to the farm directly (name, address, description) and information related to the financial projections (revenue, expenses).</p>
+
+                    <p>We would say that farms and projections have a one-to-one relationship. This is to say that every farm has exactly one projection, and every project corresponds to exactly one farm.</p>
+
+                    <p>This data can be represented in two tables: farms and projections</p>
+
+                    <table>
+                        <tr>
+                            <td>id</td>
+                            <td>farm_name</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Beech Ranch</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Morton Farms</td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                            <td>id</td>
+                            <td>farm_id</td>
+                            <td>revenue</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>65000</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>105000</td>
+                        </tr>
+                    </table>
+
+                    <p>The farm_id is the foreign key that links farms and projections together.</p>
+
+                    <p>Notes about one-to-one relationships:</p>
+                    <ul>
+                        <li>The foreign key should always have a unique constraint to prevent duplicate entries. In the example above, we wouldn't want to allow multiple projections records for one farm.</li>
+                        <li>The foreign key can be in either table. For example, we may have had a projection_id in the farms table instead. A good rule of thumb is to put the foreign key in whichever table is more auxiliary to the other.</li>
+                        <li>You can represent one-to-one data in a single table without creating anomalies. However, it is sometimes prudent to use two tables as shown above to keep separate concerns in separate tables</li>
+                    </ul>
+
+                    <h3>One to Many Relationships</h3>
+                    <p>Now imagine, we are storing the full-time ranchers employed at each farm. Each rancher would only work at one farm however, each farm may have multiple ranchers.</p>
+
+                    <p>This is called a one-to-many relationship.</p>
+
+                    <p>This is the most common type of relationship between entities. Some other examples:</p>
+                    <ul>
+                        <li>One customer can have many orders.</li>
+                        <li>One user can have many posts.</li>
+                        <li>One post can have many comments.</li>
+                    </ul>
+
+                    <p>Manage this type of relationship by adding a foreign key on the "many" table of the relationship that points to the primary key on the "one" table. Consider the farms and ranchers tables.</p>
+
+                    <table>
+                        <tr>
+                            <td>id</td>
+                            <td>farm_name</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Beech Ranch</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Morton Farms</td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                            <td>id</td>
+                            <td>rancher_name</td>
+                            <td>farm_id</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>John Doe</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Jane Doe</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Jim Done</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Jay Dow</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Jen Dunn</td>
+                            <td>1</td>
+                        </tr>
+                    </table>
+
+                    <p>In a many-to-many relationship, the foreign key (in this case farm_id) should not be unique.</p>
+
+                    <h3>Many to Many Relationships</h3>
+                    <p>If we want to track animals on a farm as well, we must explore the many-to-many relationship. A farm has multiple animals, and multiple types of animals are present at multiple different farms.</p>
+
+                    <p>Some other examples:</p>
+                    <ul>
+                        <li>an order can have many products and the same product will appear in many orders.</li>
+                        <li>a book can have more than one author, and an author can write more than one book.</li>
+                    </ul>
+
+                    <p>We need to introduce an intermediary table that holds foreign keys that reference the primary key on the related tables to model this relationship. We now have a farms, animals, and farm_animals table.</p>
+
+                    <table>
+                        <tr>
+                            <td>id</td>
+                            <td>farm_name</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Beech Ranch</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Morton Farms</td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                            <td>id</td>
+                            <td>animal</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>pig</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>chicken</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>goat</td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                            <td>farm_id</td>
+                            <td>animal_id</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>2</td>
+                        </tr>
+                    </table>
+
+                    <p>While each foreign key on the intermediary table is not unique, the combinations of keys should be unique.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/hkmn8zgefu" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h2>Create Table Relationships Using Knex</h2>
+                <p>The Knex query builder library also allows us to create multi-table schemas that include foreign keys. However, when designing a multi-table schema, there are a few extra things to keep in mind, such as using the correct order when creating tables, dropping tables, seeding data, and removing data.</p>
+
+                <p>We have to consider the way that delete and updates through our API will impact related data.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <h4>Foreign Key Setup</h4>
+                    <p>In Knex, foreign key restrictions don't automatically work. Whenever using foreign keys in your schema, add the following code to your knexfile. This will prevent users from entering bad data into a foreign key column.</p>
+
+                    <pre><code>development: {
+  client: 'sqlite3',
+  useNullAsDefault: true,
+  connection: {
+    filename: './data/database.db3',
+  },
+  // needed when using foreign keys
+  pool: {
+    afterCreate: (conn, done) => {
+      // runs after a connection is made to the sqlite engine
+      conn.run('PRAGMA foreign_keys = ON', done); // turn on FK enforcement
+    },
+  },
+},</code></pre>
+
+                    <h4>Migrations</h4>
+                    <p>Let's look at how we might track our farms and ranchers using Knex. In our migration file's up function, we would want to create two tables:</p>
+
+                    <pre><code>exports.up = function(knex, Promise) {
+  return knex.schema
+    .createTable('farms', tbl => {
+      tbl.increments();
+      tbl.string('farm_name', 128)
+        .notNullable();
+    })
+    // we can chain together createTable
+    .createTable('ranchers', tbl => {
+      tbl.increments();
+      tbl.string('rancher_name', 128);
+      tbl.integer('farm_id')
+        // forces integer to be positive
+        .unsigned()
+        .notNullable()
+        .references('id')
+        // this table must exist already
+        .inTable('farms')
+    })
+};</code></pre>
+
+                    <p>Note that the foreign key can only be created after the reference table.</p>
+
+                    <p>In the down function, the opposite is true. We always want to drop a table with a foreign key before dropping the table it references.</p>
+
+                    <pre><code>exports.down = function(knex, Promise) {
+  // drop in the opposite order
+  return knex.schema
+    .dropTableIfExists('ranchers')
+    .dropTableIfExists('farms')
+};</code></pre>
+
+                    <p>In the case of a many-to-many relationship, the syntax for creating an intermediary table is identical, except for one additional piece. We need a way to make sure our combination of foreign keys is unique.</p>
+
+                    <pre><code>.createTable('farm_animals', tbl => {
+  tbl.integer('farm_id')
+    .unsigned()
+    .notNullable()
+    .references('id')
+    // this table must exist already
+    .inTable('farms')
+  tbl.integer('animal_id')
+    .unsigned()
+    .notNullable()
+    .references('id')
+    // this table must exist already
+    .inTable('animals')
+
+  // the combination of the two keys becomes our primary key
+  // will enforce unique combinations of ids
+  tbl.primary(['farm_id', 'animal_id']);
+});</code></pre>
+
+                    <h4>Seeds</h4>
+                    <p>Order is also a concern when seeding. We want to create seeds in the same order we created our tables. In other words, don't create a seed with a foreign key until that reference record exists.</p>
+
+                    <p>In our example, make sure to write the 01-farms seed file and then the 02-ranchers seed file.</p>
+
+                    <p>However, we run into a problem with truncating our seeds, because we want to truncate 02-ranchers before 01-farms. A library called knex-cleaner provides an easy solution for us.</p>
+
+                    <p>Run knex seed:make 00-cleanup and npm install knex-cleaner. Inside the cleanup seed, use the following code.</p>
+
+                    <pre><code>const cleaner = require('knex-cleaner');
+
+exports.seed = function(knex) {
+  return cleaner.clean(knex, {
+    mode: 'truncate', // resets ids
+    ignoreTables: ['knex_migrations', 'knex_migrations_lock'], // don't empty migration tables
+  });
+};</code></pre>
+
+                    <p>This removes all tables (excluding the two tables that track migrations) in the correct order before any seed files run.</p>
+
+                    <h4>Cascading</h4>
+                    <p>If a user attempt to delete a record that is referenced by another record (such as attempting to delete Morton Ranch when entries in our ranchers table reference that record), by default, the database will block the action. The same thing can happen when updating a record when a foreign key reference.</p>
+
+                    <p>If we want that to override this default, we can delete or update with cascade. With cascade, deleting a record also deletes all referencing records, we can set that up in our schema.</p>
+
+                    <pre><code>.createTable('ranchers', tbl => {
+    tbl.increments();
+    tbl.string('rancher_name', 128);
+    tbl.integer('farm_id')
+    .unsigned()
+    .notNullable()
+    .references('id')
+    .inTable('farms')
+    .onUpdate('CASCADE');
+    .onDelete('CASCADE')
+})</code></pre>
+
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/61i5cnno7n" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
             </div>
 
-            <div class="content-box">
-                <h2>Module Content</h2>
-
-                <div class="content-section">
-                    <h3>1. Data Normalization</h3>
-                    <p>Learn the principles of database normalization:</p>
-                    <ul>
-                        <li>First Normal Form (1NF)</li>
-                        <li>Second Normal Form (2NF)</li>
-                        <li>Third Normal Form (3NF)</li>
-                        <li>Benefits and trade-offs of normalization</li>
-                    </ul>
-                </div>
-
-                <div class="content-section">
-                    <h3>2. Complex Table Relationships</h3>
-                    <p>Design and implement more complex database relationships:</p>
-                    <ul>
-                        <li>One-to-many implementations</li>
-                        <li>Many-to-many with junction tables</li>
-                        <li>Self-referencing relationships</li>
-                        <li>Polymorphic relationships</li>
-                    </ul>
-                </div>
-
-                <div class="content-section">
-                    <h3>3. Advanced Data Modeling</h3>
-                    <p>Master advanced concepts in data modeling:</p>
-                    <ul>
-                        <li>Entity-Relationship modeling</li>
-                        <li>Inheritance and hierarchies</li>
-                        <li>Handling temporal data</li>
-                        <li>Versioning and history tracking</li>
-                    </ul>
-                </div>
-
-                <div class="content-section">
-                    <h3>4. Performance Considerations</h3>
-                    <p>Balance normalization with performance needs:</p>
-                    <ul>
-                        <li>When to denormalize for performance</li>
-                        <li>Indexing strategies for complex models</li>
-                        <li>Optimizing for read vs. write operations</li>
-                        <li>Query performance with complex joins</li>
-                    </ul>
-                </div>
+            <div class="content-box module4-accent">
+                <h2>Guided Project</h2>
+              <p><a href="https://github.com/bloominstituteoftechnology/node-db4-guided" target="_blank" rel="noopener">Data Modeling Starter Code</a></p>
+              <p><a href="https://github.com/bloominstituteoftechnology/node-db4-guided-solution" target="_blank" rel="noopener">Data Modeling Solution</a></p>
+              <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/fdm00b1nto" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+              </div>
             </div>
 
-            <div class="video-container">
-                <iframe width="560" height="315" src="https://fast.wistia.net/embed/iframe/fdm00b1nto"
-                    title="Data Modeling Introduction" frameborder="0" allow="fullscreen" allowfullscreen></iframe>
+            <div class="content-box module4-accent">
+                <h2>Module 4 Project: Data Modeling</h2>
+
+                <p>The module project contains advanced problems that will challenge and stretch your understanding of the module's content. The project has built-in tests for you to check your work, and the solution video is available in case you need help or want to see how we solved each challenge, but remember, there is always more than one way to solve a problem. Before reviewing the solution video, be sure to attempt the project and try solving the challenges yourself.</p>
+                
+
+                <h3>Instructions</h3>
+
+                <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
+                <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/node-db4-project" target="_blank">Data Modeling</a></p>
+
+                <ul>
+                    <li>Fork the repository,</li>
+                    <li>clone it to your machine, and</li>
+                    <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
+                    <li>submit your completed project to the BloomTech Portal</li>
+                </ul>
+
+                <h3>Solution</h3>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/hlle9o4z0x" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
             </div>
 
             <section class="resource-section">
@@ -113,18 +534,8 @@
                         class="resource-link">
                         Knex.js Schema Builder
                     </a>
-                    <a href="https://github.com/bloominstituteoftechnology/node-db4-guided" target="_blank"
-                        rel="noopener noreferrer" class="resource-link">
-                        Guided Project Repository
-                    </a>
                 </div>
             </section>
-
-            <div class="note-box">
-                <h3>Reminder</h3>
-                <p>Data modeling is both an art and a science. Balance normalization principles with practical
-                    considerations for your specific application needs.</p>
-            </div>
         </section>
     </main>
 </body>
