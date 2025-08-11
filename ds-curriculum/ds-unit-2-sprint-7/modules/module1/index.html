@@ -676,9 +676,99 @@ weighted avg       0.97      0.97      0.97        60
         </section>
 
         <section class="content-box">
-        </section>
+            <h2>Objective 04 - use the classification metric ROC AUC to interpret a classifier model</h2>
+            <h3>Overview</h3>
+            <p>In the previous sprint, we examined the probability threshold a classifier uses when determining the
+                class to which an observation belongs. We can extend this concept and look at something called the
+                receiver operating characteristic, which is usually plotted as a curve and called the ROC curve.</p>
+            <p>First, we'll go back to the idea of calculating true positives and true negatives and look at a different
+                measurement, the true positive rate (TPR) and the false positive rate (FPR).</p>
+            <pre><code> \text{TPR} = \frac{\text{True Positives}}{\text{True Positives}+\text{False Negatives}}
 
-        <section class="content-box">
+ \text{FPR} = \frac{\text{False Positives}}{\text{False Positives}+\text{True Negatives}}
+</code></pre>
+            <p>Both of the above measurements are the total true or false positives normalized by the total for each.
+            </p>
+            <p>When we create a ROC curve, we are plotting the TPR against the FPR for a range of threshold values. In
+                the next section, we'll use the scikit-learn roc_curve() method to do the calculations for us. From the
+                resulting data, we'll create a plot.</p>
+            <h3>Follow Along</h3>
+            <p>In order to plot a ROC curve, we need some data and a classifier model fit to that data. Let's create
+                some data from the previous objective and then build the ROC curve.</p>
+            <pre><code># Load modules
+import pandas as pd
+from sklearn.datasets import make_classification
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_curve
+
+# Create the data (feature, target)
+X, y = make_classification(n_samples=10000, n_features=5,
+                          n_classes=2, n_informative=3,
+                          random_state=42)
+
+# Split the data into a training set and a test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
+
+# Create and fit the model
+logreg_classifier = LogisticRegression().fit(X_train, y_train)
+
+# Create predicted probabilities
+y_pred_prob = logreg_classifier.predict_proba(X_test)[:,1]
+# Create the data for the ROC curve
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_prob)
+
+# See the results in a table
+roccurve_df = pd.DataFrame({
+    'False Positive Rate': fpr, 
+    'True Positive Rate': tpr, 
+    'Threshold': thresholds
+})
+
+roccurve_df.head()</code></pre>
+            <pre><code>False Positive Rate	True Positive Rate	Threshold
+0	0.000000	0.000000	1.999969
+1	0.000000	0.000786	0.999969
+2	0.000000	0.291438	0.983222
+3	0.000815	0.291438	0.983049
+4	0.000815	0.360566	0.970583
+</code></pre>
+            <pre><code># Plot the ROC curve
+import matplotlib.pyplot as plt
+
+plt.plot(fpr, tpr)
+plt.plot([0,1], ls='--')
+plt.title('ROC curve')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+
+plt.show()</code></pre>
+            <pre><code>&lt;Figure size 432x288 with 0 Axes&gt;
+mod4_obj4_ROC.png
+</code></pre>
+            <p>The above model looks pretty good. In general, the better a model, the higher the curve is, and the
+                greater the area under the curve (AUC). The maximum value for the AUC is equal to one. While we can
+                "eyeball" the area in our curve, there is also a tool used to calculate the AUC.</p>
+            <pre><code># Calculate the area under the curve
+from sklearn.metrics import roc_auc_score
+roc_auc_score(y_test, y_pred_prob)
+0.9419681927513379
+</code></pre>
+            <h3>Challenge</h3>
+            <p>Using a different data set for classification, see if you can construct the ROC curve. Or with the same
+                data set generated above, try using a different classifier such as a decision tree and plot the ROC
+                curve and calculate the AUC. Which model performs better?</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://scikit-learn.org/stable/modules/model_evaluation.html#roc-metrics" target="_blank"
+                        rel="noopener noreferrer">Scikit-learn Guide: ROC</a>Links to an external site.</li>
+                <li><a href="https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: ROC Curve</a>Links to an external site.
+                </li>
+                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: ROC AUC Score</a>Links to an external
+                    site.</li>
+            </ul>
         </section>
 
         <section class="content-box">
