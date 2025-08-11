@@ -587,6 +587,92 @@ plt.clf()
         </section>
 
         <section class="content-box">
+            <h2>Objective 03 - choose an appropriate evaluation metric</h2>
+            <h3>Overview</h3>
+            <p>Up to this point in the course we've fit several different models: linear regression, logistic
+                regression, decision tree, and random forests. One concept that we haven't covered extensively is how to
+                choose the metric by which we evaluate our models.</p>
+            <p>Because it's important, the following information is likely to be repeated during the Guided Project:</p>
+            <p><strong>Classification &amp; regression metrics are different!</strong></p>
+            <ul>
+                <li>Don’t use regression metrics to evaluate classification tasks.</li>
+                <li>Don’t use classification metrics to evaluate regression tasks.</li>
+            </ul>
+            <p>Let's look at each type of task and the associated metrics.</p>
+            <h4>Classification Tasks</h4>
+            <p>For classification tasks we can use the metrics of: precision, recall, F1 score, and the receiver
+                operating characteristic (ROC) curve. Some general rules to follow when choosing one of these metrics:
+            </p>
+            <ul>
+                <li>accuracy is useful when the majority class is between 50-70%</li>
+                <li>precision and recall can be helpful for finding misclassified observations</li>
+                <li>ROC curve is helpful for when you need probabilities associated with your predictions</li>
+            </ul>
+            <h4>Regression Tasks</h4>
+            <p>Generally, regression models are scored by the R squared value. It is the proportion of the variance in
+                the dependent variable (y) that is predictable from the independent variable(s) (X).</p>
+            <p>We'll use the iris data set here to do a basic evaluation metric exercise.</p>
+            <h3>Follow Along</h3>
+            <p>Let's load in the data, create the training and test sets, fit the model, and, finally, evaluate our
+                model.</p>
+            <pre><code># Load in libraries, data
+from sklearn import datasets, metrics
+from sklearn.model_selection import train_test_split
+
+# Create X, y and training/test sets
+iris = datasets.load_iris()
+X = iris.data
+y = iris.target
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.4, random_state=42)
+
+# Import the classifier
+from sklearn.tree import DecisionTreeClassifier
+
+dt_classifier = DecisionTreeClassifier(random_state=42)
+dt_classifier.fit(X_train,y_train)
+
+print('Validation Accuracy: ', dt_classifier.score(X_test, y_test))
+</code></pre>
+            <pre><code>Validation Accuracy:  0.9666666666666667</code></pre>
+            <p>This model has a pretty high accuracy, so let's look at a few other metrics which might give us a better
+                idea of how the model is fitting the data. First, we'll create a visualization of the confusion matrix.
+            </p>
+            <pre><code># import matplotlib.pyplot as plt 
+from sklearn.metrics import ConfusionMatrixDisplay 
+
+ConfusionMatrixDisplay.from_estimator(dt_classifier, X_test, y_test) 
+plt.show()
+</code></pre>
+            <pre><code>&lt;Figure size 576x576 with 0 Axes&gt;
+236-1.png
+</code></pre>
+            <p>We can see from the confusion matrix that very few of the observations are being misclassified, so the
+                high accuracy is probably correct for this model.</p>
+            <p>We can also look at the classification report, which shows the precision, recall, and the F1-score.</p>
+            <pre><code># Create the classification report
+y_pred = dt_classifier.predict(X_test)
+print(metrics.classification_report(y_test, y_pred))
+</code></pre>
+            <pre><code>              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        23
+           1       0.95      0.95      0.95        19
+           2       0.94      0.94      0.94        18
+
+    accuracy                           0.97        60
+   macro avg       0.96      0.96      0.96        60
+weighted avg       0.97      0.97      0.97        60
+</code></pre>
+            <h3>Challenge</h3>
+            <p>For this challenge, think about a data set you have worked with that you haven't yet evaluated. Which
+                metric should you use? Do you understand how the model is being evaluated?</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://scikit-learn.org/stable/modules/model_evaluation.html" target="_blank"
+                        rel="noopener noreferrer">Scikit-learn: Model Evaluation</a>Links to an external site.</li>
+            </ul>
         </section>
 
         <section class="content-box">
