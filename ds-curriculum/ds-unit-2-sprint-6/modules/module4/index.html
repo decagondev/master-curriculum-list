@@ -34,10 +34,10 @@
 
         <section class="content-box">
             <h2>Module Overview</h2>
-            <p>In this module, you will learn about various classification metrics that are essential for evaluating
-                binary classification models. You'll explore concepts beyond simple accuracy, including confusion
-                matrices, precision, recall, and ROC curves. These metrics are crucial for understanding how your model
-                performs, especially with imbalanced datasets.</p>
+            <p>This last module will cover some important concepts in Data Science including classification model
+                evaluation metrics. We'll introduce a confusion matrix along with how to interpret precision and recall.
+                Additionally, we’ll learn about the receiver operating characteristic (ROC) curve and how we can use it
+                to interpret a classifier model.</p>
         </section>
 
         <section class="content-box">
@@ -50,12 +50,371 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - get and interpret the confusion matrix for classification models</h2>
+            <h3>Overview</h3>
+            <p>When we evaluate a model we are often looking at a score, such as the accuracy for a classification
+                model. When we are using a classifier however, it's helpful to evaluate a model visually. The plot of
+                the confusion matrix is easy to interpret and see where the model may have gone wrong and why. This
+                helps to identify patterns in misclassification.</p>
+            <p>The confusion matrix is often plotted as a heatmap where the columns represent the predicted class and
+                the rows represent the true classes. The diagonal of the matrix should be equal to the total number of
+                correct predictions for each class (or ones if the matrix is normalized by the number of observations. A
+                confusion matrix works for any number of classes, but the plot would start to become less useful with a
+                very large number of classes.</p>
+
+            <h3>Follow Along</h3>
+            <p>We used the digits data set for computing and displaying the confusion matrix.</p>
+            <p>In the lecture recordings, <code>plot_confusion_matrix</code> function was used. This is deprecated in
+                sklearn 1.0
+                and will be removed in 1.2. Here we will use the <code>ConfusionMatrixDisplay.from_estimator</code>
+                class method to
+                build our confusion matrix. Alternatively, <code>ConfusionMatrixDisplay.from_predictions</code> can also
+                be used.</p>
+            <pre><code># Import necessary modules
+import numpy as np
+import pandas as pd
+
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import ConfusionMatrixDisplay</code></pre>
+            <pre><code># Load the digits data
+
+# The default with 10 classes (digits 0-9)
+digits = datasets.load_digits(n_class=10)
+
+# Create the feature matrix
+X = digits.data
+
+# Create the target array
+y = digits.target
+
+# Split the data into a training set and a test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+
+# Instantiate and train a decision tree classifier
+dt_classifier = DecisionTreeClassifier().fit(X_train, y_train)</code></pre>
+            <pre><code># plot the confusion matrix 
+
+import matplotlib.pyplot as plt 
+ConfusionMatrixDisplay.from_estimator(dt_classifier, X_test, y_test) 
+plt.show()</code></pre>
+            <pre><code>&lt;Figure size 576x576 with 0 Axes&gt;
+</code></pre>
+            <img src="../../assets/mod_4_job_1.png" alt="212.png" width="544" height="466" loading="lazy">
+            <p>In this confusion matrix we can see that the model performs well. There are a few numbers though that the
+                model has more trouble with. Can you identify those? For example, the model was incorrect when trying to
+                distinguish between a 2 and a 3. The model was incorrect when trying to
+                distinguish between a <code>2</code> and a <code>3</code>
+                and also between a <code>4</code> and a <code>7</code>.</p>
+            <h3>Challenge</h3>
+            <p>For this challenge, try using a different data set for which to plot the confusion matrix. The Iris data
+                set is pretty common, but you could also use one of the data sets that we have worked with previously
+                such as the penguin data set. You can also compare what the confusion matrix looks like for a different
+                classifier. In the above example, we use a decision tree but you could try a logistic regression
+                classifier.</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://towardsdatascience.com/beyond-accuracy-precision-and-recall-3da06bea9f6c"
+                        target="_blank" rel="noopener noreferrer">Beyond Accuracy: Precision and Recall</a></li>
+            </ul>
         </section>
 
         <section class="content-box">
+            <h2>Objective 02 - use the classification metrics of precision and recall</h2>
+            <h3>Overview</h3>
+            <p>For some data sets and models simply calculating the accuracy is often not enough. If for example, your
+                data set has imbalanced classes (measuring disease occurrence or other uncommon events) then you might
+                have an excellent accuracy score that isn't actually a useful metric. This objective will focus on the
+                concepts of precision and recall.</p>
+            <p>Precision is the portion of positive classifications that were actually correct. It can be calculated by
+                the following equation:</p>
+            <p><img class="formula"
+                    src="https://i.upmath.me/svg/%20%5Ctext%7BPrecision%7D%20%3D%20%5Cfrac%7BTP%7D%7BTP%20%2B%20FP%7D%20"
+                    alt=" \text{Precision} = \frac{TP}{TP + FP} " align="center" loading="lazy"></p>
+            <p>where <img class="inline-formula" src="https://i.upmath.me/svg/TP" alt="TP" loading="lazy"> is the number
+                of true positives and <img class="inline-formula" src="https://i.upmath.me/svg/FP" alt="TP"
+                    loading="lazy"> is the number of false positives. A false positive is
+                where an observation is predicted to belong to a class but isn’t actually of that class.</p>
+            <p>The other metric that is useful in evaluation of classification models is the recall or portion of actual
+                positives that were identified correctly. This value is calculated by:</p>
+            <p><img class="formula"
+                    src="https://i.upmath.me/svg/%20%5Ctext%7BRecall%7D%20%3D%20%5Cfrac%7BTP%7D%7BTP%20%2B%20FN%7D%20"
+                    alt=" \text{Recall} = \frac{TP}{TP + FN} " align="center" loading="lazy"></p>
+            <p>where <img class="inline-formula" src="https://i.upmath.me/svg/TP" alt="TP" loading="lazy"> is the number
+                of
+                true
+                positives and
+                <img class="inline-formula" src="https://i.upmath.me/svg/FN" alt="FN" loading="lazy"> is the number of
+                false
+                negatives. A false negative is
+                where in observation is not predicted to belong to a certain class but actually is of that class.
+            </p>
+            <p>There is a balance between precision and recall: often by improving one value, the other value decreases.
+                In other words, if we reduce the number of false positives (by improving our model), the precision will
+                increase. But fewer false positives results in more false negatives, which decreases the recall value.
+            </p>
+            <p>A value that takes into consider both precision and recall is called the F1 score, or sometimes just the
+                F-score. It is calculated by:</p>
+            <p><span class="math_equation_latex fade-in-equation" style="null"><span class="MathJax_Preview"
+                        style="color: inherit;"></span><span class="MathJax_SVG" id="MathJax-Element-1-Frame"
+                        tabindex="0" style="font-size: 100%; display: inline-block; position: relative;"
+                        data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;F&lt;/mi&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/msub&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;mo&gt;&amp;#x00D7;&lt;/mo&gt;&lt;mfrac&gt;&lt;mrow&gt;&lt;mi&gt;p&lt;/mi&gt;&lt;mi&gt;r&lt;/mi&gt;&lt;mi&gt;e&lt;/mi&gt;&lt;mi&gt;c&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mi&gt;s&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mi&gt;o&lt;/mi&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mo&gt;&amp;#x2217;&lt;/mo&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mi&gt;r&lt;/mi&gt;&lt;mi&gt;e&lt;/mi&gt;&lt;mi&gt;c&lt;/mi&gt;&lt;mi&gt;a&lt;/mi&gt;&lt;mi&gt;l&lt;/mi&gt;&lt;mi&gt;l&lt;/mi&gt;&lt;/mrow&gt;&lt;mrow&gt;&lt;mi&gt;p&lt;/mi&gt;&lt;mi&gt;r&lt;/mi&gt;&lt;mi&gt;e&lt;/mi&gt;&lt;mi&gt;c&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mi&gt;s&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mi&gt;o&lt;/mi&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;mtext&gt;&amp;#xA0;&lt;/mtext&gt;&lt;mi&gt;r&lt;/mi&gt;&lt;mi&gt;e&lt;/mi&gt;&lt;mi&gt;c&lt;/mi&gt;&lt;mi&gt;a&lt;/mi&gt;&lt;mi&gt;l&lt;/mi&gt;&lt;mi&gt;l&lt;/mi&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;/math&gt;"
+                        role="presentation"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="23.732ex"
+                            height="4.083ex" viewBox="0 -1118.3 10217.8 1758.1" role="img" focusable="false"
+                            style="vertical-align: -1.486ex;" aria-hidden="true">
+                            <g stroke="currentColor" fill="currentColor" stroke-width="0"
+                                transform="matrix(1 0 0 -1 0 0)">
+                                <use xlink:href="#MJMATHI-46" x="0" y="0"></use>
+                                <use transform="scale(0.707)" xlink:href="#MJMAIN-31" x="910" y="-213"></use>
+                                <use xlink:href="#MJMAIN-3D" x="1375" y="0"></use>
+                                <use xlink:href="#MJMAIN-32" x="2431" y="0"></use>
+                                <use xlink:href="#MJMAIN-D7" x="3154" y="0"></use>
+                                <g transform="translate(3932,0)">
+                                    <g transform="translate(342,0)">
+                                        <rect stroke="none" width="5822" height="60" x="0" y="220"></rect>
+                                        <g transform="translate(158,547)">
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-70" x="0" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-72" x="503" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-65" x="955" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-63" x="1421" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-69" x="1855" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-73" x="2200" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-69" x="2670" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-6F" x="3015" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-6E" x="3501" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMAIN-2217" x="4455" y="0">
+                                            </use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-72" x="5309" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-65" x="5760" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-63" x="6227" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-61" x="6660" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-6C" x="7190" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-6C" x="7488" y="0"></use>
+                                        </g>
+                                        <g transform="translate(60,-402)">
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-70" x="0" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-72" x="503" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-65" x="955" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-63" x="1421" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-69" x="1855" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-73" x="2200" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-69" x="2670" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-6F" x="3015" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-6E" x="3501" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMAIN-2B" x="4455" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-72" x="5587" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-65" x="6038" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-63" x="6505" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-61" x="6938" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-6C" x="7468" y="0"></use>
+                                            <use transform="scale(0.707)" xlink:href="#MJMATHI-6C" x="7766" y="0"></use>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg><span class="MJX_Assistive_MathML" role="presentation"><math
+                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                <msub>
+                                    <mi>F</mi>
+                                    <mn>1</mn>
+                                </msub>
+                                <mo>=</mo>
+                                <mn>2</mn>
+                                <mo>×</mo>
+                                <mfrac>
+                                    <mrow>
+                                        <mi>p</mi>
+                                        <mi>r</mi>
+                                        <mi>e</mi>
+                                        <mi>c</mi>
+                                        <mi>i</mi>
+                                        <mi>s</mi>
+                                        <mi>i</mi>
+                                        <mi>o</mi>
+                                        <mi>n</mi>
+                                        <mtext>&nbsp;</mtext>
+                                        <mo>∗</mo>
+                                        <mtext>&nbsp;</mtext>
+                                        <mi>r</mi>
+                                        <mi>e</mi>
+                                        <mi>c</mi>
+                                        <mi>a</mi>
+                                        <mi>l</mi>
+                                        <mi>l</mi>
+                                    </mrow>
+                                    <mrow>
+                                        <mi>p</mi>
+                                        <mi>r</mi>
+                                        <mi>e</mi>
+                                        <mi>c</mi>
+                                        <mi>i</mi>
+                                        <mi>s</mi>
+                                        <mi>i</mi>
+                                        <mi>o</mi>
+                                        <mi>n</mi>
+                                        <mtext>&nbsp;</mtext>
+                                        <mo>+</mo>
+                                        <mtext>&nbsp;</mtext>
+                                        <mi>r</mi>
+                                        <mi>e</mi>
+                                        <mi>c</mi>
+                                        <mi>a</mi>
+                                        <mi>l</mi>
+                                        <mi>l</mi>
+                                    </mrow>
+                                </mfrac>
+                            </math></span></span>
+                    <script type="math/tex"
+                        id="MathJax-Element-1">F_1=2\times\frac{ precision\space * \space recall}{precision \space + \space recall}</script>
+                </span></p>
+
+            <h3>Follow Along</h3>
+            <p>Let's use the information above to interpret the confusion matrix for the digits data set. To make the
+                interpretation more simple, we'll use only some of the digits. We'll also limit the depth of the tree so
+                that the model isn't as good as it could be. This way, we'll get some false positives and false
+                negatives.</p>
+            <pre><code># Import necessary modules
+import numpy as np
+import pandas as pd
+
+from sklearn import datasets, metrics
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import ConfusionMatrixDisplay</code></pre>
+            <pre><code># Load the digits data
+
+# Use the first four digits (0-3)
+digits = datasets.load_digits(n_class=4)
+
+# Create the feature, target
+X = digits.data
+y = digits.target
+
+# Split the data into a training set and a test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+
+# Instantiate and train a decision tree classifier
+dt_classifier = DecisionTreeClassifier(max_depth=3).fit(X_train, y_train)</code></pre>
+            <pre><code># Plot the decision matrix
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(1,1,figsize=(8,8))  
+
+#plot the confusion matrix 
+
+import matplotlib.pyplot as plt 
+ConfusionMatrixDisplay.from_estimator(dt_classifier, X_test, y_test) 
+plt.show()</code></pre>
+            <pre><code>&lt;Figure size 576x576 with 0 Axes&gt;
+</code></pre>
+            <img src="../../assets/mod_4_obj_2.png" alt="217.png" width="544" height="466" loading="lazy">
+            <p>We can see the model had a little difficulty with <code>2</code> and <code>1</code>. <code>1</code> was
+                predicted three times but the true label
+                was a <code>2</code>. And we see something similar with <code>2</code> and <code>3</code> where
+                <code>2</code> was predicted five times but the true label
+                was <code>3</code>.
+            </p>
+            <p>Instead of calculating the precision and recall for all of these features, we can use the scikit-learn
+                <code>classification_report</code> function to calculate and display everything for us. The f1-score is
+                also returned
+                in this report.
+            </p>
+            <pre><code>y_pred = dt_classifier.predict(X_test)
+print (metrics.classification_report(y_test, y_pred))</code></pre>
+            <pre><code>
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        46
+           1       0.94      0.98      0.96        45
+           2       0.88      0.90      0.89        48
+           3       0.95      0.88      0.91        41
+
+    accuracy                           0.94       180
+   macro avg       0.94      0.94      0.94       180
+weighted avg       0.94      0.94      0.94       180
+</code></pre>
+            <h3>Challenge</h3>
+            <p>With the code above try fitting a classification model to a different data set and plot both the
+                confusion matrix and return the classification report.</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://scikit-learn.org/stable/modules/model_evaluation.html#classification-report"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: Classification Report</a></li>
+                <li><a href="https://towardsdatascience.com/beyond-accuracy-precision-and-recall-3da06bea9f6c"
+                        target="_blank" rel="noopener noreferrer">Beyond Accuracy: Precision and Recall</a></li>
+            </ul>
         </section>
 
         <section class="content-box">
+            <h2>Objective 03 - understand the relationships between precision, recall, thresholds, and predicted
+                probabilities</h2>
+            <h3>Overview</h3>
+            <p>When fitting a classification model, one thing we haven't discussed very much is the classification
+                threshold, or the value at which we decide if an observation belongs in one class or the other. This
+                concept is also tied to the probability of each observation belonging to that class. By default,
+                scikit-learn predicts an observation is part of the class if the probability is greater than 0.5 (this
+                is the threshold).</p>
+            <p>There might be some situations where using a different probability threshold is important. For example,
+                in a medical study using very expensive medication with very negative side effects, it might be
+                necessary to set the probability threshold much higher than 0.5 to classify a patient as needing the
+                medication. In this case, the medication should only be used if the patient has a high probability of
+                belonging to a class that needs the treatment.</p>
+            <p>In the following example we'll use scikit-learn to create a classification data set and look at the
+                predicted probabilities.</p>
+            <h3>Follow Along</h3>
+            <pre><code># Load modules
+from sklearn.datasets import make_classification
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+
+# Create the data (feature, target)
+X, y = make_classification(n_samples=10000, n_features=5,
+                          n_classes=2, n_informative=3,
+                          random_state=42)
+
+# Split the data into a training set and a test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
+
+# Create and fit the model
+logreg_classifier = LogisticRegression().fit(X_train, y_train)
+</code></pre>
+            <p>Now that we have created the data set and fit the model, let's look at the target probabilities. We can
+                use the method <code>predict_proba()</code> with our test data. We'll look at a single prediction and
+                interpret the probability.</p>
+            <pre><code># The value of the 10th observation
+print('The 10th observation: ', X_test[10:11])
+# Print out the probability for the 10th observation
+print('Predicted probability for the 10th observation: ',
+      logreg_classifier.predict_proba(X_test)[10:11])
+# Print the two classes
+print('The two classes: ')
+logreg_classifier.classes_
+</code></pre>
+            <pre><code>The 10th observation:  [[-0.73552378  1.05914888 -0.60278934 -0.32282208  0.55717004]]
+Predicted probability for the 10th observation:  [[0.73592057 0.26407943]]
+The two classes: 
+
+array([0, 1])
+</code></pre>
+            <p>This observation has a 74% chance of belonging to the first class and a 26% chance of belonging in the
+                second class. Is it actually in the first class (<code>0</code>)? Let's take a look.</p>
+            <pre><code># Check the class of the 10th observation
+logreg_classifier.predict(X_test[10:11])</code></pre>
+            <pre><code>array([0])
+</code></pre>
+            <p>The 10th observation was predicted to be in the first class (<code>0</code>) and it was. In the next
+                objective, we're
+                going to look at how we extend this single observation into something called a receiver operating
+                characteristic or ROC curve.</p>
+            <h3>Challenge</h3>
+            <p>With the example data set above, look at a few other observations. Take a look at their class and the
+                predicted probability of being in that class. Are they all correct? Spoiler: Yes.</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html"
+                        target="_blank" rel="noopener noreferrer">Scikit-learn: Logistic Regression</a></li>
+            </ul>
         </section>
 
         <section class="content-box">
