@@ -50,16 +50,16 @@
         </section>
 
         <section class="content-box">
-            <h2>Objective 01 - get permutation importances for model interpretation and feature selection</h2>
+            <h2>Objective 01 - Get permutation importances for model interpretation and feature selection</h2>
             <h3>Overview</h3>
             <p>In many of the models we've fit, we've looked at the feature importance. This has been accomplished by
                 ranking the features after fitting the model. In addition to these basic methods, we can also look at
-                what happens when we change a specific feature. This is called permutation importance.</p>
+                what happens when we change a specific feature. This is called <i>permutation importance</i>.</p>
             <p>To permute something means to change the order. When we fit a model we measure the accuracy by comparing
                 our model predictions to the test or validation data. We can test the importance of a feature by
                 permuting the values and calculating the accuracy against the test set.</p>
             <p>The process works something like this:</p>
-            <ol>
+            <ul>
                 <li>Fit a model and calculate the accuracy on test set</li>
                 <li>Choose a feature (by ranking the importances or some other method) and randomly permute the test set
                     values for just that feature</li>
@@ -67,14 +67,13 @@
                 <li>If it results in a decrease in accuracy: that feature is important to the model</li>
                 <li>If it results in an accuracy that stays the same: the feature isn't important to the model and could
                     be replaced by random numbers</li>
-            </ol>
+            </ul>
             <h3>Follow Along</h3>
             <p>We'll use the Australian weather data set from the previous module and permute or randomize a few of the
                 features in the test set. The accuracy should change, or decrease for features that are important to the
                 model. Additionally, the accuracy should remain essentially the same for features that are not very
                 important to the model.</p>
-            <pre>
-# Import libraries, load data, and view
+            <pre><code># Import libraries, load data, and view
 import pandas as pd 
 url = "https://raw.githubusercontent.com/bloominstituteoftechnology/DS-Unit-2-Kaggle-Challenge/main/data/weather/weatherAUS.csv" 
 weather = pd.read_csv(url) 
@@ -85,14 +84,12 @@ cols_drop = ['Location', 'Evaporation', 'Sunshine', 'Cloud9am', 'Cloud3pm', 'RIS
 weather_drop = weather.drop(cols_drop, axis=1)
 
 # Convert the 'Date' column to datetime, extract month
-weather_drop['Date'] = pd.to_datetime(weather_drop['Date'], infer_datetime_format=True).dt.month
-            </pre>
+weather_drop['Date'] = pd.to_datetime(weather_drop['Date'], infer_datetime_format=True).dt.month</code></pre>
             <h3>Create Pipeline</h3>
             <p>Here we're going to create the preprocessing and model fitting pipeline from the first module in this
                 sprint, so you have seen this code before! Once the model is fit, we can demonstrate the
                 feature-permutation process.</p>
-            <pre>
-# Imports
+            <pre><code># Imports
 import pandas as pd
 import numpy as np
 
@@ -128,11 +125,9 @@ preprocessor = ColumnTransformer(
 
 # Define the pipeline steps, including the classifier
 clf = Pipeline(steps=[('preprocessor', preprocessor),
-                  ('classifier', DecisionTreeClassifier())])
-            </pre>
+                  ('classifier', DecisionTreeClassifier())])</code></pre>
             <h3>Train and Fit the Model</h3>
-            <pre>
-# Create the feature matrix 
+            <pre><code># Create the feature matrix 
 X = weather_drop.drop('RainTomorrow', axis=1)
 
 # Create and encode the target array
@@ -149,14 +144,12 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 # Fit the model
 clf.fit(X_train,y_train)
-print('Validation Accuracy', clf.score(X_test, y_test))
-            </pre>
-            <p>Validation Accuracy 0.7793522979007701</p>
+print('Validation Accuracy', clf.score(X_test, y_test))</code></pre>
+            <pre><code>Validation Accuracy 0.7793522979007701</code></pre>
             <h3>Feature Importances</h3>
             <p>We're looking at the feature importances now (after removing the problematic leaky feature). This is
                 important because we need to see how the features rank before we change them around.</p>
-            <pre>
-# Features (order in which they were preprocessed)
+            <pre><code># Features (order in which they were preprocessed)
 features_order = numeric_features + categorical_features
 
 importances = pd.Series(clf.steps[1][1].feature_importances_, features_order)
@@ -169,17 +162,17 @@ plt.figure(figsize=(10,n/2))
 plt.title(f'Top {n} features')
 importances.sort_values()[-n:].plot.barh(color='grey')
 
-plt.show()
-            </pre>
-            <p>&lt;Figure size 720x360 with 0 Axes&gt;<br>
-                mod3_obj1_features.png</p>
+plt.show()</code></pre>
+            <pre><code>&lt;Figure size 720x360 with 0 Axes&gt;</code></pre>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_3/mod3_obj1_features.png"
+                    alt="mod3_obj1_features.png" loading="lazy"></p>
             <p>We can now try a few of the columns and see how permutation of their values affects the accuracy. We'll
-                start with the most important feature (Humidity3pm) and then do the same with one of the less important
-                features (WindSpeed3pm).</p>
+                start with the most important feature (<code>Humidity3pm</code>) and then do the same with one of the
+                less important features (<code>WindSpeed3pm</code>).</p>
             <p>We need to remember to preprocess the permuted data in the same way we did inside of the pipeline above.
-                For the numeric features, we used SimpleImputer() and StandardScaler.</p>
-            <pre>
-# Permute the values in the more important column
+                For the numeric features, we used <code>SimpleImputer()</code> and <code>StandardScaler()</code>.</p>
+
+            <pre><code># Permute the values in the more important column
 feature = 'Humidity3pm'
 X_test_permuted = X_test.copy()
 
@@ -191,15 +184,15 @@ X_test_permuted[feature] = np.random.permutation(X_test[feature])
 
 print('Feature permuted: ', feature)
 print('Validation Accuracy', clf.score(X_test, y_test))
-print('Validation Accuracy (permuted)', clf.score(X_test_permuted, y_test))
-            </pre>
-            <p>Feature permuted: Humidity3pm<br>
-                Validation Accuracy 0.7793522979007701<br>
-                Validation Accuracy (permuted) 0.699075213615106</p>
-            <p>The accuracy went down, as we would expect if this feature was important to the model. So Humidity3pm has
-                some effect on the model. Let's try another feature.</p>
-            <pre>
-# Permute the values in a less important column
+print('Validation Accuracy (permuted)', clf.score(X_test_permuted, y_test))</code></pre>
+
+            <pre><code>Feature permuted: Humidity3pm
+Validation Accuracy 0.7793522979007701
+Validation Accuracy (permuted) 0.699075213615106</code></pre>
+            <p>The accuracy went down, as we would expect if this feature was important to the model. So
+                <code>Humidity3pm</code> has some effect on the model. Let's try another feature.
+            </p>
+            <pre><code># Permute the values in a less important column
 feature = 'WindSpeed3pm'
 X_test_permuted = X_test.copy()
 
@@ -211,11 +204,10 @@ X_test_permuted[feature] = np.random.permutation(X_test[feature])
 
 print('Feature permuted: ', feature)
 print('Validation Accuracy', clf.score(X_test, y_test))
-print('Validation Accuracy (permuted)', clf.score(X_test_permuted, y_test))
-            </pre>
-            <p>Feature permuted: WindSpeed3pm<br>
-                Validation Accuracy 0.7793522979007701<br>
-                Validation Accuracy (permuted) 0.7672913956186926</p>
+print('Validation Accuracy (permuted)', clf.score(X_test_permuted, y_test))</code></pre>
+            <pre><code>Feature permuted: WindSpeed3pm
+Validation Accuracy 0.7793522979007701
+Validation Accuracy (permuted) 0.7672913956186926</code></pre>
             <p>The decrease in accuracy was not nearly as significant, so WindSpeed3pm is not as important to the model.
             </p>
             <h3>Challenge</h3>
@@ -229,32 +221,33 @@ print('Validation Accuracy (permuted)', clf.score(X_test_permuted, y_test))
         </section>
 
         <section class="content-box">
-            <h2>Objective 02 - use xgboost for gradient boosting</h2>
+            <h2>Objective 02 - Use xgboost for gradient boosting</h2>
             <h3>Overview</h3>
             <h4>Bagging</h4>
             <p>Earlier in the sprint, we used a random forest ensemble method, where the ensemble was a collection of
                 trees. An ensemble method makes use of bootstrap sampling where random samples are drawn from the
                 training set with replacement. A decision tree is trained on each sample and each tree gets a "vote" for
                 the class (when building a classifier). The class with the most votes wins. This process is called
-                bootstrap aggregating or bagging.</p>
+                bootstrap aggregating or <i>bagging</i>.</p>
             <h4>Boosting</h4>
             <p>Another important process in machine learning is boosting. For our example, we'll start by training our
                 data set with a weak learner which is often a decision tree with one node or split (called a stump).
-                Then, we’ll find the data that was misclassified and start the next round by assigning those data points
+                Then, we'll find the data that was misclassified and start the next round by assigning those data points
                 a larger weight. We will continue to train decision tree stumps and add larger weights to the "mistakes"
                 from each model. The samples that are difficult to classify will receive increasingly larger weights and
                 eventually be correctly classified. This process is called adaptive boosting and is the source of the
-                AdaBoost() name.</p>
+                <code>AdaBoost()</code> name.
+            </p>
             <h4>Gradient Boosting</h4>
             <p>Gradient boosting is another boosting technique that makes use of a gradient descent method when adding
                 trees to the model. When a tree is added, the hyperparameters are adjusted to minimize the loss function
-                following the negative gradient. The popular XGBoost algorithm makes use of this process.</p>
+                following the negative gradient. The popular <code>XGBoost</code> algorithm makes use of this process.
+            </p>
             <p>In the next section, we'll implement the two boosting methods described above.</p>
             <h3>Follow Along</h3>
-            <p>First, we'll use the AdaBoost classifier in scikit-learn and then compare that to the results from the
-                XGBoost scikit-learn API.</p>
-            <pre>
-# Load in libraries
+            <p>First, we'll use the <code>AdaBoost</code> classifier in scikit-learn and then compare that to the
+                results from the <code>XGBoost</code> scikit-learn API.</p>
+            <pre><code># Load in libraries
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 
@@ -272,32 +265,31 @@ from sklearn.ensemble import AdaBoostClassifier
 ada_classifier = AdaBoostClassifier(n_estimators=50, learning_rate=1.5, random_state=42)
 ada_classifier.fit(X_train,y_train)
 
-print('Validation Accuracy: Adaboost', ada_classifier.score(X_test, y_test))
-            </pre>
-            <p>Validation Accuracy: Adaboost 0.9666666666666667</p>
+print('Validation Accuracy: Adaboost', ada_classifier.score(X_test, y_test))</code></pre>
+            <pre><code>Validation Accuracy: Adaboost 0.9666666666666667</code></pre>
             <p>The classifier performed very well, but this data set is intended to be easy to classify. We set the
                 train-test split at 60/40 so the classifier was "challenged" a little more by using a smaller training
                 set.</p>
-            <p>Now we'll try to classify the same data with a different boosted model: xgboost. If you are running your
-                code locally, you'll need to have xgboost installed. If you are using Colab, then you are ready to
-                boost!</p>
-            <pre>
-# Load xgboost and fit the model
+            <p>Now we'll try to classify the same data with a different boosted model: <code>xgboost</code>. If you are
+                running your code locally, you'll need to have <code>xgboost</code> installed. If you are using Colab,
+                then you are ready to boost!</p>
+            <pre><code># Load xgboost and fit the model
 from xgboost import XGBClassifier
 
 xg_classifier = XGBClassifier(n_estimators=50, random_state=42, eval_metric='merror')
 
 xg_classifier.fit(X_train,y_train)
 
-print('Validation Accuracy: Adaboost', xg_classifier.score(X_test, y_test))
-            </pre>
-            <p>Validation Accuracy: Adaboost 0.9833333333333333</p>
+print('Validation Accuracy: Adaboost', xg_classifier.score(X_test, y_test))</code></pre>
+
+            <pre><code>Validation Accuracy: Adaboost 0.9833333333333333</code></pre>
             <p>We increased the accuracy a little bit here, but in order to make a decision on which type of classifier
-                is better, we would need more data. The xgboost method is a popular machine learning algorithm and is
-                behind many winning entries in Kaggle competitions, so it's not a bad choice to begin with.</p>
+                is better, we would need more data. The <code>xgboost</code> method is a popular machine learning
+                algorithm and is behind many winning entries in Kaggle competitions, so it's not a bad choice to begin
+                with.</p>
             <h3>Challenge</h3>
             <p>For both of the boosted tree models, look at the various hyperparameters and consider what you could
-                change. Some of the parameters to try are n_estimators and max_depth.</p>
+                change. Some of the parameters to try are <code>n_estimators</code> and <code>max_depth</code>.</p>
             <h3>Additional Resources</h3>
             <ul>
                 <li><a href="https://stats.stackexchange.com/questions/18842/bagging-and-boosting-in-machine-learning"
