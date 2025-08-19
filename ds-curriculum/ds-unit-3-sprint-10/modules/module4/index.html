@@ -51,9 +51,160 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - Understand and explain the advantages and disadvantages of traditional SQL databases</h2>
+            <h3>Overview</h3>
+            <p>When you only have a hammer, everything looks like a nail. When you only have SQL, must everything be
+                relational?</p>
+            <p>For traditional SQL, you do need to fit your data in a relational paradigm. This is actually not a bad
+                thing - most of the time, this is welcomed structure. But it is important to understand the strengths
+                and weaknesses of traditional databases, to make informed decisions between alternatives.</p>
+            <p>We've been using SQL the whole week - what are the tradeoffs of it as a tool?</p>
+            <h3>Follow Along</h3>
+            <p>The immediate and most obvious cost of a relational database is the necessity of robustly specifying a
+                schema, including relations between relevant tables. Another cost that becomes quickly evident with a
+                real-world application is - things change! And, while you can use ALTER TABLE to update your schema, it
+                can be pretty tricky to do so while preserving and not losing any existing data.</p>
+            <p>Another prominent cost, and the main motivation of “big data” proponents of NoSQL, is scalability.
+                Traditional relational databases need to fit an index for all keys (and sometimes other attributes) in
+                memory - this limits the ability to grow the data beyond a certain size (namely the size where all of
+                your keys fit in however much RAM you can afford).</p>
+            <p>This was highly important in the history of Google and several other major Internet companies, as they
+                needed to figure out how to scale while using large quantities of relatively cheap commodity hardware.
+                The solution is to distribute work across computers - but that requires structuring the work (and the
+                end result) in a fairly clever way. More on this in the next sprint with Apache Spark!</p>
+            <p>But it's also important to note that, in present day, RAM is actually pretty cheap, and your data is
+                probably not as big as you think it is. Unless you literally have hundreds of millions of users (and
+                maybe even then), you can with proper structure fit things in main memory and use a relational approach.
+            </p>
+            <p>So, what are the advantages of a relational approach? <strong>ACID</strong> - <strong>A</strong>tomicity,
+                <strong>C</strong>onsistency,
+                <strong>I</strong>solation, <strong>D</strong>urability - a set of guarantees provided by the use of
+                transactions to ensure that data is always in a valid state, even if e.g. a query inserting new data is
+                interrupted by a failure of any sort (including external to the system such as a power outage).
+            </p>
+            <ul>
+                <li><strong>Atomicity:</strong> a transaction functions as a “unit” - it either succeeds completely, or
+                    fails completely</li>
+                <li><strong>Consistency:</strong> transactions can only change a database from a valid state to another
+                    valid state</li>
+                <li><strong>Isolation:</strong> concurrent transactions are isolated from each other, so they have the
+                    same results as if they were run sequentially</li>
+                <li><strong>Durability:</strong> once a transaction has finished it will survive runtime system failure
+                    (it is recorded in non-volatile memory)</li>
+            </ul>
+            <p>That's a pretty nice set of guarantees! It should be clear why, for instance, financial data is often
+                suited for the ACID paradigm. But in general, ACID just means “things work reliably as you'd expect”,
+                and it's nice to have for any application.</p>
+            <p>If relational databases have ACID guarantees, what do non-relational approaches have? They usually give
+                up or weaken one of the four qualities - for instance, many big data systems are “eventually
+                consistent”. This means that there can be intermediary states where the data is actually not consistent,
+                but over time it reaches consistency. The typical acronym for adopting eventual consistency is
+                <strong>BASE</strong> - <strong>B</strong>asically <strong>A</strong>vailable, <strong>S</strong>oft
+                state, <strong>E</strong>ventually consistent.
+            </p>
+            <h3>Challenge</h3>
+            <p>Think of a situation (besides finance) where ACID guarantees are mission-critical, and another where it
+                may be okay to weaken them. Describe both to a fellow student, and explain your reasoning.</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://sqlbolt.com/" target="_blank" rel="noopener noreferrer">Overview of SQL, including
+                        numerous interactive exercises for
+                        practice.</a></li>
+                <li><a href="https://en.wikipedia.org/wiki/Eventual_consistency" target="_blank"
+                        rel="noopener noreferrer">Eventual consistency (Wikipedia)</a></li>
+                <li><a href="https://en.wikipedia.org/wiki/CAP_theorem" target="_blank" rel="noopener noreferrer">CAP
+                        theorem (Wikipedia)</a></li>
+                <li><a href="https://www.essentialsql.com/get-ready-to-learn-sql-database-normalization-explained-in-simple-english/"
+                        target="_blank" rel="noopener noreferrer">Database Normalization Explained in Simple English</a>
+                </li>
+            </ul>
         </section>
 
         <section class="content-box">
+            <h2>Objective 02 - Make informed decisions about alternative databases</h2>
+            <h3>Overview</h3>
+            <p>In tech, we have lots of tools - this leads to the problem of choosing which tools to use when.
+                Relational and non-relational - when should we use one over another, and can we get “the best of both
+                worlds?”</p>
+            <p>The first generation of “big data” solutions, as exemplified by Google's <a
+                    href="https://en.wikipedia.org/wiki/MapReduce" target="_blank"
+                    rel="noopener noreferrer">MapReduce</a>
+                paradigm, made significant tradeoffs in the name of scalability. Most notably,
+                such systems weakened the ACID guarantees, and only provided a subset of the full querying functionality
+                of SQL (queries such as sorting generally require comparison of all values in memory). They not only
+                allowed companies to scale with available and affordable technology, but also lead many companies to
+                develop solutions that were “bigger” and more complicated than they needed to be.</p>
+            <p>SQL is really just a standard for a querying language, albeit one tightly associated with the relational
+                approach. But since NoSQL became the banner of the initial non-relational approaches, NewSQL has been
+                coined as a term to characterize attempts at extreme scalability that still provide ACID guarantees.</p>
+            <p>It's also good to be aware of security issues - SQL injection is a common family of attacks where
+                user-provided data causes undesired changes in the database. But despite the name, any database system
+                is potentially vulnerable, and the solution is to always sanitize user input (building queries in your
+                application rather than trusting what they pass in).</p>
+            <h3>Follow Along</h3>
+            <p>A good way to understand the challenges of NoSQL is to envision the MapReduce paradigm. MapReduce
+                provides a framework for a programmer to specify a job that is then distributed and performed by a
+                potentially large number of worker nodes (horizontal scalability). At a high level, there are three
+                steps to computation in MapReduce:</p>
+            <ul>
+                <li><strong>Map:</strong> each worker gets a piece of the input data, and applies the given
+                    <code>map</code>
+                    function to process their data
+                </li>
+                <li><strong>Shuffle:</strong> workers redistribute the data based on the key of the output function
+                    (collecting common data in single worker nodes)</li>
+                <li><strong>Reduce:</strong> workers concurrently process their output data, resulting in final output
+                    that is combined by a master node</li>
+            </ul>
+            <p>MapReduce is no longer the most current approach for these problems, and for us, it is OK to only
+                understand it at a relatively high level. It was developed using principles from <a
+                    href="https://en.wikipedia.org/wiki/Functional_programming" target="_blank"
+                    rel="noopener noreferrer">functional
+                    programming</a>. Start by reading about these general principles if you want to explore and dig
+                deeper into the topic.</p>
+            <h3>Functional Programming</h3>
+            <p>Functional programming treats functions as first-class citizens - objects in their own right that can be
+                created and manipulated. This means you can also write higher-order functions (functions that take
+                functions), such as <code>map</code> (apply a function to all items in a collection, returning an equal
+                sized collection) and <code>reduce</code> (apply a function to combine items from a collection,
+                returning a single item).
+            </p>
+            <p>It is also more purely mathematical, reducing state (encouraging immutability) and making it easier to
+                reason about work being split up and combined. This is a deep topic, but the important point for us as
+                data scientists is that MapReduce gave horizontal scalability (tackle bigger problems with more
+                computers) as opposed to vertical (tackle bigger problems with a single bigger computer), and
+                economically horizontal scalability is the superior approach. Horizontal scalability also has
+                essentially no ceiling, whereas vertical scalability has a hard limit (though these days it is quite
+                high - you can get a single server with 1 terabyte of RAM).</p>
+            <p>Because MapReduce splits data essentially randomly (by output key) between workers, it is well-suited for
+                problems where computation order doesn't matter. For example, calculating the mean can be done by
+                summing values in any order, and then dividing by the number of values. MapReduce simply has each worker
+                sum their own arbitrary distinct subset (map), and then return those partial sums to be finally added
+                together in total (reduce). In mathematical terms - addition is commutative (order doesn't matter), so
+                things work out.</p>
+            <p>How do we do better? It's an open problem! But there are several NewSQL approaches, including
+                <a href="https://en.wikipedia.org/wiki/Shared-nothing_architecture" target="_blank"
+                    rel="noopener noreferrer">shared-nothing architecture</a> (nodes are fully independent) as well as
+                simply using heavily optimized SQL datastores (usually organizing data by column). An important caveat
+                to all of the above - it's great to keep up on the latest and greatest, but many companies are still
+                maintaining legacy codebases and existing solutions.
+            </p>
+            <p>So it is important and valuable to understand all approaches, and be able to work with any of them to
+                create effective solutions.</p>
+            <h3>Challenge</h3>
+            <p>Think about how you'd apply MapReduce to calculate <a
+                    href="https://en.wikipedia.org/wiki/Gradient_descent" target="_blank"
+                    rel="noopener noreferrer">gradient descent</a> (the algorithm underpinning many statistical
+                models). Try to sketch at a conceptual level/pseudocode, and then search for existing implementations
+                and resources. Spend at least 20 minutes thinking about it before you look things up!</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://xkcd.com/327/" target="_blank" rel="noopener noreferrer">SQL Injection (XKCD)</a>
+                </li>
+                <li><a href="https://aws.amazon.com/rds/aurora/" target="_blank" rel="noopener noreferrer">Amazon
+                        Aurora:
+                        AWS hosted "NewSQL" service</a></li>
+            </ul>
         </section>
 
         <section class="content-box">
