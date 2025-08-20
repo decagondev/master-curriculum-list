@@ -32,6 +32,7 @@
 
     <main>
         <h1>Module 3: Adding Data Science to a Web Application</h1>
+
         <section class="content-box">
             <h2>Module Overview</h2>
             <p>You have your application, you have your data - now it's time for science! Let's use what we've learned
@@ -47,6 +48,126 @@
                     accordingly</li>
                 <li>Display appropriate messages on the screen after user actions including error messages when invalid
                     actions are taken</li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 01 - Run and report simple online analysis of data from the user or an API</h2>
+
+            <div class="video-container">
+                <iframe src="https://fast.wistia.net/embed/iframe/1q4req7tlk?seo=false&"
+                    title="Adding Data Science to a Web Application" allowtransparency="true" frameborder="0"
+                    scrolling="no" class="wistia_embed" name="wistia_embed" width="640" height="360" allowfullscreen
+                    mozallowfullscreen webkitallowfullscreen oallowfullscreen msallowfullscreen></iframe>
+            </div>
+
+            <h3>Overview</h3>
+            <p>Online analysis refers to running whatever data science model/algorithm in real-time, in response to a
+                user request. This has the advantage of processing and possibly training directly on user data, but the
+                disadvantage of added compute cost (and thus possibly latency) at request time. It's still a useful
+                paradigm, especially for descriptive statistics and other simple/inexpensive techniques.</p>
+            <p>At long last, we have a web application with some data in it - let's do some Data Science!</p>
+            <p>“Online analysis” just refers to running the analytical code (e.g. dataframe wrangling, model fitting,
+                etc.) in the same application/methods as the web app itself. So this just means writing code like you're
+                using to writing in a notebook (importing and using pandas and sklearn), but in functions that get
+                called by the web application.</p>
+            <p>This makes it easy to reason about, and ensures that it's running with the latest data. But if your model
+                is computationally intensive, online analysis is not ideal, as you may block the response and page
+                loading as it waits for your model.</p>
+            <p>For our immediate purposes, we'll stick with a simple and efficient model (logistic regression), and
+                online analysis will yield useful and reasonably efficient results.</p>
+            <h3>Follow Along</h3>
+            <p>We're going to run the classic logistic regression example data - the iris dataset. But now, on the web!
+            </p>
+            <ul>
+                <li><code>pipenv install scikit-learn</code> (in your project directory) - you probably already have
+                    scikit-learn locally, but it's important for your project to have the dependency specified for later
+                    deployment.</li>
+                <li>Wherever your app and routes are specified, add the following route:</li>
+            </ul>
+            <pre><code>@app.route('/iris')
+def iris():    
+    from sklearn.datasets import load_iris
+    from sklearn.linear_model import LogisticRegression
+    X, y = load_iris(return_X_y=True)
+    clf = LogisticRegression(random_state=0, solver='lbfgs',
+                          multi_class='multinomial').fit(X, y)
+
+    return str(clf.predict(X[:2, :]))</code></pre>
+            <p>Start your server, and visit <code>http://127.0.0.1:5000/iris</code>. You should see <code>[0 0]</code>
+                as the response, reflecting the class predictions for the given Iris data based on logistic regression.
+            </p>
+            <h3>Challenge</h3>
+            <ul>
+                <li>Add a route that reports the overall goodness of fit of the logistic regression (e.g.
+                    <code>clf.score(X, y)</code>).
+                </li>
+                <li>Add a route that takes as a parameter the input data to be predicted, and returns class labels (or
+                    even full probabilities).</li>
+                <li>Refactor! You should probably centralize and move the actual scikit logic to another file, and have
+                    your routing file just import and use what it needs.</li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Run a more complicated offline model and serialize the results for online use</h2>
+
+
+            <div class="video-container">
+                <iframe src="https://fast.wistia.net/embed/iframe/p5lxoipujn"
+                    title="Adding Data Science to a Web Application" allowtransparency="true" frameborder="0"
+                    scrolling="no" class="wistia_embed" name="wistia_embed" width="640" height="360" allowfullscreen
+                    mozallowfullscreen webkitallowfullscreen oallowfullscreen msallowfullscreen></iframe>
+            </div>
+
+            <h3>Required Resources</h3>
+            <ul>
+                <li>
+                    <a href="https://docs.python.org/3/library/pickle.html" target="_blank"
+                        rel="noopener noreferrer">pickle — Python object serialization</a>
+                </li>
+            </ul>
+            <h3>Overview</h3>
+            <p>Offline analysis refers to running whatever data science model/algorithm ahead of time, before the
+                application is built/deployed. The trained model is then loaded into the application, or otherwise used
+                to inform the predictions or behavior at runtime (online, in response to user requests). More expensive
+                ML approaches essentially must be trained offline, with only inference (running the model for a
+                prediction) happening in real-time.</p>
+            <p>As you know, in Data Science we have lots of ~toys~ tools - different models, tests, feature engineering,
+                data processing, and so forth. Doing all of these “online” - live in realtime as the user makes a
+                request - is not always realistic.</p>
+            <p>Instead, the approach is to run your pipeline and train your model “offline” - which just means not as
+                part of the web application itself (in terms of routes and responses). Then, serialize the results -
+                save them in some portable format - and make them available to the online application for real-time use
+                (generally inference, making predictions rather than training).</p>
+            <h3>Follow Along</h3>
+            <p>There are many ways to save and reuse a model - the simplest (for a regression) would be to extract its
+                coefficients, and program them into the live application. One step up is to use <code>pickle</code>.</p>
+            <p><code>pickle</code> is a module in the Python standard library (so it's always available wherever Python
+                is), and it allows you to “dump” and “load” arbitrary (in-memory) Python objects to string or binary
+                representations. For our purposes we'll use string, as that is most convenient to then add to a database
+                or otherwise save and load in the web application.</p>
+            <p>To use <code>pickle</code>, you need only two functions - <code>dumps</code> (“dump to a string”) and
+                <code>loads</code> (“load from a string”):
+            </p>
+            <pre><code>>>> import pickle
+>>> d = {'An arbitrary': 'Python Object'}
+>>> d_pickled = pickle.dumps(d)
+>>> d_pickled
+b'\x80\x03}q\x00X\x0c\x00\x00\x00An arbitraryq\x01X\r\x00\x00\x00Python Objectq\x02s.'
+>>> d_unpickled = pickle.loads(d_pickled)
+>>> d_unpickled
+{'An arbitrary': 'Python Object'}
+</code></pre>
+            <h3>Challenge</h3>
+            <ul>
+                <li>The above example shows how to save and load an arbitrary Python object with <code>pickle</code>.
+                </li>
+                <li>Reproduce the example, but with your own Python object (and specifically one representing a
+                    statistical model of some sort).</li>
+                <li>Persist the string into a file or database, and write code to automatically load it in a fresh
+                    session.</li>
+                <li>See if you can integrate the above into your web application!</li>
             </ul>
         </section>
 

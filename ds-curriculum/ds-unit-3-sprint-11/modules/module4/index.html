@@ -17,11 +17,11 @@
                 <li class="dropdown">
                     <a href="#" class="active">Modules</a>
                     <div class="dropdown-content">
-                        <a href="../module1/index.html" class="active">Module 1: Web Application Development with
+                        <a href="../module1/index.html">Module 1: Web Application Development with
                             Flask</a>
                         <a href="../module2/index.html">Module 2: Consuming Data from an API</a>
                         <a href="../module3/index.html">Module 3: Adding Data Science to a Web Application</a>
-                        <a href="../module4/index.html">Module 4: Web Application Deployment</a>
+                        <a href="../module4/index.html" class="active">Module 4: Web Application Deployment</a>
                     </div>
                 </li>
                 <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
@@ -32,6 +32,7 @@
 
     <main>
         <h1>Module 4: Web Application Deployment</h1>
+
         <section class="content-box">
             <h2>Module Overview</h2>
             <p>You've put together a nice application - time to get it out there! A GitHub repo is great, but a deployed
@@ -48,6 +49,334 @@
             <ul>
                 <li>Deploy a basic (single-server) web application to common cloud services</li>
                 <li>Securely connect a deployed web application to a relational database back-end</li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 01 - Diving into MongoDB</h2>
+            <h3>What is MongoDB?</h3>
+            <p>
+                MongoDB is a document-oriented NoSQL database. It stores data in flexible, JSON-like documents, meaning
+                fields can vary from document to document and data structure can be changed over time. This provides the
+                ability to store, query, and process large amounts of data in myriad ways.
+            </p>
+            <h3>Setting up a MongoDB Account</h3>
+            <p>
+                First, you'll need to sign up for a free <a href="https://www.mongodb.com/" target="_blank"
+                    rel="noopener noreferrer">MongoDB account</a>.
+            </p>
+            <p>
+                Then you'll need a MongoDB project.
+            </p>
+            <ul>
+                <li>
+                    Create new project and give it a name.
+                </li>
+                <li>
+                    As the owner, you'll automatically be added as a user. Click <code>Create Project</code>.
+                </li>
+                <li>
+                    Click <code>Build a Database</code>
+                </li>
+                <li>
+                    Choose an <code>M0</code> free tier database. Choose a hosting provider - AWS, Google or Azure. For
+                    best
+                    performance, select a region close to you. Make sure it says <code>FREE</code> and click
+                    <code>Create</code>.
+                </li>
+                <li>
+                    Create a username and password for your database. Click <code>Create User</code>. Be sure to save
+                    this username
+                    &amp; password, we will need it later.
+                </li>
+                <li>
+                    Your current IP address will be automatically added. Add additional IPs as needed.
+                </li>
+                <li>
+                    Click <code>Finish and Close</code>, then click <code>Go To Database</code>.
+                </li>
+                <li>
+                    Click <code>Connect</code>, then click <code>Drivers</code>.
+                </li>
+                <li>
+                    Copy your connection string and save it to a file called <code>.env</code> at the root of the
+                    project.
+                    <ul>
+                        <li><code>MONGODB_URL=mongodb+srv://Admin:&lt;password&gt;@cluster0.gyyzea9.mongodb.net/?retryWrites=true&amp;w=majority</code>
+                        </li>
+                        <li>You'll need to replace <code>&lt;password&gt;</code> with the password we created in a
+                            previous
+                            step.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p>Once MongoDB is set up, you can interact with it using PyMongo.</p>
+
+            <h3>What is PyMongo?</h3>
+            <p>
+                PyMongo is a Python driver for MongoDB. It provides tools to work with MongoDB, allowing you to interact
+                with MongoDB databases within your Python programs.
+            </p>
+            <p>
+                First, you need to install PyMongo with the command:
+            </p>
+            <pre><code>pip install python-dotenv fastapi pymongo</code></pre>
+            <p>
+                Then, you can connect to your MongoDB instance and perform various operations:
+            </p>
+            <h4>PyMongo Basic</h4>
+            <pre><code>import os
+from pymongo import MongoClient
+from dotenv import load_dotenv
+
+# load the environment variables from the `.env` file
+load_dotenv()
+
+# create a MongoClient to interact with your MongoDB instance
+db_url = os.getenv("MONGODB_URL")
+client = MongoClient(db_url)
+
+# get a reference to your database
+db = client['mydatabase']
+
+# get a reference to your collection
+collection = db['mycollection']
+
+# insert a document into the collection
+collection.insert_one({
+  "name": "John Smith", 
+  "age": 30, 
+  "job": "developer",
+  "favorite_language": "Python",
+})
+
+# find a document in the collection
+document = collection.find_one({"favorite_language": "Python"})
+
+print(document)
+</code></pre>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://www.mongodb.com/" target="_blank" rel="noopener noreferrer">MongoDB</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Securely connect a deployed web application to a relational database back-end</h2>
+            <h3>Important Note:</h3>
+            <p>
+                Starting November 28, 2022, all free Heroku programs will no longer be available. You may choose to
+                complete this module with the Heroku paid versions, but it is not required to complete this Sprint.
+            </p>
+            <h3>Overview</h3>
+            <p>
+                As we learned when we discussed full-stack web applications, the back-end handles requests but it is
+                generally not the right place to persist data in the longterm. For that, we need a database, and for it
+                to work in production we need to connect securely to it. This means using environment variables for
+                secrets (passwords), not checking them into git or otherwise exposing them.
+            </p>
+            <p>
+                GitHub is great for your code - but not so great for your API keys. How do you avoid committing secrets
+                that grant account access, when <code>git</code> itself is the tool for both backing up, sharing, and
+                now deploying your code?
+            </p>
+            <p>
+                For local development, we set up <code>python-dotenv</code> - for the cloud, we'll use <a
+                    href="https://devcenter.heroku.com/articles/config-vars" target="_blank"
+                    rel="noopener noreferrer">Heroku config vars</a>.
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                After you deploy your application for the first time, you need to set all your config vars (Heroku's
+                flavor of environment variables). You can retrieve all or one of them from the CLI as follows:
+            </p>
+            <pre><code>$ heroku config
+USERNAME:jane
+ENVIRONMENT:production
+
+$ heroku config:get USERNAME
+jane
+</code></pre>
+            <p>
+                You can set a username (creating or overriding it) with
+                <code>heroku config:set USERNAME=janesmith</code>, and <code>heroku config:unset USERNAME</code> will
+                simply remove it entirely.
+            </p>
+            <h3>Challenge</h3>
+            <ul>
+                <li>Use the command line to set all the config vars you need for your app to work (largely Basilica and
+                    Twitter API access).</li>
+                <li>Explore the Heroku web site, and find the part of the dashboard corresponding to config vars. Verify
+                    that your config vars are there as you set them from the CLI.</li>
+            </ul>
+            <p>
+                Note - you don't need to set the <code>DATABASE_URL</code>! Why? Because that gets set automatically
+                when it is created (see the last line):
+            </p>
+            <pre><code>$ heroku addons:create heroku-postgresql:hobby-dev
+Creating heroku-postgresql:hobby-dev on ⬢ sushi... free
+Database has been created and is available
+ ! This database is empty. If upgrading, you can transfer
+ ! data from another database with pg:copy
+Created postgresql-concave-52656 as DATABASE_URL
+</code></pre>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://devcenter.heroku.com/articles/heroku-postgresql" target="_blank"
+                        rel="noopener noreferrer">Heroku Postgres</a></li>
+                <li><a href="https://devcenter.heroku.com/articles/config-vars" target="_blank"
+                        rel="noopener noreferrer">Heroku config vars</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Resource - Git for Build Sprint</h2>
+            <h3>Important Note:</h3>
+            <p>
+                Starting November 28, 2022, all free Heroku programs will no longer be available. You may choose to
+                complete this module with the Heroku paid versions, but it is not required to complete this Sprint.
+            </p>
+            <h3>Git MVP</h3>
+            <p>Git MVP includes 4 main requirements:</p>
+            <ol>
+                <li>
+                    <strong>Use main as your primary branch</strong><br>
+                    You must use main as your primary branch, which is the default when creating a new
+                    repository.<br><br>
+                    <strong>Why?</strong><br>
+                    Branching from the branches other than the main branch can create opportunities for merge conflicts.
+                </li>
+                <li>
+                    <strong>Feature Branch Naming</strong><br>
+                    Feature branches must be named: <code>feature/&lt;descriptive name&gt;</code><br><br>
+                    For example, if you're working on a feature that allows users to change the email address in their
+                    profile, the branch should be named <code>feature/change-email</code><br><br>
+                    More info on branches and how to create a branch can be found here<span>Links to an external
+                        site.</span>.<br><br>
+                    <strong>Why?</strong><br>
+                    Without a good naming convention, it is very easy to lose track of the purpose of a branch.
+                </li>
+                <li>
+                    <strong>Delete Merged Branches</strong><br>
+                    After a branch has been merged to the main branch, it must be immediately deleted.<br><br>
+                    <strong>Why?</strong><br>
+                    Short-lived branches are a best-practice for minimizing merge conflicts. Leaving many branches
+                    active in a repository makes it difficult for team members to navigate the on-going work. Once a
+                    branch has been reviewed, approved, and merged into the main branch, it should be immediately
+                    deleted.<br>
+                    A healthy Git repository has a minimum of active branches.<br>
+                    This is easy to comply with using GitHub<span>Links to an external site.</span>.
+                </li>
+                <li>
+                    <strong>Build Sprint Git Workflow</strong><br>
+                    Following this workflow make it easier to collaborate with your teammates. It will also help prepare
+                    you for Labs, since it is very similar to the Git workflow you will use in Labs!<br><br>
+                    The idea is that each Trello card should be on its own pull request as a feature!<br><br>
+                    The Build Sprint Git Workflow is designed to prepare you for your Labs experience. You can learn
+                    more about Git &amp; GitHub in Labs, check out the Engineering Standards<span>Links to an external
+                        site.</span>.
+                </li>
+            </ol>
+            <h3>Getting Started</h3>
+            <p>You're ready to work on a new Trello card - let's get started!</p>
+            <ul>
+                <li>WITHOUT FORKING, clone your team's repository.</li>
+                <li>After that always make sure you start with a recent copy of the repo.</li>
+            </ul>
+            <pre><code>git checkout main
+git pull origin main
+</code></pre>
+            <p>
+                To get started on your first task let's make a branch. Making sure you are on the main branch, start a
+                new branch with a name that matches or correlates to the task you are about to begin.<br>
+                The trick here is to think beyond yourself when naming the branch, stay aligned with your Trello board
+                so you and others can easily make sense of it.<br>
+                <code>git checkout -b [<em>feature/&lt;descriptive name&gt;</em>]</code>
+            </p>
+            <h3>Sharing Is Good</h3>
+            <p>
+                Now you have a branch to make all your awesome commits to!
+            </p>
+            <p>
+                Copying the description from the Trello card, which should summarize the actual work in the PR, create a
+                Draft Pull Request using the mainbranch as the base after you have made your first commit.<br>
+                Github created pull request drafts so that notifications will be turned off by default until you decide
+                you are ready for review.
+            </p>
+            <p>
+                This animated gif is of the GitHub page to create pull requests. The dropdown to create a pull request
+                is opened, and the option "Create Draft Pull Request" is selected.<span>Links to an external
+                    site.</span>
+            </p>
+            <p>
+                We have lift off! 🚀<br>
+                Now we're ready to make some awesome software. Committing and pushing our code regularly are habits
+                worth having. Before we know it, we'll be ready to take the PR out of draft mode.
+            </p>
+            <p>
+                <strong>Tip:</strong> do your best to be a great team member by making commit messages as clear as
+                possible. They don't have to be elaborate- keep it to the point.
+            </p>
+            <h3>One small step 👨🏾‍🚀</h3>
+            <p>
+                When you feel you've completed the task you've been working on, it's time to:
+            </p>
+            <ul>
+                <li>Update the description</li>
+                <li>Take the PR out of Draft Mode</li>
+                <li>Make it "ready for review".</li>
+                <li>Ask someone in your team's channel to review your work.</li>
+            </ul>
+            <p>
+                The image shows a pull request page on GitHub. The "Ready to review" button is highlighted.
+            </p>
+            <p>
+                <span>Links to an external site.</span>
+            </p>
+            <p>
+                The team will then be notified of the PR and they can begin a review before merging it to the main
+                branch.
+            </p>
+            <p>
+                <strong>Tip:</strong> Follow the team policy regarding the number of reviewers required before merging.
+                It's great practice to take the time and make comments in the code, even if just positive notes on good
+                work your teammate did.
+            </p>
+            <h3>Merging to main</h3>
+            <p>
+                If there are no conflicts to be resolved in the code choose Rebase and merge or Squash and merge from
+                the Merge button.
+            </p>
+            <p>
+                A screenshot of GitHub showing a pull request and the merge dropdown menu. The option "Rebase and merge"
+                is selected in the dropdown menu.<span>Links to an external site.</span>
+            </p>
+            <p>
+                If you find yourself with a merge conflict, there are a number of ways to solve it. The Github tools are
+                very handy. You can also do it locally. When going down the local path, there is a good set of
+                instructions here<span>Links to an external site.</span>.
+            </p>
+            <p>
+                Your code changes are now on the main branch, ready to wow! users with your updates.
+            </p>
+            <p>
+                Deploy your code (if not otherwise handled by Github Events) and be ready to support and address any
+                issues that arise.
+            </p>
+            <p>
+                A comic about git. Cueball is showing git on his computer to Ponytail and Hairy. Cueball says, "This is
+                git. It tracks collaborative work on projects through a beautiful distributed graph theory tree model."
+                Ponytail responds, "Cool. How do we use it?" Cueball replies, "No idea. Just memorize these shell
+                commands and type them to sync up. If you get errors, save your work elsewhere, delete the project, and
+                download a fresh copy."<span>Links to an external site.</span>
+            </p>
+            <h3>Humor Break!</h3>
+            <h3>Revision History</h3>
+            <ul>
+                <li>July 30, 2020: Created by @Christine<span>Links to an external site.</span> Carpenter</li>
+                <li>August 8, 2020: Edited by: @Christine<span>Links to an external site.</span> Carpenter (update
+                    branch to main)</li>
             </ul>
         </section>
 
