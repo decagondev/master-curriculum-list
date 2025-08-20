@@ -18,7 +18,8 @@
                     <li class="dropdown">
                         <a href="#" class="active">Modules</a>
                         <div class="dropdown-content">
-                            <a href="../module1/index.html">Module 1: Natural Language Processing - Introduction</a>
+                            <a href="../module1/index.html" class="active">Module 1: Natural Language Processing -
+                                Introduction</a>
                             <a href="../module2/index.html">Module 2: Vector Representations</a>
                             <a href="../module3/index.html">Module 3: Document Classification</a>
                             <a href="../module4/index.html">Module 4: Topic Modeling</a>
@@ -32,6 +33,7 @@
 
         <main>
             <h1>Module 1: Natural Language Processing - Introduction</h1>
+
             <section id="module-overview">
                 <div class="content-box">
                     <h2>Module Overview</h2>
@@ -52,6 +54,790 @@
                         <li>Stem and Lemmatize Text</li>
                     </ul>
                 </div>
+            </section>
+
+            <section class="content-box">
+                <h2>Objective 01 - Tokenize Text</h2>
+                <h3>Overview</h3>
+                <p>What is a token?<br>
+                    As we read in the introduction, natural languages are semi-structured and follow the rules
+                    concerning using the different parts of the language. Therefore, almost all natural language
+                    speakers have a basic understanding of the parts of language and how to use them. But, to analyze
+                    text using computer programs, we need to format the text to make sense to the program.</p>
+                <p>In Natural Language Processing, one of the first steps when analyzing text is to “tokenize” or
+                    separate the text into tokens. A token is a unit of text that has some meaning. For example, we can
+                    break a long text string down into sentences (sentence tokens) or words (word tokens). The process
+                    of splitting text into smaller pieces is called <i>tokenization</i>.</p>
+                <p>A typical text document contains alphanumeric characters, punctuation, and spaces and words with both
+                    upper- and lower-case letters. Attributes of “good” tokens include words in the same case
+                    (lower-case is preferred) with only alphanumeric characters.</p>
+                <p>It's also essential to store tokens in a form that can iterate over, including a string, list, or
+                    pandas series.</p>
+                <h3>Tokenization by Character</h3>
+                <p>We'll start with a straightforward example of a list of characters in a string. What would be the
+                    natural way to break this string down into tokens?</p>
+                <pre><code>string = '29texqevzr3gwvmrpjvde637h4gwd6'</code></pre>
+                <p>In the above example, the useful unit for analysis would be a single character, as there are no words
+                    or sentences in the string of characters. We can use the Python list() constructor to tokenize this
+                    string.</p>
+                <pre><code># Use the list() constructor to tokenize
+tokens = list(string)
+
+# Look at the first 10 tokens
+print(tokens[:10])</code></pre>
+                <pre><code>['2', '9', 't', 'e', 'x', 'q', 'e', 'v', 'z', 'r']</code></pre>
+
+                <p>Our tokens are already “good”: they are all in the same case, they don't contain any non-alphanumeric
+                    characters, and are in an iterable data structure.</p>
+                <h3>Tokenization by word</h3>
+                <p>We'll look at a sample of words and enumerate them. A string object in Python is already iterable.
+                    However, the item you iterate over is a character, not a token. But, if you think about a sentence
+                    composed of words, there are spaces between each word. Fortunately, Python comes with a method to
+                    “split” on whitespace.</p>
+
+                <pre><code># Random sentence
+mysentence = 'Last Friday I saw a spotted striped blue worm shake hands with a legless lizard.'
+
+# Split on a space
+mysentence.split(" ")</code></pre>
+                <pre><code>['Last',
+ 'Friday',
+ 'I',
+ 'saw',
+ 'a',
+ 'spotted',
+ 'striped',
+ 'blue',
+ 'worm',
+ 'shake',
+ 'hands',
+ 'with',
+ 'a',
+ 'legless',
+ 'lizard.']</code></pre>
+
+                <h3>Token Analysis</h3>
+                <p>Now that we have some tokens, we're ready to move on to the analysis! For example, we might want to
+                    learn different things from text, such as the length of the document, the frequency occurrence of
+                    certain words, or the sentiment value for each sentence. Since we now have tokens in the appropriate
+                    form, we can start to analyze these things.</p>
+                <h3>Counting Token Frequency</h3>
+                <p>In this example, we'll look at how often each character in a sequence or sentence occurs. Then, we
+                    can use seaborn to produce a simple count plot quickly.</p>
+                <pre><code>import seaborn as sns
+
+ax = sns.histplot(tokens)
+ax.set_title('Count plot of random_seq characters')
+</code></pre>
+                <h3><img src="../../assets/plot_of_random.png" alt="plot_of_random_seq_characters"
+                        style="max-width: 100%; height: auto; display: block;"></h3>
+                <h3>Case Normalization</h3>
+                <p>A common data cleaning task with tokens is to standardize or normalize the case (convert all words to
+                    lowercase). Normalizing the case reduces the chance of duplicate records for words with practically
+                    the same semantic meaning. You can use either the .lower() or .upper() string methods to normalize
+                    the case.</p>
+                <p>Consider the following example of items typically purchased at a grocery store (we're loading a local
+                    file here):</p>
+                <pre><code>import pandas as pd
+grocery = pd.read_csv('grocery_list.csv')
+items_list = grocery['items'].tolist()
+print(items_list)</code></pre>
+                <pre><code>['apple',
+ 'Apple',
+ 'banana',
+ 'Banana',
+ 'BANANA',
+ 'APPLE',
+ 'tomato sauce',
+ 'Tomato SAUCE',
+ 'TOMATO sauce',
+ 'toothpicks',
+ 'Toothpicks',
+ 'TOOTHPICKS',
+ 'carrots',
+ 'Carrots',
+ 'CARROTS',
+ 'red grapes',
+ 'Red grapes',
+ 'RED grapes',
+ 'RED GRAPES',
+ 'paper towel',
+ 'Paper Towel',
+ 'PAPER TOWEL']
+</code></pre>
+                <p>We'll look at the value counts for the items in the list.</p>
+                <pre><code># Count the frequency of each item in the list
+grocery['items'].value_counts()</code></pre>
+                <pre><code>RED GRAPES      1
+tomato sauce    1
+TOOTHPICKS      1
+Apple           1
+Banana          1
+Carrots         1
+red grapes      1
+paper towel     1
+toothpicks      1
+apple           1
+Red grapes      1
+Toothpicks      1
+banana          1
+TOMATO sauce    1
+Paper Towel     1
+PAPER TOWEL     1
+BANANA          1
+CARROTS         1
+carrots         1
+Tomato SAUCE    1
+RED grapes      1
+APPLE           1
+Name: items, dtype: int64
+</code></pre>
+                <p>We see many repeat items here because different stores have different ways of listing the label for
+                    their items. In this case, we would like to normalize the case for each of the items. Python has
+                    several helpful string methods to help with this, namely <code>.lower()</code>. We'll use the pandas
+                    <code>.apply()</code>
+                    method on the items column.
+                </p>
+                <pre><code># Create lower case items
+grocery['items'] = grocery['items'].apply(lambda x: x.lower())
+
+# Re-do the value counts
+grocery['items'].value_counts()</code></pre>
+                <pre><code>red grapes      4
+banana          3
+tomato sauce    3
+apple           3
+carrots         3
+toothpicks      3
+paper towel     3
+Name: items, dtype: int64
+</code></pre>
+                <p>That's better; we now have more useful information about the items on the list after just putting all
+                    items in lower case.</p>
+                <h3>Alphanumeric Characters</h3>
+                <p>When analyzing text, we only want letters and numbers. Everything else is probably noise:
+                    punctuation, unneeded whitespace, and other notation. So selecting only alphanumeric characters is a
+                    little more complicated than our previous example for case normalization.</p>
+                <p>To do this, we'll need to import the Python base package re (regular expressions). The functions in
+                    the <code>re</code> module need a pattern to compare against. The regex expression pattern you need
+                    for this is
+                    <code>[^a-zA-Z 0-9]</code>, which keeps lower case letters, upper case letters, numbers, and single
+                    spaces. We'll
+                    filter out the non-alphanumeric characters with the <code>re.sub()</code> function.
+                </p>
+                <pre><code># Random string of characters
+string = 'D]ehjZe_*-e!?fdfW)_/zQ2#8*LKH#'
+
+# Import the regular expressions package
+import re
+
+# Filter and replace with nothing
+re.sub('[^a-zA-Z 0-9]', '', string)
+</code></pre>
+                <pre><code>'DehjZeefdfWzQ28LKH'
+</code></pre>
+                <h3>Follow Along</h3>
+                <h4>Processing Raw Text with spaCy</h4>
+                <p>So far, we have used basic Python and the pandas library to process and tokenize our text data. There
+                    are many Natural Language Processing Libraries available to process text, tokenization, and many
+                    other tasks. The library that we will be using for the majority of our NLP work is <a
+                        href="https://spacy.io/" target="_blank" rel="noopener noreferrer">spaCy</a>.</p>
+                <p>SpaCy's data model for documents is unique among NLP libraries. Instead of storing the components of
+                    the document repeatedly in various data structures, spaCy indexes components, and stores the lookup
+                    information. In other words, spaCy is fast when it comes to working with large-scale data sets. The
+                    quickness is why spaCy is more production-grade than a library like Natural Languages Tool Kit
+                    (NLTK), another popular NLP library.</p>
+                <p>Let us now use the spaCy library to process and tokenize a sample text.</p>
+                <pre><code># Download spacy module 
+# If working on Colab, restart runtime after this step
+!python -m spacy download en_core_web_lg 
+
+import spacy
+from spacy.tokenizer import Tokenizer 
+
+# Load the pre-trained statistical model for English 
+import en_core_web_lg 
+nlp = en_core_web_lg.load() 
+
+# Tokenizer 
+tokenizer = Tokenizer(nlp.vocab) 
+# Sample text 
+sample = "They watched the 42 dancing piglets with panda bear tummies in the swimming pool." 
+
+# Tokenize and print out list of tokens 
+tokens = [token.text for token in tokenizer(sample)]
+print(tokens)</code></pre>
+                <pre><code>['They',
+ 'watched',
+ 'the',
+ '42',
+ 'dancing',
+ 'piglets',
+ 'with',
+ 'panda',
+ 'bear',
+ 'tummies',
+ 'in',
+ 'the',
+ 'swimming',
+ 'pool.']
+</code></pre>
+                <p>The tokenization produced by spaCy looks pretty similar to our first example, but punctuation has
+                    been included.</p>
+                <h3>Challenge</h3>
+                <p>To prepare for the lecture, make sure you have spaCy installed and the <code>en_core_web_lg</code>
+                    statistical
+                    model. Then, using the above example, practice tokenizing some sample text with the spaCy tokenizer.
+                </p>
+                <p>You can also challenge yourself to create a function that combines some of the above individual
+                    steps. For example, create a function that strips out the non-alphanumeric characters and
+                    lower-cases the input text.</p>
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://spacy.io/" target="_blank" rel="noopener noreferrer">spaCy</a></li>
+                    <li><a href="https://nlp.stanford.edu/IR-book/" target="_blank"
+                            rel="noopener noreferrer">Introduction to Information Retrieval</a></li>
+                </ul>
+            </section>
+
+            <section class="content-box">
+                <h2>Objective 02 - Remove Stop Words From a List of Tokens</h2>
+                <h3>Required Resources</h3>
+                <ul>
+                    <li><a href="https://spacy.io/" target="_blank" rel="noopener noreferrer">spaCy library</a></li>
+                </ul>
+                <h3>Overview</h3>
+                <p>What are stop words?<br>
+                    In the last objective, you probably began to notice that certain words occur a lot more frequently
+                    than others in some of the visualizations. Unfortunately, these words, often called as stop words,
+                    don't convey much meaning in our documents, so we often want to do something about them, either
+                    removing them entirely or excluding them somehow.</p>
+                <p>English stop words are classified as the following parts of speech: conjunctions, articles, adverbs,
+                    and pronouns. Here are some common examples of these words:</p>
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>part of speech</th>
+                                <th>examples</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>articles</td>
+                                <td>a, an, the</td>
+                            </tr>
+                            <tr>
+                                <td>adverbs</td>
+                                <td>very, really, almost</td>
+                            </tr>
+                            <tr>
+                                <td>pronouns</td>
+                                <td>she, her, they, them</td>
+                            </tr>
+                            <tr>
+                                <td>conjunctions</td>
+                                <td>and, or, but</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <h3>Follow Along</h3>
+                <h4>Using spaCy to remove stop words</h4>
+                <p>Natural language processing libraries come with lists of pre-defined stop words, so there's no need
+                    to do this manually. Instead, let's take a look at the common stop words that came with our spaCy
+                    model.</p>
+                <pre><code>import spacy
+from spacy.tokenizer import Tokenizer
+
+# Load the pre-trained statistical model for English
+import en_core_web_lg
+nlp = en_core_web_lg.load()
+
+# spaCy's default stop words
+stop_list = list(nlp.Defaults.stop_words)
+print("The number of stop words: ", len(stop_list))
+
+print("The first 10 stop words are: ", stop_list[:10])
+</code></pre>
+                <pre><code>The number of stop words: 326
+The first 10 stop words are: ['what', 'everything', 'few', "'d", 'beside', 'beyond', 'nobody',
+'even', 'latter', 'where']
+</code></pre>
+                <p>There are over three hundred stop words in the default list from spaCy. The next part of the process
+                    is removing them. We need some text to practice on for this example. The Gutenberg Library is an
+                    excellent resource for a wide variety of texts for practicing NLP tasks. For this example, we copied
+                    a few paragraphs of “Alice in Wonderland” by Lewis Carroll and saved the plain text file locally.
+                </p>
+                <p>After opening the file and reading the raw text into a string, we can use spaCy to process and
+                    tokenize the text. Then we'll take out the stop words.</p>
+                <ul>
+                    <li><a href="https://github.com/bloominstituteoftechnology/DS-Unit-4-Sprint-1-NLP/blob/main/module1-text-data/data/wonderland.txt"
+                            target="_blank" rel="noopener noreferrer">wonderland.txt</a></li>
+                </ul>
+                <pre><code># Open and save the raw files
+with open('wonderland.txt', encoding='utf-8', errors='ignore') as f:
+    wonder_raw = f.read()
+
+# Parse the raw text
+doc = nlp(wonder_raw)
+print('The type of output is: ', type(doc))
+print(doc[:100])
+</code></pre>
+                <pre><code>The type of output is: &lt;class 'spacy.tokens.doc.Doc'&gt;
+Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, “and what is the use of a book,” thought Alice “without pictures or conversations?” So she was considering in her own mind (as well as she could, for the hot day made her feel very sleepy and stupid), whether the pleasure
+</code></pre>
+                <pre><code># Remove the stop words and the punctuation
+
+# Initialize a list to hold the tokens
+tokens_nostop = []
+
+# Loop over each token in the document (doc)
+for token in doc:
+    if not token.is_stop and not token.is_punct:
+        tokens_nostop.append(token.text.lower())
+
+# Print the first 50 tokens      
+print(tokens_nostop[:50])
+</code></pre>
+                <pre><code>['\ufeff', '\n', 'alice', 'beginning', 'tired', 'sitting', 'sister', 'bank', 'having', 'twice',
+'peeped', 'book', 'sister', 'reading', 'pictures', 'conversations', 'use', 'book', 'thought',
+'alice', 'pictures', 'conversations', 'considering', 'mind', 'hot', 'day', 'feel', 'sleepy',
+'stupid', 'pleasure', 'making', 'daisy', 'chain', 'worth', 'trouble', 'getting', 'picking',
+'daisies', 'suddenly', 'white', 'rabbit', 'pink', 'eyes', 'ran', 'close', 'remarkable', 'alice',
+'think', 'way', 'hear']</code></pre>
+                <p>The tokens now don't include either punctuation or stop words. To examine the distribution of the
+                    tokens a little further, we can look at the word counts. First, using a Counter method, we'll count
+                    the number of occurrences in the list of tokens and store that information in a dictionary. Then, we
+                    can convert the dictionary to a dataframe and use the familiar pandas methods to sort and plot the
+                    word frequency.</p>
+                <pre><code>from collections import Counter
+import pandas as pd
+
+# Sum up the word counts and store in a dict
+tokens_dict = Counter(tokens_nostop)
+
+# Convert to a DataFrame
+tokens_wc = pd.DataFrame(list(tokens_dict.items()), columns = ['word','count'])
+
+# Rank the words by how frequently they occur
+tokens_wc['rank'] = tokens_wc['count'].rank(method='first', ascending=False)
+
+# Count all of the words in the document and calculate their percentage
+total = tokens_wc['count'].sum()
+tokens_wc['pct_total'] = tokens_wc['count'].apply(lambda x: (x / total)*100)
+
+# Take a look at the DataFrame with new results
+tokens_wc.head(10)
+</code></pre>
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>word</th>
+                                <th>count</th>
+                                <th>rank</th>
+                                <th>pct_total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0</td>
+                                <td>1</td>
+                                <td>40.0</td>
+                                <td>0.456621</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>\n</td>
+                                <td>1</td>
+                                <td>41.0</td>
+                                <td>0.456621</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>alice</td>
+                                <td>9</td>
+                                <td>1.0</td>
+                                <td>4.109589</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>beginning</td>
+                                <td>1</td>
+                                <td>42.0</td>
+                                <td>0.456621</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>tired</td>
+                                <td>1</td>
+                                <td>43.0</td>
+                                <td>0.456621</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>sitting</td>
+                                <td>1</td>
+                                <td>44.0</td>
+                                <td>0.456621</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>sister</td>
+                                <td>2</td>
+                                <td>12.0</td>
+                                <td>0.913242</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>bank</td>
+                                <td>1</td>
+                                <td>45.0</td>
+                                <td>0.456621</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>having</td>
+                                <td>1</td>
+                                <td>46.0</td>
+                                <td>0.456621</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>twice</td>
+                                <td>1</td>
+                                <td>47.0</td>
+                                <td>0.456621</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>It's essential to look at what percentage of the total each word makes up. We can do this with a
+                    simple line plot, where the 'rank' of the word is plotted against the 'pct_total' from our
+                    DataFrame. Since the top-ranked words make up a significant percentage than the rest of the words,
+                    let's look at just the top 25.</p>
+                <pre><code>import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create a new DataFrame of the top 25 ranked words
+tokens_wc_top25 = tokens_wc[tokens_wc['rank'] <= 25]
+
+# Line plot of rank vs. percent total
+sns.lineplot(x='rank', y='pct_total', data=tokens_wc_top25)
+
+plt.show()
+</code></pre>
+                <p><img src="../../assets/pct_total.png" alt="mod1_obj2_square1.png" loading="lazy"></p>
+                <p>The five most common words make up a large percentage of the document; in this case, we could do a
+                    quick “eyeball” estimation and say that about 15% of the document is composed of five words.
+                    However, since we're data scientists, let's look at another way to visualize the word counts.</p>
+                <p>The <code>squarify</code> module returns a treemap of the input values. The size of the square (or
+                    rectangle) is
+                    mapped to its value. In this case, the larger the percentage, the larger the rectangle on the plot.
+                </p>
+                <pre><code>import squarify # To install: pip install squarify
+
+squarify.plot(sizes=tokens_wc_top25['pct_total'], label=tokens_wc_top25['word'], alpha=0.8)
+plt.axis('off')
+
+plt.show()
+</code></pre>
+                <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/sprint_1/mod1_obj2_square1.png"
+                        alt="mod1&lt;em&gt;obj2&lt;/em&gt;square1.png" loading="lazy"></p>
+                <p>There are still a few words in this plot that might not add a lot to our analysis. In this case, we
+                    might want to remove 'Alice and 'rabbit'; we already know our book involves these characters.</p>
+                <p>In spaCy, we can customize our stop words list by adding additional words.</p>
+                <pre><code># Add additional stop words to the default list
+STOP_WORDS = nlp.Defaults.stop_words.union(['alice', 'rabbit'])
+</code></pre>
+                <pre><code># Initialize a list to hold the tokens
+tokens_nostop_add = []
+
+# Loop over each token in the document (doc)
+for token in doc:
+    if token.text.lower() not in STOP_WORDS and not token.is_punct:
+        tokens_nostop_add.append(token.text.lower())
+
+# Sum up the word counts and store in a dict & DataFrame
+tokens_dict_add = Counter(tokens_nostop_add)
+tokens_wc_add = pd.DataFrame(list(tokens_dict_add.items()), columns = ['word','count'])
+
+# Rank the words & create a percentage column
+tokens_wc_add['rank'] = tokens_wc_add['count'].rank(method='first', ascending=False)
+total = tokens_wc_add['count'].sum()
+tokens_wc_add['pct_total'] = tokens_wc_add['count'].apply(lambda x: (x / total)*100)
+
+# Create a new DataFrame of the NEW top 25 ranked words
+tokens_wc_add_top25 = tokens_wc_add[tokens_wc_add['rank'] <= 25]
+</code></pre>
+                <pre><code>squarify.plot(sizes=tokens_wc_add_top25['pct_total'], label=tokens_wc_add_top25['word'], alpha=0.8)
+plt.axis('off')
+
+plt.show()
+</code></pre>
+                <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/sprint_1/mod1_obj2_square2.png"
+                        alt="mod1&lt;em&gt;obj2&lt;/em&gt;square2.png" loading="lazy"></p>
+                <p>We can see that the common words 'Alice and 'rabbit' are no longer in the tokens.</p>
+                <h3>Statistical trimming</h3>
+                <p>But, there are additional ways to remove common words from a document. What if we looked at the
+                    distribution of word counts and then just removed or “trimmed” the most common words. We want to
+                    preserve the words that give us the most variation in the text.</p>
+                <p>We already looked at the plot of the most common words in our text. Instead, let's look at the least
+                    common words and the frequency with which they appear.</p>
+                <pre><code># Create a new DataFrame of the bottom 25 words
+tokens_wc_end25 = tokens_wc.tail(25)
+
+squarify.plot(sizes=tokens_wc_end25['pct_total'], label=tokens_wc_end25['word'], alpha=0.8)
+plt.axis('off')
+
+plt.show()
+</code></pre>
+                <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/sprint_1/mod1_obj2_square3.png"
+                        alt="mod1&lt;em&gt;obj2&lt;/em&gt;square3.png" loading="lazy"></p>
+                <h3>Challenge</h3>
+                <p>Now it's your turn to try removing stop words from a text. First, follow the example method above and
+                    use the default stop words available with spaCy. Next, create a squarify plot and then see if
+                    additional words might be good to remove, depending on the type of analysis you would like to do.
+                    You can find many example texts available at <a href="https://www.gutenberg.org/" target="_blank"
+                        rel="noopener noreferrer">Project Gutenberg</a>.</p>
+                <h3>Additional Resources</h3>
+                <ul>
+                    <li><a href="https://course.spacy.io/chapter1" target="_blank" rel="noopener noreferrer">spaCy -
+                            Chapter 1</a></li>
+                    <li><a href="https://spacy.io/usage/adding-languages#stop-words" target="_blank"
+                            rel="noopener noreferrer">spaCy: Stop Words</a></li>
+                    <li><a href="https://www.gutenberg.org/" target="_blank" rel="noopener noreferrer">Project
+                            Gutenberg</a></li>
+                </ul>
+            </section>
+
+            <section class="content-box">
+                <h2>Objective 03 - Stem or Lemmatize Text</h2>
+                <h3>Overview</h3>
+                <p>In any natural language, many words share the same root word. For example, think about the root word
+                    'auto,' which means self. So when combined with other words, we have automatic, automobile,
+                    autocrat, and many others. Or the word 'active.' We can't reduce these words down any further and
+                    still have meaning. But these words are also stems. So we can add endings (automatically,
+                    automobiles, activated) or a prefix (inactive), or both (deactivated).</p>
+                <p>This process is called inflection in language, where you can modify a word for different uses,
+                    including tense, case number, and gender. But inflected words still retain their core meaning.</p>
+                <p>In English (and other languages), you apply inflection to a verb and receive verb conjugation. We
+                    modify verbs for person, tense, and number. An example verb conjugation for tense would be: work,
+                    worked, am working.</p>
+                <p>Nouns are inflected for number (plural) by changing the suffix: cat-cats, wolf-wolves, puppy-puppies.
+                    To make things confusing, sometimes more than the suffix changes, like for goose-geese or
+                    mouse-mice.</p>
+                <p>We use stemming or lemmatization in natural language processing to trim our words down to the root
+                    word or stem. As we can see from the inflection examples, language is complicated, and there are no
+                    simple rules to do this trimming. Let's look in more detail at the process to get a better idea of
+                    how it works.</p>
+                <h3>Stemming</h3>
+                <p>As we've already seen from the inflection examples above, the process of stemming can involve simple
+                    actions. Some of these actions are removing “s” or “es” from the end of a noun or “ed” or “ing” from
+                    the end of a verb.</p>
+                <p>These rules aren't comprehensive but are a good starting place. Fortunately, there is a lot of
+                    research on stemming algorithms. For more information on various stemming algorithms, check out the
+                    resources listed below.</p>
+                <p>Let's look in more detail at the Porter stemmer. It works by using an explicit list of suffixes and a
+                    list of criteria showing which suffix to remove. The stemmer works in phases where each phase
+                    follows a particular rule, depending on the end of the word. For example, the first phase uses the
+                    following “rule group.”</p>
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Rule</th>
+                                <th></th>
+                                <th></th>
+                                <th>Example</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>SSES</td>
+                                <td>&rarr;</td>
+                                <td>SS</td>
+                                <td>caresses</td>
+                                <td>&rarr;</td>
+                                <td>caress</td>
+                            </tr>
+                            <tr>
+                                <td>IES</td>
+                                <td>&rarr;</td>
+                                <td>I</td>
+                                <td>ponies</td>
+                                <td>&rarr;</td>
+                                <td>poni</td>
+                            </tr>
+                            <tr>
+                                <td>SS</td>
+                                <td>&rarr;</td>
+                                <td>SS</td>
+                                <td>caress</td>
+                                <td>&rarr;</td>
+                                <td>caress</td>
+                            </tr>
+                            <tr>
+                                <td>S</td>
+                                <td>&rarr;</td>
+                                <td></td>
+                                <td>cats</td>
+                                <td>&rarr;</td>
+                                <td>cat</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>We can see that the resulting stem on the right doesn't have to be an actual word (“poni”) because we
+                    can still understand the meaning. Here's an example of what some text looks like after going through
+                    the Porter stemmer.</p>
+                <h4>Sample text</h4>
+                <pre><code>Such and analysis can reveal features that are not easily visible from the variations in the
+individual genes and can lead to a picture of expression that is more biologically transparent and
+accessible to interpretation</code></pre>
+                <h4>Porter stemmer</h4>
+                <pre><code>such an analysi can reveal featur that ar not easili visibl from the variat in the individu gene and
+can lead to a pictur of express that is more biolog transpar and access to interpret</code></pre>
+                <p>A Porter stemmer can be implemented in Python with the Natural Languages Toolkit (NLTK), but we will
+                    be working with the spaCy library for this part of the course. However, spaCy doesn't do stemming
+                    out of the box but instead uses a different technique called lemmatization which we'll discuss next.
+                </p>
+                <h3>Lemmatization</h3>
+                <p>As you read through the example sentence after stemming, it will seem like the words are literally
+                    “chopped off.” The job of a stemmer is to remove the endings, which is essentially what the Porter
+                    stemmer example above shows. This stemming works well when the result doesn't need to be
+                    human-readable. Stemming is helpful in search and information retrieval applications; also, it's
+                    fast.</p>
+                <p>Lemmatization, on the other hand, is more methodical. The goal is to transform a word into its base
+                    form called a lemma. First, plural nouns with uncommon spellings get changed to the singular tense.
+                    Next, verbs are all transformed to the transitive: an action word with something or someone
+                    receiving the action such as paint (transitive verb) the canvas (object).</p>
+                <p>However, this type of processing has a computational cost. In this case, spaCy does a pretty good job
+                    of lemmatizing.</p>
+                <h3>Follow Along</h3>
+                <p>Let's use some of our example text from the previous objective to apply lemmatization to.</p>
+                <pre><code># Import the library
+import spacy
+
+# Create an example sentence
+sent = "The rabbit-hole went straight on like a tunnel for some way, and then dipped suddenly down, so suddenly that Alice had not a moment to think about stopping herself before she found herself falling down a very deep well."
+
+# Load the language library
+nlp = spacy.load("en_core_web_lg")
+doc = nlp(sent)
+
+# Lemma Attributes
+for token in doc:
+    print(token.text, " --> ", token.lemma_)
+</code></pre>
+                <pre><code>
+The  -->  the
+rabbit  -->  rabbit
+-  -->  -
+hole  -->  hole
+went  -->  go
+straight  -->  straight
+on  -->  on
+like  -->  like
+a  -->  a
+tunnel  -->  tunnel
+for  -->  for
+some  -->  some
+way  -->  way
+,  -->  ,
+and  -->  and
+then  -->  then
+dipped  -->  dip
+suddenly  -->  suddenly
+down  -->  down
+,  -->  ,
+so  -->  so
+suddenly  -->  suddenly
+that  -->  that
+Alice  -->  Alice
+had  -->  have
+not  -->  not
+a  -->  a
+moment  -->  moment
+to  -->  to
+think  -->  think
+about  -->  about
+stopping  -->  stop
+herself  -->  -PRON-
+before  -->  before
+she  -->  -PRON-
+found  -->  find
+herself  -->  -PRON-
+falling  -->  fall
+down  -->  down
+a  -->  a
+very  -->  very
+deep  -->  deep
+well  -->  well
+.  -->  .
+</code></pre>
+                <p>And there we go! We have tokenized and lemmatized our first sentence in spaCy. The lemmas are much
+                    easier to read than the stemmed text. In this particular text, there aren't a lot of words that are
+                    lemmatized; we can see falling becomes fall and went becomes go. But otherwise, there aren't a lot
+                    of changes in this particular text.</p>
+                <p>To make this process more efficient, let's put these various text normalizing functions in another
+                    function.</p>
+                <pre><code># Tokenizing and lemmatizing in one function
+
+def get_lemmas(text):
+    # Initialize a list
+    lemmas = []
+
+    # Convert the input text into a spaCy doc
+    doc = nlp(text)
+
+    # Remove stop words, punctuation, and personal pronouns (PRON)
+    for token in doc:
+        if not token.is_stop and not token.is_punct and token.pos_ != 'PRON':
+            lemmas.append(token.lemma_)
+
+    # Return the lemmatized tokens
+    return lemmas</code></pre>
+                <pre><code># Example text (https://en.wikipedia.org/wiki/Geology)
+geology = [
+    "Geology describes the structure of the Earth on and beneath its surface, and the processes that have shaped that structure.",
+    "It also provides tools to determine the relative and absolute ages of rocks found in a given location, and also to describe the histories of those rocks.", 
+    "By combining these tools, geologists are able to chronicle the geological history of the Earth as a whole, and also to demonstrate the age of the Earth.",
+    "Geology provides the primary evidence for plate tectonics, the evolutionary history of life, and the Earth's past climates."
+]</code></pre>
+                <pre><code># Find the lemmas for each sentence in the above text
+geology_lemma = [get_lemmas(sentence) for sentence in geology]
+print(geology_lemma)
+</code></pre>
+                <pre><code>[['geology', 'describe', 'structure', 'Earth', 'beneath', 'surface', 'process', 'shape', 'structure'], ['provide', 'tool', 'determine', 'relative', 'absolute', 'age', 'rock', 'find', 'give', 'location', 'describe', 'history', 'rock'], ['combine', 'tool', 'geologist', 'able', 'chronicle', 'geological', 'history', 'Earth', 'demonstrate', 'age', 'Earth'], ['geology', 'provide', 'primary', 'evidence', 'plate', 'tectonic', 'evolutionary', 'history', 'life', 'Earth', 'past', 'climate']]
+</code></pre>
+                <p>Compared to the original sentences, we see many words that have changed, either by becoming singular
+                    or changing the tense: processes to process, shaped to shape, combining to combine.</p>
+                <h3>Challenge</h3>
+                <p>Using the <code>get_lemmas()</code> function above, complete the following text normalization steps
+                    on
+                    any text
+                    you choose. The text can be something more technical from Wikipedia or your favorite book.</p>
+                <ul>
+                    <li>tokenization</li>
+                    <li>removing stop words</li>
+                    <li>remove pronouns (part of speech)</li>
+                    <li>lemmatization</li>
+                </ul>
+                <p>Compare your original text with the lemmatized version and see if you can notice any patterns.</p>
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://pdfs.semanticscholar.org/1c0c/0fa35d4ff8a2f925eb955e48d655494bd167.pdf"
+                            target="_blank" rel="noopener noreferrer">Stemming algorithms</a></li>
+                    <li><a href="http://people.scs.carleton.ca/~armyunis/projects/KAPI/porter.pdf" target="_blank"
+                            rel="noopener noreferrer">Porter stemmer</a></li>
+                    <li><a href="https://spacy.io/api/annotation#text-processing" target="_blank"
+                            rel="noopener noreferrer">spaCy: Text Processing (Lemmatization)</a></li>
+                </ul>
             </section>
 
             <section id="guided-project">
