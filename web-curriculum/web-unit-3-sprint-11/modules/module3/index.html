@@ -23,7 +23,6 @@
                         <a href="../module4/index.html">Module 4: Deploying Web Apps</a>
                     </div>
                 </li>
-                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
                 <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
         </nav>
@@ -32,82 +31,449 @@
     <main class="container">
         <h1>Module 3: HTTP: The Native Fetch - Web Unit 3 Sprint 11</h1>
         <section class="welcome">
-            <div class="content-box">
-                <h2>Module Overview</h2>
-                <p>In this module, you'll learn about the Fetch API and how to make HTTP requests in web applications.
-                    You'll understand how to configure requests, parse responses, and handle different types of data.
-                </p>
+            <div class="content-box module3-accent">
+                <h2>Understanding Fetch</h2>
+                <p>This Objective covers making basic requests with the native fetch API in JavaScript. Fetch provides a modern, promise-based mechanism to interact with HTTP resources. It's widely supported in modern browsers and offers a more flexible, powerful alternative to older methods like XMLHttpRequest.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <h4>What is fetch</h4>
+                    <p>Fetch is a native Web API that serves as a modern replacement for XMLHttpRequest, providing a more powerful and flexible way to make network requests.</p>
+
+                    <p>Unlike Axios, which is a library that adds a layer of abstraction and additional features, fetch is built into the browser environment, ensuring that no extra dependencies are required. Its promise-based nature simplifies handling asynchronous operations, allowing developers to write cleaner, more readable code than with the ancient XMLHttpRequest.</p>
+
+                    <p>Fetch not only supports a variety of request types but also allows extensive customization through settings for headers, credentials, and more, making it adaptable to complex scenarios.</p>
+
+                    <h4>Using fetch to resolve a Response object</h4>
+                    <p>When using fetch, it is essential to understand that it returns a promise that resolves as soon as the server responds with headers, even before the full response body is ready. This design allows developers to start processing parts of the response (like checking the status code) without waiting for the entire payload, which can be particularly beneficial when dealing with large datasets.</p>
+
+                    <p>The Response object provides several properties and methods that can be used to inspect and manipulate the incoming data. For example, developers can asynchronously read the body content in various formats (like JSON) depending on the nature of the response, enabling efficient data handling.</p>
+
+                    <p>The basic syntax for using fetch is:</p>
+
+                    <pre><code>fetch('http://example.com/api/cats') // fetch defaults to GET
+  .then(response => {
+    // inspect the Response object (headers, status)
+    // ❗ note that the data is not available here,
+    // as the promise fulfills _before_ the response body arrives
+  })
+  .catch(error => {
+    // handle any errors
+  })</code></pre>
+
+                    <h4>Studying the status code and throwing an error if the request did not go OK</h4>
+                    <p>One of the key differences between fetch and other HTTP request tools like Axios is how they handle HTTP error statuses. Fetch does not automatically reject the promise when the server responds with an error status (like 404 or 500). Instead, it provides an ok property that indicates whether the response was successful (status in the range 200-299).</p>
+
+                    <p>This approach requires developers to explicitly check this property and manually throw errors if needed. This pattern gives developers more control over error handling, allowing them to decide how to respond to different server statuses effectively, but it also means that we must throw an error manually, if we intend to centralize all failures inside the catch.</p>
+
+                    <p>Here's how you can throw errors for unsuccessful HTTP responses:</p>
+
+                    <pre><code>fetch('http://example.com/api/cats')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP status ${response.status}`)
+    }
+  })
+  .catch(error => {
+    console.error('There was a problem:', error)
+  })</code></pre>
+
+                    <h4>Reading the Content-Type header of the response</h4>
+                    <p>After ensuring the HTTP request was successful, it's often necessary to examine the Content-Type header of the response. This header indicates the type of data that is being returned by the server, allowing your application to handle it appropriately. Whether the data format is JSON, plain text, HTML, or something else, knowing the content type helps you parse the response correctly.</p>
+
+                    <p>Here's how you can check the Content-Type of the response and take appropriate actions based on its value:</p>
+
+                    <pre><code>fetch('https://example.com/api/cats')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP status ${response.status}`)
+    }
+    const contentType = response.headers.get('Content-Type')
+    
+    if (contentType.includes('application/json')) {
+      // Handle JSON data
+    }
+  })
+  .catch(error => {
+    console.error('There was a problem:', error)
+  })</code></pre>
+
+                    <h4>Example of using fetch in a React application</h4>
+                    <p>Here is a working example you can build yourself, by scaffolding a React application using @bloomtools/react (version 0.1.39 or later):</p>
+
+                    <pre><code>import React, { useEffect } from 'react'
+
+export default function App() {
+  useEffect(() => {
+    function getCats() {
+      fetch('http://localhost:3003/api/cats')
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`Ouch, status ${res.status}`)
+          }
+          const contentType = res.headers.get('Content-Type')
+          if (contentType.includes('application/json')) {
+            console.log('We are getting cats... but they have not arrived yet!')
+          }
+        })
+        .catch(err => {
+          console.log('Something went wrong GETing cats', err)
+        })
+    }
+    getCats()
+  }, [])
+  return (
+    <div>
+      <h2>Hello, Cats!</h2>
+    </div>
+  )
+}</code></pre>
+
+                    <p>Thanks to fetch, we are able to perform network requests with a modern, promise-based tool that simplifies asynchronous HTTP communication. This API is essential for front-end developers to understand as it interacts with APIs and performs network operations in modern web applications.</p>
+
+                    <p>In the next Objective you will learn how to actually read the JSON data that returns from this GET request!</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/hwgsabrezq?seo=false&videoFoam=false" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h2>Pasing Fetch Responses</h2>
+                <p>In this Objective, we will explore parsing the response body when using the fetch API in JavaScript. Understanding how to handle different data formats and manage potential errors during fetch operations is crucial for any modern web developer. This chapter will guide you through various techniques for effectively retrieving and utilizing data from server responses.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <h4>Parsing the Response Body</h4>
+                    <p>As we know, fetch fulfills its promise as soon as the response starts arriving, and does not wait for the full response body to arrive. This allows for quick decision making, even if the payload is very big.</p>
+
+                    <p>In the following example we are GETing cats from an API, and throwing an error if the status code is not in the 200 range.</p>
+
+                    <pre><code>import React, { useEffect } from 'react'
+
+export default function App() {
+  useEffect(() => {
+    function getCats() {
+      fetch('http://localhost:3003/api/cats')
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`Ouch, status ${res.status}`)
+          }
+        })
+        .catch(err => {
+          console.log('Something went wrong GETing cats', err)
+        })
+    }
+    getCats()
+  }, [])
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Hello, Cats!&lt;/h2&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+                    <p>Knowing the format of the data you're expecting from your API is essential for parsing the response correctly. If the Content-Type of the response is known and consistent, you can directly parse the data as JSON by returning res.json(), which gives a new promise:</p>
+
+                    <pre><code>fetch('http://localhost:3003/api/cats')
+  .then(res => {
+    if (!res.ok) {
+      throw new Error(`Ouch, status ${res.status}`)
+    }
+    // let's parse the response body as JSON
+    return res.json() // res.json returns a promise
+  })
+  .then(cats => {
+    // the response body has been parsed
+    console.log(cats) // The cats array has arrived!
+  })
+  .catch(err => {
+    console.log('Something went wrong GETing cats', err)
+  })</code></pre>
+
+                    <h4>Other Response Body Formats</h4>
+                    <p>Fetch also provides methods like res.blob() for binary data and res.text() for text data, which are used depending on the content type of the response.</p>
+
+                    <p>If we do not know what content type will arrive, we must check the Content-Type header, which we have immediate access to:</p>
+
+                    <pre><code>// Determine how to parse the response based on the Content-Type
+const contentType = res.headers.get('Content-Type')
+if (contentType.includes('application/json')) {
+  return res.json()
+} else if (contentType.includes('text/html')) {
+  return res.text()
+} else if (contentType.includes('image')) {
+  return res.blob()
+} else {
+  throw new Error('Unsupported content type: ' + contentType)
+}</code></pre>
+
+                    <h4>Using async/await</h4>
+                    <p>Async/await syntax simplifies handling asynchronous operations by making the code appear more synchronous and linear. Here's how you can use async/await with fetch in a React component:</p>
+
+                    <pre><code>import React, { useEffect } from 'react'
+
+export default function App() {
+  useEffect(() => {
+    async function getCats() { // don't forget the async keyword
+      try {
+        const res = await fetch('http://localhost:3003/api/cats')
+        if (!res.ok) throw new Error(`Ouch, status ${res.status}`)
+        const cats = await res.json() // we have the cats now!
+      } catch (err) {
+        console.log('Something went wrong GETing cats', err)
+      }
+    }
+    getCats()
+  }, [])
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Hello, Cats!&lt;/h2&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+                    <p>In the next Objective you will learn how to make POST, PUT and DELETE requests with Fetch!</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/3w2ij93nmo?seo=false&videoFoam=false" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h2>Configuring Fetch Requests</h2>
+                <p>In this Objective, we will use the fetch API in JavaScript to make more complex HTTP requests like POST, PUT, and DELETE. We will also explore how to customize these requests using the second argument of fetch to specify the method, body, and headers.</p>
+
+                <p>This is essential for any web developer looking to perform CRUD (Create, Read, Update, Delete) operations in modern web applications. This objective will provide a step-by-step guide on how to construct these requests effectively.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <h4>Configuring Fetch for Different HTTP Methods</h4>
+                    <p>The fetch function in JavaScript not only retrieves data but can also be used to send data to servers. By default, fetch makes a GET request, but it can be configured to perform other types of requests such as POST, PUT, and DELETE through its second argument. This argument is an object that lets you control a number of parameters like method, body, and headers.</p>
+
+                    <h4>Making a POST Request</h4>
+                    <p>To create a new resource on a server, we typically use a POST request. Unlike GET requests, which do not include a request body, POST requests involve sending data from the client to the server. This data is often in JSON format and constitutes the body of the request.</p>
+
+                    <p>When using POST with the fetch API, it's important to correctly configure the request's body and headers. JavaScript objects must be converted to a JSON string using JSON.stringify() before they can be sent, as the server expects JSON formatted text. Additionally, you must explicitly set the Content-Type header to 'application/json'. If this header is not set, fetch may incorrectly default to sending the data as plain text.</p>
+
+                    <p>Here is an example of how to use fetch to send data in a POST request:</p>
+
+                    <pre><code>// fetch takes a second argument with configuration
+fetch('http://localhost:3003/api/cats', {
+  method: 'POST', // the method of the request is set here
+  body: JSON.stringify({ // you must stringify your payload
+    name: "Whiskers",
+    breed: "Siamese"
+  }),
+  headers: {
+    // this is important if we intend to send JSON
+    'Content-Type': 'application/json'
+  }
+})
+  .then(response => response.json())
+  .then(data => console.log('Success:', data))
+  .catch(error => console.error('Error:', error))</code></pre>
+
+                    <h4>Updating Data with a PUT Request</h4>
+                    <p>A PUT request is used to update an existing resource on the server entirely with the data you provide. When performing a PUT operation, the payload typically (although not always) represents the updated state of the entire resource, including the properties that stay the same.</p>
+
+                    <p>Below is an example of how you might update a resource:</p>
+
+                    <pre><code>// let's change the name of the cat with ID 4
+fetch('http://localhost:3003/api/cats/4', { // note the ID at the end of the URL
+  method: 'PUT', // we replace items on the server using PUT
+  body: JSON.stringify({ // same as with POST, you must stringify your payload
+    name: "Freddy",  // the property that changes
+    breed: "Siamese", // the property that stays the same
+  }),
+  headers: {
+    // as with POST, if we send JSON we need to set the correct header
+    'Content-Type': 'application/json'
+  }
+})
+  .then(response => response.json())
+  .then(data => console.log('Success:', data))
+  .catch(error => console.error('Error:', error))</code></pre>
+
+                    <h4>Deleting Data with a DELETE Request</h4>
+                    <p>To remove a resource from the server, you can use a DELETE request. The example below shows how to send a DELETE request:</p>
+
+                    <pre><code>// let's delete the cat with ID 4
+fetch('http://localhost:3003/api/cats/4', { // note the ID at the end of the URL
+  method: 'DELETE', // method used to remove resources from the server
+})
+  .then(response => response.json())
+  .then(data => console.log('Success:', data)) // if we care about the response data
+  .catch(error => console.error('Error:', error))</code></pre>
+
+                    <h4>Wrap-Up: The Importance of Understanding the Fetch API</h4>
+                    <p>As we conclude our module on the Fetch API, it's important to reflect on why mastering this fundamental tool is essential for web developers, even in an era where numerous higher-level libraries and frameworks exist to simplify AJAX requests.</p>
+
+                    <ol>
+                        <li><strong>Understanding Fundamentals:</strong> The Fetch API provides a direct, powerful way to handle HTTP requests and responses. It's built into the browser, which means understanding Fetch allows developers to work with every aspect of network interactions using native methods. This foundational knowledge gives you a clearer understanding of how data is exchanged between clients and servers, enabling you to troubleshoot and optimize interactions more effectively.</li>
+
+                        <li><strong>Flexibility and Control:</strong> While libraries like Axios or jQuery's AJAX methods offer convenience and additional features, they abstract some of the lower-level functionalities. In contrast, the Fetch API offers granular control over network requests, including the ability to work directly with Promises, stream responses, and finely configure requests and responses. This can be particularly advantageous when dealing with complex scenarios that require detailed manipulation of headers, request methods, or payloads.</li>
+
+                        <li><strong>Modern Features:</strong> Fetch supports modern JavaScript features like async/await out of the box, making it a natural fit for contemporary web development practices. It handles a wide range of data formats and can be used in both traditional multi-page applications and modern single-page applications.</li>
+
+                        <li><strong>No Additional Dependencies:</strong> Using Fetch eliminates the need for additional libraries, reducing the overhead and complexity of managing dependencies in a project. This not only simplifies the development process but also minimizes potential compatibility issues and decreases the load time of web applications.</li>
+
+                        <li><strong>Future-Proofing Skills:</strong> The Fetch API is part of the living standard, actively maintained and updated. Learning and using Fetch ensures that your skills remain relevant as web standards evolve. As new features are added to the specification, knowing Fetch allows you to adopt them quickly, keeping your applications up to date with the latest in web technology.</li>
+
+                        <li><strong>Broad Applicability:</strong> Understanding how to use the Fetch API enhances your ability to interact with numerous APIs and web services, a critical skill in today's interconnected digital landscape. Whether you are fetching simple data or integrating complex third-party services, the versatility of Fetch is a valuable asset.</li>
+                    </ol>
+
+                    <p>While libraries and frameworks will come and go, the underlying technology they abstract remains critical. By understanding how to use the Fetch API effectively, you equip yourself with a skill that ensures deeper insights into web development, better performance optimization, and a more robust handling of network interactions in your applications.</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/k59b715q3p?seo=false&videoFoam=false" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <h2>Prompt Engineering with Fetch</h2>
+                <p>Welcome to this Learning Objective on using JavaScript's fetch function to interact with the OpenAI API. This section is designed to not only practice the mechanics of making network requests but also to demonstrate how these capabilities are applied in practical scenarios such as interacting with cutting-edge AI technologies.</p>
+
+                <p>Given the costs associated with API usage, following along without executing the code is completely fine. However, engaging directly will provide the best learning experience.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <h4>Prerequisites</h4>
+                    <ul>
+                        <li><strong>Node.js Version:</strong> Ensure your version of Node.js is at least 20.6.0.</li>
+                        <li><strong>OpenAI API Key:</strong> The OpenAI API is not free, and you will need an API key to make requests. If this is something you'd like to try out, sign up at <a href="https://openai.com" target="_blank">OpenAI's website</a> and obtain an API key.</li>
+                    </ul>
+
+                    <h4>Setting Up the Project</h4>
+                    <p>Your Walkthrough Video below will walk you through a more realistic project organization. For right now, you will write all of your code inside a single JavaScript module called index.mjs. Mind the mjs extension!</p>
+
+                    <pre><code>// index.mjs
+
+const OPENAI_API_KEY = "your api key here" // do not push this file to GitHub!
+console.log(OPENAI_API_KEY)</code></pre>
+
+                    <p>In order to execute our program, instead of loading it in a browser, you will simply use Node from your command line:</p>
+
+                    <pre><code># Navigate your Terminal to the location of index.mjs
+
+node index.mjs # This executes your code</code></pre>
+
+                    <p>You should see your API key printing to the Terminal!</p>
+
+                    <h4>Writing the Fetch Code</h4>
+                    <p>We will begin by creating a new variable holding the address of the endpoint we intend to fetch:</p>
+
+                    <pre><code>// index.mjs
+
+const OPENAI_API_KEY = "your api key here"
+const OPEN_AI_URL = 'https://api.openai.com/v1/chat/completions'</code></pre>
+
+                    <p>Underneath these two constants, we will start a try/catch block, and POST a request to the OpenAI API:</p>
+
+                    <pre><code>try {
+  const res = await fetch(OPEN_AI_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+  if (!res.ok) throw new Error(`Something is wrong: ${res.status}`)
+} catch (err) {
+  console.log(err.message)
+}</code></pre>
+
+                    <p>This call is not going to succeed. The request is malformed for two reasons. First, we are not supplying the API key token. And second, we are not providing any payload containing the prompt. See for yourself by running node index.mjs in your Terminal! You should see a 401 error message printing in the Terminal.</p>
+
+                    <h4>Using the OpenAI API Token</h4>
+                    <p>Let's fix the authorization issue by adding an Authorization header to the request, containing the token:</p>
+
+                    <pre><code>try {
+  const res = await fetch(OPEN_AI_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${OPENAI_API_KEY}`, // Here is your token!
+    },
+  })
+  if (!res.ok) throw new Error(`Something is wrong: ${res.status}`)
+} catch (err) {
+  console.log(err.message)
+}</code></pre>
+
+                    <h4>Adding a Payload of JSON</h4>
+                    <p>Now, we will add the payload which the API expects. It will specify the Large Language Model we wish to use, and an array of messages. The first one provides initial setup and context for the model, and the second one is the query proper. Then we will make sure to parse the response body as JSON.</p>
+
+                    <pre><code>try {
+  const res = await fetch(OPEN_AI_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({ // The headers say you are sending JSON
+      model: 'gpt-3.5-turbo', // The model you are using today
+      messages: [
+        {
+          role: 'system',
+          content: 'Answer as Captain Haddock' // Context for the model
+        },
+        {
+          role: 'user',
+          content: 'What is our place in this universe?' // The user query
+        }
+      ],
+    })
+  })
+  if (!res.ok) throw new Error(`Something is wrong: ${res.status}`)
+  const data = await res.json()
+
+  // You are interested in a particular part of the response payload
+  console.log(data.choices[0].message.content) // Here is the generated output
+  // But feel free to explore the entire response body!
+  console.log(data)
+} catch (err) {
+  console.log(err.message)
+}</code></pre>
+
+                    <p>Take it for a drive and see the generated output, as well as the full response from the API.</p>
+
+                    <p>This was your first taste of Prompt Engineering. A brave new world awaits!</p>
+                    <div class="video-container">
+                        <iframe src="https://fast.wistia.net/embed/iframe/blvp9dxgh1?seo=false&videoFoam=false" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    </div>
+                </div>
             </div>
 
-            <div class="content-box">
-                <h2>Learning Objectives</h2>
+            <div class="content-box module3-accent">
+                <h2>Guided Project</h2>
+              <p><a href="https://github.com/bloominstituteoftechnology/w_s11_fetch_gp" target="_blank" rel="noopener">HTTP: The Native Fetch Starter Code</a></p>
+              <p><a href="https://github.com/bloominstituteoftechnology/w_s11_fetch_gp-solution" target="_blank" rel="noopener">HTTP: The Native Fetch Solution</a></p>
+              <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/hxb0yg3d5o" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+              </div>
+            </div>
+
+            <div class="content-box module3-accent">
+                <h2>Module 3 Project: The Native Fetch</h2>
+
+                <p>This project will have you build an app for a dog shelter. The app has two screens: a route that lists the dogs, and another one that renders a form used to add, edit and delete dogs. You will need all of your skill for this one, but the rewards will be great! By the end of it you will have practiced using the Native fetch to perform full CRUD on a backend resource (Create, Read, Update and Delete). On top of that you will brush up on React Router, state and props management, component reusability (using the same form for create and edit operations) and more.</p>
+
+                <p>The Module Project contains advanced problems that will challenge and stretch your understanding of the module's content. The solution video is available below in case you need help or want to see how we solved each challenge (note: this challenge can be solved in many ways). If you can successfully complete all the Module Projects in a sprint, you are ready for the Sprint Challenge and Assessment.</p>
+                
+
+                <h3>Instructions</h3>
+
+                <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
+                <p>Starter Repo: <a href="https://github.com/bloominstituteoftechnology/w_s11_fetch_mp" target="_blank">The Native Fetch</a></p>
+
                 <ul>
-                    <li>Understand the Fetch API and its capabilities</li>
-                    <li>Parse and handle Fetch responses</li>
-                    <li>Configure Fetch requests with different options</li>
-                    <li>Use prompt engineering with Fetch</li>
-                    <li>Complete guided projects and practice exercises</li>
+                    <li>Fork the repository,</li>
+                    <li>clone it to your machine, and</li>
+                    <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
+                    <li>submit your completed project to the BloomTech Portal</li>
                 </ul>
-            </div>
 
-            <div class="content-box">
-                <h2>Content</h2>
-
-                <div class="video-section">
-                    <h3>Understanding Fetch Requests</h3>
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/hwgsabrezq"
-                            title="Understanding Fetch Requests" allow="fullscreen" frameborder="0" scrolling="no"
-                            loading="lazy"></iframe>
-                    </div>
+                <h3>Solution</h3>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/efblmvt6ym?seo=false&videoFoam=false" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
                 </div>
-
-                <div class="video-section">
-                    <h3>Parsing Fetch Responses</h3>
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/3w2ij93nmo" title="Parsing Fetch Responses"
-                            allow="fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
-                    </div>
-                </div>
-
-                <div class="video-section">
-                    <h3>Configuring Fetch Requests</h3>
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/k59b715q3p" title="Configuring Fetch Requests"
-                            allow="fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
-                    </div>
-                </div>
-
-                <div class="video-section">
-                    <h3>Using the OpenAI API</h3>
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/blvp9dxgh1" title="Using the OpenAI API"
-                            allow="fullscreen" frameborder="0" scrolling="no" loading="lazy"></iframe>
-                    </div>
-                </div>
-            </div>
-
-            <div class="content-box">
-                <h2>Practice Activities</h2>
-                <ul>
-                    <li>Module 3 Practice Exercises</li>
-                    <li>Module 3 Quiz</li>
-                    <li>Module 3 Project</li>
-                </ul>
             </div>
 
             <div class="content-box">
                 <h2>Additional Resources</h2>
                 <div class="resource-section">
                     <div class="resource-links">
-                        <a href="https://github.com/bloominstituteoftechnology/web-guided-project-HTTP"
-                            class="resource-link">Module 3 Guided Project 1</a>
-                        <a href="https://github.com/bloominstituteoftechnology/web-guided-project-HTTP-solution"
-                            class="resource-link">Solution Guide 1</a>
                         <a href="https://github.com/bloominstituteoftechnology/w_s11_fetch_gp"
-                            class="resource-link">Module 3 Guided Project 2</a>
+                            class="resource-link">Module 3 Guided Project</a>
                         <a href="https://github.com/bloominstituteoftechnology/w_s11_fetch_gp_end"
-                            class="resource-link">Solution Guide 2</a>
+                            class="resource-link">Module 3 Guided Project Solution</a>
                     </div>
                 </div>
             </div>
