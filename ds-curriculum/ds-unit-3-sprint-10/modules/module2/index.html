@@ -49,6 +49,152 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - Deploy and use a simple PostgreSQL database</h2>
+            <h3>Video Walkthrough</h3>
+
+            <div class="video-container">
+                <iframe src="https://fast.wistia.net/embed/iframe/1xj9srfw5l?seo=false&videoFoam=false"
+                    title="SQL for Analysis Video" allowtransparency="true" frameborder="0" scrolling="no"
+                    class="wistia_embed" name="wistia_embed" width="640" height="360" allowfullscreen mozallowfullscreen
+                    webkitallowfullscreen oallowfullscreen msallowfullscreen></iframe>
+            </div>
+
+            <h3>Overview</h3>
+            <p>SQLite is a great starting point, and still useful for all sorts of situations - but if you want to
+                deploy and scale, PostgreSQL is the next tool to check out. It is a performant and true SQL database,
+                with a great ecosystem and support for sharding (partitioning data for scalability - the domain of
+                DevOps, but good to be aware of).</p>
+            <p>PostgreSQL is a highly influential relational database management system (rdbms), created in the 1980s at
+                UC Berkeley. An evolution of the <a href="https://en.wikipedia.org/wiki/Ingres_(database)"
+                    target="_blank" rel="noopener noreferrer">Ingres database</a>, PostgreSQL uses a permissive
+                (MIT-style) license. Its author, <a href="https://en.wikipedia.org/wiki/Michael_Stonebraker"
+                    target="_blank" rel="noopener noreferrer">Michael Stonebraker</a>, received the 2014 Turing Award
+                (the computer science equivalent of the Nobel Prize) in recognition of his work and its impact.</p>
+            <p>Despite its long and rich history, PostgreSQL is a well-supported modern database, with significant new
+                functionality having been added in recent years. It is also the <a
+                    href="https://stackshare.io/stackups/mariadb-vs-mysql-vs-postgresql" target="_blank"
+                    rel="noopener noreferrer">second most widely used open-source SQL database</a>, after
+                MySQL (now owned by Oracle).</p>
+
+            <h3>Follow Along</h3>
+            <p>Sign up for <a href="https://aiven.io/" target="_blank" rel="noopener noreferrer">Aiven.io</a> and login
+                and create a new free PostgreSQL
+                service following the steps outlined in your walkthrough video above. No address or credit card should
+                be required.</p>
+            <p>Connect to your PostgreSQL service using the Beaver client, and open a SQL console. We will use it to run
+                some SQL queries:</p>
+            <pre>
+CREATE TABLE test_table (
+  id        SERIAL PRIMARY KEY,
+  name      varchar(40) NOT NULL,
+  data      JSONB
+);</pre>
+            <p>Then you can insert some data:</p>
+            <pre>
+INSERT INTO test_table (name, data) VALUES
+(
+  'A row name',
+  null
+),
+(
+  'Another row, with JSON',
+  '{ "a": 1, "b": ["dog", "cat", 42], "c": true }'
+);</pre>
+            <p>And finally use <code>SELECT</code> to see the result!</p>
+            <pre>
+SELECT * FROM test_table;</pre>
+
+            <h3>Challenge</h3>
+            <p>Create more tables and insert some rows into them.</p>
+
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://dbeaver.com/docs/dbeaver/" target="_blank" rel="noopener noreferrer">DBeaver
+                        Documentation</a></li>
+                <li><a href="https://dataintoresults.com/post/postgresql-for-data-science-pro-and-cons/" target="_blank"
+                        rel="noopener noreferrer">PostgreSQL
+                        Pros and Cons</a></li>
+                <li><a href="https://aiven.io/docs/platform/concepts/free-plan" target="_blank"
+                        rel="noopener noreferrer">Aiven Free Plans</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Create a data pipeline with SQL</h2>
+            <h3>Required Resources</h3>
+            <ul>
+                <li><a href="https://www.psycopg.org/docs/" target="_blank" rel="noopener noreferrer">PostgreSQL
+                        database adapter for Python</a></li>
+                <li><a href="https://pypi.org/project/psycopg2-binary/" target="_blank" rel="noopener noreferrer">Python
+                        package for
+                        connecting to and executing queries on PostgreSQL databases</a>
+                </li>
+            </ul>
+            <h3>Overview</h3>
+            <p>What good is a database without data in it? And do we really want to do all of our analysis directly with
+                ad hoc queries?</p>
+            <p>There's a better way - getting data into and out of things programmatically, by building data pipelines.
+            </p>
+            <p>SQL is great, but Python is our home - it's where our core code will live, and it's supported by a great
+                ecosystem of Data Science libraries and frameworks. The good news is we can connect to SQL from Python,
+                using Psycopg!</p>
+            <h3>Follow Along</h3>
+            <p>Use <code>pip</code> (in an environment of your choice - even Colab) to install <a
+                    href="https://pypi.org/project/psycopg2-binary/" target="_blank"
+                    rel="noopener noreferrer">psycopg2-binary</a>.
+                Then execute the following (requires having first done the setup from the previous objective in this
+                module):
+            </p>
+            <pre><code>import psycopg2
+
+# Connect to Aiven.io-hosted PostgreSQL
+# You must obtain the connection details in your Aiven.io account
+conn = psycopg2.connect(
+    dbname='TODO',
+    user='TODO',
+    password='TODO',
+    host='TODO.aivencloud.com',
+    port=TODO
+)
+
+# A "cursor", a structure to iterate over db records to perform queries
+cur = conn.cursor()
+
+# An example query
+cur.execute('SELECT * from test_table;')
+
+# Fetch all rows from the executed query
+rows = cur.fetchall()
+
+# Iterate over the rows and print them
+for row in rows:
+    print(row)
+
+# Close the cursor and connection
+cur.close()
+conn.close()</code></pre>
+
+            <p>If you see something like <code>(1, 'A row name', None)</code>, congratulations! You've interacted with
+                your database from Python.</p>
+            <h3>Challenge</h3>
+            <p>Write a Python function to generate random data for insertion, and execute it in a loop in order to
+                generate and insert a large quantity of data.</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://www.hackerrank.com/domains/sql" target="_blank"
+                        rel="noopener noreferrer">HackerRank SQL Exercises (Good practice - many hiring processes
+                        use these as screening questions!)</a></li>
+                <li><a href="https://data.stackexchange.com/stackoverflow/query/new" target="_blank"
+                        rel="noopener noreferrer">StackExchange
+                        Data Explorer (Real live production SQL data of StackOverflow users you can
+                        explore/query.)</a></li>
+                <li><a href="http://docs.peewee-orm.com/en/latest/" target="_blank" rel="noopener noreferrer">peewee ORM
+                        (query a SQL DB with object-oriented programming.)</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
             <h2>Guided Project</h2>
 
             <div class="note-box">

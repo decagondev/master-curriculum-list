@@ -51,6 +51,143 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - Distinguish between front-end, back-end, database, and what tasks are appropriate for
+                which</h2>
+
+            <h3>Overview</h3>
+
+            <p>Web applications are built on a relatively thick stack - from the client (user with their browser) over a
+                network to the back-end (server) and database (for data persistence). As a data scientist you won't
+                master any particular piece, but you should understand the whole picture.</p>
+            <p>A web application is a user-facing piece of software implemented with a client-server architecture. The
+                client (the user's browser) makes requests - specifically, <strong>HTTP</strong> (HyperText Transfer
+                Protocol) requests over a network (the Internet, or a local network for e.g. internal
+                corporate web applications).</p>
+            <p>The server receives this request, and then builds and sends a response - generally, a mixture of HTML/CSS
+                and JavaScript, a.k.a. “a web page.” The client receives the response, and the web browser renders it so
+                the user can see whatever it was they asked for.</p>
+
+            <h3>Follow Along</h3>
+            <p>From the above summary, it's fairly clear what the <strong>front-end</strong> of a web application is -
+                specifically, it's that HTML/CSS and JavaScript returned in response to user requests. But what's the
+                difference between the <strong>back-end</strong> and the database?</p>
+            <p>The <strong>back-end</strong> is the direct server receiving requests, and handling the routing/business
+                logic to
+                determine and send the appropriate response. The <strong>database</strong> is generally a separate
+                server where data is
+                actually persisted - saved in a durable fashion, for later retrieval by the web application. In fact,
+                many web applications are essentially highly usable database querying machines - they let a user
+                interact with a front-end, send requests to a back-end which gets or changes data in a database.</p>
+            <p>Why separate the back-end and the database? A useful model is to have a back-end server application that
+                is stateless (or close to it) - that is, it doesn't persist or save or depend on persisting or saving
+                things. It just has the appropriate logic to respond as desired in a given situation - and as such, it's
+                much easier to scale, spin up or down extra instances, and so forth.</p>
+            <p>Now that you know a bit about the pieces, consider this example of a simple full-stack web application:
+            </p>
+            <ul>
+                <li><strong>Front-end:</strong> a webpage styled with simple CSS (e.g. Bootstrap), listing TODO items
+                    for a user in a bullet point list</li>
+                <li><strong>Back-end:</strong> a Flask application that receives requests for returning, creating, or
+                    completing/deleting TODOs, and returns responses with the appropriate TODOs for the front-end to
+                    render</li>
+                <li><strong>Database:</strong> a PostgreSQL instance that stores the actual TODO data for users, which
+                    the back-end uses to persist and retrieve data</li>
+            </ul>
+            <h3>Challenge</h3>
+            <p>Think of your own example of a full-stack web application, and list what specific responsibilities you
+                think fall to which piece of the stack. You may pick an existing application or one you imagine - in
+                either case, share your analysis with a classmate and offer them feedback on theirs.</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://picnicss.com/documentation" target="_blank" rel="noopener noreferrer">Picnic CSS:
+                        Documentation for a simple CSS framework</a></li>
+                <li><a href="https://www.google.com/search/howsearchworks/" target="_blank"
+                        rel="noopener noreferrer">How Search Works: A high-level summary of Google search</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Create a simple Python web application that exposes an API to URL endpoints</h2>
+            <h3>Required Resources</h3>
+            <ul>
+                <li><a href="https://flask.palletsprojects.com/en/2.2.x/" target="_blank"
+                        rel="noopener noreferrer">Introduction to Flask</a></li>
+                <li><a href="https://pipenv.pypa.io/en/latest/" target="_blank" rel="noopener noreferrer">Pipenv: Python
+                        Dev Workflow for Humans</a></li>
+            </ul>
+
+            <h3>Prepare Videos</h3>
+            <ul>
+                <li><a href="https://youtu.be/dqq951Msj_Q" target="_blank" rel="noopener noreferrer">Web Application
+                        Development with Flask</a></li>
+                <li><a href="https://youtu.be/NUXLxvoFJmw" target="_blank" rel="noopener noreferrer">TwitOff Project
+                        Kickoff</a></li>
+            </ul>
+            <h3>Overview</h3>
+            <p>Now that you know the basics of what a web application is, it's time to build our own! We'll be focusing
+                on the back-end, building a simple Python web application with Flask (a microframework) to handle and
+                return requests to URL endpoints.</p>
+            <pre><code>from flask import Flask
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "Hello World!"
+</code></pre>
+            <p>“Hello World!” with Flask is as simple as that - 5 lines of code. Let's understand each one by one.</p>
+            <h3>Follow Along</h3>
+            <p>Let's break down each of the lines of the above example.</p>
+            <ul>
+                <li><strong>from flask import Flask</strong> - you've seen plenty of lines like this. We're importing a
+                    specific class we want (Flask) from a package (flask). The Flask class will allow us to instantiate
+                    our own Flask applications!</li>
+                <li><strong>app = Flask(__name__)</strong> - instantiate our own Flask application! It really is just
+                    this, __name__ is a bit of Python magic to know the name of the module the execution is occurring in
+                    (and it's actually optional, though nice to tell it to Flask). Also note that this is in global
+                    scope, so your linter may complain (you can use the all-capitalized variable name <code>APP</code>
+                    instead to reflect that it's global), but it is valid code.</li>
+                <li><strong>@app.route("/")</strong> - this is a decorator, which is actually a function that takes a
+                    function, augments it, and returns it. That may sound scary, but all it's doing is what it says -
+                    routing requests to the base <code>/</code> route (the host of the application, without any other
+                    path) to be
+                    served by this function.</li>
+                <li><strong>def hello():</strong> - defining the function to be decorated, which will be invoked by
+                    requests to <code>/</code>. The name is actually fairly arbitrary, as far as Flask is concerned -
+                    but do try to
+                    pick good names for your benefit. This is somewhat like views in other frameworks (e.g. Django),
+                    though a good bit lighter and simpler.</li>
+                <li><strong>return "Hello World!"</strong> - the response from our function. It means that requests to
+                    <code>/</code>
+                    will receive a response <code>"Hello World!"</code> - Flask responses can be fancy templates
+                    (HTML/CSS and JS),
+                    but they can also just be strings, and the latter can be pretty useful for fast developing and
+                    prototyping.
+                </li>
+            </ul>
+            <h3>Challenge</h3>
+            <p>Make a new file <code>hello.py</code> with the contents of the above basic “Hello World!” Flask web
+                application. Then, get to a terminal and try to run it:</p>
+            <pre><code>$ pip install Flask
+$ FLASK_APP=hello.py flask run
+ * Running on http://localhost:5000/
+</code></pre>
+            <p>This assumes you have <code>pip</code> ready to go - which you should! You'll only have to install
+                <code>Flask</code> once (globally or per environment), and to run an application you specify what it is
+                with an environment variable (<code>FLASK_APP=hello.py</code>) and then just <code>flask run</code> -
+                and you can do it all in one line!
+            </p>
+            <p>Once you get it running and see output as above, try to open the URL it gives in your browser. You should
+                see “Hello World!” in all its Python Flask glory.</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://flask-migrate.readthedocs.io/en/latest/" target="_blank"
+                        rel="noopener noreferrer">flask-Migrate: The right way to change a database schema and not
+                        necessarily lose all
+                        your data.</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
             <h2>Guided Project</h2>
 
             <p>Due to recent changes in the accessibility of the Twitter API you will no longer need to request

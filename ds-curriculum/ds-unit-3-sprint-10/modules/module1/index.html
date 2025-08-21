@@ -53,6 +53,233 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - write basic SQL queries to get specific subsets of data from a database and answer basic
+                business questions</h2>
+            <h3>Required Resources</h3>
+            <ul>
+                <li><a href="https://pandas.pydata.org/pandas-docs/stable/getting_started/comparison/comparison_with_sql.html"
+                        target="_blank" rel="noopener noreferrer">Pandas comparison with SQL</a></li>
+                <li><a href="https://www.sqlstyle.guide/" target="_blank" rel="noopener noreferrer">SQL Style Guide</a>
+                </li>
+            </ul>
+            <h3>Overview</h3>
+            <p>The main purpose of SQL is to just get (<code>SELECT</code>) some data, and to restrict the data based on
+                certain
+                conditions (<code>WHERE</code>). Getting all customers from a certain region, or everyone who bought a
+                certain
+                product or on a certain day - these are common business questions useful for reports and dashboards, and
+                easily answered with basic SQL.</p>
+            <p>SQL is a standard, and a computational implementation of <a
+                    href="https://en.wikipedia.org/wiki/Relational_algebra" target="_blank"
+                    rel="noopener noreferrer">relational algebra</a> - the math underpinning modern data
+                modeling.</p>
+            <p>In relational algebra, datum are considered members of sets, where data with the same overall structure
+                (attributes) are members of the same sets. Data in other sets has different attributes (columns if you
+                want to picture it), but has at least one column shared with another set - a key that can relate entries
+                across them.</p>
+            <p>So querying in relational algebra is essentially a batch of set operations - union, difference, Cartesian
+                product, and intersection - but constrained to ensure the end result is valid.</p>
+            <p><img class="eq-img"
+                    src="https://i.upmath.me/svg/%20%5CPi_%7Bname%2Cid%7D(%5Csigma_%7Bstate%3DCA%7D(Customers))%20"
+                    alt=" \Pi_{name,id}(\sigma_{state=CA}(Customers)) " align="center" loading="lazy"></p>
+            <p>The Pi symbol indicates projection (choosing attributes), and <code>sigma</code> indicates selection
+                (setting
+                conditions). The above translates roughly to “Get the names and ids of all customers from California.”
+            </p>
+            <h3>Follow Along</h3>
+            <p>Querying in SQL is essentially the same as relational algebra, but instead of mathematical syntax and
+                Greek letters we use capitalized keywords like <code>SELECT</code> and <code>WHERE</code>. Here is a
+                typical SQL query:</p>
+            <pre><code>SELECT name, id
+FROM customers
+WHERE state = 'CA';</code></pre>
+            <p>One counterintuitive difference - in SQL, <code>SELECT</code> is the equivalent of projection
+                (<i>Pi</i>),
+                and <code>WHERE</code> is the equivalent of selection (in relational algebra).
+            </p>
+            <p>SQL queries are declarative - they simply state what they want, and the database sorts out the details.
+                Depending on your career you may eventually want to specialize and dig deeper, but for now - trust the
+                query planner (the part of the database that does this), and always start with queries as <i>simple</i>
+                as you can.</p>
+            <h3>SQL Constructs</h3>
+            <p>Other common SQL constructs:</p>
+            <ul>
+                <li><strong>AND</strong> - you can use <code>AND</code> to specify multiple conditions, e.g.
+                    <code>WHERE state = 'CA'</code> and <code>name = 'John Smith'</code>
+                </li>
+                <li><strong>LIMIT</strong> - if you only want at most a certain number of rows</li>
+                <li><strong>ORDER</strong> - to sort output</li>
+                <li><strong>GROUP</strong> - to aggregate output (more on this later)</li>
+            </ul>
+            <p>In addition to writing SQL queries directly, they can be executed in Python via connector modules. For
+                example:</p>
+
+            <pre><code>import sqlite3 
+conn = sqlite3.connect('rpg_db.sqlite3') 
+curs = conn.cursor() 
+query = 'SELECT COUNT(*) FROM armory_item;' 
+curs.execute(query) 
+curs.execute(query).fetchall()</code></pre>
+
+            <p>The general usage pattern is:</p>
+            <ol>
+                <li>Import the library</li>
+                <li>Instantiate a connection to the database (may require authentication for “real” databases)</li>
+                <li>Create a cursor (pointer into the database) - depending on workload/app you can have multiple
+                    cursors per connection</li>
+                <li>Execute a query using the cursor</li>
+                <li>(If relevant) Fetch results from the query</li>
+            </ol>
+            <p>Note that, for write (<code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>DROP</code>)
+                queries it may be necessary to execute a <code>.commit()</code> method on the cursor for the change to
+                “stick” (be finalized in the database).
+            </p>
+            <h3>Challenge</h3>
+            <p>Imagine the customers table also has <code>address</code> and <code>customer_since</code>
+                attributes (where <code>customer_since</code> is a year). Write a query to get all names and addresses
+                of customers living in Colorado who have been customers for at least 10 years.</p>
+
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://www.w3schools.com/sql/default.asp" target="_blank"
+                        rel="noopener noreferrer">Web3schools SQL Tutorial</a></li>
+                <li><a href="https://www.schemacrawler.com/" target="_blank" rel="noopener noreferrer">SchemaCrawler
+                        (Generate your own schema diagrams.)</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Understand the purpose of SQL join and perform joins to access data from multiple tables
+            </h2>
+            <h3>Overview</h3>
+            <p>What if the data you need lives in separate tables (e.g. one for users, and another for orders)? That's
+                when you need to <code>JOIN</code> - write a query that brings data across tables together on some
+                common key. This is where “relational” in relational databases comes from, and is the true heart of the
+                power of SQL.</p>
+            <p>Joins come in several flavors, and a favorite of SQL puzzles is to understand the distinction between
+                them. Consider a scenario where you have two tables, for now considered abstractly as X (with n rows
+                <code>x_i</code>) and Y (with m rows <code>y_j</code>), and that there is some common key id across the
+                tables allowing rows to be connected. Following are the possible joins:
+            </p>
+
+            <ul>
+                <li><strong>Cross join</strong> - also known as Cartesian product, this combines each <code>x_i</code>
+                    with each <code>y_j</code>,
+                    and will multiply out the number of rows returned (<code>n * m</code>)</li>
+                <li><strong>Left outer join</strong> - returns all <code>n</code> rows of <code>X</code>, with the
+                    columns populated with <code>Y</code> values, whenever the common key id matches and a null for
+                    those values that do not match</li>
+                <li><strong>Right outer join</strong> - similar to left, but uses the <code>m</code> rows of
+                    <code>Y</code> instead
+                </li>
+                <li><strong>Inner join</strong> - only returns rows that are both in <code>X</code> and <code>Y</code>,
+                    reducing the number of rows returned, and guaranteeing that no null values are introduced</li>
+            </ul>
+            <p>SQL databases support all of the above, but the last case - inner joins - is the most practical in most
+                situations. Cross joins are essentially never used outside of testing the database (most join
+                implementations are cross-joins followed by filtering), and outer joins, while occasionally useful,
+                should never be the default (only choose an outer join if you know it is appropriate for your problem).
+            </p>
+            <p>There are specific cases of inner join referred to as equi-join (specifying what should be equal) and
+                natural join (automatically joining by matching column names) - their implementation will vary across
+                real-world databases, and use of natural join is generally discouraged. Start with regular inner join -
+                you can research and pick up more sophisticated techniques as needed later on.</p>
+            <h3>Follow Along</h3>
+            <p>The full syntax to specify an inner join is:</p>
+
+            <pre><code>SELECT charactercreator_character.name, charactercreator_character_inventory.id
+FROM charactercreator_character
+INNER JOIN charactercreator_character_inventory ON
+charactercreator_character.character_id = charactercreator_character_inventory.character_id;</code></pre>
+
+            <p>This query can be made easier by using table aliases, and replacing the explicit join with an implicit
+                inner join using a <code>WHERE</code> clause:</p>
+
+            <pre><code>SELECT character.name, inventory.id
+FROM charactercreator_character AS character,
+charactercreator_character_inventory AS inventory
+WHERE character.character_id = inventory.character_id;</code></pre>
+
+            <p>Both above queries are identical, returning 898 rows for the included <code>rpg_db.sqlite3</code> data
+                in this module. Since that's a lot of rows, let's just load the first 10:</p>
+
+            <pre><code>SELECT character.name, inventory.id
+FROM charactercreator_character AS character,
+charactercreator_character_inventory AS inventory
+WHERE character.character_id = inventory.character_id
+LIMIT 10;</code></pre>
+
+            <pre><code>Aliquid iste optio reiciendi    1
+Aliquid iste optio reiciendi    2
+Aliquid iste optio reiciendi    3
+Optio dolorem ex a    4
+Optio dolorem ex a    5
+Optio dolorem ex a    6
+Minus c    7
+Minus c    8
+Sit ut repr    9
+Sit ut repr    10</code></pre>
+
+            <p>What are we looking at? Character names and all their unique inventory <code>id</code> values - each of
+                these then
+                corresponds to an actual item, but the details of that lives in another table. Fortunately, we can get
+                it by just growing our join:</p>
+
+            <pre><code>SELECT character.name, item.name
+FROM charactercreator_character AS character,
+charactercreator_character_inventory AS inventory,
+armory_item AS item
+WHERE character.character_id = inventory.character_id
+AND inventory.item_id = item.item_id
+LIMIT 10;</code></pre>
+
+            <pre><code>Aliquid iste optio reiciendi    Quos re
+Aliquid iste optio reiciendi    Dolores rem v
+Aliquid iste optio reiciendi    Alias laboriosam sapiente e
+Optio dolorem ex a    Sapiente do
+Optio dolorem ex a    Natus
+Optio dolorem ex a    Libero saepe accusantium
+Minus c    Saepe ea vo
+Minus c    Tempore
+Sit ut repr    Atque laudantium dolor q
+Sit ut repr    Sit rerum err</code></pre>
+
+            <p>Note that all the names (for both characters and items) are automatically generated <a
+                    href="https://en.wikipedia.org/wiki/Lorem_ipsum" target="_blank" rel="noopener noreferrer">lorem
+                    ipsum</a> - but the
+                results look pretty good! We've successfully joined across three tables, connecting characters to the
+                items they own.</p>
+            <p>The relationship between characters and items is known as many-to-many - one character can have many
+                items, and one item can be had by many characters (“item” here refers to the general idea of e.g. a
+                sword, and not a specific copy of a sword). The intermediary
+                <code>charactercreator_character_inventory</code>
+                facilitates this relationship - if you have simpler relationships, you can get the results from joining
+                only two tables. Other sorts of relationships:
+            </p>
+            <ul>
+                <li><strong>One-to-one</strong> - each entry has exactly one corresponding row in each table (e.g. books
+                    and ISBNs, people and SSNs)</li>
+                <li><strong>One-to-many</strong> - each entry in the first table can have multiple corresponding rows in
+                    the second table (e.g. books and book editions/printings, addresses and people who live there)</li>
+            </ul>
+            <p>All of these can come up (many-to-one can be considered the reverse of one-to-many), but many-to-many
+                (m2m) is particularly powerful. Consider other m2m examples - customers and items purchased, books and
+                authors, and more.</p>
+            <h3>Challenge</h3>
+            <p>Come up with your own real-world examples of situations/data that can be modeled with one-to-one,
+                one-to-many, and many-to-many relationships. Write “pseudo-SQL” to describe and query the data.</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://www.w3resource.com/sql/subqueries/understanding-sql-subqueries.php" target="_blank"
+                        rel="noopener noreferrer">SQL Subqueries</a></li>
+                <li><a href="https://www.sqltutorial.org/sql-aggregate-functions/" target="_blank"
+                        rel="noopener noreferrer">SQL Aggregation Functions</a></li>
+                <li><a href="https://www.sqltutorial.org/sql-aggregate-functions/" target="_blank"
+                        rel="noopener noreferrer">pandas.DataFrame.to_sql</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
             <h2>Guided Project</h2>
 
             <p>In this guided project, we'll learn the fundamentals of SQL and how to query databases effectively. Open

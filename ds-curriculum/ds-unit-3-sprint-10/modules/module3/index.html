@@ -150,6 +150,185 @@
         </section>
 
         <section class="content-box">
+            <h2>Objective 01 - Identify appropriate use cases for document-oriented databases</h2>
+            <h3>Required Resources</h3>
+            <p>Review each preclass resource before class.</p>
+            <ul>
+                <li><a href="https://news.ycombinator.com/item?id=19158854" target="_blank"
+                        rel="noopener noreferrer">Red Hat Satellite standardizing on PostgreSQL
+                        backend</a></li>
+                <li><a href="https://fauna.com/blog/comparison-of-scalable-database-isolation-levels" target="_blank"
+                        rel="noopener noreferrer">HN
+                        Discussion comparing MongoDB to PostgreSQL and SQLite</a></li>
+                <li><a href="https://utcc.utoronto.ca/~cks/space/blog/programming/DatabasesAlwaysSchemas"
+                        target="_blank" rel="noopener noreferrer">Your databases always have a schema: Essay comparing
+                        SQL/NoSQL and
+                        discussing what a schema really is</a></li>
+            </ul>
+
+            <h3>Overview</h3>
+            <p>There's a lot of hype for Big Data - what are the actual use cases? One common case is document-oriented
+                databases (also known as document stores), which are great for storing large amounts of, well, documents
+                (generally unstructured or semi-structured content).</p>
+            <p>Some people refer to these as “NoSQL” - but really, that is an imprecise label (anything that isn't SQL
+                is “NoSQL”). More specifically, these are non-relational approaches to storing and retrieving data.</p>
+            <p>Document-oriented databases are a common subset of key-value stores - a general non-relational database
+                paradigm. You've already interacted with structures like this! The general data structure abstraction is
+                known as the <a href="https://en.wikipedia.org/wiki/Hash_table" target="_blank"
+                    rel="noopener noreferrer">hash table</a> (or hash map), and common real-world
+                implementations are Python dictionaries and JSON.</p>
+            <p>How is a document-oriented database different? It's bigger, and (usually) run on somebody else's computer
+                (or computers). Because values are indexed by key hashes, it is relatively easily to split the data
+                across multiple instances, and figure out which instance is needed to actually retrieve a given record.
+            </p>
+            <p>Traditional SQL databases are more difficult to scale, as they calculate an index for each table based on
+                its primary key, and these indices must live in-memory in a single server. There are new approaches to
+                work around this which we will discuss later (e.g. PostgreSQL sharding), but it is true that
+                non-relational approaches are still at least conceptually easier to scale.</p>
+            <p>Another important distinction - as we've seen, SQL databases require specifying a schema (what your
+                data/types are) up-front. Document-oriented databases can generally take any sort of key-value pairs,
+                including nested key-values, allowing you to flexibly store data without preemptively specifying
+                structure. Some argue that this allows for faster prototyping, and is good for situations where you need
+                to rapidly develop something that is likely to be completely rewritten in the long term anyway.</p>
+            <p>But there is an important caveat - though some may characterize NoSQL as being “schema-free”, it really
+                just delays the necessity of a schema. Eventually your application needs to know what fields it is
+                asking for (and probably what types they are). One way to characterize this approach is
+                “schema-on-read”, as querying a document store usually requires specifying which key/value pairs you
+                want. This is in contrast with “schema-on-write”, the approach of traditional SQL (which then lets you
+                do things like <code>SELECT *</code> more easily, with some guarantees for what you're getting).</p>
+            <h3>Follow Along</h3>
+            <p>Consider the following situations:</p>
+            <ul>
+                <li>A bank, with mission-critical data demanding high reliability and integrity</li>
+                <li>A 2-person startup, rapidly developing a prototype in a week to demonstrate to investors</li>
+                <li>A medium size company, profitable and established in their niche, building a new product offering
+                </li>
+                <li>A large company, in the same situation as the prior medium size company</li>
+            </ul>
+            <p>Think for a moment - which sort of database (relational or non-relational) would you recommend in which
+                situation?</p>
+            <p>The first situation (the bank) arguably demands a relational approach. Banks should be well-defined in
+                their data, so an up-front schema is a fine requirement. Banks also benefit more from the reliability of
+                SQL than the scalability of document-oriented databases.</p>
+            <p>The second situation could go either way, but many would suggest document-oriented databases. You can
+                quickly make and throw away things without worrying about a schema, and you're likely to rewrite
+                everything after you get investor approval anyway. Overall when prototyping though - go with the tools
+                you know. If the two people involved happen to be really experienced with PostgreSQL, that is likely to
+                be a better approach.</p>
+            <p>The third situation is similarly dependent on details, but erring towards relational is likely the right
+                decision. Many companies think they have larger data than they have - PostgreSQL is likely to scale up
+                just fine, and if you're an established company you have the time to plan and develop something with
+                structure.</p>
+            <p>The fourth situation is deceptively similar to the third one - even a larger company can get by with
+                relational! The main exception would be if they know they are developing a product that is closely
+                related to their existing line and will thus immediately see significant usage and “big” data. But
+                otherwise, even a large company can get a lot of mileage out of SQL, and benefits even more from the
+                clarity and structure of a schema (due to having more developers and a larger ecosystem).</p>
+            <p>In the last two situations it'd also be worth considering modern “NewSQL” approaches, which try to
+                combine the best of both worlds (structure from relational, scale from non-relational). More on this in
+                the next module!</p>
+            <h3>Challenge</h3>
+            <p>Come up with two situations, one where relational is appropriate and another where non-relational is.
+                Describe both in writing, as if you were making a recommendation to your manager for which database to
+                choose.</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://news.ycombinator.com/item?id=19158854" target="_blank"
+                        rel="noopener noreferrer">Red Hat Satellite to standardize on PostgreSQL
+                        backend</a></li>
+                <li><a href="https://utcc.utoronto.ca/~cks/space/blog/programming/DatabasesAlwaysSchemas"
+                        target="_blank" rel="noopener noreferrer">Your databases always have a schema</a></li>
+                <li><a href="https://fauna.com/blog/a-comparison-of-scalable-database-isolation-levels" target="_blank"
+                        rel="noopener noreferrer">A Comparison of Scalable Database Isolation Levels</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Deploy and use a simple MongoDB instance</h2>
+            <h3>Required Resources</h3>
+            <ul>
+                <li><a href="https://docs.atlas.mongodb.com/getting-started/" target="_blank"
+                        rel="noopener noreferrer">MongoDB Atlas Getting Started: Instructions for setting up your first
+                        free MongoDB
+                        Cluster</a></li>
+                <li><a href="https://pymongo.readthedocs.io/en/stable/" target="_blank"
+                        rel="noopener noreferrer">PyMongo:
+                        Full PyMongo documentation</a></li>
+            </ul>
+            <h3>Overview</h3>
+            <p>MongoDB makes it quite easy to have data in the cloud - it won't be the sort of data you're necessarily
+                used to, but it is useful and is a tool that many web apps depend on.</p>
+            <p>A good mental abstraction for MongoDB is that it is “big JSON in the cloud” - it lets you save and
+                retrieve (persist) JSON-serialized data, at scale, over a network. Since JSON is a ubiquitous format,
+                widely supported by browsers and web applications, this is pretty handy.</p>
+            <p>But there is an important caveat - from a data science perspective, “unstructured key-value pairs” aren't
+                the most useful way to have data. They're great for application development - just save things and
+                retrieve them when you need them, but use a key instead of an inscrutable memory address. But this
+                variety means that you end up with a collection of heterogeneous documents - you aren't guaranteed that
+                they all have the same fields, so you can't just throw them in a DataFrame and work with them.</p>
+            <p>Nonetheless, you will encounter document-oriented databases in some form or another, and with proper care
+                it is possible to get useful data from them.</p>
+            <h3>Follow Along</h3>
+            <p>Follow the instructions for <a href="https://docs.atlas.mongodb.com/getting-started/" target="_blank"
+                    rel="noopener noreferrer">Getting Started with MongoDB Atlas</a> - registration is
+                free, and the default options are generally all fine. You may have to wait some time for your cluster to
+                actually be generated - it's actually spinning up multiple nodes, demonstrating the natural scalability
+                of non-relational approaches.</p>
+            <p>Once it is finished, you can click the <code>Connect</code> button for your sandbox cluster - you have to
+                specify a
+                username and password, and it is suggested you randomly generate and save these values somewhere. You
+                can generate random strings by <a href="https://duckduckgo.com/?q=pwgen&ia=answer/" target="_blank"
+                    rel="noopener noreferrer">clicking here</a> (refresh for new ones), and use one for username and
+                another for
+                password (but save them somewhere locally so you remember them!).</p>
+            <p>Also, make sure to <a href="https://help.gooddata.com/pages/viewpage.action?pageId=86796460"
+                    target="_blank" rel="noopener noreferrer">whitelist</a> your current IP address! This will
+                allow you to connect through the firewall that will protect your cluster. If you would like to connect
+                from a Colab or another hosted notebook, Run <code>!curl https://ipecho.net/plain</code> to find the IP
+                address. Note - it seems Colab IP addresses all start with <code>35.</code>, so you can whitelist all of
+                them with
+                the rule <code>35.0.0.0/8</code>.</p>
+            <p>Next we will have to choose the connection method. Select “Connect to Your Application” (the other method
+                of accessing date through tools will require installing local tools - check out the extension links if
+                you're curious). Select MongoDB Drivers option, and choose the driver and version. Copy the connection
+                string”, replace username/password with the ones you just used. Remember to remove '&lt;' and '&gt;'
+                before typing the username and password., and run the following (after replacing the string passed to
+                <code>pymongo.MongoClient</code>):
+            </p>
+
+            <pre><code>from pymongo import MongoClient
+client = MongoClient(mongodb+srv://&lt;username&gt;:&lt;password&gt;@cluster0.iapf3z5.mongodb.net/?retryWrites=true&w=majority)
+db = client.test</code></pre>
+
+            <p>Congratulations - you're connected to your MongoDB! PyMongo interacts with MongoDB, giving/retrieving
+                Python dictionaries from it, but with an important caveat - all keys must be strings, so that it can be
+                cleanly translated to JSON by MongoDB.</p>
+
+            <pre><code>result = db.test.insert_one({'stringy key': [2, 'thing', 3]})
+print(result.inserted_id)
+print(db.test.find_one({'stringy key': [2, 'thing', 3]}))</code></pre>
+
+            <p>You should see output like:</p>
+            <pre><code>5c6a0505d04bc70096888c2e
+{'_id': ObjectId('5c6a0505d04bc70096888c2e'), 'stringy key': [2, 'thing', 3]}</code></pre>
+
+            <h3>Challenge</h3>
+            <p>Use <code>dir()</code> and <code>help()</code> to inspect the db.test object, and see what else you can
+                do. In particular, check out <code>db.test.insert_many</code> and <code>db.test.find_many</code>, to let
+                you work with lots of data at once!</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://info-mongodb-com.s3.amazonaws.com/ReferenceCards15-PDF.pdf" target="_blank"
+                        rel="noopener noreferrer">MongoDB Cheat Sheet</a></li>
+                <li><a href="https://www.mongodb.com/docs/v4.4/mongo/" target="_blank" rel="noopener noreferrer">The
+                        mongo shell: A tutorial for installing and using the command line
+                        mongo shell</a></li>
+                <li><a href="https://aws.amazon.com/documentdb/" target="_blank" rel="noopener noreferrer">Amazon
+                        DocumentDB</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
             <h2>Guided Project</h2>
 
             <p>In this guided project, we'll learn how to work with NoSQL databases and build data pipelines between
