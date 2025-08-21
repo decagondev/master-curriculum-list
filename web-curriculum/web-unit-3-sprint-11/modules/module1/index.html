@@ -23,7 +23,6 @@
                         <a href="../module4/index.html">Module 4: Deploying Web Apps</a>
                     </div>
                 </li>
-                <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
                 <li><a href="../../sprint-challenge/index.html">Sprint Challenge</a></li>
             </ul>
         </nav>
@@ -32,43 +31,298 @@
     <main class="container">
         <h1>Module 1: Testing React - Web Unit 3 Sprint 11</h1>
         <section class="welcome">
-            <div class="content-box">
-                <h2>Module Overview</h2>
-                <p>In this module, you'll learn how to test React components effectively. You'll understand how to test
-                    components as their props change, use mocks in web application tests, and test asynchronous API
-                    calls within components.</p>
-            </div>
+            <div class="content-box module1-accent">
+                <h2>Test React Components as the Props Change</h2>
+                <p>Today we will continue working with React testing library to test rendered DOM elements. This objective will focus on testing data being passed as props and testing props changes that may happen in a component.</p>
 
-            <div class="content-box">
-                <h2>Learning Objectives</h2>
-                <ul>
-                    <li>Test React components as props change</li>
-                    <li>Use mocks in web application tests</li>
-                    <li>Test asynchronous API calls in components</li>
-                    <li>Complete guided projects and practice exercises</li>
-                </ul>
-            </div>
+                <p>In some cases, when props are updated, you'll want to run a second test on the same component. Luckily there is a built-in method called rerender() that allows us to look at a component with new props easily.</p>
 
-            <div class="content-box">
-                <h2>Content</h2>
+                <p>To do this, we need to add the rerender function when setting up our test for use in testing the component after the prop has been updated.</p>
 
-                <div class="video-section">
-                    <h3>Understanding React Testing</h3>
-                    <div class="video-container">
-                        <iframe src="https://fast.wistia.net/embed/iframe/0o8k9quzsp"
-                            title="Understanding React Testing" allow="fullscreen" frameborder="0" scrolling="no"
-                            loading="lazy"></iframe>
-                    </div>
+                <p>Let's look at an example where we have some component called PhoneNumber that the user will update with their phone number. We want to show an error message when the component is empty but pass the test after the user puts in a number between 0 and 10.</p>
+
+                <pre><code>// name test
+test("entering an invalid value shows an error message", () => {
+  // pull in testing properties - add rerender and debug
+  const { getByLabelText, getByRole } = render(
+    &lt;PhoneNumber /&gt;
+  );
+  const input = getByLabelText(/favorite number/i);
+  // update prop
+  fireEvent.change(input, { target: { value: "2025550113" } });
+  // test component
+  expect(getByRole("alert")).toHaveTextContent(/the number is invalid/i);
+  // test prop updates somehow:
+  // rerender(&lt;PhoneNumber phoneNumber={"2025550113"} /&gt;);
+});</code></pre>
+
+                <p>How does this work in practice? In the example above, we are interested in a component called PhoneNumber. Since the first test tests the component before the prop updates, the test will fail and show an error message. However, once the user inputs their number, the second test (the rendering) should pass if you were to run this code in your console; that's what you'd see.</p>
+
+                <h3>Assert Content is not Rendered</h3>
+                <p>In some cases, we want to ensure that content is not rendering on the DOM. For example, if a component should show up on click or, really any time after pageload. All getBy assertions return an error if they can't find the thing they're searching for (if a return is null). Luckily there is a workaround here - the assertion called queryByRole (or any queryBy assertion), will return null instead of an error. This lets us query for something this isn't supposed to be on the DOM. It also allows us to use an assertion like .toBeNull() or toBeFalsy(), and then tests will start passing even when no content is rendered.</p>
+
+                <pre><code>test("entering an invalid value shows an error message", () => {
+  // pull in testing properties - add rerender
+  // render the component without a prop
+  const { rerender } = render(
+    &lt;PhoneNumber /&gt;
+  );
+  // test component
+  expect(screen.getByRole("alert")).toHaveTextContent(/the number is invalid/i);
+  // test prop updates by rerendering component with different props
+  rerender(&lt;PhoneNumber phoneNumber={"2025550113"} /&gt;);
+  // assert that the error message is NOT being rendered (optional)
+  expect(screen.queryByRole("alert")).toBeNull();
+});</code></pre>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's walk through building and testing a component that handles changing props:</p>
+
+                    <p>First, create your App component:</p>
+                    <pre><code>export default function App({ friends }) {
+  return (
+    &lt;div className="App"&gt;
+      &lt;ul&gt;
+        {friends.length
+          ? friends.map(f =&gt;
+            &lt;li key={f.id} data-testid="friend"&gt;{f.name}&lt;/li&gt;
+          )
+          : &lt;div&gt;Fetching friends...&lt;/div&gt;}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+                    <p>Then create your test file to verify the component behavior:</p>
+                    <pre><code>import { render, screen } from '@testing-library/react';
+import App from './App';
+
+test('renders friends from the API', () => {
+  // Initial render with empty friends array
+  const { rerender } = render(&lt;App friends={[]} /&gt;);
+
+  // Verify initial state
+  expect(screen.queryAllByTestId('friend')).toHaveLength(0);
+  expect(screen.queryByText('Fetching friends...')).toBeInTheDocument();
+ 
+  // Re-render with friends data
+  rerender(&lt;App friends={[
+    { id: 1, name: 'Alla' },
+    { id: 2, name: 'Josh' }
+  ]} /&gt;);
+
+  // Verify updated state
+  expect(screen.queryAllByTestId('friend')).toHaveLength(2);
+  expect(screen.queryByText('Fetching friends...')).not.toBeInTheDocument();
+});</code></pre>
+
+                    <p>This test demonstrates how to:</p>
+                    <ul>
+                        <li>Initially render a component with empty props</li>
+                        <li>Test the initial render state</li>
+                        <li>Re-render the component with updated props</li>
+                        <li>Verify the component updates correctly</li>
+                    </ul>
+                </div>
+                <h2>Use Mocks in Web Application Tests</h2>
+                <p>A function in testing may have inconvenient dependencies on other objects. To isolate the behavior of the function, it's often desirable to replace the other objects with mocks that simulate the behavior of the real objects. Replacing objects is especially useful if the actual objects are impractical to incorporate into the unit test.</p>
+                <p>Another use of mocks is as "spies" because they let us spy on the behavior of a function that is called by some other code. Mock functions can keep track of calls to the function and the parameters passed in those calls. We can even define an implementation for the mock, but that's optional. Simpler mocks that implement only enough behavior to execute test code are sometimes called "stubs."</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's implement a helper function with an uncomfortable dependency that makes the helper impure (reliant on something outside of its scope) and, therefore, harder to test:</p>
+
+                    <p>Install the nanoid library executing <code>npm i nanoid@3.3.7</code>. The specific version used is due to some changes in later versions that would break our example! Let's make use of nanoid in the following component, to generate a unique ID:</p>
+
+                    <pre><code>import { nanoid } from "nanoid";
+
+export const makeUser = (firstName, lastName) => {
+  return {
+    id: nanoid(),
+    fullName: `${firstName} ${lastName}`
+  };
+};</code></pre>
+
+                    <p>Testing expected output against actual output would be complex because nanoid generates a new, random id each time. We can give it a try, though. Note the use of <code>.toEqual()</code> to make our assertion. It compares the nested properties of objects, which we need to check here.</p>
+
+                    <pre><code>import { makeUser } from "../utils/makeUser";
+
+test("generates a user with an id and a full name", () => {
+  // Arrange
+  const expected = { id: "abcde", fullName: "Peter Parker" }; // fishy...
+
+  // Act
+  const actual = makeUser("Peter", "Parker");
+
+  // Assert
+  expect(actual).toEqual(expected);
+});</code></pre>
+
+                    <p>To get around this problem, we can stub out (create) a fake version of nanoid that will replace the real one during the execution of the test. Outside of the test block, at the top level of the test file, place the following code:</p>
+
+                    <pre><code>jest.mock('nanoid', () => ({
+  nanoid: () => 'abcde',
+}));</code></pre>
+
+                    <p>Let's break it down. As the first argument to <code>jest.mock()</code>, we pass the path to the module we want to replace. As the second argument, we pass a callback that returns whatever it is we want the faked thing to be. We wish for nanoid to be an object with a nanoid method (like the real thing) but this method will become a silly stub function that always returns the same string: "abcde". Our tests should be passing now!</p>
+                </div>
+                <h2>Test Asynchronous API Calls That Are Made in a Component</h2>
+                <p>An asynchronous test is a special kind of test that does not complete right away, as it needs to wait for the results of one or more asynchronous operations. When writing asynchronous code, like when dealing with APIs, it's important to write asynchronous tests because other tests won't work as expected.</p>
+
+                <p>React testing library has a couple of helper functions for us to write these tests. The waitFor function from React testing library lets us tell the test that we need to wait for the async call to finish before continuing our assertions.</p>
+
+                <p>As mentioned before, we will also use the jest.mock function to make mocks of the asynchronous functions so we won't have to wait for the actual call to be made.</p>
+
+                <p>In the following tutorial, we'll walk through an example using API data. Like we did with non-asynchronous tests, we need to import components, render components, simulate an event, and run the test - the difference here is simply a few added functions to make calls asynchronous.</p>
+                <div class="note-box">
+                    <h3>How to Build It</h3>
+                    <p>Let's say we have a component that fetches data from the dog.ceo API when the user pushes a "Fetch Doggos" button. The component uses a function called fetchDoggos to make the API call. We have pulled this function out of the component and into an /api directory in our file structure to make it easier to test. We would write a test for this component following these steps:</p>
+
+                    <h4>Imports</h4>
+                    <p>As usual, we need to import the required libraries for testing. In addition to our normal libraries, we'll import waitFor to make our function run asynchronously, and we'll import our component fetchDoggos as mockFetchDoggos so that we don't have to wait for the actual call to be made.</p>
+
+                    <ul>
+                        <li>Import the react, @testing-library/react and @testing-library/user-event dependencies.</li>
+                        <li>Also import waitFor from rtl.</li>
+                        <li>Import fetchDoggos from the /api directory, and rename it to mockFetchDoggos so we know that it will be mocked - remember that a mock allows us to isolate a function from its dependencies.</li>
+                    </ul>
+
+                    <pre><code>// import libraries
+import React from "react";
+import { render, waitFor } from "@testing-library/react";
+import userEvent from '@testing-library/user-event';
+import { fetchDoggos as mockFetchDoggos } from "../api/fetchDoggos";
+import Doggos from "./Doggos";
+
+// set up test
+test("renders dog images from API", async () => {});</code></pre>
+
+                    <h4>Mocking the Async Function</h4>
+                    <p>Next we need to set up the mock. Like before, we will create the mock outside of the test block to mock the fetchDoggos async function. Then, inside the test block we will tell the mock function with what data it should resolve. When the component makes the async request using our mocked function, it will resolve quickly with that data.</p>
+
+                    <pre><code>// import libraries
+import React from "react";
+import { render, waitFor } from "@testing-library/react";
+import userEvent from '@testing-library/user-event';
+import { fetchDoggos as mockFetchDoggos } from "../api/fetchDoggos";
+import Doggos from "./Doggos";
+
+//create mock *before* setting up test
+jest.mock("../api/fetchDoggos");
+
+// set up test
+test("renders dog images from API", () => {
+  //mock resolved results
+  mockFetchDoggos.mockResolvedValueOnce({
+    message: [
+      "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
+      "https://images.dog.ceo/breeds/hound-afghan/n02088094_1007.jpg",
+      "https://images.dog.ceo/breeds/hound-afghan/n02088094_1023.jpg"
+    ]
+  });
+});</code></pre>
+
+                    <h4>Render, Query, and Click</h4>
+                    <p>Render the component, query for the necessary elements, and fire the click event with userEvent. At this point, we need to tell our test that it is going to handle an async function by adding async right after the test name string, and before the callback function. This is using JavaScript's async/await syntax. The click operation needs to be awaited, as you can see below:</p>
+
+                    <pre><code>//import libraries
+import React from "react";
+import { render, waitFor } from "@testing-library/react";
+import userEvent from '@testing-library/user-event';
+import { fetchDoggos as mockFetchDoggos } from "../api/fetchDoggos";
+import Doggos from "./Doggos";
+
+//set up test
+jest.mock("../api/fetchDoggos");
+
+test("renders dog images from API", async () => { // use the async keyword
+  mockFetchDoggos.mockResolvedValueOnce({
+    message: [
+      "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
+      "https://images.dog.ceo/breeds/hound-afghan/n02088094_1007.jpg",
+      "https://images.dog.ceo/breeds/hound-afghan/n02088094_1023.jpg"
+    ]
+  });
+
+  const { getByText } = render(&lt;Doggos /&gt;);
+  const user = userEvent.setup();
+
+  const fetchDoggosButton = getByText(/fetch doggos/i);
+  await user.click(fetchDoggosButton); // we need the `async` keyword because we are using `await` here
+});</code></pre>
+
+                    <p>At this point, the async call has been made!</p>
+
+                    <h4>The waitFor Function</h4>
+                    <p>Tell the function which async operation it needs to wait for. There are two related parts we need to set up here:</p>
+
+                    <ul>
+                        <li>Use the waitFor function from RTL to wait for RTL to update the DOM so we can query for the dog images.</li>
+                        <li>Write an assertion in the waitFor functions callback function.</li>
+                    </ul>
+
+                    <pre><code>test("renders dog images from API", async () => {
+  mockFetchDoggos.mockResolvedValueOnce({
+    message: [
+      "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
+      "https://images.dog.ceo/breeds/hound-afghan/n02088094_1007.jpg",
+      "https://images.dog.ceo/breeds/hound-afghan/n02088094_1023.jpg"
+    ]
+  });
+
+  const { getByText, getAllByTestId } = render(&lt;Doggos /&gt;);
+  const user = userEvent.setup();
+
+  const fetchDoggosButton = getByText(/fetch doggos/i);
+  await user.click(fetchDoggosButton);
+  await waitFor(() => {
+    // we put inside here the assertions that need to retry until
+    // the async operation is done and the DOM has been updated
+    expect(getAllByTestId(/doggo-images/i)).toHaveLength(3);
+  });
+});</code></pre>
+
+                    <h4>One Last Assertion</h4>
+                    <p>Finally, we will make sure that the correct function was called by adding an extra assertion, expect(mockFetchDoggos).toHaveBeenCalledTimes(1);.</p>
+
+                    <pre><code>await waitFor(() => {
+  expect(getAllByTestId(/doggo-images/i)).toHaveLength(3);
+});
+expect(mockFetchDoggos).toHaveBeenCalledTimes(1);</code></pre>
                 </div>
             </div>
+            <div class="content-box module1-accent">
+                <h2>Guided Project</h2>
+              <p><a href="https://github.com/bloominstituteoftechnology/web-guided-project-testing-react" target="_blank" rel="noopener">Testing React Starter Code</a></p>
+              <p><a href="https://github.com/bloominstituteoftechnology/web-guided-project-testing-react-solution" target="_blank" rel="noopener">Testing React Solution</a></p>
+              <div class="video-container">
+                  <iframe src="https://fast.wistia.net/embed/iframe/0o8k9quzsp" title="Guided Project" allow="autoplay; fullscreen" loading="lazy"></iframe>
+              </div>
+            </div>
 
-            <div class="content-box">
-                <h2>Practice Activities</h2>
+            <div class="content-box module1-accent">
+                <h2>Module 1 Project: Testing React</h2>
+
+                <p>Manually testing an application can take an entire team of QA specialists several days, making it a very expensive and error-prone endeavor. And this kind of exhaustive testing would have to happen every time any new code is merged into the main branch!</p>
+
+                <p>Automatically testing the UI of an application removes the need for humans to eyeball every possible state of the application's interface. In this Module Project you will add tests to existing React Components, greatly reducing the need for manual testing.</p>
+                
+
+                <h3>Instructions</h3>
+
+                <p>The link below takes you to Bloom's code repository of the assignment. You'll need to fork the repo to your own GitHub account, and clone it down to your computer:</p>
+                <p>Starter Repo: <a href="https://github.com/LambdaSchool/web-module-project-testing-react" target="_blank">React Testing - TV Show</a></p>
+
                 <ul>
-                    <li>Module 1 Practice Exercises</li>
-                    <li>Module 1 Quiz</li>
-                    <li>Module 1 Project</li>
+                    <li>Fork the repository,</li>
+                    <li>clone it to your machine, and</li>
+                    <li>open the README.md file in VSCode, where you will find instructions on completing this Project.</li>
+                    <li>submit your completed project to the BloomTech Portal</li>
                 </ul>
+
+                <h3>Solution</h3>
+                <div class="video-container">
+                    <iframe src="https://fast.wistia.net/embed/iframe/92jzrqbvdx" title="Solution Video" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                </div>
             </div>
 
             <div class="content-box">
