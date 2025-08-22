@@ -20,7 +20,7 @@
                         <div class="dropdown-content">
                             <a href="../module1/index.html">Module 1: Natural Language Processing - Introduction</a>
                             <a href="../module2/index.html">Module 2: Vector Representations</a>
-                            <a href="../module3/index.html">Module 3: Document Classification</a>
+                            <a href="../module3/index.html" class="active">Module 3: Document Classification</a>
                             <a href="../module4/index.html">Module 4: Topic Modeling</a>
                         </div>
                     </li>
@@ -32,6 +32,7 @@
 
         <main>
             <h1>Module 3: Document Classification</h1>
+
             <section id="module-overview">
                 <div class="content-box">
                     <h2>Module Overview</h2>
@@ -55,11 +56,381 @@
                 </div>
             </section>
 
+            <section class="content-box">
+                <h2>Objective 01 - Extract Text Features and Use Them in Classification Pipelines</h2>
+                <h3>Overview</h3>
+                <p>In Unit 2, we worked with pipelines a lot. We used them to create a consistent workflow of
+                    preprocessing and model fitting steps. A pipeline is necessary to ensure that the data is processed
+                    simultaneously during each fold of the cross-validation.</p>
+                <p>To start this module, we will focus on two tasks: extracting features from text and then classifying
+                    the text with a simple logistic regression. We'll put these two tasks together in a pipeline and
+                    then use a grid search cross-validation to find the ideal parameters.</p>
+                <h3>Follow Along</h3>
+                <p>For this example, we'll be using the sentiment labeled reviews from this <a
+                        href="https://archive.ics.uci.edu/ml/datasets/Sentiment+Labelled+Sentences" target="_blank"
+                        rel="noopener noreferrer">UCI Machine Learning Repository</a>. To make this exercise a little
+                    simpler and the dataset a little smaller, we'll use the reviews from Yelp.</p>
+                <p>First, let's vectorize the text data and then fit a classifier model.</p>
+                <pre><code># Imports
+import pandas as pd
+
+# Read in the locally saved file from the link above
+df_yelp = pd.read_csv('yelp_labelled.txt', names=['sentence', 'label'], sep='\t')
+df_yelp.head()
+</code></pre>
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>sentence</th>
+                                <th>label</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0</td>
+                                <td>Wow... Loved this place.</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Crust is not good.</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Not tasty and the texture was just nasty.</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Stopped by during the late May bank holiday of...</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>The selection on the menu was great and so wer...</td>
+                                <td>1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <pre><code># Import train-test split
+from sklearn.model_selection import train_test_split
+
+# Create the feature and target variables
+sentences = df_yelp['sentence']
+y = df_yelp['label']
+
+# Train-test split
+sentences_train, sentences_test, y_train, y_test = train_test_split(
+    sentences, y, test_size=0.25, random_state=42)
+</code></pre>
+                <p>We now have a list of sentences; we did the train-test split before we vectorized. If we instead
+                    vectorized the whole training set and split it into train-test sets, the training set would have
+                    information about the testing test set.</p>
+                <pre><code># Import the tf-idf vectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Instantiate and fit the tf-idf vectorizer
+vectorizer = TfidfVectorizer(stop_words='english', ngram_range = (2,2))
+vectorizer.fit(sentences_train)
+
+# Vectorize the training and testing data
+X_train = vectorizer.transform(sentences_train)
+X_test  = vectorizer.transform(sentences_test)
+
+# Display the properties of the vectorized text
+X_train
+</code></pre>
+                <pre>
+&lt;750x2864 sparse matrix of type '&lt;class 'numpy.float64'&gt;'
+    with 3051 stored elements in Compressed Sparse Row format&gt;
+</pre>
+                <pre><code># Import the classifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+
+# Instantiate and fit a model
+classifier = LogisticRegression(solver='lbfgs')
+
+classifier.fit(X_train, y_train)
+score = classifier.score(X_test, y_test)
+
+print("Accuracy:", score)
+</code></pre>
+                <pre>
+Accuracy: 0.588
+</pre>
+                <p>We have decent accuracy with a logistic regression model. Now, if we want to optimize our model and
+                    use cross-validation, we'll need to put the vectorizer and classifier steps in each fold of the
+                    cross-validation. Furthermore, as we learned in Unit 2, we need to apply the same transformation
+                    within each fold of the validation; otherwise, we could accidentally introduce data leakage (where
+                    we give the model more information about the data that it shouldn't have).</p>
+                <p>Our pipeline will have two steps: the vectorizer and the classifier.</p>
+                <pre><code>from sklearn.pipeline import Pipeline
+
+# Define the Pipeline
+pipe = Pipeline([('vect', vectorizer), # vectorizer
+                 ('clf', classifier) # classifier
+                ])
+
+# Define the parameter space for the grid serach
+parameters = {'clf__C': [1, 10, 1000000]} # C: regularization strength
+
+
+# Implement a grid search with cross-validation
+from sklearn.model_selection import GridSearchCV
+
+grid_search = GridSearchCV(pipe, parameters, cv=5, n_jobs=-1, verbose=1)
+grid_search.fit(sentences, y);
+
+# Print out the best score
+grid_search.best_score_
+</code></pre>
+                <pre>
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+
+
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done   8 out of  15 | elapsed:    2.3s remaining:    2.0s
+[Parallel(n_jobs=-1)]: Done  15 out of  15 | elapsed:    2.4s finished
+
+
+
+
+
+0.611
+</pre>
+                <p>The accuracy is improved compared to the version we did without a grid search. It's relatively
+                    straightforward to adjust the parameters that you would like to perform the grid search over. In
+                    this case, the only somewhat helpful parameter to search over is the C or the inverse of the
+                    regularization. For classifiers with more parameters, you add a key: value pair to the parameters
+                    dictionary.</p>
+                <h3>Challenge</h3>
+                <p>For this challenge, try using a different classifier in place of the logistic regression. Make sure
+                    to adjust the <code>parameters</code> dictionary to be consistent with the classifier you choose.
+                    Some suggested classifiers, to begin with, are a decision tree or a random forest.</p>
+                <h3>Additional Resources</h3>
+                <ul>
+                    <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html"
+                            target="_blank" rel="noopener noreferrer">Scikit-learn: Logistic regression</a></li>
+                    <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html"
+                            target="_blank" rel="noopener noreferrer">Scikit-learn: Pipeline</a></li>
+                    <li><a href="https://archive.ics.uci.edu/ml/datasets/Sentiment+Labelled+Sentences" target="_blank"
+                            rel="noopener noreferrer">UCI: Sentiment Labelled Sentences</a></li>
+                </ul>
+            </section>
+
+            <section class="content-box">
+                <h2>Objective 02 - Apply Latent Semantic Indexing (LSA) to a Document Classification Problem</h2>
+                <h3>Overview</h3>
+                <p>We're going to continue to improve on our model from the previous objective. So far, we have used a
+                    pipeline with a vectorizer and a classifier. Another advantage of a pipeline is that it's easy to
+                    add additional tasks. For this objective, we will look at a technique called latent semantic
+                    analysis (LSA). It's also referred to as latent semantic indexing (LSI), and the terms are
+                    interchangeable.</p>
+                <p>When we're doing this analysis, we're looking for a set of common concepts for the documents in our
+                    corpus. So first, a word count (or some vector representation) is determined for each document. We
+                    can then assess document similarity by calculating the cosine similarity between two document
+                    vectors (cosine similarity is the normalized dot product).</p>
+                <h3>Singular Value Decomposition (SVD)</h3>
+                <p>We won't go into all of the detailed math here, but we'll try to summarize the main ideas behind
+                    singular value composition. First, as we have seen in previous modules, we can create a matrix
+                    representing the corpus's words. In the last objective, we have a list of yelp reviews and are
+                    considering each one a document. For each review (document), we calculate the tf-idf vector. The
+                    resulting matrix has rows that correspond to the words in the corpus, and the columns are each
+                    document. This matrix could also be large; we don't necessarily need all of the information within
+                    it.</p>
+                <p>To find the critical "parts" of the matrix, we can use SVD to reduce the number of rows (words) while
+                    still preserving enough information for later comparisons, like the cosine similarity.</p>
+                <p>In the following example, we'll do a latent semantic analysis using the Scikit-learn
+                    <code>TruncatedSVD</code> transformer. This tool works on tf-idf matrices as returned by the
+                    vectorizers. When we apply the transformer to this matrix type, it is known as latent semantic
+                    analysis (LSA).
+                </p>
+                <h3>Follow Along</h3>
+                <pre><code>import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import TruncatedSVD
+from sklearn.linear_model import LogisticRegression
+
+# Read in the locally saved file from the link above
+
+df_yelp = pd.read_csv('yelp_labelled.txt', names=['sentence', 'label'], sep='\t')
+df_yelp.head()
+
+# Create the features and target
+sentences = df_yelp['sentence']
+y = df_yelp['label']
+
+# Instantiate the tf-idf vectorizer
+vectorizer = TfidfVectorizer(stop_words='english', ngram_range = (2,2))
+
+# Instantiate the classifier (defaults)
+classifier = LogisticRegression(solver='lbfgs')
+
+# Instantiate the LSA (SVD) algorithm (defaults)
+svd = TruncatedSVD()
+</code></pre>
+                <p>Now we can add the SVD part to our pipeline; we'll separate it from the classifier part and call the
+                    combination of the vectorizer and SVD the "lsa" piece.</p>
+                <pre><code># Create the pipelines
+from sklearn.pipeline import Pipeline
+
+# LSA part
+lsa = Pipeline([('vect', vectorizer), ('svd', svd)])
+
+# Combine into one pipeline
+pipe = Pipeline([('lsa', lsa), ('clf', classifier)])
+
+# Define the parameter space for the grid search
+parameters = {
+    'lsa__svd__n_components': (100,250),
+    'lsa__vect__max_df': (0.9, 1.0), # max document frequency
+}
+
+# Implement a grid search with cross-validation
+from sklearn.model_selection import GridSearchCV
+
+grid_search = GridSearchCV(pipe, parameters, cv=5, n_jobs=-1, verbose=1)
+grid_search.fit(sentences, y);
+
+# Display the best score from the grid-search
+grid_search.best_score_
+</code></pre>
+                <pre>
+Fitting 5 folds for each of 4 candidates, totalling 20 fits
+
+
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done  18 out of  20 | elapsed:    3.4s remaining:    0.4s
+[Parallel(n_jobs=-1)]: Done  20 out of  20 | elapsed:    3.4s finished
+
+
+
+
+
+0.594
+</pre>
+                <p>In the last objective, we achieved an accuracy of 0.61, and we're at about the same here. Our
+                    analysis didn't seem to benefit too much from adding in LSA/SVD. But, we did use a relatively small
+                    set of labeled sentences, and the resulting matrix likely didn't contain too much extra information
+                    that needed to be "decomposed."</p>
+                <h3>Challenge</h3>
+                <p>The UCI Sentiment Labeled Sentences dataset could include two other sources in the analysis: Amazon
+                    and IMDB. You can use a dataset that contains all three of these sources or select one of them. With
+                    that dataset, try running the analysis above. Did it make any difference to include SVD?</p>
+                <h3>Additional Resources</h3>
+                <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Latent_semantic_analysis" target="_blank"
+                            rel="noopener noreferrer">Latent Semantic Analysis</a></li>
+                    <li><a href="https://www.deeplearningbook.org/contents/linear_algebra.html" target="_blank"
+                            rel="noopener noreferrer">Deep Learning Book: Singular Value Decomposition</a></li>
+                    <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.TruncatedSVD.html"
+                            target="_blank" rel="noopener noreferrer">Scikit-learn: Truncated SVD</a></li>
+                    <li><a href="https://archive.ics.uci.edu/ml/datasets/Sentiment+Labelled+Sentences" target="_blank"
+                            rel="noopener noreferrer">UCI: Sentiment Labeled Sentences</a></li>
+                </ul>
+            </section>
+
+            <section class="content-box">
+                <h2>Objective 03 - Benchmark and Compare Various Vectorization Methods in Document Classification Tasks
+                </h2>
+                <h3>Overview</h3>
+                <p>
+                    This objective will focus on building pipelines and adding in different pieces to improve the
+                    modeling of our text data. In the previous examples, we vectorized the sentences in our "documents"
+                    (sentences). But this may not have been good enough to capture the meaning of the words in the text.
+                    We have model accuracies around 60% and would like to try to improve the model performance.
+                </p>
+                <p>
+                    One thing we haven't incorporated are word embeddings - remember those? Individual words can be
+                    vectors, which represent different components. If we take a sentence of word vectors, the overall
+                    sentence vector is the average of all word vectors.
+                </p>
+                <p>
+                    In the following example, we'll use spaCy and import the large pre-trained model, including word
+                    embeddings. Because we're vectorizing our text using spaCy and not the scikit-learn
+                    <code>TfidfVectorizer</code>, we're not going to use a pipeline here. Instead, we'll get just a
+                    train-test split and vectorize each part of the training and testing sets separately. Let's improve
+                    our model.
+                </p>
+                <h3>Follow Along</h3>
+                <pre><code># Import spaCy and the large pretrained model (includes word embeddings)
+import spacy
+nlp = spacy.load("en_core_web_lg")
+</code></pre>
+                <pre><code># Imports
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+# Read in the locally saved file from UCI website
+df_yelp = pd.read_csv('yelp_labelled.txt', names=['sentence', 'label'], sep='\t')
+df_yelp.head()
+
+# Create the features and target
+sentences = df_yelp['sentence']
+y = df_yelp['label']
+
+# Train-test split
+sentences_train, sentences_test, y_train, y_test = train_test_split(
+    sentences, y, test_size=0.25, random_state=42)
+
+# Function to return the vector for each sentence in a document
+def get_word_vectors(docs):
+    return [nlp(doc).vector for doc in docs]
+
+# Get the vectors for each sentence (mean of all the word vectors)
+X_train = get_word_vectors(sentences_train)
+X_test = get_word_vectors(sentences_test)
+
+from sklearn.linear_model import LogisticRegression
+
+# Instantiate the classifier (defaults)
+classifier = LogisticRegression(solver='lbfgs')
+
+# Fit the model
+classifier.fit(X_train, y_train)
+score = classifier.score(X_test, y_test)
+
+# Print out the accuracy score
+print("Accuracy including word embeddings: ", score)
+</code></pre>
+                <pre>
+Accuracy including word embeddings:  0.856
+</pre>
+                <p>
+                    We have improved our accuracy a lot here! The improvement would suggest that for this type of text
+                    data (short- to medium-length sentences reviewing something), word embeddings and word vectors
+                    captured more meaning. The ability to have more information resulted in a model that was able to
+                    make better predictions.
+                </p>
+                <h3>Challenge</h3>
+                <p>
+                    The UCI Sentiment Labeled Sentences dataset could include two other sources in the analysis: Amazon
+                    and IMDB. You can use a dataset that contains all three of these sources or select one of them. With
+                    that dataset, try running the analysis above. Did adding more sentences change how well your model
+                    could predict?
+                </p>
+                <p>
+                    Another task you could try is to use a different classifier, like a decision tree or random forest.
+                    Does the performance improve?
+                </p>
+                <h3>Additional Resources</h3>
+                <ul>
+                    <li><a href="https://spacy.io/usage/vectors-similarity" target="_blank"
+                            rel="noopener noreferrer">SpaCy: Word Vectors</a></li>
+                </ul>
+            </section>
+
             <section id="guided-project">
                 <div class="content-box">
                     <h2>Guided Project</h2>
 
-                    <p>Open <strong>DS_413_Document_Classification_Lecture_GP.ipynb</strong> in the GitHub repository to
+                    <p>Open <strong>DS_413_Document_Classification_Lecture_GP.ipynb</strong> in the GitHub
+                        repository to
                         follow along with the guided project.</p>
 
                     <div class="resource-links">
@@ -83,8 +454,10 @@
             <section id="module-assignment">
                 <div class="content-box">
                     <h2>Module Assignment</h2>
-                    <p>Participate in a Kaggle competition to classify whisky reviews using different NLP techniques.
-                        Apply text feature extraction, LSI, and word embeddings to optimize classification performance
+                    <p>Participate in a Kaggle competition to classify whisky reviews using different NLP
+                        techniques.
+                        Apply text feature extraction, LSI, and word embeddings to optimize classification
+                        performance
                         and achieve at least 80% accuracy.</p>
 
                     <div class="resource-links">
@@ -107,7 +480,8 @@
                     <h3>Text Classification and Feature Extraction</h3>
                     <ul>
                         <li><a href="https://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction"
-                                target="_blank" rel="noopener noreferrer">Scikit-Learn: Text Feature Extraction</a></li>
+                                target="_blank" rel="noopener noreferrer">Scikit-Learn: Text Feature Extraction</a>
+                        </li>
                     </ul>
                     <h3>Dimensionality Reduction and LSI</h3>
                     <ul>
@@ -126,7 +500,8 @@
                         <li><a href="https://machinelearningmastery.com/develop-word-embedding-model-predicting-movie-review-sentiment/"
                                 target="_blank" rel="noopener noreferrer">Embeddings Sentiment Analysis</a></li>
                         <li><a href="https://www.kaggle.com/code/faressayah/natural-language-processing-nlp-for-beginners"
-                                target="_blank" rel="noopener noreferrer">Kaggle Learn: Natural Language Processing for
+                                target="_blank" rel="noopener noreferrer">Kaggle Learn: Natural Language Processing
+                                for
                                 Beginners</a></li>
                     </ul>
                 </div>

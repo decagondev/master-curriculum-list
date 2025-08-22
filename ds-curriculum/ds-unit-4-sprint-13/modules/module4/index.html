@@ -21,7 +21,7 @@
                             <a href="../module1/index.html">Module 1: Natural Language Processing - Introduction</a>
                             <a href="../module2/index.html">Module 2: Vector Representations</a>
                             <a href="../module3/index.html">Module 3: Document Classification</a>
-                            <a href="../module4/index.html">Module 4: Topic Modeling</a>
+                            <a href="../module4/index.html" class="active">Module 4: Topic Modeling</a>
                         </div>
                     </li>
                     <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
@@ -32,6 +32,7 @@
 
         <main>
             <h1>Module 4: Topic Modeling</h1>
+
             <section id="module-overview">
                 <div class="content-box">
                     <h2>Module Overview</h2>
@@ -53,6 +54,358 @@
                         <li>Interpret Document Topic Distributions and summarize findings from a topic model</li>
                     </ul>
                 </div>
+            </section>
+
+            <section class="content-box">
+                <h2>Objective 01 - Describe the Latent Dirichlet Allocation Process</h2>
+                <h3>Overview</h3>
+                <p>In the previous module, we did some basic document classification using latent semantic analysis
+                    (LSA). With that method, we found common "concepts" in documents and compared them to other
+                    documents to find similarities. In this next module, we will go deeper into learning more about
+                    topics in our documents.</p>
+                <h3>Topics</h3>
+                <p>First, let's define what a topic is. A text about a specific topic, like astronomy or cats, or
+                    cooking: we would expect to find similar words in any documents about the same topic. Articles and
+                    books about astronomy would include terms like "planet," "orbit," and "telescope." A text about
+                    cooking would have different words; for example, "mixing," "oven," and "diced" are standard terms
+                    used in cooking. But, these documents on two different topics would also have words in common, such
+                    as "temperature," "scale," and "measure."</p>
+                <p>So how do we determine which "topics" are in a document? Math! We can use various mathematical and
+                    statistical techniques to determine these topics and their representation in a text. This module
+                    will focus on a technique called latent Dirichlet allocation (LDA).</p>
+                <h3>Latent Dirichlet allocation</h3>
+                <p>The basis of the LDA model is that it assumes that a document is a mixture of topics and that all the
+                    words in the document (after removing stop words and stemming/lemmatization) belong to a topic. A
+                    more straightforward way might be to say each document is a mixture of topics and each topic is a
+                    mixture of words.</p>
+                <p>More generally, LDA is an unsupervised learning (clustering) technique, where the clusters are the
+                    topics. You can also think about representing a document in "topic space" in the same way that we
+                    use word embeddings to describe a word in a vector space.</p>
+                <p>One of the parameters to specify when fitting an LDA model is the number of topics. Unfortunately,
+                    the parameter isn't something that can be measured or determined before actually assigning words to
+                    topics. But, we can optimize the number of topics by measuring the performance during a
+                    classification or regression task by determining how many different topics there are.</p>
+                <p>In the next objective, we'll dive into creating topic models with some Python packages. But for now,
+                    we'll look at the simple topics for a small collection of documents. By this, we mean five
+                    sentences! So first, let's find some topics.</p>
+                <h3>Follow Along</h3>
+                <p>Let's pretend we want to find the topics in this corpus:</p>
+                <ul>
+                    <li>"Many people have believed that the summer season is hot because the Earth is closer to the
+                        Sun."</li>
+                    <li>"Would the state of liquid water change to a solid or gas on the surface of the Moon?"</li>
+                    <li>"After discussing their problems, the underlying issue began to surface."</li>
+                    <li>"The recipe did state specific cooking directions but didn't indicate how to season the food."
+                    </li>
+                    <li>"The state needs to issue the document."</li>
+                </ul>
+                <p>Some words have multiple meanings, such as season (time of year or food flavoring), state (form of
+                    matter or geographic location), and issue (to give out or problem/difficulty).</p>
+                <p>What topics can we identify in these documents? First, we have statements related to science topics
+                    (Earth, Sun, state of liquid) and other sentences that refer to more general topics like cooking or
+                    paperwork.</p>
+                <p>Let's see what topics we produce if we fit an LDA model to this text. First, we have to choose the
+                    number of topics, so we'll select a small number of topics like three for a small sample like this.
+                    Then for each topic, we'll look at the top three words. There are more than nine words (3*3) in our
+                    corpus, but for now, three should be enough to get an idea of what the topic is.</p>
+                <p>Don't worry about the details of fitting the model right now; we'll get to this in the next
+                    objective.</p>
+                <h4>Topics</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>topic</th>
+                            <th>word1</th>
+                            <th>word2</th>
+                            <th>word3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>state</td>
+                            <td>water</td>
+                            <td>liquid</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>season</td>
+                            <td>people</td>
+                            <td>believed</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>issue</td>
+                            <td>surface</td>
+                            <td>underlying</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>We have our three topics and the words associated with those topics. The first topic seems like it
+                    can be called "science" since state seems to be associated with the scientific definition. The
+                    second topic is more challenging to classify, but "season" seems to be associated with things people
+                    do rather than the weather. And the last topic could be called "psychology," as it seems those are
+                    terms a counselor might use.</p>
+                <p>Even with this small example, we're starting to feel what a topic is, especially when we can easily
+                    see and read the whole corpus. Usually, we'll deal with large amounts of text.</p>
+                <h3>Challenge</h3>
+                <p>Using the topic modeling application available at this <a
+                        href="https://lettier.com/projects/lda-topic-modeling/" target="_blank"
+                        rel="noopener noreferrer">website</a>, try adding some of you own documents. Suggestions for
+                    what to use here include:
+                </p>
+                <ul>
+                    <li>A paragraph of text from an open source text book or non-fiction article (NASA, science news
+                        letters, etc.)</li>
+                    <li>Excerpts from novels by different authors from public domain texts on <a
+                            href="https://www.gutenberg.org/" target="_blank" rel="noopener noreferrer">Project
+                            Gutenberg</a></li>
+                    <li>A sample of your own writing on a topic compared to a sample from a different source</li>
+                </ul>
+                <h3>Additional Resources</h3>
+                <ul>
+                    <li><a href="https://lettier.com/projects/lda-topic-modeling/" target="_blank"
+                            rel="noopener noreferrer">LDA Topic Modeling</a></li>
+                    <li><a href="https://medium.com/@lettier/how-does-lda-work-ill-explain-using-emoji-108abf40fa7d"
+                            target="_blank" rel="noopener noreferrer">Your Guide to Latent Dirichlet Allocation</a></li>
+                </ul>
+            </section>
+
+            <section class="content-box">
+                <h2>Objective 02 - Implement a Topic Model Using the Gensim Library</h2>
+                <h3>Overview</h3>
+                <p>In the last objective, we looked at a small corpus of five sentence-length documents and used latent
+                    Dirichlet allocation (LDA) to find the topics in that corpus. In this next part, we will demonstrate
+                    how to use the gensim Python package to do some topic modeling using LDA.</p>
+                <p>We'll go through the following steps to find the topics; the text we'll use is "Alice in Wonderland"
+                    by Lewis Carroll. The text was prepared by selecting paragraph-sized chunks of text from the book.
+                    In the analysis, each chunk of text will be considered a document.</p>
+                <h3>Topic Modeling Steps</h3>
+                <ol>
+                    <li>Prepare text: Load text file, split into documents, tokenize/lemmatize, remove stop words</li>
+                    <li>Create the term dictionary for the corpus</li>
+                    <li>Create a document term matrix (DTM)</li>
+                    <li>Set up the LDA model, decide on the number of topics</li>
+                    <li>Run and train the model</li>
+                    <li>Topics!</li>
+                </ol>
+                <h3>Follow Along</h3>
+                <p>The "Alice in Wonderland" text was downloaded from the <a href="https://www.gutenberg.org/"
+                        target="_blank" rel="noopener noreferrer">Gutenberg
+                        Project</a>. The file used in this analysis can be found <a
+                        href="https://github.com/bloominstituteoftechnology/DS-Unit-4-Sprint-1-NLP/blob/main/module4-topic-modeling/wonderland.txt"
+                        target="_blank" rel="noopener noreferrer">here</a>.</p>
+                <pre><code># Imports
+import gensim
+from gensim.utils import simple_preprocess
+from gensim.parsing.preprocessing import STOPWORDS
+
+# Add additional stop words
+#STOPWORDS = set(STOPWORDS).union(set(['said', 'mr', 'mrs']))
+
+# Function for tokenizing the 
+def tokenize(text):
+    return [token for token in simple_preprocess(text) if token not in STOPWORDS]
+</code></pre>
+                <pre><code># Read in the text (download to run locally)
+with open('wonderland.txt', 'r') as file:
+    text_str = file.read()
+
+# Split the string on the newline character
+text = text_str.split('\n')
+
+# Tokenize each chunk of text
+text_tokens = [tokenize(chunk) for chunk in text]
+
+# Look at the first 10 tokens
+text_tokens[0][0:10]
+</code></pre>
+                <pre><code>['alice',
+ 'beginning',
+ 'tired',
+ 'sitting',
+ 'sister',
+ 'bank',
+ 'having',
+ 'twice',
+ 'peeped',
+ 'book']
+</code></pre>
+                <pre><code>
+# Imports
+from gensim import corpora
+
+# Create the term dictionary of our corpus
+# every unique term is assigned an index
+dictionary = corpora.Dictionary(text_tokens)
+
+# Convert list of documents (corpus) into Document Term Matrix 
+# using the dictionary we just created
+doc_term_matrix = [dictionary.doc2bow(doc) for doc in text_tokens]
+
+# What does this matrix look like?
+print(doc_term_matrix[0][0:25])
+</code></pre>
+                <pre><code>[(0, 1), (1, 4), (2, 1), (3, 1), (4, 2), (5, 1), (6, 1), (7, 1), (8, 1), (9, 2), (10, 1), (11, 1), (12, 1), (13, 1), (14, 2), (15, 1), (16, 1), (17, 1), (18, 1), (19, 1), (20, 1), (21, 1), (22, 1), (23, 1), (24, 1)]
+</code></pre>
+                <p>The document term matrix consists of an ID for each unique term in the document and how many times
+                    that term appears. So, for example, in the section we printed above, we're looking at the first 25
+                    terms in the first document.</p>
+                <p>Now let's use this document term matrix to train our LDA model. We need to set the number of topics
+                    ahead of time; let's choose five.</p>
+                <pre><code># Imports
+from gensim.models.ldamulticore import LdaMulticore
+
+# Create the object for LDA model
+lda = gensim.models.ldamodel.LdaModel
+
+# Train LDA model on the document term matrix
+# topics = 5
+ldamodel = lda(doc_term_matrix, num_topics=5, id2word = dictionary, passes=50)
+
+# Print out the topics
+print(ldamodel.print_topics(num_topics=3, num_words=5))
+</code></pre>
+                <pre><code>[(1, '0.029*"turtle" + 0.024*"said" + 0.024*"mock" + 0.020*"gryphon" + 0.015*"alice"'), (0, '0.027*"rabbit" + 0.020*"alice" + 0.014*"white" + 0.014*"time" + 0.014*"dear"'), (2, '0.025*"little" + 0.020*"alice" + 0.009*"ran" + 0.009*"looking" + 0.009*"head"')]
+</code></pre>
+                <p>These topics look good but it might be easier to look at them in a more readable format.</p>
+                <pre><code>import re
+words = [re.findall(r'"([^"]*)"', t[1]) for t in ldamodel.print_topics()]
+topics = [' '.join(t[0:5]) for t in words]
+for id, t in enumerate(topics): 
+    print(f"------ Topic {id} ------")
+    print(t, end="\n\n")
+</code></pre>
+                <pre><code>------ Topic 0 ------
+rabbit alice white time dear
+
+------ Topic 1 ------
+turtle said mock gryphon alice
+
+------ Topic 2 ------
+little alice ran looking head
+
+------ Topic 3 ------
+came hearts said alice procession
+
+------ Topic 4 ------
+king alice executioner queen look
+</code></pre>
+                <p>When we do topic modeling, the topics don't always make sense as human readers. But these topics are
+                    somewhat readable, and we might even assign "themes" to these topics. So in the next objective,
+                    we're going to look at how to interpret these topics.</p>
+                <h3>Challenge</h3>
+                <p>Following the example above, try to change the number of topics and the number of words displayed per
+                    topics. How do the topics change? Do they make more sense if we can group them into more topic
+                    clusters? Does it help to view more words per topic?</p>
+
+                <h3>Additional Resources</h3>
+                <ul>
+                    <li><a href="https://radimrehurek.com/gensim/" target="_blank" rel="noopener noreferrer">Gensim:
+                            Python package for topic modeling, nlp, word
+                            vectorization, and few other things.</a></li>
+                    <li><a href="http://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/#11createthedictionaryandcorpusneededfortopicmodeling"
+                            target="_blank" rel="noopener noreferrer">Topic Modeling with Gensim: A kind of cookbook for
+                            LDA
+                            with gensim. Excellent overview, but the you need to be aware of missing import statements
+                            and
+                            assumed prior knowledge.</a></li>
+                </ul>
+            </section>
+
+            <section class="content-box">
+                <h2>Objective 03 - Interpret Document Topic Distributions and Summarize Findings</h2>
+                <h3>Overview</h3>
+                <p>When we interpret topics, we need to understand how the words are being used in the documents and
+                    their meaning in that context. We also want to look at how the topics relate to each other and the
+                    distribution of words.</p>
+                <p>For the small example here, the topics might make a lot of sense, and we aren't comparing them to
+                    novels by other authors. But we can make use of the <code>pyLDAvis</code> library to explore our
+                    topic model.</p>
+                <h3>Follow Along</h3>
+                <p>We will load the same "Alice in Wonderland" text from the last objective and run an LDA model with
+                    five topics. After creating our model, we'll use the <code>pyLDAvis</code> library to produce an
+                    interactive visualization of our topics.</p>
+                <pre><code># Suppress annoying warning
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
+
+# Import the library
+import pyLDAvis.gensim
+
+# Use the visualization in a notebook
+pyLDAvis.enable_notebook()
+</code></pre>
+                <pre><code># Repeat the topic model from the previous objective
+# Imports
+import gensim
+from gensim.utils import simple_preprocess
+from gensim.parsing.preprocessing import STOPWORDS
+
+# Add additional stop words
+#STOPWORDS = set(STOPWORDS).union(set(['said', 'mr', 'mrs']))
+
+# Function for tokenizing the 
+def tokenize(text):
+    return [token for token in simple_preprocess(text) if token not in STOPWORDS]
+
+# Read in the text (download to run locally)
+with open('wonderland.txt', 'r') as file:
+    text_str = file.read()
+
+# Split the string on the newline character
+text = text_str.split('\n')
+
+# Tokenize each chunk of text
+text_tokens = [tokenize(chunk) for chunk in text]
+
+# Imports
+from gensim import corpora
+
+# Create the term dictionary of our corpus
+# every unique term is assigned an index
+dictionary = corpora.Dictionary(text_tokens)
+
+# Convert list of documents (corpus) into Document Term Matrix 
+# using the dictionary we just created
+doc_term_matrix = [dictionary.doc2bow(doc) for doc in text_tokens]
+
+# Imports
+from gensim.models.ldamulticore import LdaMulticore
+
+# Create the object for LDA model
+lda = gensim.models.ldamodel.LdaModel
+
+# Train LDA model on the document term matrix
+# topics = 5
+ldamodel = lda(doc_term_matrix, num_topics=5, id2word = dictionary, passes=50)
+</code></pre>
+                <pre><code># Interactive visualization for topic modeling
+# Uncomment the following line to start the interactive visualization
+# (a screenshot will be displayed below)
+#pyLDAvis.gensim.prepare(ldamodel, doc_term_matrix, dictionary)
+</code></pre>
+                <p>Because we're viewing this content on a static site and not in a notebook, we cannot run this
+                    interactive visualization. But, we can see that this tool allows us to compare the word
+                    distributions within each topic (bar chart on the right). We can also see if there is any overlap
+                    between topics (bubble chart on the left).</p>
+                <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/sprint_1/mod4_obj3_pyLDAvis.png"
+                        alt="mod4_obj3_pyLDAvis.png" loading="lazy"></p>
+                <h3>Challenge</h3>
+                <p>Right now is an excellent time to try out <code>pyLDAvis</code> yourself! Using the same code and
+                    the text available <a
+                        href="https://gist.githubusercontent.com/nwhoffman/20d15b1a8cf2988a2a008d3bd73ff76e/raw/e1660f42e20e0421dde26c48fee9f56493277922/wonderland.txt"
+                        target="_blank" rel="noopener noreferrer">here</a>, reproduce the above step to create
+                    your topic model. You can even fit more topics and see how the distribution changes.</p>
+                <h3>Additional Resources</h3>
+                <ul>
+                    <li><a href="https://github.com/bmabey/pyLDAvis" target="_blank" rel="noopener noreferrer">pyLDAvis:
+                            interactive topic model visualization</a></li>
+                    <li><a href="https://nlp.stanford.edu/events/illvi2014/papers/sievert-illvi2014.pdf" target="_blank"
+                            rel="noopener noreferrer">LDAvis: A
+                            method for visualizing and interpreting topics (paper)</a>
+                    </li>
+                </ul>
             </section>
 
             <section id="guided-project">
