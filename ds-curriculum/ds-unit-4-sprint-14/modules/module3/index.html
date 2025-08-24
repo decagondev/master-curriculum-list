@@ -58,6 +58,7 @@
         <section class="content-box">
             <h2>Objective 01 - Describe the Major Hyperparameters to Tune</h2>
             <h3>Overview</h3>
+
             <p>We have already experimented with hyperparameter tuning in Unit 2, using the scikit-learn GridSearchCV
                 method. Remember that a hyperparameter is a parameter set before we begin training our model; parameters
                 are what the model learns.</p>
@@ -154,8 +155,8 @@ def make_network(optimizer='adam'):
 </code></pre>
             <pre><code># Scikit-learn wrappers for keras
 from keras.wrappers.scikit_learn import KerasClassifier
-neural_network = KerasClassifier(build_fn=make_network, verbose=0)
-# Define hyperparameter space over which to search
+neural_network = KerasClassifier(build_fn=make_network, verbose=0)</code></pre>
+            <pre><code># Define hyperparameter space over which to search
 epochs = [10, 25]
 batches = [4, 8, 32]
 optimizers = ['rmsprop', 'adam']
@@ -183,14 +184,19 @@ grid_result.best_params_
                 difference in the best-fit parameters returned.</p>
             <h3>Additional Resources</h3>
             <ul>
-                <li>Tuning Neural Network Hyperparameters<span>Links to an external site.</span></li>
-                <li>Simple Guide to Hyperparameter Tuning in Neural Networks</li>
+                <li><a href="https://www.analyticsvidhya.com/blog/2021/05/tuning-the-hyperparameters-and-layers-of-neural-network-deep-learning/"
+                        target="_blank" rel="noopener noreferrer">Tuning Neural Network Hyperparameters</a></li>
+                <li><a href="https://towardsdatascience.com/simple-guide-to-hyperparameter-tuning-in-neural-networks-3fe03dad8594"
+                        target="_blank" rel="noopener noreferrer">Simple Guide to Hyperparameter Tuning in Neural
+                        Networks</a></li>
             </ul>
         </section>
 
         <section class="content-box">
             <h2>Objective 02 - Implement an Experiment Tracking Framework</h2>
+
             <h3>Overview</h3>
+
             <p>In the previous modules and objectives, we know how complicated neural networks can be and the number of
                 hyperparameters that need to be tuned. Fortunately, there are tools to assist us in understanding how
                 our model is affected by different hyperparameters.</p>
@@ -219,16 +225,19 @@ features, target = make_classification(n_samples = 10000,
 x_train, x_test, y_train, y_test = train_test_split(
     features, target, test_size=0.25, random_state=42)
 </code></pre>
-            <p>The following example is from the Tensorflow example found here.<em>Links to an external site.</em></p>
-            <p>Links to an external site. The next step is to set up the parameters we would like to tune over. In the
-                following example, the parameters are:</p>
+            <p>The following example is from the Tensorflow example found <a
+                    href="https://www.tensorflow.org/tensorboard/hyperparameter_tuning_with_hparams" target="_blank"
+                    rel="noopener noreferrer">here</a>.</p>
+            <p><a href="https://www.tensorflow.org/tensorboard/hyperparameter_tuning_with_hparams" target="_blank"
+                    rel="noopener noreferrer">The next step</a> is to set up the parameters we would like to tune over.
+                In the following example, the parameters are:</p>
             <ul>
                 <li>Number of units in the first dense layer</li>
                 <li>Dropout rate in the dropout layer</li>
                 <li>Optimizer</li>
             </ul>
-            <pre><code>%load_ext tensorboard
-# Imports
+            <pre><code>%load_ext tensorboard</code></pre>
+            <pre><code># Imports
 import tensorflow as tf
 from tensorboard.plugins.hparams import api as hp
 
@@ -247,7 +256,7 @@ with tf.summary.create_file_writer('logs/hparam_tuning').as_default():
     metrics=[hp.Metric(METRIC_ACCURACY, display_name='Accuracy')],
   )
 </code></pre>
-            <p>Adapt TensorFlow runs to log hyperparameters and metrics</p>
+            <h3>Adapt TensorFlow runs to log hyperparameters and metrics</h3>
             <pre><code># Write the function to create the model with the
 # specified hyperparameter tuning
 def train_test_model(hparams):
@@ -268,14 +277,14 @@ def train_test_model(hparams):
   _, accuracy = model.evaluate(x_test, y_test)
   return accuracy
 </code></pre>
-            <p>Log an hparams summary with the hyperparameters and final accuracy:</p>
+            <h4>Log an hparams summary with the hyperparameters and final accuracy:</h4>
             <pre><code>def run(run_dir, hparams):
   with tf.summary.create_file_writer(run_dir).as_default():
     hp.hparams(hparams)  # record the values used in this trial
     accuracy = train_test_model(hparams)
     tf.summary.scalar(METRIC_ACCURACY, accuracy, step=1)
 </code></pre>
-            <p>Start runs and log them all under one parent directory</p>
+            <h3>Start runs and log them all under one parent directory</h3>
             <pre><code>session_num = 0
 
 for num_units in HP_NUM_UNITS.domain.values:
@@ -327,9 +336,9 @@ for num_units in HP_NUM_UNITS.domain.values:
 </code></pre>
             <h4>Visualize the results in TensorBoard's HParams plugin</h4>
             <pre><code># Uncomment the following line to display the output
-#%tensorboard --logdir logs/hparam_tuning
-mod3_obj2_tensorboard.png
-</code></pre>
+#%tensorboard --logdir logs/hparam_tuning</code></pre>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/sprint_2/mod3_obj2_tensorboard.png"
+                    alt="mod3_obj2_tensorboard.png" loading="lazy"></p>
             <h3>Challenge</h3>
             <p>There are a lot of parameters to adjust. For this challenge, try to reproduce the code exactly, either
                 from the above or the link at the top and below. First, make sure you can get the Tensorboard running
@@ -337,7 +346,8 @@ mod3_obj2_tensorboard.png
                 some of the parameters in the tuning function and see how they change the results.</p>
             <h3>Additional Resources</h3>
             <ul>
-                <li>Tensorboard: Tuning with hparams<em>Links to an external site.</em></li>
+                <li><a href="https://www.tensorflow.org/tensorboard/hyperparameter_tuning_with_hparams" target="_blank"
+                        rel="noopener noreferrer">Tensorboard: Tuning with hparams</a></li>
             </ul>
         </section>
 
