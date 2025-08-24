@@ -54,6 +54,267 @@
             </div>
         </section>
 
+        <section class="content-box">
+            <h2>Objective 01 - Describe and Implement Regulation Strategies Including Early Stopping, Dropout, Weight
+                Decay, and Weight Constraint</h2>
+            <h3>Overview</h3>
+            <p>In Unit 2, we applied regularization techniques to regression problems. In particular, we used ridge
+                regression (also called L2 regression). In general, regularization introduces a penalty when the model
+                parameters are fit. The penalty results in the model not learning the data "too well" and allows it to
+                generalize better to new data.</p>
+            <h3>Neural Network Regularization</h3>
+            <p>As we have seen in the first three modules in this sprint, neural networks are complicated. There are
+                many large hyperparameters that need to be set. With a complex model, it's easy to overfit them.
+                Fortunately, there are many regularization techniques that neural networks can apply.</p>
+            <p>While we can apply L2 regression to neural networks, there are other types of regularization that we'll
+                look at first.</p>
+            <h3>Regularization Techniques</h3>
+            <ul>
+                <li>early stopping</li>
+                <li>dropout</li>
+                <li>weight decay</li>
+                <li>weight constraint</li>
+            </ul>
+            <h4>Early Stopping</h4>
+            <p>This method of regularization sounds just like the name: stop the training early to prevent overfitting.
+                As the neural network trains, when the performance on the validation set begins to decrease, the
+                training is stopped. The goal is to find the balance between learning the data well enough and
+                overfitting.</p>
+            <h4>Dropout</h4>
+            <p>Using a method called dropout, we can take advantage of ensemble learning to reduce overfitting. By not
+                using or randomly dropping nodes and their associated output from a layer in a network, we have created
+                a "new" layer with different properties. This process results in a layer that learns a sparse
+                representation and more randomness in the data; thus, it generalizes better to unseen data.</p>
+            <h4>Weight Decay</h4>
+            <p>To reduce the complexity of a model, we can add a term to the loss function. The idea of weight decay is
+                to apply a term to the weights as they update during the gradient descent process. As a result, the
+                weights decrease, which is why this process is called weight decay.</p>
+            <h4>Weight Constraint</h4>
+            <p>Weight constraint is a similar regularization technique as weight decay, but instead of decreasing the
+                weights, a predefined limit is set, and the weights aren't allowed to pass this limit. If they do, they
+                are scaled to remain below the threshold.</p>
+            <p>It would be best not to use the regularization techniques or weight decay and weight constraint together;
+                you need to choose one or the other.</p>
+            <p>Here are some general guidelines to follow:</p>
+            <ul>
+                <li>Always use EarlyStopping</li>
+                <li>Use EarlyStopping, Weight Decay and Dropout</li>
+                <li>Use EarlyStopping, Weight Constraint and Dropout</li>
+            </ul>
+            <h3>Follow Along</h3>
+            <p>In the following example, we'll create a dataset that doesn't have a solution: the features are a
+                sequence of integers, and the target is an array of zeros. Remember that a callback is an object that
+                can perform actions at various stages of training. In this case, we'll use the EarlyStopping class and
+                call it at the end of each epoch.</p>
+            <p>The monitored value is the loss; if the loss doesn't improve (decrease) after three epochs (patience=3),
+                then the process will end "early" or before the ten epochs that the model training could complete if the
+                loss were decreasing.</p>
+            <pre><code># Example: Keras EarlyStopping documentation
+
+# Imports
+import tensorflow as tf
+import numpy as np
+
+# 
+callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
+# This callback will stop the training when there is no improvement in  
+# the validation loss for three consecutive epochs.  
+model = tf.keras.models.Sequential([tf.keras.layers.Dense(10)])
+model.compile(tf.keras.optimizers.SGD(), loss='mse')
+
+# Create some data
+# X: sequence from 0 to 99
+X = np.arange(100).reshape(5, 20)
+
+# y: an array of zeroes
+y = np.zeros(5)
+
+# Model this data using the EarlyStopping callback
+history = model.fit(X, y, epochs=10, batch_size=1, callbacks=[callback])</code></pre>
+            <pre><code>Epoch 1/10
+5/5 [==============================] - 0s 1ms/step - loss: 923942848003309568.0000
+Epoch 2/10
+5/5 [==============================] - 0s 1ms/step - loss: 3004282714424342087681259356553216.0000
+Epoch 3/10
+5/5 [==============================] - 0s 1ms/step - loss: inf
+Epoch 4/10
+5/5 [==============================] - 0s 1ms/step - loss: inf
+</code></pre>
+            <p>The training stopped after three epochs (not counting the first epoch). This example was completed with
+                test data to force to the training to stop but the same general process as above can be applied to a
+                real dataset.</p>
+            <h4>Dropout</h4>
+            <p>In this example, we'll use a small generated dataset, implement a dropout layers, and then look at the
+                output.</p>
+            <pre><code># Example: Keras regularization layers / Dropout layer
+
+tf.random.set_seed(42)
+
+# Drop 0.2 of the inputs (random)
+layer = tf.keras.layers.Dropout(0.2, input_shape=(2,))
+data = np.arange(10).reshape(5, 2).astype(np.float32)
+print("The input data: ", data)
+
+outputs = layer(data, training=True)
+print("The output after applying a dropout:", outputs)</code></pre>
+            <pre><code>The input data:  [[0. 1.]
+ [2. 3.]
+ [4. 5.]
+ [6. 7.]
+ [8. 9.]]
+The output after applying a dropout: tf.Tensor(
+[[ 0.    1.25]
+ [ 2.5   3.75]
+ [ 0.    6.25]
+ [ 7.5   8.75]
+ [10.   11.25]], shape=(5, 2), dtype=float32)
+</code></pre>
+            <p>In the output, we can see that 1 out of 5 inputs have been set to zero, for this random seed.</p>
+            <h4>Weight Regularization</h4>
+            <p>In the following example from the Keras documentation, we can see how to apply a weight constraint and a
+                weight decay.</p>
+            <pre><code># Weight constraint example
+from tensorflow.keras.constraints import max_norm
+from tensorflow.keras import layers
+
+# kernel_constraint argument is for the main weights
+model.add(layers.Dense(64, kernel_constraint=max_norm(2.)))
+
+# Weight decay example
+from tensorflow.keras import layers
+from tensorflow.keras import regularizers
+
+# Add in the weight "decay" terms
+layer = layers.Dense(
+    units=64,
+    kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4)
+)
+</code></pre>
+            <h3>Challenge</h3>
+            <p>Would you please select one of the above regularization techniques and apply it to a previous neural
+                network example? For the weight regularization techniques, which may be more challenging to use, make
+                sure to read through the documentation linked below first. Then give one of them a try!</p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://machinelearningmastery.com/early-stopping-to-avoid-overtraining-neural-network-models/"
+                        target="_blank" rel="noopener noreferrer">Early Stopping to Avoid Overtraining on Neural Network
+                        Models</a></li>
+                <li><a href="https://machinelearningmastery.com/dropout-for-regularizing-deep-neural-networks/"
+                        target="_blank" rel="noopener noreferrer">Dropout for Regularizing Deep Neural Networks</a></li>
+                <li><a href="https://keras.io/api/callbacks/early_stopping/" target="_blank"
+                        rel="noopener noreferrer">Keras: EarlyStopping Class</a></li>
+                <li><a href="https://jmlr.org/papers/v15/srivastava14a.html" target="_blank"
+                        rel="noopener noreferrer">Dropout: A Simple Way to Prevent Neural Networks from Overfitting
+                        (paper)</a></li>
+                <li><a href="https://keras.io/api/layers/regularizers/" target="_blank" rel="noopener noreferrer">Keras:
+                        Layers and Regularizers</a></li>
+                <li><a href="https://keras.io/api/layers/constraints/" target="_blank" rel="noopener noreferrer">Keras:
+                        Layers and Constraints</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Export a Keras Model and Load it Into a Lightweight Web Application</h2>
+
+            <h3>Overview</h3>
+
+            <p>We have spent a lot of time learning to create and fit neural network models over the past sprint.
+                Depending on the number of parameters and other characteristics, it may take longer to train your model.
+                We benefit by saving the weights learned by our model and then load those parameters later, either to
+                use the model or to continue training.</p>
+            <p>Fortunately, the Keras ModelCheckpoint class provides a convenient way to save the model weights at a
+                specified frequency. Thus, the model can be saved at various points in the training process, and we can
+                specify which metric to monitor, such as the loss or accuracy.</p>
+            <p>When the weights and architecture information are saved, we can load the parameters later and either use
+                the model or continue training.</p>
+            <h3>Follow Along</h3>
+            <p>Let's look at an example from earlier in the sprint, and use ModelCheckpoint to save and then re-load the
+                model.</p>
+            <pre><code>from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+# Define the keras model
+model = Sequential()
+model.add(Dense(12, input_dim=8, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+
+# Compile the keras model
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+</code></pre>
+            <p>The above code is just the model that we fit in the first module of this sprint: we defined the
+                architecture (an input layer, two hidden layers, and the output, with the appropriate activation
+                functions) and compiled the model.</p>
+            <p>Next, let's add the callback and save the checkpoints. For this callback, we'll save just the model
+                weights.</p>
+            <pre><code># Create checkpoint options
+from tensorflow.keras.callbacks import ModelCheckpoint
+cpoint = ModelCheckpoint("weights_best.h5", 
+                         verbose=1, save_weights_only=True)
+</code></pre>
+            <p>And finally, load the dataset and fit the model, saving the weights with the callback function.</p>
+            <pre><code># Load the Pima Indians diabetes dataset
+import numpy as np
+
+# Set the URL for the data location
+url = 'https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv'
+
+# Load the dataset
+dataset = np.loadtxt(url, delimiter=',')
+
+# Split into input (X) and output (y) variables
+# (8 input columns, 1 target column)
+X = dataset[:,0:8]
+y = dataset[:,8]
+
+# Fit the keras model on the dataset
+# (remove the verbose=0 argument to see the output)
+model.fit(X, y, epochs=5, batch_size=10, verbose=0, callbacks=[cpoint]);
+</code></pre>
+            <pre><code>Epoch 00001: saving model to weights_best.h5
+
+Epoch 00002: saving model to weights_best.h5
+
+Epoch 00003: saving model to weights_best.h5
+
+Epoch 00004: saving model to weights_best.h5
+
+Epoch 00005: saving model to weights_best.h5
+</code></pre>
+            <p>Now we can look at the saved model weights and architecture.</p>
+            <pre><code># View the saved model weights
+model.load_weights('weights_best.h5')
+model.summary()
+</code></pre>
+            <pre><code>Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense (Dense)                (None, 12)                108       
+_________________________________________________________________
+dense_1 (Dense)              (None, 8)                 104       
+_________________________________________________________________
+dense_2 (Dense)              (None, 1)                 9         
+=================================================================
+Total params: 221
+Trainable params: 221
+Non-trainable params: 0
+_________________________________________________________________
+</code></pre>
+            <h3>Challenge</h3>
+            <p>Now it's your turn. Using the code above or a previous model you fit, set up the callback and model
+                checkpoint. You can also explore different metrics for how often your model parameters will be saved.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://keras.io/api/callbacks/model_checkpoint/" target="_blank"
+                        rel="noopener noreferrer">Keras: ModelCheckpoints</a>
+                </li>
+                <li><a href="https://machinelearningmastery.com/check-point-deep-learning-models-keras/" target="_blank"
+                        rel="noopener noreferrer">Tutorial: Checkpoint Deep Learning Models with Keras</a></li>
+            </ul>
+        </section>
+
         <section id="guided-project">
             <div class="content-box">
                 <h2>Guided Project</h2>
