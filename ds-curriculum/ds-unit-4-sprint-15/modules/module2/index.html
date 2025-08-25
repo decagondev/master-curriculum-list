@@ -57,6 +57,371 @@
             </div>
         </section>
 
+        <section class="content-box">
+            <h2>Objective 01 - Describe Convolution and Pooling</h2>
+
+            <h3>Overview</h3>
+
+            <p>In the previous module, we used a type of RNN and LSTM network, to predict text. Because of the structure
+                of RNNs, they are very good at learning how to predict sequences, such as text.</p>
+            <p>Now, we're going to move onto a type of neural network used to learn about images. Convolutional neural
+                networks or CNNs classify images, cluster images by similarity, and object recognition in images.</p>
+            <p>So, what is a convolutional neural network? It is a type of network that makes use of a mathematical
+                operation called convolution. But, first, let's take a quick look at how the brain uses convolution to
+                process images.</p>
+
+            <h3>The Brain and Image Recognition</h3>
+            <p>You probably already know that the animal brain is good at image recognition. Animals are good at image
+                recognition because of the organization of the visual cortex, or the part of the brain that processes
+                images.</p>
+            <p>Individual neurons in the brain respond to stimuli from only part of the visual field. Neurons in some
+                areas of the visual cortex respond to features in images at specific orientations. For example, some
+                neurons might respond to bars or lines in a specific orientation; these neurons would be good at edge
+                detection. Neurons in other areas process information about color and motion.</p>
+
+            <h3>Convolutional Neural Network</h3>
+            <p>A CNN uses a similar structure: a convolutional layer in the network uses convolution to filter or
+                convolve the input image and create an output. However, different filters have different results: some
+                are good at detecting lines and edges, others are good at identifying other features in the image.</p>
+            <p>The output from all of this filtering or convolution is then fed into other hidden layers and finally the
+                output to make a prediction.</p>
+            <p>Right now, we're going to go over an example of the convolution of an image; in the next part of the
+                module, we'll implement a CNN for image classification.</p>
+
+            <h3>Follow Along</h3>
+            <pre><code>import requests
+
+img_url = "https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/palm_trees.jpg"
+
+r = requests.get(img_url)
+with open('palm_trees.jpg', 'wb') as f:
+  f.write(r.content)
+
+# Display the first image
+from IPython.display import Image
+Image(filename='palm_trees.jpg', width=500)</code></pre>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/palm_trees.jpg"
+                    alt="palm_trees" loading="lazy"></p>
+            <p>We have a pretty standard image of palm trees. Let's perform a convolution on this image. First, we'll do
+                an edge detection which we implement with a high-pass filter. The edge detection means that we let
+                through features that change abruptly in value; in this case, the edges of the leaves and trunk.</p>
+            <p>The kernel is the filter and is usually an array smaller in size than the image. In our example code
+                below, the kernel is a 3x3 matrix with a larger positive value in the center surrounded by negative
+                values. When this kernel is passed over or convolved with our input image, we should have a resulting
+                image that's just the edges.</p>
+            <h3>Example credit: https://pythonexamples.org/python-opencv-image-filter-convolution-cv2-filter2d/</h3>
+            <pre><code># Imports
+import numpy as np
+import cv2
+
+# Read in the image
+img_src = cv2.imread('palm_trees.jpg')
+
+# Edge detection (high-pass filter)
+kernel = np.array([[0.0, -1.0, 0.0], 
+                   [-1.0, 4.0, -1.0],
+                   [0.0, -1.0, 0.0]])
+
+kernel = kernel / (np.sum(kernel) if np.sum(kernel) != 0 else 1)
+
+# Filter the source image
+img_rst = cv2.filter2D(img_src,-1,kernel)
+
+#save result image
+cv2.imwrite('palm_trees_edge.jpg', img_rst)
+
+Image(filename='palm_trees_edge.jpg', width=500)
+</code></pre>
+            <p><img src="https://github.com/bloominstituteoftechnology/data-science-canvas-images/blob/main/unit_4/sprint_3/mod2_obj1_palm_trees_edge.png?raw=true"
+                    alt="palm&lt;em&gt;trees&lt;/em&gt;edges" loading="lazy"></p>
+            <h3>Challenge</h3>
+            <p>Try out the convolution process on an image of your own! Is the edge detection filter actually finding
+                what you think are the edges in your image? For a stretch goal, try implementing a low-pass filter. The
+                filter kernel would look like this for a 5x5 kernel:</p>
+            <pre><code>kernel = np.array([[1, 1, 1, 1, 1], 
+                   [1, 1, 1, 1, 1], 
+                   [1, 1, 1, 1, 1], 
+                   [1, 1, 1, 1, 1], 
+                   [1, 1, 1, 1, 1]])
+kernel = kernel / sum(kernel)
+</code></pre>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53"
+                        target="_blank" rel="noopener noreferrer">A Comprehensive Guide to Convolutional Neural
+                        Networks</a></li>
+                <li><a href="https://wiki.pathmind.com/convolutional-network" target="_blank"
+                        rel="noopener noreferrer">A Beginner's Guide to Convolutional Neural Networks</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Apply a Convolutional Neural Network to a Classification Task</h2>
+            <h3>Overview</h3>
+            <p>
+                A convolutional neural network includes a convolutional layer that maps regions of the input image to
+                the responsible neurons. They also have a "pooling" layer, which we discussed earlier in the module.
+            </p>
+            <p>
+                After the convolution and a few other layers as needed, we have the output layer and our complete model
+                architecture.
+            </p>
+            <p>
+                Let's implement a CNN and see what sort of results we can get!
+            </p>
+            <h3>Follow Along</h3>
+            <p>
+                The example below will use a CNN to classify digits in the MNIST dataset. Some of the following code has
+                been adapted from <a href="#" target="_blank" rel="noopener noreferrer">this website</a>. Remember that
+                images are
+                represented as a matrix of pixels, where the pixel's value is the "intensity" of the color in that
+                location. Therefore, color images would need to be represented by three separate pixel matrices, one for
+                each RGB color.
+            </p>
+            <p>
+                The MNIST images are just represented by a single matrix in grayscale. The dataset is available through
+                the Keras datasets.
+            </p>
+            <pre><code># Some example code from: Machine Learning Mastery
+# Imports
+
+from keras.datasets import mnist
+import matplotlib.pyplot as plt
+
+# Load the MNIST dataset
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
+
+# Look at the training/testing sizes
+print('Train: X=%s, y=%s' % (X_train.shape, y_train.shape))
+print('Test: X=%s, y=%s' % (X_test.shape, y_test.shape))
+
+# Plot the first nine images
+for i in range(9):
+    plt.subplot(330 + 1 + i)
+    plt.imshow(X_train[i], cmap=plt.get_cmap('gray'))
+
+plt.show()</code></pre>
+            <pre><code>Train: X=(60000, 28, 28), y=(60000,)
+Test: X=(10000, 28, 28), y=(10000,)</code></pre>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/sprint_3/mod2_obj2_digits_in.png"
+                    alt="mod2&lt;em&gt;obj2&lt;/em&gt;digits_in.png" loading="lazy"></p>
+            <p>
+                We have 60,000 images to use for training and another 10,000 for testing. For input into the neural
+                network, we need to reshape the data to have 60000 28x28x1 matrices.
+            </p>
+            <p>
+                We also need to encode the target array to represent the digits between 0 and 9.
+            </p>
+            <pre><code># Reshape the training images
+trainX = X_train.reshape((X_train.shape[0], 28, 28, 1))
+testX = X_test.reshape((X_test.shape[0], 28, 28, 1))
+print(X_train.shape)
+
+# Encode target values
+from keras.utils import to_categorical
+
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)</code></pre>
+            <pre><code>(60000, 28, 28, 1)</code></pre>
+            <p>
+                The data also needs to be scaled so that each pixel has a value between 0 and 1; currently they can have
+                a value between 0 and 255 so we'll just divide by 255.
+            </p>
+            <pre><code># scale pixels
+def prep_pixels(train, test):
+    # convert from integers to floats
+    train_norm = train.astype('float32')
+    test_norm = test.astype('float32')
+    # normalize to range 0-1
+    train_norm = train_norm / 255.0
+    test_norm = test_norm / 255.0
+    # return normalized images
+    return train_norm, test_norm
+
+# Convert the images
+X_train_norm, X_test_norm = prep_pixels(X_train, X_test)</code></pre>
+            <p>
+                Now that we have the images ready, we'll set up the model. It will include convolutional layers, a
+                pooling layer, and a few other layers, including the output corresponding to the ten digits we're trying
+                to classify.
+            </p>
+            <pre><code># Import keras models, layers
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten
+from keras.optimizers import SGD
+
+# Set-up the model
+model = Sequential()
+
+# Convolutional layer with a 3x3 kernel
+model.add(Conv2D(32, (3, 3), activation='relu', 
+                 kernel_initializer='he_uniform',
+                 input_shape=(28, 28, 1)))
+
+# Pooling layer (takes the max value)
+model.add(MaxPooling2D((2, 2)))
+model.add(Flatten())
+
+# Dense hidden layer
+model.add(Dense(100, activation='relu', kernel_initializer='he_uniform'))
+
+# Output layer
+model.add(Dense(10, activation='softmax'))
+
+# Compile model
+opt = SGD(lr=0.01, momentum=0.9)
+model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])</code></pre>
+            <p>
+                And now we can train our model. As usual, this can take a while.
+            </p>
+            <pre><code>model.fit(X_train_norm, y_train, epochs=5, 
+          batch_size=32, validation_data=(X_test_norm, y_test), 
+          verbose=0)</code></pre>
+            <pre><code>&lt;tensorflow.python.keras.callbacks.History at 0x7fa5527d4860&gt;</code></pre>
+            <p>
+                Finally, we'll evaluate on the test set; the second number displayed is the accuracy.
+            </p>
+            <pre><code>model.evaluate(X_test, y_test, verbose=0)</code></pre>
+            <pre><code>[26.49790382385254, 0.9621000289916992]</code></pre>
+            <h3>Challenge</h3>
+            <p>
+                For this challenge, you can try changing the parameters of the convolutional layer, such as the kernel
+                size.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://machinelearningmastery.com/how-to-develop-a-convolutional-neural-network-from-scratch-for-mnist-handwritten-digit-classification/"
+                        target="_blank" rel="noopener noreferrer">How to Develop a Convolutional Neural Network</a></li>
+                <li><a href="https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53"
+                        target="_blank" rel="noopener noreferrer">A Comprehensive Guide to Convolutional Neural
+                        Networks</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 03 - Use a Pre-Trained Convolution Neural Network for Image Classification</h2>
+            <h3>Overview</h3>
+            <p>
+                In this last part of the module, we will take advantage of the transfer learning process, where we store
+                what we learned from one type of problem and apply it to a different problem. Because neural networks
+                for image classification take a long time to train, we can use pre-trained models. For image
+                classification, the model has likely been trained on a very large number of images so that you can use
+                it for general image classification tasks.
+            </p>
+            <p>
+                The one we will demonstrate here and in the Guided Project is the <a
+                    href="https://arxiv.org/abs/1512.03385" target="_blank" rel="noopener noreferrer">ResNet50</a>
+                pre-trained classifier available as a Keras application.
+            </p>
+            <h3>Follow Along</h3>
+            <pre><code># Imports
+import numpy as np
+import requests
+
+from keras.applications.resnet50 import ResNet50
+from keras.preprocessing import image
+from keras.applications.resnet50 import preprocess_input, decode_predictions
+
+# Image processing
+
+# Set location for images to test
+
+image_urls = [
+    "https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/two_llamas.jpg",
+    "https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/cat_llama.jpg",
+    "https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/palm_trees.jpg"
+]
+
+# Write images to local file space
+for _id, img in enumerate(image_urls): 
+    r = requests.get(img)
+    with open(f'example{_id}.jpg', 'wb') as f:
+        f.write(r.content)
+
+# Function to load images from a path
+def process_img_path(img_path):
+  return image.load_img(img_path, target_size=(224, 224))
+
+
+# Classify image
+
+def classify_image(img):
+
+  # Convert the image to an array
+  x = image.img_to_array(img)
+  x = np.expand_dims(x, axis=0)
+  x = preprocess_input(x)
+
+  # Instantiate the model
+  model = ResNet50(weights='imagenet')
+
+  # Predict which features the image has
+  features = model.predict(x)
+
+  # Decode the prediction and display the top three features
+  results = decode_predictions(features, top=3)[0]
+  return results
+</code></pre>
+            <p>
+                Now we have a function to process the input image so that it's in the correct format and then output the
+                top three "features" or results. Let's try it out on three different images: llamas, a cat and llama,
+                and palm trees (for something very unlike a llama).
+            </p>
+            <pre><code># Display the first image
+from IPython.display import Image
+
+Image(filename='./example0.jpg', width=300)</code></pre>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/two_llamas.jpg"
+                    alt="two_llamas" loading="lazy"></p>
+            <pre><code># Return the classification from the model
+classify_image(process_img_path('example0.jpg'))</code></pre>
+            <pre><code>[('n02437616', 'llama', 0.9999949), ('n02437312', 'Arabian_camel', 4.2163906e-06), ('n02412080', 'ram', 7.4659454e-07)]</code></pre>
+            <p>
+                The model correctly identified "llama" with a high degree of certainty. Let's try a different image that
+                includes a toy llama in addition to a cat.
+            </p>
+            <pre><code># Test out the second image
+Image(filename='./example1.jpg', width=300)</code></pre>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/cat_llama.jpg"
+                    alt="cat_llama" loading="lazy"></p>
+
+            <pre><code>classify_image(process_img_path('example1.jpg'))</code></pre>
+            <pre><code>[('n02124075', 'Egyptian_cat', 0.63906634), ('n02123045', 'tabby', 0.13549377), ('n02123159', 'tiger_cat', 0.07188996)]
+</code></pre>
+            <p>
+                This one also correctly identifies a cat, though the correct choice "tabby" is second. But still pretty
+                good!
+            </p>
+            <p>
+                And our last image is of trees - let's see how this one does.
+            </p>
+            <pre><code>#Image(filename='./example2.jpg', width=300)</code></pre>
+            <p><img src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_4/palm_trees.jpg"
+                    alt="palm_trees" loading="lazy"></p>
+            <pre><code>classify_image(process_img_path('example2.jpg'))</code></pre>
+            <pre><code>[('n09428293', 'seashore', 0.55565596), ('n03837869', 'obelisk', 0.099918865), ('n12768682', 'buckeye', 0.052723538)]
+</code></pre>
+            <p>
+                This classification isn't as good as the other two: we have seashore as the first result (though these
+                trees are next to the ocean), followed by "obelisk" and then "buckeye," which is a type of tree that is
+                not next to the ocean. But, the leaves in this picture do resemble the buckeye tree leaves.
+            </p>
+            <h3>Challenge</h3>
+            <p>
+                Now is a great time to have some fun! Think of a type of image that you would like to classify and load
+                them following the above example. Change the name of the function to what you are trying to classify.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://www.tensorflow.org/hub/tutorials" target="_blank"
+                        rel="noopener noreferrer">TensorFlow
+                        Hub: Tutorials</a></li>
+                <li><a href="https://www.tensorflow.org/api_docs/python/tf/keras/applications/ResNet50V2"
+                        target="_blank" rel="noopener noreferrer">Keras
+                        Applications: ResNet50 V2</a></li>
+            </ul>
+        </section>
+
         <section id="guided-project">
             <div class="content-box">
                 <h2>Guided Project</h2>
