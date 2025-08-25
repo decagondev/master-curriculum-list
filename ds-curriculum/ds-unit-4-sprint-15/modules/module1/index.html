@@ -32,6 +32,7 @@
     <main class="container">
         <section id="welcome">
             <h1>Module 1: Recurrent Neural Networks and LSTM</h1>
+
             <div class="content-box">
                 <h2>Module Overview</h2>
                 <p>This module introduces Recurrent Neural Networks (RNNs) and Long Short-Term Memory (LSTM) networks,
@@ -56,6 +57,325 @@
                     <li>Implement LSTM models for a text classification problem and a text generation problem</li>
                 </ul>
             </div>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 01 - Describe Neural Networks Used for Modeling Sequences</h2>
+            <h3>Overview</h3>
+            <p>We have reached the last sprint of the core data science curriculum! In this unit so far, we have created
+                and trained feed-forward neural networks. While we can do a lot with this type of neural network, some
+                types of data work better with different architectures.</p>
+            <p>This module will explore recurrent neural networks (RNN), and a type of RNN called a long short-term
+                memory (LSTM) network. These architectures are well suited for processing sequences and using them for
+                many natural language processing tasks.</p>
+
+            <h3>Sequence</h3>
+            <p>A sequence is a collection of objects (integers, floats, characters, tokens, and other data types) where
+                you can repeat the order of matter and objects. A Python list is an example, as well as NumPy arrays.
+                Many of the data structures we use are built on basic sequences.</p>
+
+            <h3>Time Series</h3>
+            <p>A time series is a data where you have not just the order but some actual continuous marker for where the
+                points lie “in time” - this could be a date, a timestamp, Unix time, or something else. Of course, all
+                time series are also sequences, and for some techniques, you might consider the order of the sequence
+                and not the separation (in time) of the entries.</p>
+
+            <h3>Recursion</h3>
+            <p>In mathematics, recursion is defining objects based on previously defined other objects of the same type.
+                In other words, recursion is something that happens when a thing calls itself one or more times.</p>
+            <p>For example, a recursive function calls itself and uses its previous terms to define subsequent terms.
+                <a href="https://en.wikipedia.org/wiki/Pascal%27s_triangle" target="_blank"
+                    rel="noopener noreferrer">Pascal's Triangle</a> is an example of using previous terms to calculate
+                subsequent terms: each number is the sum of the two numbers directly above it.
+            </p>
+            <p>In computer science, a recursive function calls itself from within its code.</p>
+
+            <h3>Recurrent Neural Networks (RNN)</h3>
+            <p>Remember that a feed-forward neural network has an input layer and then some number of hidden layers. The
+                output from each layer is fed into the next layer without any feedback. In contrast, with a recurrent
+                neural network, there is a layer where the output from the nodes feeds back into itself. This layer is
+                called the recurrent layer.</p>
+            <p>Simple RNNs have a weakness called the vanishing gradient problem: the recursive aspect sometimes results
+                in the back-propagation gradients either exploding or becoming very small (vanishing). So what can we
+                do?</p>
+
+            <h3>Long short-term memory (LSTM) network</h3>
+            <p>To prevent the vanishing gradient problem, we can create a memory state within the network that adds to
+                the gradients; this prevents them from becoming too small. You can learn more about the structure of the
+                LSTM network in <a
+                    href="https://adventuresinmachinelearning.com/recurrent-neural-networks-lstm-tutorial-tensorflow/"
+                    target="_blank" rel="noopener noreferrer">this article</a>. For now, we'll focus on how to implement
+                them
+                and what types of problems they are suitable for.</p>
+
+            <h3>Follow Along</h3>
+            <p>In this section, we'll first look at the option in Keras for creating a simple neural network with a
+                recurrent layer. The <code>keras.layers.SimpleRNN</code> is a fully connected RNN where the output from
+                the previous time step is fed to the next time step.</p>
+            <pre><code># Example: https://keras.io/guides/working_with_rnns/
+
+# Imports
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+
+# Instantiate the model
+model = keras.Sequential()
+model.add(layers.Embedding(input_dim=1000, output_dim=64))
+
+# The output of SimpleRNN will be a 2D tensor of shape (batch_size, 128)
+model.add(layers.SimpleRNN(128))
+
+# Add an additional hidden layer
+model.add(layers.Dense(10))
+
+# View the architecture
+model.summary()</code></pre>
+            <pre><code>Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding (Embedding)        (None, None, 64)          64000     
+_________________________________________________________________
+simple_rnn (SimpleRNN)       (None, 128)               24704     
+_________________________________________________________________
+dense (Dense)                (None, 10)                1290      
+=================================================================
+Total params: 89,994
+Trainable params: 89,994
+Non-trainable params: 0
+_________________________________________________________________
+</code></pre>
+            <p>Next, we can also create a network with a LSTM layer.</p>
+            <pre><code># Example: https://keras.io/guides/working_with_rnns/
+
+# LSTM network example
+model = keras.Sequential()
+# Add an Embedding layer expecting input vocab of size 1000, and
+# output embedding dimension of size 64.
+model.add(layers.Embedding(input_dim=1000, output_dim=64))
+
+# Add a LSTM layer with 128 internal units.
+model.add(layers.LSTM(128))
+
+# Add a Dense layer with 10 units.
+model.add(layers.Dense(10))
+
+model.summary()</code></pre>
+            <pre><code>Model: "sequential_1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding_1 (Embedding)      (None, None, 64)          64000     
+_________________________________________________________________
+lstm (LSTM)                  (None, 128)               98816     
+_________________________________________________________________
+dense_1 (Dense)              (None, 10)                1290      
+=================================================================
+Total params: 164,106
+Trainable params: 164,106
+Non-trainable params: 0
+_________________________________________________________________
+</code></pre>
+            <h3>Challenge</h3>
+            <p>Before class time, it would be good to review the Keras: Working with RNNs documentation. Ensure you know
+                how to add a recurrent layer and the difference between a simple RNN and LSTM.</p>
+
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://keras.io/guides/working_with_rnns/" target="_blank"
+                        rel="noopener noreferrer">Keras: Working with RNNs</a></li>
+                <li><a href="https://adventuresinmachinelearning.com/recurrent-neural-networks-lstm-tutorial-tensorflow/"
+                        target="_blank" rel="noopener noreferrer">Recurrent Neural Networks: LSTM Tutorial</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - Apply an LSTM to a Text Generation Problem Using Keras</h2>
+            <h3>Overview</h3>
+            <p>In the first part of this module, we generally learned why recurrent neural networks are a good choice
+                for working with sequential data, such as text. Now, we will implement a specific type of RNN called a
+                long short-term memory network (LSTM) to make text predictions.</p>
+            <p>LSTM networks are suitable for text prediction and generation because they can remember long sequences of
+                data. So, let's test out how to implement an LSTM network with text prediction.</p>
+            <h3>Follow Along</h3>
+            <p>We'll use text from <a href="https://www.gutenberg.org/" target="_blank"
+                    rel="noopener noreferrer">Project Gutenberg</a> and use a portion of it to train the neural
+                network. The novel is the Adventures of Sherlock Holmes by Arthur Conan Doyle; the shortened text used
+                in the following analysis is also available <a
+                    href="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-practice-datasets/main/unit_4/sherlock.txt"
+                    target="_blank" rel="noopener noreferrer">here</a>.</p>
+            <pre><code># Load the text
+import requests
+
+url = "https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-practice-datasets/main/unit_4/sherlock.txt"
+response = requests.get(url)
+text = response.text
+
+# Strip the \r\n characters
+text = text.replace('\r\n', ' ')
+</code></pre>
+            <p>We now have a single string of text. However, the neural network input needs to be numeric, so we must
+                convert or encode the text as characters. We can create two look-up tables: character to integer and
+                integer to character (to make predictions after training).</p>
+            <pre><code># Encode Data as Chars
+
+# Find the unique characters
+chars = list(set(text))
+
+# Lookup tables
+char_int = {c:i for i, c in enumerate(chars)} 
+int_char = {i:c for i, c in enumerate(chars)}
+
+print('The number of unique characters in the text:', len(chars))
+</code></pre>
+            <pre><code>The number of unique characters in the text: 91</code></pre>
+            <p>Now we need to create sequences of the characters to train on.</p>
+            <pre><code># Create the sequence data
+maxlen = 40
+step = 5
+
+# Encode the characters using the lookup tables
+encoded = [char_int[c] for c in text]
+
+# Initialize empty lists to hold the sequences
+sequences = [] # Each element is 40 chars long
+next_char = [] # One element for each sequence
+
+# Loop through the entire text
+for i in range(0, len(encoded) - maxlen, step): 
+    sequences.append(encoded[i : i + maxlen])
+    next_char.append(encoded[i + maxlen])
+
+print('sequences: ', len(sequences))
+</code></pre>
+            <pre><code>sequences:  54974</code></pre>
+            <p>And now that the text is processed, we can build our model! We'll use a Keras utility to pad our
+                sequences, so they are all the same length up to the maximum we specify. Then, we'll create our feature
+                and target arrays:</p>
+            <pre><code>import tensorflow as tf
+from tensorflow.keras.preprocessing import sequence
+
+# Pad sequences so all are equal
+seq = tf.keras.preprocessing.sequence.pad_sequences(sequences, maxlen=40)
+
+# Create x & y
+import numpy as np
+
+# Create arrays of zeros (False)
+x = np.zeros((len(sequences), maxlen, len(chars)), dtype=np.bool)
+y = np.zeros((len(sequences), len(chars)), dtype=np.bool)
+
+# Turn on the location (set to True) when the character is present
+for i, sequence in enumerate(sequences):
+    for t, char in enumerate(sequence):
+        x[i,t,char] = 1
+
+    y[i, next_char[i]] = 1
+</code></pre>
+            <p>The model we will use has an input layer equal to the number of characters in our text, a hidden layer of
+                64 nodes, an LSTM layer of 64 nodes, and an output layer equal to the character set's size. We are
+                predicting one of the characters, so we need to reflect that in the output.</p>
+            <pre><code># Build the model: a single LSTM
+from keras.models import Sequential
+from tensorflow.keras.layers import Dense, LSTM
+from tensorflow.keras.layers import Bidirectional, Embedding
+
+model = Sequential()
+model.add(Embedding(output_dim=64, input_dim=len(chars)))
+model.add(Bidirectional(LSTM(64)))
+model.add(Dense(len(chars), activation='softmax'))
+
+model.compile(loss='categorical_crossentropy', optimizer='adam')
+</code></pre>
+            <p>Finally, let's fit the model! We will choose a lower number of epochs for this text run because neural
+                networks usually take some time to train. We can adjust the epochs later to see how our results change.
+            </p>
+            <pre><code># Fit the model
+model.fit(seq, y, batch_size=32,
+          epochs=5, verbose=2)
+</code></pre>
+            <pre><code>Epoch 1/5
+1718/1718 - 59s - loss: 2.5776
+Epoch 2/5
+1718/1718 - 59s - loss: 2.2019
+Epoch 3/5
+1718/1718 - 60s - loss: 2.0714
+Epoch 4/5
+1718/1718 - 59s - loss: 1.9853
+Epoch 5/5
+1718/1718 - 60s - loss: 1.9195
+
+<tensorflow.python.keras.callbacks.History at 0x7f2e49e5fb70>
+</code></pre>
+            <p>Once we fit the model, we need to convert the numeric predictions back into characters, so that we can
+                read it. We'll create a function to do this.</p>
+            <pre><code># Predict and convert text back into characters
+def generate_text(model, seed, length):
+
+  encoded = [char_int[c] for c in seed]
+
+  generated = ''
+  generated += seed
+  model.reset_states()
+
+  start_index = 0 
+
+  for _ in range(length):
+
+      sample = encoded[start_index:start_index+10]      
+      sample = np.array(sample)
+      sample = np.expand_dims(sample,0)
+
+      pred = model.predict(sample)
+      pred = tf.squeeze(pred, 0)
+      next_char = np.argmax(pred)
+      encoded.append(next_char)
+      generated += int_char[next_char]
+
+      start_index += 1
+
+  return generated</code></pre>
+            <pre><code># Set the seed text which the model will use to generate the predicted text
+seed_text = "I have no data yet it is a capital mistake to theorise before one has data insensibly one begins to twist facts to suit theories"
+
+generate_text(model, seed_text, 400)</code></pre>
+            <pre><code>'I have no data yet it is a capital mistake to theorise before one has data insensibly one begins to twist facts to suit theoriestoyhraov an an a lomenenlaent ne th the k nedae are tf  tav aovhnan ertenee af  aeaeng ah thet  aoske ah thrneahe k nd  r eenneandt dt sane tdtytd  aovtheohe sntov rdane ahathhset nee rgavtirtddtn th  rdt t  ahe  a“ n edt  aheee r dtntoatheavdtodrd  aootttd aheo  ea“ ne erd dtoooneteosd an n e  d aovdteate ne ee eahetheoothh“   th ftetveaah   ddteteoointeerre  r eeah nn e etn dnthvrftovtvtaaeonkk '</code></pre>
+            <p>Well, that is interesting! We have something resembling language, but the words don't make any sense - I
+                don't know what an “aootttd” is, but it could be exciting! There also isn't any punctuation or other
+                structure in the text. But, we only trained the network for five epochs, which isn't very many.</p>
+            <p>Let's increase that to 100 epochs and compare the output, using the same seed text.</p>
+            <pre><code># Train with more epochs
+model.fit(seq, y, batch_size=32,
+          epochs=100, verbose=0)</code></pre>
+            <pre><code>&lt;tensorflow.python.keras.callbacks.History at 0x7f2e463b94e0&gt;</code></pre>
+            <pre><code># Set the seed text which the model will use to generate the predicted text
+seed_text = "I have no data yet it is a capital mistake to theorise before one has data insensibly one begins to twist facts to suit theories"
+
+generate_text(model, seed_text, 400)</code></pre>
+            </code></pre>
+            <pre><code>'I have no data yet it is a capital mistake to theorise before one has data insensibly one begins to twist facts to suit theoriesdoiinwoktis asty fa-eeiclwegtrgssah bhe   nt.nrlfc-rrtdxoed GevccGsatrtin!y ing prlosa,IoIwoectiiocc.-ihIcpez bhe   cs,.nrrgin?hj—ffcr trmc!séBe  ,eoit-l suent  ew  E_ eTeoaiebmiL4aelay4ve:img” wseuWeoocet  t  t s onn”y”“j”]g i IeenoTTlJ ”   ana”,e”'oeeoIieaepaovP   kt HeCtrt  i xii vO'zllr1mcsasg?b! '' e dn e hh lnhdnnr rs o  h eLcn.   Oa   rtt ddzt eeoIdT   ddc s snnnn”n£sJFsœe,aT e-Meee ioS s e'</code></pre>
+            <p>Now we can see that the text is starting to develop some structure, with punctuation and even a few words
+                that seem more like words?</p>
+            <p>We kept this example simple so that you could see how to set up an LSTM for generating text. Usually, you
+                would use more layers to capture the structure of the text better.</p>
+            <h3>Challenge</h3>
+            <p>Now it is up to you! Using the exact text and code above, add additional layers to the network and see if
+                you can improve the text prediction.</p>
+            <p>You can even take it a step further and source a new text, load it, and process it in the same way, and
+                see what your network can generate.</p>
+
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank"
+                        rel="noopener noreferrer">Understanding LSTMs</a></li>
+                <li><a href="https://www.analyticsvidhya.com/blog/2018/03/text-generation-using-python-nlp/"
+                        target="_blank" rel="noopener noreferrer">Text Generation Using Python</a></li>
+                <li><a href="https://machinelearningmastery.com/text-generation-lstm-recurrent-neural-networks-python-keras/"
+                        target="_blank" rel="noopener noreferrer">Text Generation With LSTM Recurrent Neural Networks in
+                        Python with Keras</a></li>
+            </ul>
         </section>
 
         <section id="guided-project">
