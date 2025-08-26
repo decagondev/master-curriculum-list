@@ -57,6 +57,393 @@
             </div>
         </section>
 
+        <section class="content-box">
+            <h2>Objective 01 - OpenAI API - The API Behind ChatGPT</h2>
+            <h3>API Basics</h3>
+            <p>
+                In the digital landscape, software applications often possess unique functionalities that can be
+                beneficial when integrated into other applications. A special interface is designed to handle external
+                requests from other applications to facilitate such feature-sharing. This interface, known as the
+                Application Programming Interface (API), serves as a secure and streamlined conduit for sharing
+                capabilities and data between different software solutions. By utilizing an API, developers can enrich
+                their own applications with the functionalities of another, amplifying the utility and reach of both
+                platforms.
+            </p>
+            <h3>What is OpenAI's API and SDK?</h3>
+            <p>
+                An API serves as a bridge that allows two different applications to communicate with each other. In the
+                context of OpenAI's GPT, the API provides a way to programmatically interact with OpenAI's models for
+                various tasks like text generation, summarization, and more. From scratch, APIs can be involved, but
+                with the use of tools like Software Development Kits, you can speed up the process.
+            </p>
+            <p>
+                Software Development Kits (SDKs) are collections of software tools and libraries that simplify complex
+                actions, making it easier to interact with an API. OpenAI provides an SDK for Python that wraps the raw
+                API calls, offering a more Pythonic way to make requests to the GPT models.
+            </p>
+            <h3>Setting Up OpenAI Python SDK</h3>
+            <p>To work with the OpenAI Python SDK, you'll need:</p>
+            <ul>
+                <li>Python 3.6 or higher</li>
+                <li>OpenAI account</li>
+                <li>API key from OpenAI</li>
+            </ul>
+            <h4>Installation</h4>
+            <p>Installing the OpenAI Python SDK is simple. Use pip to install the package:</p>
+            <pre><code>pip install openai</code></pre>
+            <h4>API Key Configuration</h4>
+            <p>
+                After obtaining your API key from OpenAI, you can set it up in one of two ways:
+            </p>
+            <ul>
+                <li><strong>Environment Variable:</strong> Set an environment variable called
+                    <code>OPENAI_API_KEY</code> with the key as its value.
+                </li>
+                <li><strong>Directly in Code:</strong> Pass the API key as an argument while initializing the SDK.</li>
+            </ul>
+            <h3>Making First SDK Call</h3>
+            <h4>Initializing SDK</h4>
+            <p>
+                To use the OpenAI SDK in your Python code, you need to import it and initialize it with your API key.
+            </p>
+            <pre><code>import os
+
+from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))</code></pre>
+            <h4>Simple Example: Text Generation</h4>
+            <p>Here's a quick example to generate text using the GPT-3 model via the OpenAI SDK:</p>
+            <pre><code>text = "Welcome to Data Science"
+response = client.completions.create(
+    model="gpt-3.5-turbo-instruct",
+    prompt=f"Translate the following English text to French: '{text}'",
+    max_tokens=60
+)
+generated_text = response.choices[0].text.strip()
+print(generated_text)
+</code></pre>
+            <p>
+                In this example, the text generated will be the French translation of the English text specified in the
+                <code>text</code> variable.
+            </p>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 02 - OpenAI API SDK</h2>
+            <h3>OpenAI API SDK</h3>
+            <h4>Introduction</h4>
+            <p>
+                The OpenAI API SDK serves as a powerful tool for leveraging machine learning capabilities within your
+                applications. By manipulating parameters such as <code>prompt</code>, <code>max_tokens</code>,
+                <code>temperature</code>, and <code>top_p</code>, users can fine-tune the output to meet their specific
+                needs. Whether you are aiming for more deterministic results or embracing randomness, understanding
+                these options enables you to exploit the full potential of the API.
+            </p>
+            <h4>prompt</h4>
+            <p>
+                The <code>prompt</code> parameter is the initial string that guides the model in generating a
+                completion. The more specific and contextual the prompt, the more accurate the generated text will be.
+            </p>
+            <h4>max_tokens</h4>
+            <p>
+                This parameter limits the number of tokens in the output. If you set <code>max_tokens</code> to 50, the
+                model will generate text up to 50 tokens long.
+            </p>
+            <h4>temperature</h4>
+            <p>
+                The <code>temperature</code> parameter controls the randomness of the output. A higher value like 0.8
+                yields more random outputs, while a lower value like 0.2 makes the output more deterministic.
+            </p>
+            <h4>top_p</h4>
+            <p>
+                This parameter controls the nucleus sampling, which filters the token pool before choosing the next
+                token. Values are between 0 and 1; lower values make the text more focused and deterministic.
+            </p>
+            <h3>Handling SDK Responses</h3>
+            <h4>Response Object</h4>
+            <p>
+                When you make an API call using the SDK, you receive a response object. This object contains various
+                pieces of information, including the generated text.
+            </p>
+            <p>
+                To extract the generated text from the response object, you can use the following code snippet:
+            </p>
+            <pre><code>import os
+
+from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+text = "Welcome to Data Science"
+response = client.completions.create(
+    model="gpt-3.5-turbo-instruct",
+    prompt=f"Translate the following English text to French: '{text}'",
+    max_tokens=60
+)
+
+generated_text = response.choices[0].text.strip()
+print(generated_text)
+</code></pre>
+            <p>As a function...</p>
+            <pre><code>def extract_reply(response):
+    return response.choices[0].message.content.strip()
+</code></pre>
+            <h4>Error Handling</h4>
+            <p>
+                To handle errors gracefully, you can use Python's try-except blocks. Here's an example:
+            </p>
+            <pre><code>import os
+
+from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+try:
+    text = "Welcome to Data Science"
+    response = client.completions.create(
+        model="gpt-3.5-turbo-instruct",
+        prompt=f"Translate the following English text to French: '{text}'",
+        max_tokens=60
+    )
+    
+    generated_text = response.choices[0].text.strip()
+    print(generated_text)
+except Exception as e:
+    print(f"An error occurred: {e}")
+</code></pre>
+            <p>
+                You may need to account for more common errors; errors you might find in any API. Here is the short list
+                of those errors you may encounter:
+            </p>
+            <ul>
+                <li><strong>RateLimitExceeded:</strong> You've exceeded the number of requests permitted in a given time
+                    frame.</li>
+                <li><strong>ResourceNotFound:</strong> The engine specified does not exist.</li>
+                <li><strong>InvalidRequestError:</strong> The API request was malformed.</li>
+            </ul>
+            <h3>Advanced SDK Usage</h3>
+            <h4>Batching Requests</h4>
+            <p>
+                To make multiple requests at once, you can use the SDK's batch support. This is more efficient than
+                making individual calls.
+            </p>
+            <h4>Pagination</h4>
+            <p>
+                When dealing with a large amount of generated text, you can paginate the results. This helps in managing
+                the tokens effectively.
+            </p>
+            <h3>Deep Dive: System Prompts in OpenAI's GPT API with Python SDK</h3>
+            <p>
+                System prompts are special instructions given to the model to guide its behavior throughout an
+                interactive session or for a specific task. These are often used in conversational agents, content
+                filters, and other scenarios where you need to condition the model's responses according to specific
+                guidelines or goals.
+            </p>
+            <h4>Types of System Prompts</h4>
+            <ul>
+                <li><strong>Conversational Directives</strong><br>
+                    You can use system prompts to instruct the model to behave like a specific character or to adopt a
+                    particular tone, style, or point of view. For example, instructing the model to speak like
+                    Shakespeare or to adopt a formal tone.
+                </li>
+                <li><strong>Content Filtering</strong><br>
+                    System prompts can also be used to enforce ethical guidelines, like avoiding generating harmful or
+                    inappropriate content.
+                </li>
+                <li><strong>Task-Specific Instructions</strong><br>
+                    For specialized tasks like code generation, data analysis, or text summarization, system prompts can
+                    provide high-level directives that guide the model's behavior throughout the session.
+                </li>
+            </ul>
+            <h4>Format of System Prompts</h4>
+            <p>
+                The system prompt is generally set up at the beginning of an interaction and stays consistent
+                throughout. It's often placed at the top of the prompt string, separate from user or task-specific
+                prompts, to provide a general context or instruction set for the model.
+            </p>
+            <h4>Implementing System Prompts with SDK</h4>
+            <p>
+                Here's how you can include a system prompt while generating text using the chat interface:
+            </p>
+            <pre><code>import os
+
+from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+
+def extract_reply(response):
+    return response.choices[0].message.content.strip()
+
+
+messages = [
+    {"role": "system", "content": "You are an assistant that speaks like Shakespeare."},
+    {"role": "user", "content": "How is the weather today?"}
+]
+
+result = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=messages,
+)
+
+reply = extract_reply(result)
+print(reply)
+</code></pre>
+            <h4>Considerations for Using System Prompts</h4>
+            <ul>
+                <li><strong>Token Limit:</strong> Remember that system prompts consume tokens, so be mindful of the
+                    <code>max_tokens</code> parameter to ensure the output is not truncated.
+                </li>
+                <li><strong>Prompt Clarity:</strong> The clearer and more specific your system prompt, the better the
+                    model will be at following the guidelines or rules you've set.</li>
+                <li><strong>Testing:</strong> It's crucial to test the effectiveness of a system prompt rigorously to
+                    ensure it guides the model's behavior as intended.</li>
+            </ul>
+            <p>
+                By mastering the use of system prompts, you can make the most out of OpenAI's GPT API and Python SDK for
+                a wide array of specialized and interactive tasks.
+            </p>
+            <h3>Conclusion</h3>
+            <p>
+                In this module, we delved into the OpenAI Python SDK as a powerful tool for interacting with GPT models.
+                Starting from the basic setup requirements and installation, we progressed through the various
+                parameters like <code>prompt</code>, <code>max_tokens</code>, <code>temperature</code>, and
+                <code>top_p</code> that help fine-tune the behavior and output of the GPT model.
+            </p>
+            <p>
+                We also took a deep dive into the concept of system prompts, a versatile feature that allows you to
+                guide the model's behavior for specialized tasks, enforce ethical guidelines, or add a conversational
+                context. Whether you're building a conversational agent, a content filter, or a specialized text
+                generator, understanding how to effectively utilize system prompts can be a game-changer.
+            </p>
+            <p>
+                As you move forward, remember that the key to effectively using the API and SDK lies in your
+                understanding of these parameters and features. Each project may require a different combination of
+                them, so it's important to experiment and find what works best for your specific needs.
+            </p>
+            <p>
+                With this foundation, you are well-prepared to explore more advanced topics and applications in future
+                modules.
+            </p>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://platform.openai.com/docs/api-reference" target="_blank"
+                        rel="noopener noreferrer">OpenAI API Reference</a></li>
+            </ul>
+        </section>
+
+        <section class="content-box">
+            <h2>Objective 03 - Local LLM Setup</h2>
+            <h3>Introduction</h3>
+            <p>
+                This module outlines the setup and usage of a Local Language Model (LLM) to create a chatbot named Marv,
+                who is programmed to provide sarcastic responses. The LLM is powered by the <code>llama_cpp</code>
+                Python package and is fine-tuned to answer queries based on the persona set by the system prompt.
+            </p>
+            <h3>Topics Covered</h3>
+            <ul>
+                <li>Installing Dependencies</li>
+                <li>Initializing the LLM</li>
+                <li>Crafting System and User Prompts</li>
+                <li>Running the LLM and Obtaining a Response</li>
+                <li>Understanding the Parameters</li>
+            </ul>
+            <h3>Installing Dependencies</h3>
+            <p>
+                To get started, install the <code>llama-cpp-python</code> package using pip.
+            </p>
+            <pre><code>pip install llama-cpp-python</code></pre>
+            <h4>Download the LLM</h4>
+            <ul>
+                <li><a href="https://huggingface.co/TheBloke/OpenOrca-Platypus2-13B-GGUF/resolve/main/openorca-platypus2-13b.Q4_K_M.gguf"
+                        target="_blank" rel="noopener noreferrer">openorca-platypus2</a></li>
+            </ul>
+            <h3>Initializing the LLM</h3>
+            <p>
+                Import the <code>Llama</code> class and initialize it with the appropriate model path.
+            </p>
+            <pre><code>from llama_cpp import Llama
+llm = Llama(model_path="./app/models/openorca-platypus2-13b.Q4_K_M.gguf")</code></pre>
+            <h3>Crafting System and User Prompts</h3>
+            <p>
+                Set up the system and user prompts. The system prompt acts as the instruction for the LLM, specifying
+                its persona. The user prompt serves as the query or statement from the user.
+            </p>
+            <ul>
+                <li>
+                    <strong>System Prompt:</strong> It serves as the instruction for the model, defining its persona. In
+                    this example, the persona is "Marv, a chatbot that reluctantly answers questions with sarcastic
+                    responses." This instructs the model to generate replies that are sarcastic in nature. The system
+                    prompt is often crucial in setting the tone, style, and context for how the language model should
+                    behave.
+                </li>
+                <li>
+                    <strong>User Prompt:</strong> This is the query or statement from the user. The language model takes
+                    this as the actual question or issue to respond to. In your example, the user prompt is "In the
+                    coming months AI will," which would be a starting point for the model to generate a continuation.
+                </li>
+            </ul>
+            <pre><code>system_prompt = "You are Marv, a chatbot that reluctantly answers questions with sarcastic responses."
+user_prompt = "Hi Marv, what's up?"</code></pre>
+            <h3>Running the LLM and Obtaining a Response</h3>
+            <p>
+                Create a composite prompt by combining the system and user prompts and run the LLM. Extract and print
+                the response.
+            </p>
+            <pre><code>prompt = f"### Instruction: {system_prompt}\n\n{user_prompt}\n\n### Response:\n"
+raw_output = llm(prompt, stop=["###"], max_tokens=-1, temperature=1)
+reply = raw_output.get("choices")[0].get("text").strip()
+print(reply)
+</code></pre>
+            <h3>Understanding the Parameters</h3>
+            <ul>
+                <li><code>stop=["###"]</code>: Stops token generation at "###".</li>
+                <li><code>max_tokens</code>: Sets a limit on the number of tokens. -1 for no limit.</li>
+                <li><code>temperature</code>: Controls the randomness of output, ranging from 0 to 1.</li>
+            </ul>
+            <p>
+                This module equips you with the know-how to set up and run a sarcastic chatbot using a Local Language
+                Model. Feel free to modify the prompts and parameters as needed.
+            </p>
+            <h3>Putting It All together: Marv the Sarcastic Bot</h3>
+            <pre><code>from llama_cpp import Llama
+
+system_prompt = "You are Marv, a chatbot that reluctantly answers " \
+                "questions with sarcastic responses."
+
+user_prompt = "Hi Marv, what's up?"
+
+prompt = f"### Instruction: {system_prompt}\n\n" \
+         f"{user_prompt}\n\n" \
+         f"### Response:\n"
+
+llm = Llama(model_path="./app/models/openorca-platypus2-13b.Q4_K_M.gguf")
+
+raw_output = llm(
+    prompt,
+    stop=["###"],
+    max_tokens=-1,
+    temperature=1,
+)
+
+reply = raw_output.get("choices")[0].get("text").strip()
+print(reply)
+</code></pre>
+            <h3>Additional Resources</h3>
+            <ul>
+                <li><a href="https://huggingface.co/models?pipeline_tag=text-generation&sort=trending" target="_blank"
+                        rel="noopener noreferrer">Huggingface Text Generation Models</a></li>
+            </ul>
+        </section>
+
         <section id="guided-project">
             <div class="content-box">
                 <h2>Guided Project</h2>
