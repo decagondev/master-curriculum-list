@@ -1,134 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DS5 Module 4 - Logistic Regression</title>
-    <link rel="stylesheet" href="../../../css/style.css" />
-  </head>
 
-  <body>
-    <header>
-      <nav>
-        <div class="logo">Data Science Unit 2</div>
-        <ul>
-          <li><a href="../../index.html">Home</a></li>
-          <li class="dropdown">
-            <a href="#" class="active">Modules</a>
-            <div class="dropdown-content">
-              <a href="../module1/index.html">Module 1: Linear Regression 1</a>
-              <a href="../module2/index.html">Module 2: Linear Regression 2</a>
-              <a href="../module3/index.html">Module 3: Ridge Regression</a>
-              <a href="../module4/index.html" class="active"
-                >Module 4: Logistic Regression</a
-              >
-            </div>
-          </li>
-          <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
-          <li>
-            <a href="../../sprint-challenge/index.html">Sprint Challenge</a>
-          </li>
-        </ul>
-      </nav>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DS5 Module 4 - Logistic Regression</title>
+  <link rel="stylesheet" href="../../../css/style.css" />
+</head>
 
-    <main class="container">
-      <h1>Module 4: Logistic Regression</h1>
+<body>
+  <header>
+    <nav>
+      <div class="logo">Data Science Unit 2</div>
+      <ul>
+        <li><a href="../../index.html">Home</a></li>
+        <li class="dropdown">
+          <a href="#" class="active">Modules</a>
+          <div class="dropdown-content">
+            <a href="../module1/index.html">Module 1: Linear Regression 1</a>
+            <a href="../module2/index.html">Module 2: Linear Regression 2</a>
+            <a href="../module3/index.html">Module 3: Ridge Regression</a>
+            <a href="../module4/index.html" class="active">Module 4: Logistic Regression</a>
+          </div>
+        </li>
+        <li><a href="../../code-alongs/index.html">Code-Alongs</a></li>
+        <li>
+          <a href="../../sprint-challenge/index.html">Sprint Challenge</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
 
-      <section class="content-box">
-        <h2>Module Overview</h2>
-        <p>
-          In this module, you will transition from regression to classification
-          with logistic regression. You'll implement train-validate-test splits,
-          understand classification baselines, and learn about scikit-learn
-          pipelines. These skills will enable you to build and evaluate models
-          for binary classification problems.
-        </p>
-      </section>
+  <main class="container">
+    <h1>Module 4: Logistic Regression</h1>
 
-      <section class="content-box">
-        <h2>Learning Objectives</h2>
-        <ul>
-          <li>Implement a train-validate-test split</li>
-          <li>Begin with baselines for classification</li>
-          <li>
-            Express and explain the intuition and interpretation of logistic
-            regression
-          </li>
-          <li>
-            Use scikit-learn to fit and interpret logistic regression models
-          </li>
-          <li>Use scikit-learn pipelines</li>
-        </ul>
-      </section>
+    <section class="content-box">
+      <h2>Module Overview</h2>
+      <p>
+        In this module, you will transition from regression to classification
+        with logistic regression. You'll implement train-validate-test splits,
+        understand classification baselines, and learn about scikit-learn
+        pipelines. These skills will enable you to build and evaluate models
+        for binary classification problems.
+      </p>
+    </section>
 
-      <section class="content-box">
-        <h2>Objective 01 - Implement a train-validate-test split</h2>
-        <h3>Overview</h3>
-        <p>
-          In the previous module we used a train-test split, where we hold back
-          a subset of the data to use for testing the model. When we train a
-          model we also need to evaluate the model. Recall that if we evaluate
-          on the training data we're not getting an accurate estimate of the
-          true performance of the model. For this reason, we need to use test
-          data that the model has not yet seen.
-        </p>
-        <p>
-          Sometimes it's useful to be able to have an intermediate step where
-          the model can be evaluated without using the set-aside test set. This
-          is where a validation set is useful. Consider the situation where we
-          take a subset of our data and set it aside as the test set - we won't
-          touch this data until we're ready to evaluate a final model.
-        </p>
-        <p>
-          With the remaining data, we can divide it into training and validation
-          sets. We then train the model on the training data and evaluate it on
-          the validation data. Another advantage of using a validation set is
-          that it can be used to tune the model or adjust the hyperparameters.
-          Iterations of tuning and model fitting are used to find the final
-          model, which is then evaluated using the test set.
-        </p>
-        <h3>Train-validate-test</h3>
-        <p>Some general definitions are:</p>
-        <ul>
-          <li>
-            <strong>training dataset</strong>: the sample of data used to fit
-            the model
-          </li>
-          <li>
-            <strong>validation dataset</strong>: the sample of data used to
-            evaluate the model and possibly to adjust the hyperparameters
-          </li>
-          <li>
-            <strong>testing dataset</strong>: the sample of data used for final
-            model testing; not to be used for anything other than testing so
-            that the result is unbiased
-          </li>
-        </ul>
-        <p>
-          One last point to make is that sometimes you won't even have access
-          the test set! If you are participating in a Kaggle competition, for
-          example, you cannot view the actual target values for the test data,
-          and can only generate the predictions for your submission. The number
-          of test prediction submissions might be limited, or you might not want
-          to make numerous test submissions just to evaluate or tune your model.
-        </p>
-        <p>
-          In this next section, we'll create our own train-validation-test data
-          sets. We'll follow the guideline of using 60% for training, 20% for
-          validation, and 20% for testing.
-        </p>
-        <h3>Follow Along</h3>
-        <p>
-          We haven't yet worked with the Iris dataset in this module, so we'll
-          start there. In the following example, we load the data and then
-          separate out the feature <code>petal_width</code> and the target
-          <code>petal_length</code>. Having plotted this data earlier, we know
-          there is a linear relationship between the petal width and length: the
-          wider the petal, the greater the length. We'll use a linear model to
-          predict our target.
-        </p>
-        <pre><code># Import numpy and seaborn
+    <section class="content-box">
+      <h2>Learning Objectives</h2>
+      <ul>
+        <li>Implement a train-validate-test split</li>
+        <li>Begin with baselines for classification</li>
+        <li>
+          Express and explain the intuition and interpretation of logistic
+          regression
+        </li>
+        <li>
+          Use scikit-learn to fit and interpret logistic regression models
+        </li>
+        <li>Use scikit-learn pipelines</li>
+      </ul>
+    </section>
+
+    <section class="content-box">
+      <h2>Objective 01 - Implement a train-validate-test split</h2>
+      <h3>Overview</h3>
+      <p>
+        In the previous module we used a train-test split, where we hold back
+        a subset of the data to use for testing the model. When we train a
+        model we also need to evaluate the model. Recall that if we evaluate
+        on the training data we're not getting an accurate estimate of the
+        true performance of the model. For this reason, we need to use test
+        data that the model has not yet seen.
+      </p>
+      <p>
+        Sometimes it's useful to be able to have an intermediate step where
+        the model can be evaluated without using the set-aside test set. This
+        is where a validation set is useful. Consider the situation where we
+        take a subset of our data and set it aside as the test set - we won't
+        touch this data until we're ready to evaluate a final model.
+      </p>
+      <p>
+        With the remaining data, we can divide it into training and validation
+        sets. We then train the model on the training data and evaluate it on
+        the validation data. Another advantage of using a validation set is
+        that it can be used to tune the model or adjust the hyperparameters.
+        Iterations of tuning and model fitting are used to find the final
+        model, which is then evaluated using the test set.
+      </p>
+      <h3>Train-validate-test</h3>
+      <p>Some general definitions are:</p>
+      <ul>
+        <li>
+          <strong>training dataset</strong>: the sample of data used to fit
+          the model
+        </li>
+        <li>
+          <strong>validation dataset</strong>: the sample of data used to
+          evaluate the model and possibly to adjust the hyperparameters
+        </li>
+        <li>
+          <strong>testing dataset</strong>: the sample of data used for final
+          model testing; not to be used for anything other than testing so
+          that the result is unbiased
+        </li>
+      </ul>
+      <p>
+        One last point to make is that sometimes you won't even have access
+        the test set! If you are participating in a Kaggle competition, for
+        example, you cannot view the actual target values for the test data,
+        and can only generate the predictions for your submission. The number
+        of test prediction submissions might be limited, or you might not want
+        to make numerous test submissions just to evaluate or tune your model.
+      </p>
+      <p>
+        In this next section, we'll create our own train-validation-test data
+        sets. We'll follow the guideline of using 60% for training, 20% for
+        validation, and 20% for testing.
+      </p>
+      <h3>Follow Along</h3>
+      <p>
+        We haven't yet worked with the Iris dataset in this module, so we'll
+        start there. In the following example, we load the data and then
+        separate out the feature <code>petal_width</code> and the target
+        <code>petal_length</code>. Having plotted this data earlier, we know
+        there is a linear relationship between the petal width and length: the
+        wider the petal, the greater the length. We'll use a linear model to
+        predict our target.
+      </p>
+      <pre><code># Import numpy and seaborn
 import numpy as np
 import seaborn as sns
 
@@ -139,82 +138,82 @@ x = iris['petal_width']
 X = np.array(x)[:, np.newaxis]
 y = iris['petal_length']
 </code></pre>
-        <div class="table-responsive">
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>sepal_length</th>
-                <th>sepal_width</th>
-                <th>petal_length</th>
-                <th>petal_width</th>
-                <th>species</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>0</td>
-                <td>5.1</td>
-                <td>3.5</td>
-                <td>1.4</td>
-                <td>0.2</td>
-                <td>setosa</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>4.9</td>
-                <td>3.0</td>
-                <td>1.4</td>
-                <td>0.2</td>
-                <td>setosa</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>4.7</td>
-                <td>3.2</td>
-                <td>1.3</td>
-                <td>0.2</td>
-                <td>setosa</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>4.6</td>
-                <td>3.1</td>
-                <td>1.5</td>
-                <td>0.2</td>
-                <td>setosa</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>5.0</td>
-                <td>3.6</td>
-                <td>1.4</td>
-                <td>0.2</td>
-                <td>setosa</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p>
-          First, we'll hold back a subset of the data just for the test data.
-          We'll do this with the scikit-learn utility. We'll call it something
-          different from "train" so that we don't confuse it with the actual
-          training data later.
-        </p>
-        <pre><code># Import the train_test_split utility
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>sepal_length</th>
+              <th>sepal_width</th>
+              <th>petal_length</th>
+              <th>petal_width</th>
+              <th>species</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0</td>
+              <td>5.1</td>
+              <td>3.5</td>
+              <td>1.4</td>
+              <td>0.2</td>
+              <td>setosa</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>4.9</td>
+              <td>3.0</td>
+              <td>1.4</td>
+              <td>0.2</td>
+              <td>setosa</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>4.7</td>
+              <td>3.2</td>
+              <td>1.3</td>
+              <td>0.2</td>
+              <td>setosa</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>4.6</td>
+              <td>3.1</td>
+              <td>1.5</td>
+              <td>0.2</td>
+              <td>setosa</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>5.0</td>
+              <td>3.6</td>
+              <td>1.4</td>
+              <td>0.2</td>
+              <td>setosa</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        First, we'll hold back a subset of the data just for the test data.
+        We'll do this with the scikit-learn utility. We'll call it something
+        different from "train" so that we don't confuse it with the actual
+        training data later.
+      </p>
+      <pre><code># Import the train_test_split utility
 from sklearn.model_selection import train_test_split
 
 # Create the "remaining" and test datasets
 X_remain, X_test, y_remain, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42)
 </code></pre>
-        <p>
-          Then we'll create a training set and validation set from the remaining
-          data. We could have done this in one step but we're breaking it down
-          here so it's easier to see that we removed a test subset and will not
-          accidentally use it for evaluation until we're ready to test.
-        </p>
-        <pre><code># Create the train and validation datasets
+      <p>
+        Then we'll create a training set and validation set from the remaining
+        data. We could have done this in one step but we're breaking it down
+        here so it's easier to see that we removed a test subset and will not
+        accidentally use it for evaluation until we're ready to test.
+      </p>
+      <pre><code># Create the train and validation datasets
 
 X_train, X_val, y_train, y_val = train_test_split(
     X_remain, y_remain, test_size=0.25, random_state=42)
@@ -225,12 +224,12 @@ print('Training data set samples:', len(X_train))
 print('Validation data set samples:', len(X_val))
 print('Test data set samples:', len(X_test))
 </code></pre>
-        <pre><code>Training data set samples: 90
+      <pre><code>Training data set samples: 90
 Validation data set samples: 30
 Test data set samples: 30
 </code></pre>
-        <p>Now we can fit our model and evaluate it on our validation set.</p>
-        <pre><code># Import the predictor and instantiate the class
+      <p>Now we can fit our model and evaluate it on our validation set.</p>
+      <pre><code># Import the predictor and instantiate the class
 from sklearn.linear_model import LinearRegression
 
 # Instantiate the model
@@ -246,103 +245,100 @@ y_predict = model.predict(X_val)
 from sklearn.metrics import r2_score
 r2_score(y_val, y_predict)
 </code></pre>
-        <pre><code>0.9589442606386026
+      <pre><code>0.9589442606386026
 </code></pre>
-        <p>
-          Well, that's a pretty good model score (R-squared), which we expect
-          because we know the Iris dataset has a strong linear trend between the
-          petal width and petal length. Now would be the time to change any of
-          the model hyperparameters and evaluate on the validation set again.
-          We'll continue with the default model parameters for now.
-          Hyperparameter tuning is something that will be introduced in the
-          later Sprints.
-        </p>
-        <p>Now, let's use the test set we held back above.</p>
-        <pre><code># Use the TEST set for prediction
+      <p>
+        Well, that's a pretty good model score (R-squared), which we expect
+        because we know the Iris dataset has a strong linear trend between the
+        petal width and petal length. Now would be the time to change any of
+        the model hyperparameters and evaluate on the validation set again.
+        We'll continue with the default model parameters for now.
+        Hyperparameter tuning is something that will be introduced in the
+        later Sprints.
+      </p>
+      <p>Now, let's use the test set we held back above.</p>
+      <pre><code># Use the TEST set for prediction
 y_predict_test = model.predict(X_test)
 
 # Calculate the accuracy score
 
 r2_score(y_test, y_predict_test)
 </code></pre>
-        <pre><code>0.9287783612248339
+      <pre><code>0.9287783612248339
 </code></pre>
-        <p>
-          The R-squared score is a little lower than it was for the validate
-          set. If we were to run the model and test again with a different
-          random seed, the scores would be different and the test score might be
-          higher.
-        </p>
-        <h3>Challenge</h3>
-        <p>
-          Using the same data set as in the example, try changing the
-          <code>random_state</code> parameter to see how the validate and test
-          model scores change.
-        </p>
-        <h3>Additional Resources</h3>
-        <ul>
-          <li>
-            <a
-              href="https://machinelearningmastery.com/difference-test-validation-datasets/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              What is the Difference Between Test and Validation Datasets?<!--Links to an external site.-->
-            </a>
-          </li>
-        </ul>
-      </section>
+      <p>
+        The R-squared score is a little lower than it was for the validate
+        set. If we were to run the model and test again with a different
+        random seed, the scores would be different and the test score might be
+        higher.
+      </p>
+      <h3>Challenge</h3>
+      <p>
+        Using the same data set as in the example, try changing the
+        <code>random_state</code> parameter to see how the validate and test
+        model scores change.
+      </p>
+      <h3>Additional Resources</h3>
+      <ul>
+        <li>
+          <a href="https://machinelearningmastery.com/difference-test-validation-datasets/" target="_blank"
+            rel="noopener noreferrer">
+            What is the Difference Between Test and Validation Datasets?
+          </a>
+        </li>
+      </ul>
+    </section>
 
-      <section class="content-box">
-        <h2>Objective 02 - Begin with baselines for classification</h2>
-        <h3>Overview</h3>
-        <p>
-          When we fit a model to our data and look at the model score, we need
-          something to compare that score with. As we covered in module 1, a
-          baseline is a simple estimate or prediction for a model. A baseline
-          can be determined from descriptive statistics such as the mean value
-          of a variable, or even a simple linear regression for two variables.
-          We started by finding a baseline for a linear regression problem where
-          we were predicting continuous variables. From our penguin data set we
-          used a baseline estimate of the ratio of flipper length to body mass.
-        </p>
-        <p>
-          In this module, we are going to focus on classification problems. A
-          classification model predicts which class a set of observations
-          belongs to. Classification problems deal with discrete or
-          non-continuous variables. As an example of a classification problem,
-          consider the Old Faithful geyser data set where we have some
-          information about how long each eruption lasts and the length of time
-          between eruptions. There are two features (<code>duration</code> and
-          <code>waiting</code>) and one target containing two classes
-          (<code>kind</code>). We want to use the <code>duration</code> and
-          <code>waiting</code> features to predict which class the geyser
-          eruption belongs to (<code>long</code> or <code>short</code>).
-        </p>
-        <h3>Classification Baseline</h3>
-        <p>
-          Before we set up our model we need to start with a baseline. For a
-          classification problem a common starting place is to find the most
-          common class and use that as a baseline. We'll start by considering a
-          binary classification problem, where there are only two classes. In
-          our geyser data set there are two kinds of geyser eruptions, short and
-          long, so this data set is suitable for a binary classification
-          problem.
-        </p>
-        <p>
-          Why do we use the most common class as a starting baseline? If we
-          think about how we make a prediction, we would most likely be correct
-          if our guess is the most common class. Let's explore the data set to
-          find the most common class and then calculate the accuracy of this
-          baseline.
-        </p>
-        <h3>Follow Along</h3>
-        <p>
-          The eruption data set is available in the
-          <code>seaborn</code> plotting library data sets, so it's easy to load
-          and use. We'll start the usual way by loading the data and viewing it.
-        </p>
-        <pre><code># Import numpy and seaborn
+    <section class="content-box">
+      <h2>Objective 02 - Begin with baselines for classification</h2>
+      <h3>Overview</h3>
+      <p>
+        When we fit a model to our data and look at the model score, we need
+        something to compare that score with. As we covered in module 1, a
+        baseline is a simple estimate or prediction for a model. A baseline
+        can be determined from descriptive statistics such as the mean value
+        of a variable, or even a simple linear regression for two variables.
+        We started by finding a baseline for a linear regression problem where
+        we were predicting continuous variables. From our penguin data set we
+        used a baseline estimate of the ratio of flipper length to body mass.
+      </p>
+      <p>
+        In this module, we are going to focus on classification problems. A
+        classification model predicts which class a set of observations
+        belongs to. Classification problems deal with discrete or
+        non-continuous variables. As an example of a classification problem,
+        consider the Old Faithful geyser data set where we have some
+        information about how long each eruption lasts and the length of time
+        between eruptions. There are two features (<code>duration</code> and
+        <code>waiting</code>) and one target containing two classes
+        (<code>kind</code>). We want to use the <code>duration</code> and
+        <code>waiting</code> features to predict which class the geyser
+        eruption belongs to (<code>long</code> or <code>short</code>).
+      </p>
+      <h3>Classification Baseline</h3>
+      <p>
+        Before we set up our model we need to start with a baseline. For a
+        classification problem a common starting place is to find the most
+        common class and use that as a baseline. We'll start by considering a
+        binary classification problem, where there are only two classes. In
+        our geyser data set there are two kinds of geyser eruptions, short and
+        long, so this data set is suitable for a binary classification
+        problem.
+      </p>
+      <p>
+        Why do we use the most common class as a starting baseline? If we
+        think about how we make a prediction, we would most likely be correct
+        if our guess is the most common class. Let's explore the data set to
+        find the most common class and then calculate the accuracy of this
+        baseline.
+      </p>
+      <h3>Follow Along</h3>
+      <p>
+        The eruption data set is available in the
+        <code>seaborn</code> plotting library data sets, so it's easy to load
+        and use. We'll start the usual way by loading the data and viewing it.
+      </p>
+      <pre><code># Import numpy and seaborn
 import numpy as np
 import seaborn as sns
 
@@ -351,184 +347,176 @@ display(geyser.head())
 
 display(geyser.describe())
 </code></pre>
-        <div class="table-responsive">
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>duration</th>
-                <th>waiting</th>
-                <th>kind</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>0</td>
-                <td>3.600</td>
-                <td>79</td>
-                <td>long</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>1.800</td>
-                <td>54</td>
-                <td>short</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>3.333</td>
-                <td>74</td>
-                <td>long</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>2.283</td>
-                <td>62</td>
-                <td>short</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>4.533</td>
-                <td>85</td>
-                <td>long</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="table-responsive">
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>duration</th>
-                <th>waiting</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>count</td>
-                <td>272.000000</td>
-                <td>272.000000</td>
-              </tr>
-              <tr>
-                <td>mean</td>
-                <td>3.487783</td>
-                <td>70.897059</td>
-              </tr>
-              <tr>
-                <td>std</td>
-                <td>1.141371</td>
-                <td>13.594974</td>
-              </tr>
-              <tr>
-                <td>min</td>
-                <td>1.600000</td>
-                <td>43.000000</td>
-              </tr>
-              <tr>
-                <td>25%</td>
-                <td>2.162750</td>
-                <td>58.000000</td>
-              </tr>
-              <tr>
-                <td>50%</td>
-                <td>4.000000</td>
-                <td>76.000000</td>
-              </tr>
-              <tr>
-                <td>75%</td>
-                <td>4.454250</td>
-                <td>82.000000</td>
-              </tr>
-              <tr>
-                <td>max</td>
-                <td>5.100000</td>
-                <td>96.000000</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p>
-          The next step is to see how many observations are in each class. We
-          can use the <code>value_counts()</code> method on the
-          <code>kind</code> column.
-        </p>
-        <pre><code># Find the number of counts for each type of eruption
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>duration</th>
+              <th>waiting</th>
+              <th>kind</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0</td>
+              <td>3.600</td>
+              <td>79</td>
+              <td>long</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>1.800</td>
+              <td>54</td>
+              <td>short</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>3.333</td>
+              <td>74</td>
+              <td>long</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>2.283</td>
+              <td>62</td>
+              <td>short</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>4.533</td>
+              <td>85</td>
+              <td>long</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>duration</th>
+              <th>waiting</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>count</td>
+              <td>272.000000</td>
+              <td>272.000000</td>
+            </tr>
+            <tr>
+              <td>mean</td>
+              <td>3.487783</td>
+              <td>70.897059</td>
+            </tr>
+            <tr>
+              <td>std</td>
+              <td>1.141371</td>
+              <td>13.594974</td>
+            </tr>
+            <tr>
+              <td>min</td>
+              <td>1.600000</td>
+              <td>43.000000</td>
+            </tr>
+            <tr>
+              <td>25%</td>
+              <td>2.162750</td>
+              <td>58.000000</td>
+            </tr>
+            <tr>
+              <td>50%</td>
+              <td>4.000000</td>
+              <td>76.000000</td>
+            </tr>
+            <tr>
+              <td>75%</td>
+              <td>4.454250</td>
+              <td>82.000000</td>
+            </tr>
+            <tr>
+              <td>max</td>
+              <td>5.100000</td>
+              <td>96.000000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        The next step is to see how many observations are in each class. We
+        can use the <code>value_counts()</code> method on the
+        <code>kind</code> column.
+      </p>
+      <pre><code># Find the number of counts for each type of eruption
 geyser['kind'].value_counts()
 </code></pre>
-        <pre><code>long     172
+      <pre><code>long     172
 short    100
 Name: kind, dtype: int64
 </code></pre>
-        <p>
-          Here, we have more observations for the <code>long</code> class. If we
-          were given a set of values for the duration and waiting interval and
-          predicted <code>long</code> for the class, we would be correct 63% of
-          the time (number of <code>long</code> values divided by the total
-          number of observations: <code>172/272 = 0.63</code>). This baseline is
-          the number we would like to beat when we actually train and fit a
-          model to our data set.
-        </p>
-        <h3>Challenge</h3>
-        <p>
-          Using the penguin data set and the iris data set, find the most common
-          classes for the target variables ("sex" for the penguin data and
-          "species" for the iris data). For each of these data sets, what is the
-          baseline?
-        </p>
-        <h3>Additional Resources</h3>
-        <ul>
-          <li>
-            <a
-              href="http://www.stat.cmu.edu/~larry/all-of-statistics/=data/faithful.dat"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Old Faithful Geyser Data
-            </a>
-          </li>
-        </ul>
-      </section>
+      <p>
+        Here, we have more observations for the <code>long</code> class. If we
+        were given a set of values for the duration and waiting interval and
+        predicted <code>long</code> for the class, we would be correct 63% of
+        the time (number of <code>long</code> values divided by the total
+        number of observations: <code>172/272 = 0.63</code>). This baseline is
+        the number we would like to beat when we actually train and fit a
+        model to our data set.
+      </p>
+      <h3>Challenge</h3>
+      <p>
+        Using the penguin data set and the iris data set, find the most common
+        classes for the target variables ("sex" for the penguin data and
+        "species" for the iris data). For each of these data sets, what is the
+        baseline?
+      </p>
+      <h3>Additional Resources</h3>
+      <ul>
+        <li>
+          <a href="http://www.stat.cmu.edu/~larry/all-of-statistics/=data/faithful.dat" target="_blank"
+            rel="noopener noreferrer">
+            Old Faithful Geyser Data
+          </a>
+        </li>
+      </ul>
+    </section>
 
-      <section class="content-box">
-        <h2>
-          Objective 03 - Express and explain the intuition and interpretation of
-          logistic regression
-        </h2>
-        <h3>Overview</h3>
-        <p>
-          So far in this sprint, we have been fitting linear regression models
-          to continuous data and predicting a numeric value. In this next part
-          of the module, we're going to be implementing a classification model
-          where we predict the class a given observation belongs to. One of the
-          most basic classification techniques is called a logistic regression.
-          Don't confuse linear regression with logistic regression, the former
-          is a regression model and the latter used for classification.
-        </p>
-        <h3>Logistic Regression</h3>
-        <p>
-          A logistic regression classifier is based on the sigmoid function
-          which is an s-shaped curve. The equation for the sigmoid is given by:
-        </p>
-        <p>
-          <img
-            class="eq-img"
-            src="https://i.upmath.me/svg/%5Csigma(x)%20%3D%20%5Cfrac%7B1%7D%7B1%2Bexp(-x)%7D"
-            alt="\sigma(x) = \frac{1}{1+exp(-x)}"
-            align="center"
-            loading="lazy"
-          />
-        </p>
-        <p>
-          We'll plot this function and then discuss why it's shape makes it
-          suitable for a binary classification problem.
-        </p>
-        <pre><code># The logistic sigmoid function (implemented to accept numpy arrays)
+    <section class="content-box">
+      <h2>
+        Objective 03 - Express and explain the intuition and interpretation of
+        logistic regression
+      </h2>
+      <h3>Overview</h3>
+      <p>
+        So far in this sprint, we have been fitting linear regression models
+        to continuous data and predicting a numeric value. In this next part
+        of the module, we're going to be implementing a classification model
+        where we predict the class a given observation belongs to. One of the
+        most basic classification techniques is called a logistic regression.
+        Don't confuse linear regression with logistic regression, the former
+        is a regression model and the latter used for classification.
+      </p>
+      <h3>Logistic Regression</h3>
+      <p>
+        A logistic regression classifier is based on the sigmoid function
+        which is an s-shaped curve. The equation for the sigmoid is given by:
+      </p>
+      <p>
+        <img class="eq-img" src="https://i.upmath.me/svg/%5Csigma(x)%20%3D%20%5Cfrac%7B1%7D%7B1%2Bexp(-x)%7D"
+          alt="\sigma(x) = \frac{1}{1+exp(-x)}" align="center" loading="lazy" />
+      </p>
+      <p>
+        We'll plot this function and then discuss why it's shape makes it
+        suitable for a binary classification problem.
+      </p>
+      <pre><code># The logistic sigmoid function (implemented to accept numpy arrays)
 import numpy as np
 
 def sigmoid(x):
     return 1 / (1 + np.e**(-x))</code></pre>
-        <pre><code># Plot the function
+      <pre><code># Plot the function
 
 x_plot = np.linspace(-10, 10, 100)
 sig_y = sigmoid(x_plot)
@@ -543,71 +531,39 @@ plt.title('Sigmoid function')
 
 plt.show()
 </code></pre>
-        <p>
-          <img
-            class="eq-img"
-            src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_1/mod4_obj3_sigmoid.png"
-            alt="mod4_obj3_sigmoid.png"
-            loading="lazy"
-          />
-        </p>
-        <p>
-          Over most of the range of the sigmoid function, the value is either 0
-          or 1, which is why this function is particularly suitable for a binary
-          classifier. When we are fitting a model, we would like to find the
-          coefficients that best fit the data. Including these coefficients
-          results in an equation of this form:
-        </p>
-        <p>
-          <img
-            class="eq-img"
-            src="https://i.upmath.me/svg/P(y_i%20%3D%201)%20%3D%20%5Cfrac%7B1%7D%7B1%2Be%5E%7B-(%5Cbeta_0%2B%5Cbeta_1x)%7D%7D"
-            alt="P(y_i = 1) = \frac{1}{1+e^{-(\beta_0+\beta_1x)}}"
-            align="center"
-            loading="lazy"
-          />
-        </p>
-        <p>
-          where
-          <img
-            class="eq-small"
-            src="https://i.upmath.me/svg/P(y_i%3D1)"
-            alt="P(y_i=1)"
-            loading="lazy"
-          />
-          is the probability of observation
-          <img
-            class="eq-small"
-            src="https://i.upmath.me/svg/i"
-            alt="i"
-            loading="lazy"
-          />
-          being in class 1. The coefficients
-          <img
-            class="eq-small"
-            src="https://i.upmath.me/svg/%5Cbeta_0"
-            alt="\beta_0"
-            loading="lazy"
-          />
-          and
-          <img
-            class="eq-small"
-            src="https://i.upmath.me/svg/%5Cbeta_1"
-            alt="\beta_1"
-            loading="lazy"
-          />
-          determine the shape of the function and are what we are trying to fit
-          when we model our data. When we know the coefficients, we can make a
-          prediction of the class for an observation
-          <img
-            class="eq-small"
-            src="https://i.upmath.me/svg/x"
-            alt="x"
-            loading="lazy"
-          />.
-        </p>
-        <h3>Follow Along</h3>
-        <pre><code># Import seaborn and load the data
+      <p>
+        <img class="eq-img"
+          src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_1/mod4_obj3_sigmoid.png"
+          alt="mod4_obj3_sigmoid.png" loading="lazy" />
+      </p>
+      <p>
+        Over most of the range of the sigmoid function, the value is either 0
+        or 1, which is why this function is particularly suitable for a binary
+        classifier. When we are fitting a model, we would like to find the
+        coefficients that best fit the data. Including these coefficients
+        results in an equation of this form:
+      </p>
+      <p>
+        <img class="eq-img"
+          src="https://i.upmath.me/svg/P(y_i%20%3D%201)%20%3D%20%5Cfrac%7B1%7D%7B1%2Be%5E%7B-(%5Cbeta_0%2B%5Cbeta_1x)%7D%7D"
+          alt="P(y_i = 1) = \frac{1}{1+e^{-(\beta_0+\beta_1x)}}" align="center" loading="lazy" />
+      </p>
+      <p>
+        where
+        <img class="eq-small" src="https://i.upmath.me/svg/P(y_i%3D1)" alt="P(y_i=1)" loading="lazy" />
+        is the probability of observation
+        <img class="eq-small" src="https://i.upmath.me/svg/i" alt="i" loading="lazy" />
+        being in class 1. The coefficients
+        <img class="eq-small" src="https://i.upmath.me/svg/%5Cbeta_0" alt="\beta_0" loading="lazy" />
+        and
+        <img class="eq-small" src="https://i.upmath.me/svg/%5Cbeta_1" alt="\beta_1" loading="lazy" />
+        determine the shape of the function and are what we are trying to fit
+        when we model our data. When we know the coefficients, we can make a
+        prediction of the class for an observation
+        <img class="eq-small" src="https://i.upmath.me/svg/x" alt="x" loading="lazy" />.
+      </p>
+      <h3>Follow Along</h3>
+      <pre><code># Import seaborn and load the data
 import seaborn as sns
 
 geyser = sns.load_dataset("geyser")
@@ -626,60 +582,60 @@ display(geyser.head())
 # Assign the target variable to y
 y = geyser['kind_binary']
 </code></pre>
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>duration</th>
-              <th>waiting</th>
-              <th>kind</th>
-              <th>kind_binary</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>0</td>
-              <td>3.600</td>
-              <td>79</td>
-              <td>long</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>1.800</td>
-              <td>54</td>
-              <td>short</td>
-              <td>1</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>3.333</td>
-              <td>74</td>
-              <td>long</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>2.283</td>
-              <td>62</td>
-              <td>short</td>
-              <td>1</td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>4.533</td>
-              <td>85</td>
-              <td>long</td>
-              <td>0</td>
-            </tr>
-          </tbody>
-        </table>
-        <p>
-          We now have a DataFrame with a column encoded with two classes: long=0
-          and short=1. Let's plot the <code>duration</code> column against the
-          binary classes we just created.
-        </p>
-        <pre><code># Plot the data for 'duration'
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>duration</th>
+            <th>waiting</th>
+            <th>kind</th>
+            <th>kind_binary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>3.600</td>
+            <td>79</td>
+            <td>long</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>1.800</td>
+            <td>54</td>
+            <td>short</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>3.333</td>
+            <td>74</td>
+            <td>long</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>2.283</td>
+            <td>62</td>
+            <td>short</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>4.533</td>
+            <td>85</td>
+            <td>long</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        We now have a DataFrame with a column encoded with two classes: long=0
+        and short=1. Let's plot the <code>duration</code> column against the
+        binary classes we just created.
+      </p>
+      <pre><code># Plot the data for 'duration'
 plt.scatter(x, y)
 plt.yticks([0, 1])
 plt.xlabel('x (geyser duration - minutes)'); plt.ylabel('kind of eruption')
@@ -687,21 +643,19 @@ plt.title('Geyser duration')
 
 plt.show()
 </code></pre>
-        <p>
-          <img
-            src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_1/mod4_obj3_geyser.png"
-            alt="mod4_obj3_geyser.png"
-            loading="lazy"
-          />
-        </p>
-        <p>
-          Now, let's use the sigmoid function with coefficients from a model
-          that fits the above data. We'll get to this step in the next objective
-          so for now let's just focus on what the coefficient means and how to
-          interpret the result. We'll assign the coefficients to variables and
-          then plot the new function on our data above.
-        </p>
-        <pre><code># Assign coefficient from previously fit model
+      <p>
+        <img
+          src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_1/mod4_obj3_geyser.png"
+          alt="mod4_obj3_geyser.png" loading="lazy" />
+      </p>
+      <p>
+        Now, let's use the sigmoid function with coefficients from a model
+        that fits the above data. We'll get to this step in the next objective
+        so for now let's just focus on what the coefficient means and how to
+        interpret the result. We'll assign the coefficients to variables and
+        then plot the new function on our data above.
+      </p>
+      <pre><code># Assign coefficient from previously fit model
 beta_0 = 11.32
 beta_1 = -3.65
 
@@ -722,101 +676,85 @@ plt.title('Geyser eruption with model')
 
 plt.show()
 </code></pre>
-        <p>
-          <img
-            src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_1/mod4_obj3_geyser_model.png"
-            alt="mod4_obj3_geyser_model.png"
-            loading="lazy"
-          />
-        </p>
-        <p>
-          Now let's use our function with the model parameters to make and
-          interpret a prediction. We'll pretend that we have visited the geyser
-          site and viewed an eruption, which we timed to be 3.25 minutes. Which
-          class would this eruption belong to and with what probability?
-        </p>
-        <p>
-          We know from the equation above that the probability is for the
-          observation to belong to class=1 (short eruption). Plugging in the
-          values for x (3.25 minutes) along with the coefficients gives us the
-          following equation:
-        </p>
-        <p>
-          <img
-            class="eq-img"
-            src="https://i.upmath.me/svg/%20P(y_i%20%3D%201)%20%3D%20%5Cfrac%7B1%7D%7B1%2Be%5E%7B-(%5Cbeta_0%2B%5Cbeta_1x)%7D%7D%20"
-            alt=" P(y_i = 1) = \frac{1}{1+e^{-(\beta_0+\beta_1x)}} "
-            align="center"
-            loading="lazy"
-          />
-        </p>
-        <p>
-          <img
-            class="eq-img"
-            src="https://i.upmath.me/svg/%20P(y_i%20%3D%201%20%5Ctext%7B%20when%20%7Dx%3D3.25)%20%3D%20%5Cfrac%7B1%7D%7B1%2Be%5E%7B-(11.32-3.65%5Ctimes3.25)%7D%7D"
-            alt=" P(y_i = 1 \text{ when }x=3.25) = \frac{1}{1+e^{-(11.32-3.65\times3.25)}}"
-            align="center"
-            loading="lazy"
-          />
-        </p>
-        <p>
-          We interpret this result to mean that the probability of belonging to
-          class=1 (short) is 37%. The probability of the observation belonging
-          to class=0 (long) is 100%-37% = 63%. Our model predicts that an
-          eruption with a duration of 3.25 minutes would belong to the long
-          class of eruption.
-        </p>
-        <h3>Challenge</h3>
-        <p>
-          Using the same geyser data set in the example above, plot the
-          <code>waiting</code>
-          column along with the binary class we assigned above
-          (<code>kind_binary</code>). Sketch out the shape of the sigmoid
-          function that would best fit the data.
-        </p>
-        <h3>Additional Resources</h3>
-        <ul>
-          <li>
-            <a
-              href="https://www.dataschool.io/guide-to-logistic-regression/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Guide to Logistic Regression
-            </a>
-          </li>
-          <li>
-            <a
-              href="http://www.stat.cmu.edu/~larry/all-of-statistics/=data/faithful.dat"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Old Faithful Geyser Data
-            </a>
-          </li>
-        </ul>
-      </section>
+      <p>
+        <img
+          src="https://raw.githubusercontent.com/bloominstituteoftechnology/data-science-canvas-images/main/unit_2/sprint_1/mod4_obj3_geyser_model.png"
+          alt="mod4_obj3_geyser_model.png" loading="lazy" />
+      </p>
+      <p>
+        Now let's use our function with the model parameters to make and
+        interpret a prediction. We'll pretend that we have visited the geyser
+        site and viewed an eruption, which we timed to be 3.25 minutes. Which
+        class would this eruption belong to and with what probability?
+      </p>
+      <p>
+        We know from the equation above that the probability is for the
+        observation to belong to class=1 (short eruption). Plugging in the
+        values for x (3.25 minutes) along with the coefficients gives us the
+        following equation:
+      </p>
+      <p>
+        <img class="eq-img"
+          src="https://i.upmath.me/svg/%20P(y_i%20%3D%201)%20%3D%20%5Cfrac%7B1%7D%7B1%2Be%5E%7B-(%5Cbeta_0%2B%5Cbeta_1x)%7D%7D%20"
+          alt=" P(y_i = 1) = \frac{1}{1+e^{-(\beta_0+\beta_1x)}} " align="center" loading="lazy" />
+      </p>
+      <p>
+        <img class="eq-img"
+          src="https://i.upmath.me/svg/%20P(y_i%20%3D%201%20%5Ctext%7B%20when%20%7Dx%3D3.25)%20%3D%20%5Cfrac%7B1%7D%7B1%2Be%5E%7B-(11.32-3.65%5Ctimes3.25)%7D%7D"
+          alt=" P(y_i = 1 \text{ when }x=3.25) = \frac{1}{1+e^{-(11.32-3.65\times3.25)}}" align="center"
+          loading="lazy" />
+      </p>
+      <p>
+        We interpret this result to mean that the probability of belonging to
+        class=1 (short) is 37%. The probability of the observation belonging
+        to class=0 (long) is 100%-37% = 63%. Our model predicts that an
+        eruption with a duration of 3.25 minutes would belong to the long
+        class of eruption.
+      </p>
+      <h3>Challenge</h3>
+      <p>
+        Using the same geyser data set in the example above, plot the
+        <code>waiting</code>
+        column along with the binary class we assigned above
+        (<code>kind_binary</code>). Sketch out the shape of the sigmoid
+        function that would best fit the data.
+      </p>
+      <h3>Additional Resources</h3>
+      <ul>
+        <li>
+          <a href="https://www.dataschool.io/guide-to-logistic-regression/" target="_blank" rel="noopener noreferrer">
+            Guide to Logistic Regression
+          </a>
+        </li>
+        <li>
+          <a href="http://www.stat.cmu.edu/~larry/all-of-statistics/=data/faithful.dat" target="_blank"
+            rel="noopener noreferrer">
+            Old Faithful Geyser Data
+          </a>
+        </li>
+      </ul>
+    </section>
 
-      <section class="content-box">
-        <h2>
-          Objective 04 - Use scikit learn to fit and interpret logistic
-          regression models
-        </h2>
-        <h3>Overview</h3>
-        <p>
-          So far, we've looked at the function and coefficients used to fit a
-          logistic regression. In this objective we're going to go more into
-          detail about how to use the scikit learn
-          <code>LogisticRegression</code> predictor. We'll also cover how to fit
-          this model using the two features in the dataset and how to interpret
-          these results.
-        </p>
-        <h3>Follow Along</h3>
-        <p>
-          Let's load the geyser data set we used earlier, and go through the
-          steps to fit a logistic regression model.
-        </p>
-        <pre><code># Import seaborn and load the data
+    <section class="content-box">
+      <h2>
+        Objective 04 - Use scikit learn to fit and interpret logistic
+        regression models
+      </h2>
+      <h3>Overview</h3>
+      <p>
+        So far, we've looked at the function and coefficients used to fit a
+        logistic regression. In this objective we're going to go more into
+        detail about how to use the scikit learn
+        <code>LogisticRegression</code> predictor. We'll also cover how to fit
+        this model using the two features in the dataset and how to interpret
+        these results.
+      </p>
+      <h3>Follow Along</h3>
+      <p>
+        Let's load the geyser data set we used earlier, and go through the
+        steps to fit a logistic regression model.
+      </p>
+      <pre><code># Import seaborn and load the data
 import seaborn as sns
 
 geyser = sns.load_dataset("geyser")
@@ -831,62 +769,62 @@ le = LabelEncoder()
 geyser['kind_binary'] = le.fit_transform(geyser['kind'])
 display(geyser.head())
 </code></pre>
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>duration</th>
-              <th>waiting</th>
-              <th>kind</th>
-              <th>kind_binary</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>0</td>
-              <td>3.600</td>
-              <td>79</td>
-              <td>long</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>1.800</td>
-              <td>54</td>
-              <td>short</td>
-              <td>1</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>3.333</td>
-              <td>74</td>
-              <td>long</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>2.283</td>
-              <td>62</td>
-              <td>short</td>
-              <td>1</td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>4.533</td>
-              <td>85</td>
-              <td>long</td>
-              <td>0</td>
-            </tr>
-          </tbody>
-        </table>
-        <p>
-          Now that we have our geyser class encoded, we can follow the usual
-          model fitting procedure. First, we create the feature matrix and
-          target array. Then we import the
-          <code>LogisticRegression</code> model, instantiate the predictor
-          class, and fit the model.
-        </p>
-        <pre><code># Import logistic regression predictor
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>duration</th>
+            <th>waiting</th>
+            <th>kind</th>
+            <th>kind_binary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>3.600</td>
+            <td>79</td>
+            <td>long</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>1.800</td>
+            <td>54</td>
+            <td>short</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>3.333</td>
+            <td>74</td>
+            <td>long</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>2.283</td>
+            <td>62</td>
+            <td>short</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>4.533</td>
+            <td>85</td>
+            <td>long</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Now that we have our geyser class encoded, we can follow the usual
+        model fitting procedure. First, we create the feature matrix and
+        target array. Then we import the
+        <code>LogisticRegression</code> model, instantiate the predictor
+        class, and fit the model.
+      </p>
+      <pre><code># Import logistic regression predictor
 from sklearn.linear_model import LogisticRegression
 
 # Prepare the feature (we'll begin with one feature)
@@ -901,8 +839,8 @@ y = geyser['kind_binary']
 # Fit the model using the default parameters
 model = LogisticRegression()
 model.fit(X, y)</code></pre>
-        <pre><code>LogisticRegression()</code></pre>
-        <pre><code># Import the cross validation method
+      <pre><code>LogisticRegression()</code></pre>
+      <pre><code># Import the cross validation method
 from sklearn.model_selection import cross_val_score
 
 # Implement a cross-validation with k=5
@@ -912,22 +850,22 @@ print(cross_val_score(model, X, y, cv=5))
 score_mean = cross_val_score(model, X, y, cv=5).mean()
 print('The mean CV score is: ', score_mean)
 </code></pre>
-        <pre><code>[0.94545455 1.         1.         0.94444444 1.        ]
+      <pre><code>[0.94545455 1.         1.         0.94444444 1.        ]
 The mean CV score is:  0.977979797979798
 </code></pre>
-        <p>
-          This model is pretty accurate. If we remember from earlier in this
-          module, our baseline accuracy was 63%. We've improved over the
-          baseline by a significant amount.
-        </p>
-        <p>
-          Now, how much can we improve our model by using an additional feature
-          in fitting our model? We still have the <code>waiting</code> column
-          which is the amount of time that passes between eruptions. Let's add
-          that feature to the feature matrix, fit the model, and calculate the
-          cross-validation score.
-        </p>
-        <pre><code># Create new feature matrix
+      <p>
+        This model is pretty accurate. If we remember from earlier in this
+        module, our baseline accuracy was 63%. We've improved over the
+        baseline by a significant amount.
+      </p>
+      <p>
+        Now, how much can we improve our model by using an additional feature
+        in fitting our model? We still have the <code>waiting</code> column
+        which is the amount of time that passes between eruptions. Let's add
+        that feature to the feature matrix, fit the model, and calculate the
+        cross-validation score.
+      </p>
+      <pre><code># Create new feature matrix
 features = ['duration', 'waiting']
 X_two = geyser[features]
 
@@ -942,88 +880,82 @@ print(cross_val_score(model_two, X_two, y, cv=5))
 score_mean = cross_val_score(model_two, X_two, y, cv=5).mean()
 print('The mean CV score is (two features): ', score_mean)
 </code></pre>
-        <pre><code>[1. 1. 1. 1. 1.]
+      <pre><code>[1. 1. 1. 1. 1.]
 The mean CV score is (two features):  1.0
 </code></pre>
-        <p>
-          TThe accuracy is perfect for this model. This is likely because the
-          two classes have a very clear division. It's important to remember
-          that not all data sets will be so easy to model with such accurate
-          results!
-        </p>
-        <h3>Challenge</h3>
-        <p>
-          For this challenge, try to plot the two features on the same plot. So
-          instead of a plot with the feature on the x-axis and the class on the
-          y axis, plot one feature on each axis. Are the two classes distinct as
-          visualized on the plot? If you use two different colors for the
-          classes, there should be a clear division between them. Think about
-          where you would draw the decision boundary.
-        </p>
-        <h3>Additional Resources</h3>
-        <ul>
-          <li>
-            <a
-              href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Scikit learn: Logistic Regression</a
-            >
-          </li>
-        </ul>
-      </section>
+      <p>
+        TThe accuracy is perfect for this model. This is likely because the
+        two classes have a very clear division. It's important to remember
+        that not all data sets will be so easy to model with such accurate
+        results!
+      </p>
+      <h3>Challenge</h3>
+      <p>
+        For this challenge, try to plot the two features on the same plot. So
+        instead of a plot with the feature on the x-axis and the class on the
+        y axis, plot one feature on each axis. Are the two classes distinct as
+        visualized on the plot? If you use two different colors for the
+        classes, there should be a clear division between them. Think about
+        where you would draw the decision boundary.
+      </p>
+      <h3>Additional Resources</h3>
+      <ul>
+        <li>
+          <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html"
+            target="_blank" rel="noopener noreferrer">Scikit learn: Logistic Regression</a>
+        </li>
+      </ul>
+    </section>
 
-      <section class="content-box">
-        <h2>Objective 05 - Use scikit-learn pipelines</h2>
-        <h3>Overview</h3>
-        <p>
-          In previous modules, we processed our data and fit the model in
-          separate steps. We completed each step separately in order to better
-          understand the process. Sometimes there are a number of steps needed
-          before the model is fit, including encoding, imputing missing values,
-          standardizing, and normalizing variables.
-        </p>
-        <p>
-          Each of these steps also needs to be applied to both the training data
-          and the testing data, making for many extra lines of code. In order to
-          streamline the preprocessing and model fitting, we can use a
-          scikit-learn method called a pipeline.
-        </p>
-        <h3>Pipeline</h3>
-        <p>
-          The scikit-learn pipeline is used to apply a list of preprocessing
-          steps and the final estimator, all in one step. Another important
-          advantage of using a pipeline is that the same steps can be applied to
-          data in the same fold of a cross-validation.
-        </p>
-        <h3>Follow Along</h3>
-        <p>
-          There are two ways to use the scikit-learn pipeline tool. The main one
-          is to use <code>sklearn.pipeline.Pipeline()</code>, where each step in
-          the pipeline is tuple of the name and transformer or estimator. For
-          example, creating a pipeline using the <code>StandardScaler</code> and
-          the <code>SVC</code> estimator would result in
-          <code
-            >pipe = Pipeline([('scaler', StandardScaler()), ('svc',
-            SVC())])</code
-          >.
-        </p>
-        <p>
-          An easier implementation is to use the
-          <code>sklearn.pipeline.make_pipeline()</code> convenience function.
-          Instead of a list of tuples, this function just accepts the
-          transformers and estimators; the names are set to the lowercase of
-          their types automatically. An example of this function is:
-          <code>make_pipe = make_pipeline(StandardScaler(), SVC())</code>.
-        </p>
-        <h3>Implement a Pipeline</h3>
-        <p>
-          Going back to our well-loved penguin data set, we're going to use a
-          pipeline to pre-process and fit a model to predict which class a
-          penguin belongs to (male or female). Let's load in the data and
-          discuss each step as we work through the pipeline.
-        </p>
-        <pre><code># Load in the data!
+    <section class="content-box">
+      <h2>Objective 05 - Use scikit-learn pipelines</h2>
+      <h3>Overview</h3>
+      <p>
+        In previous modules, we processed our data and fit the model in
+        separate steps. We completed each step separately in order to better
+        understand the process. Sometimes there are a number of steps needed
+        before the model is fit, including encoding, imputing missing values,
+        standardizing, and normalizing variables.
+      </p>
+      <p>
+        Each of these steps also needs to be applied to both the training data
+        and the testing data, making for many extra lines of code. In order to
+        streamline the preprocessing and model fitting, we can use a
+        scikit-learn method called a pipeline.
+      </p>
+      <h3>Pipeline</h3>
+      <p>
+        The scikit-learn pipeline is used to apply a list of preprocessing
+        steps and the final estimator, all in one step. Another important
+        advantage of using a pipeline is that the same steps can be applied to
+        data in the same fold of a cross-validation.
+      </p>
+      <h3>Follow Along</h3>
+      <p>
+        There are two ways to use the scikit-learn pipeline tool. The main one
+        is to use <code>sklearn.pipeline.Pipeline()</code>, where each step in
+        the pipeline is tuple of the name and transformer or estimator. For
+        example, creating a pipeline using the <code>StandardScaler</code> and
+        the <code>SVC</code> estimator would result in
+        <code>pipe = Pipeline([('scaler', StandardScaler()), ('svc',
+            SVC())])</code>.
+      </p>
+      <p>
+        An easier implementation is to use the
+        <code>sklearn.pipeline.make_pipeline()</code> convenience function.
+        Instead of a list of tuples, this function just accepts the
+        transformers and estimators; the names are set to the lowercase of
+        their types automatically. An example of this function is:
+        <code>make_pipe = make_pipeline(StandardScaler(), SVC())</code>.
+      </p>
+      <h3>Implement a Pipeline</h3>
+      <p>
+        Going back to our well-loved penguin data set, we're going to use a
+        pipeline to pre-process and fit a model to predict which class a
+        penguin belongs to (male or female). Let's load in the data and
+        discuss each step as we work through the pipeline.
+      </p>
+      <pre><code># Load in the data!
 
 import pandas as pd
 import seaborn as sns
@@ -1035,97 +967,97 @@ penguins.dropna(inplace=True)
 
 display(penguins.head())
 </code></pre>
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>species</th>
-              <th>island</th>
-              <th>bill_length_mm</th>
-              <th>bill_depth_mm</th>
-              <th>flipper_length_mm</th>
-              <th>body_mass_g</th>
-              <th>sex</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>0</td>
-              <td>Adelie</td>
-              <td>Torgersen</td>
-              <td>39.1</td>
-              <td>18.7</td>
-              <td>181.0</td>
-              <td>3750.0</td>
-              <td>Male</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Adelie</td>
-              <td>Torgersen</td>
-              <td>39.5</td>
-              <td>17.4</td>
-              <td>186.0</td>
-              <td>3800.0</td>
-              <td>Female</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Adelie</td>
-              <td>Torgersen</td>
-              <td>40.3</td>
-              <td>18.0</td>
-              <td>195.0</td>
-              <td>3250.0</td>
-              <td>Female</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Adelie</td>
-              <td>Torgersen</td>
-              <td>36.7</td>
-              <td>19.3</td>
-              <td>193.0</td>
-              <td>3450.0</td>
-              <td>Female</td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>Adelie</td>
-              <td>Torgersen</td>
-              <td>39.3</td>
-              <td>20.6</td>
-              <td>190.0</td>
-              <td>3650.0</td>
-              <td>Male</td>
-            </tr>
-          </tbody>
-        </table>
-        <p>
-          We have a few features to choose from to fit our model. Let's use
-          <code>species</code>, <code>bill_length_mm</code>,
-          <code>bill_depth_mm</code>, <code>flipper_length_mm</code>, and
-          <code>body_mass_g</code>. Our target will be the <code>sex</code> of
-          the penguin.
-        </p>
-        <h3>Feature Matrix</h3>
-        <p>
-          We have one categorical feature (<code>species</code>) and four
-          numeric features. We'll use one-hot encoding to transform the
-          <code>species</code> column into three one-hot encoded columns. And
-          the target array (<code>sex</code>) will also be encoded with the
-          label encoder. That won't be part of the preprocessing of the
-          features; we'll do that separately before we apply our pipeline steps
-          and fit the model.
-        </p>
-        <p>
-          In the following code we will use the
-          <code>OneHotEncoder()</code> method for the
-          <code>species</code> column. When we use this method we also need to
-          use the <code>ColumnTransformer()</code> method to apply the one-hot
-          encoder to our specified column.
-        </p>
-        <pre><code># Imports!
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>species</th>
+            <th>island</th>
+            <th>bill_length_mm</th>
+            <th>bill_depth_mm</th>
+            <th>flipper_length_mm</th>
+            <th>body_mass_g</th>
+            <th>sex</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>Adelie</td>
+            <td>Torgersen</td>
+            <td>39.1</td>
+            <td>18.7</td>
+            <td>181.0</td>
+            <td>3750.0</td>
+            <td>Male</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>Adelie</td>
+            <td>Torgersen</td>
+            <td>39.5</td>
+            <td>17.4</td>
+            <td>186.0</td>
+            <td>3800.0</td>
+            <td>Female</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Adelie</td>
+            <td>Torgersen</td>
+            <td>40.3</td>
+            <td>18.0</td>
+            <td>195.0</td>
+            <td>3250.0</td>
+            <td>Female</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Adelie</td>
+            <td>Torgersen</td>
+            <td>36.7</td>
+            <td>19.3</td>
+            <td>193.0</td>
+            <td>3450.0</td>
+            <td>Female</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Adelie</td>
+            <td>Torgersen</td>
+            <td>39.3</td>
+            <td>20.6</td>
+            <td>190.0</td>
+            <td>3650.0</td>
+            <td>Male</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        We have a few features to choose from to fit our model. Let's use
+        <code>species</code>, <code>bill_length_mm</code>,
+        <code>bill_depth_mm</code>, <code>flipper_length_mm</code>, and
+        <code>body_mass_g</code>. Our target will be the <code>sex</code> of
+        the penguin.
+      </p>
+      <h3>Feature Matrix</h3>
+      <p>
+        We have one categorical feature (<code>species</code>) and four
+        numeric features. We'll use one-hot encoding to transform the
+        <code>species</code> column into three one-hot encoded columns. And
+        the target array (<code>sex</code>) will also be encoded with the
+        label encoder. That won't be part of the preprocessing of the
+        features; we'll do that separately before we apply our pipeline steps
+        and fit the model.
+      </p>
+      <p>
+        In the following code we will use the
+        <code>OneHotEncoder()</code> method for the
+        <code>species</code> column. When we use this method we also need to
+        use the <code>ColumnTransformer()</code> method to apply the one-hot
+        encoder to our specified column.
+      </p>
+      <pre><code># Imports!
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
@@ -1146,13 +1078,13 @@ preprocessor = ColumnTransformer(
 clf = Pipeline(steps=[('preprocessor', preprocessor),
                       ('classifier', LogisticRegression())])
 </code></pre>
-        <h3>Feature Matrix and Target Array</h3>
-        <p>
-          We need to select our features and encode our target array. These
-          steps are pretty simple and do not need to be part of the
-          preprocessing pipeline.
-        </p>
-        <pre><code># Select features
+      <h3>Feature Matrix and Target Array</h3>
+      <p>
+        We need to select our features and encode our target array. These
+        steps are pretty simple and do not need to be part of the
+        preprocessing pipeline.
+      </p>
+      <pre><code># Select features
 features = ['species', 'bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g']
 X = penguins[features]
 
@@ -1164,12 +1096,12 @@ penguins['sex_encode'] = le.fit_transform(penguins['sex'])
 # Set target array
 y = penguins['sex_encode']
 </code></pre>
-        <p>
-          Now that we have our feature matrix (still in categorical form) and a
-          label encoded target array, we can apply the pipeline and actually fit
-          the model!
-        </p>
-        <pre><code># Apply the pipeline
+      <p>
+        Now that we have our feature matrix (still in categorical form) and a
+        label encoded target array, we can apply the pipeline and actually fit
+        the model!
+      </p>
+      <pre><code># Apply the pipeline
 
 # Separate into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
@@ -1178,547 +1110,440 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
 clf.fit(X_train, y_train)
 print("model score: %.3f" % clf.score(X_test, y_test))
 </code></pre>
-        <pre><code>model score: 0.440
+      <pre><code>model score: 0.440
 </code></pre>
-        <p>
-          With just one line of code we one-hot encoded our specified features
-          and fit a logistic regression model to our data. Using the pipeline
-          allowed us to apply the same transformations to our training and
-          testing data sets without having to repeat those steps.
-        </p>
-        <h3>Challenge</h3>
-        <p>
-          Using the above code example, let's see if you can improve the model
-          score. In the <code>LogisticRegression()</code> part, try to change
-          the inverse of regularization strength parameter <code>C</code>. You
-          could also adjust the number of features used in the model to see how
-          that affects the accuracy.
-        </p>
-        <h3>Additional Resources</h3>
-        <ul>
-          <li>
-            <a
-              href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Scikit-learn: Pipeline</a
-            >
-          </li>
-          <li>
-            <a
-              href="https://scikit-learn.org/stable/auto_examples/compose/plot_column_transformer_mixed_types.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Scikit-learn: Column Transformer</a
-            >
-          </li>
-        </ul>
-      </section>
+      <p>
+        With just one line of code we one-hot encoded our specified features
+        and fit a logistic regression model to our data. Using the pipeline
+        allowed us to apply the same transformations to our training and
+        testing data sets without having to repeat those steps.
+      </p>
+      <h3>Challenge</h3>
+      <p>
+        Using the above code example, let's see if you can improve the model
+        score. In the <code>LogisticRegression()</code> part, try to change
+        the inverse of regularization strength parameter <code>C</code>. You
+        could also adjust the number of features used in the model to see how
+        that affects the accuracy.
+      </p>
+      <h3>Additional Resources</h3>
+      <ul>
+        <li>
+          <a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline"
+            target="_blank" rel="noopener noreferrer">Scikit-learn: Pipeline</a>
+        </li>
+        <li>
+          <a href="https://scikit-learn.org/stable/auto_examples/compose/plot_column_transformer_mixed_types.html"
+            target="_blank" rel="noopener noreferrer">Scikit-learn: Column Transformer</a>
+        </li>
+      </ul>
+    </section>
 
-      <section class="content-box">
-        <h2>RESOURCE - Local Installation (Windows)</h2>
-        <h3>Common Command Prompt Commands</h3>
-        <a
-          href="https://youtu.be/jmlYV6yX5lY"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Video: Common Command Prompt Commands</a
-        >
+    <section class="content-box">
+      <h2>RESOURCE - Local Installation (Windows)</h2>
+      <h3>Common Command Prompt Commands</h3>
+      <a href="https://youtu.be/jmlYV6yX5lY" target="_blank" rel="noopener noreferrer">Video: Common Command Prompt
+        Commands</a>
 
-        <p>You should be familiar with the following commands:</p>
-        <ul>
-          <li><code>dir</code></li>
-          <li><code>cd</code></li>
-          <li><code>mkdir</code></li>
-        </ul>
-        <h3>Install and Configure Git</h3>
-        <a
-          href="https://youtu.be/fB7y3_f87tg"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Video: Installing Git</a
-        >
+      <p>You should be familiar with the following commands:</p>
+      <ul>
+        <li><code>dir</code></li>
+        <li><code>cd</code></li>
+        <li><code>mkdir</code></li>
+      </ul>
+      <h3>Install and Configure Git</h3>
+      <a href="https://youtu.be/fB7y3_f87tg" target="_blank" rel="noopener noreferrer">Video: Installing Git</a>
 
-        <h4>Installation</h4>
-        <p>
-          Download the latest 64-bit version of
-          <a
-            href="https://git-scm.com/download/win"
-            target="_blank"
-            rel="noopener noreferrer"
-            >git for Windows</a
-          >.
-        </p>
-        <p>
-          Once the installer opens, select the following options from the
-          prompts:
-        </p>
-        <ul>
-          <li>
-            <strong>Choosing the default editor used by Git</strong><br />
-            Choose anything other than Vim (for example, VS Code)
-          </li>
-          <li>
-            <strong>Adjusting your PATH enviroment</strong><br />
-            Choose “Git from the command line and also from 3rd-party software”
-          </li>
-          <li>
-            <strong>Choosing HTTP transport backend</strong><br />
-            Choose “Use the OpenSSL library”
-          </li>
-          <li>
-            <strong>Configuring the line endings conversions</strong><br />
-            Choose “Checkout Windows-style, commit Unix-style line endings”
-          </li>
-          <li>
-            <strong
-              >Configuring the terminal emulator to use with Git Bash</strong
-            ><br />
-            Choose “Use MinTYY”
-          </li>
-          <li>
-            <strong>Choose the default behavoir of git pull</strong><br />
-            Choose “Default" (fast-forward or merge)
-          </li>
-          <li>
-            <strong>Choose a credential helper</strong><br />
-            Choose “Git Credential Manager”
-          </li>
-          <li>
-            <strong>Configuring extra options</strong><br />
-            Check the box for “Enable file system caching”
-          </li>
-          <li>
-            <strong>Configuring experimental options</strong><br />
-            Make sure that no boxes are checked
-          </li>
-        </ul>
-        <h4>Configuration</h4>
-        <p>
-          In order to work with the BloomTech curriculum repos, you need to
-          configure git on your machine. Open up the Command Prompt, and type
-          out these commands, following each with ENTER.
-        </p>
-        <p>
-          While you can use any username, you should use the username that's
-          associated with your GitHub profile.
-        </p>
-        <pre><code>git config --global user.name &lt;your username&gt;</code></pre>
-        <p>
-          Be sure that this email is the same one associated with your GitHub
-          account.
-        </p>
-        <pre><code>git config --global user.email &lt;your email address&gt;</code></pre>
-        <p>If you'd like to use VS Code to write your commit messages:</p>
-        <pre><code>git config --global core.editor "code --wait"</code></pre>
-        <p>And to make sure there are no conflicts with line endings:</p>
-        <pre><code>git config --global core.autocrlf true</code></pre>
-        <h3>Install Python</h3>
-        <a
-          href="https://youtu.be/HYV3tWLIYU0"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Video: Installing Python 64 bit (Windows 10)</a
-        >
-        <p>
-          Download the
-          <a
-            href="https://www.python.org/downloads/"
-            target="_blank"
-            rel="noopener noreferrer"
-            >latest version of Python for Windows</a
-          >. Note: It is very important that you download the Windows 64-bit
-          executable installer.
-        </p>
-        <p>
-          Once the installer has opened, select the Add Python to PATH box and
-          click Customize installation. Then select the following options from
-          the prompts:
-        </p>
-        <ul>
-          <li>
-            <strong>Optional Features</strong><br />
-            Check all the boxes. Make sure that the “pip” option is selected.
-          </li>
-          <li>
-            <strong>Advanced Options</strong><br />
-            Select “Associate files with Python,” “Create shortcuts for
-            installed applications,” and “Add Python to environment variables.
-            This last option is especially important.
-          </li>
-        </ul>
-        <h3>Install pipenv</h3>
-        <a
-          href="https://youtu.be/wi0ziwaUv8s"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Video: Installing pipenv (Windows 10)</a
-        >
-        <p>Open the command prompt and enter:</p>
-        <pre><code>pip install pipenv</code></pre>
-        <p>
-          To check that pipenv has been installed, close the Command Prompt and
-          reopen. Then enter <code>pipenv</code>. If you see some help prompts,
-          you're all set!
-        </p>
-        <h3>Build a Virtual Enviroment</h3>
-        <h4>Build Enviroment on the Fly</h4>
-        <a
-          href="https://youtu.be/E-P7notsYU8"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Video: Building a Virtual Environment with pipenv</a
-        >
-        <p>
-          In the Terminal, use the <code>cd</code> command to navigate to the
-          folder where you want to build your environment. For example,
-        </p>
-        <pre><code>cd Documents/GitHub/testenv</code></pre>
-        <p>Once you're in the correct directory, execute the command:</p>
-        <pre><code>pipenv shell</code></pre>
-        <p>
-          You'll know that your virtual environment is active if your command
-          line starts with the name of the environment in parentheses.
-        </p>
-        <pre><code>(testenv) &lt;...&gt; %</code></pre>
-        <p>
-          Use <code>pipenv install &lt;packages&gt;</code> to install the
-          packages that you'll use for the project, separated by spaces. For
-          example,
-        </p>
-        <pre><code>pipenv install pandas sklearn matplotlib notebook</code></pre>
-        <p>
-          You can also specify package versions using <code>==</code>. For
-          example, <code>pipenv install numpy==1.17.*</code> would install
-          version 1.17 of numpy.
-        </p>
-        <p>
-          Note that if you want to use Jupyter notebooks, you always need to
-          install the <code>notebook</code> package.
-        </p>
-        <h4>Build Enviroment from requirements.txt File</h4>
-        <a
-          href="https://youtu.be/XyXnRKYt-ks"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Video: Building a Virtual Environment from a requirements.txt file</a
-        >
-        <p>
-          In the Terminal, use the <code>cd</code> command to navigate to the
-          folder where the <code>requirements.txt</code> file is located. For
-          example,
-        </p>
-        <pre><code>cd Documents/GitHub/testenv</code></pre>
-        <p>Once you're in the correct directory, execute the command:</p>
-        <pre><code>pipenv shell</code></pre>
-        <p>
-          Once your virutal enviroment is activated, use the following command
-          to install all the dependencies listed in the
-          <code>requirements.txt</code> file:
-        </p>
-        <pre><code>pipenv install -r requirements.txt</code></pre>
-      </section>
+      <h4>Installation</h4>
+      <p>
+        Download the latest 64-bit version of
+        <a href="https://git-scm.com/download/win" target="_blank" rel="noopener noreferrer">git for Windows</a>.
+      </p>
+      <p>
+        Once the installer opens, select the following options from the
+        prompts:
+      </p>
+      <ul>
+        <li>
+          <strong>Choosing the default editor used by Git</strong><br />
+          Choose anything other than Vim (for example, VS Code)
+        </li>
+        <li>
+          <strong>Adjusting your PATH enviroment</strong><br />
+          Choose “Git from the command line and also from 3rd-party software”
+        </li>
+        <li>
+          <strong>Choosing HTTP transport backend</strong><br />
+          Choose “Use the OpenSSL library”
+        </li>
+        <li>
+          <strong>Configuring the line endings conversions</strong><br />
+          Choose “Checkout Windows-style, commit Unix-style line endings”
+        </li>
+        <li>
+          <strong>Configuring the terminal emulator to use with Git Bash</strong><br />
+          Choose “Use MinTYY”
+        </li>
+        <li>
+          <strong>Choose the default behavoir of git pull</strong><br />
+          Choose “Default" (fast-forward or merge)
+        </li>
+        <li>
+          <strong>Choose a credential helper</strong><br />
+          Choose “Git Credential Manager”
+        </li>
+        <li>
+          <strong>Configuring extra options</strong><br />
+          Check the box for “Enable file system caching”
+        </li>
+        <li>
+          <strong>Configuring experimental options</strong><br />
+          Make sure that no boxes are checked
+        </li>
+      </ul>
+      <h4>Configuration</h4>
+      <p>
+        In order to work with the BloomTech curriculum repos, you need to
+        configure git on your machine. Open up the Command Prompt, and type
+        out these commands, following each with ENTER.
+      </p>
+      <p>
+        While you can use any username, you should use the username that's
+        associated with your GitHub profile.
+      </p>
+      <pre><code>git config --global user.name &lt;your username&gt;</code></pre>
+      <p>
+        Be sure that this email is the same one associated with your GitHub
+        account.
+      </p>
+      <pre><code>git config --global user.email &lt;your email address&gt;</code></pre>
+      <p>If you'd like to use VS Code to write your commit messages:</p>
+      <pre><code>git config --global core.editor "code --wait"</code></pre>
+      <p>And to make sure there are no conflicts with line endings:</p>
+      <pre><code>git config --global core.autocrlf true</code></pre>
+      <h3>Install Python</h3>
+      <a href="https://youtu.be/HYV3tWLIYU0" target="_blank" rel="noopener noreferrer">Video: Installing Python 64 bit
+        (Windows 10)</a>
+      <p>
+        Download the
+        <a href="https://www.python.org/downloads/" target="_blank" rel="noopener noreferrer">latest version of Python
+          for Windows</a>. Note: It is very important that you download the Windows 64-bit
+        executable installer.
+      </p>
+      <p>
+        Once the installer has opened, select the Add Python to PATH box and
+        click Customize installation. Then select the following options from
+        the prompts:
+      </p>
+      <ul>
+        <li>
+          <strong>Optional Features</strong><br />
+          Check all the boxes. Make sure that the “pip” option is selected.
+        </li>
+        <li>
+          <strong>Advanced Options</strong><br />
+          Select “Associate files with Python,” “Create shortcuts for
+          installed applications,” and “Add Python to environment variables.
+          This last option is especially important.
+        </li>
+      </ul>
+      <h3>Install pipenv</h3>
+      <a href="https://youtu.be/wi0ziwaUv8s" target="_blank" rel="noopener noreferrer">Video: Installing pipenv (Windows
+        10)</a>
+      <p>Open the command prompt and enter:</p>
+      <pre><code>pip install pipenv</code></pre>
+      <p>
+        To check that pipenv has been installed, close the Command Prompt and
+        reopen. Then enter <code>pipenv</code>. If you see some help prompts,
+        you're all set!
+      </p>
+      <h3>Build a Virtual Enviroment</h3>
+      <h4>Build Enviroment on the Fly</h4>
+      <a href="https://youtu.be/E-P7notsYU8" target="_blank" rel="noopener noreferrer">Video: Building a Virtual
+        Environment with pipenv</a>
+      <p>
+        In the Terminal, use the <code>cd</code> command to navigate to the
+        folder where you want to build your environment. For example,
+      </p>
+      <pre><code>cd Documents/GitHub/testenv</code></pre>
+      <p>Once you're in the correct directory, execute the command:</p>
+      <pre><code>pipenv shell</code></pre>
+      <p>
+        You'll know that your virtual environment is active if your command
+        line starts with the name of the environment in parentheses.
+      </p>
+      <pre><code>(testenv) &lt;...&gt; %</code></pre>
+      <p>
+        Use <code>pipenv install &lt;packages&gt;</code> to install the
+        packages that you'll use for the project, separated by spaces. For
+        example,
+      </p>
+      <pre><code>pipenv install pandas sklearn matplotlib notebook</code></pre>
+      <p>
+        You can also specify package versions using <code>==</code>. For
+        example, <code>pipenv install numpy==1.17.*</code> would install
+        version 1.17 of numpy.
+      </p>
+      <p>
+        Note that if you want to use Jupyter notebooks, you always need to
+        install the <code>notebook</code> package.
+      </p>
+      <h4>Build Enviroment from requirements.txt File</h4>
+      <a href="https://youtu.be/XyXnRKYt-ks" target="_blank" rel="noopener noreferrer">Video: Building a Virtual
+        Environment from a requirements.txt file</a>
+      <p>
+        In the Terminal, use the <code>cd</code> command to navigate to the
+        folder where the <code>requirements.txt</code> file is located. For
+        example,
+      </p>
+      <pre><code>cd Documents/GitHub/testenv</code></pre>
+      <p>Once you're in the correct directory, execute the command:</p>
+      <pre><code>pipenv shell</code></pre>
+      <p>
+        Once your virutal enviroment is activated, use the following command
+        to install all the dependencies listed in the
+        <code>requirements.txt</code> file:
+      </p>
+      <pre><code>pipenv install -r requirements.txt</code></pre>
+    </section>
 
-      <section class="content-box">
-        <h2>RESOURCE - Local Installation (mac)</h2>
-        <h3>Before You Begin</h3>
-        <ul>
-          <li>
-            Make sure you're running the latest version of the the MacOS
-            (Catalina, 10.15 or later).
-          </li>
-          <li>Make sure that your default shell in the terminal is z-shell.</li>
-        </ul>
-        <h3>Common Commands</h3>
-        <p>You should be familiar with the following terminal commands:</p>
-        <ul>
-          <li>pwd</li>
-          <li>cd</li>
-          <li>ls</li>
-          <li>mkdir</li>
-          <li>clear</li>
-          <li>nano</li>
-        </ul>
-        <h3>Installation</h3>
-        <h4>Install Xcode</h4>
-        <p>
-          In order to work locally on your Mac, you need to install Python 3 and
-          pip3 on your machine. Fortunately, both of these come as part of
-          Apple's Xcode. If you haven't already installed Xcode, open the
-          Terminal and enter the following command:
-        </p>
-        <pre><code>xcode-select --install</code></pre>
-        <p>
-          A popup window will appear. Click Install, and accept the user
-          agreement.
-        </p>
-        <p>
-          To make sure that the latest version of pip3 has been installed,
-          enter:
-        </p>
-        <pre><code>pip3 install --upgrade pip --user</code></pre>
-        <h4>Install pipenv</h4>
-        <p>Once, pip3 is installed, you can use it to install pipenv:</p>
-        <pre><code>pip3 install pipenv --user</code></pre>
-        <p>
-          During installation, you may get a warning that looks something like
-          this:
-        </p>
-        <pre><code>WARNING: The script virtualenv-clone is installed in 'Users/&lt;your_username&gt;/Library/Python/3.7/bin' which is not on PATH</code></pre>
-        <p>
-          Note that the name of your path will a little look different: Your
-          username will appear after User/, and you might have a different
-          version number after Python/.
-        </p>
-        <p>
-          You will need to use this path later in the installation, so copy the
-          Users/&lt;your_username&gt;/Library/Python/3.7/bin text and paste it
-          somewhere where you can access it later.
-        </p>
-        <p>
-          Below the warning message, you should see a message saying that pipenv
-          has been successfully installed.
-        </p>
-        <h4>Add Directory to Your PATH</h4>
-        <p>Note: You only need to do this step if you got the warning above.</p>
-        <p>
-          You now need to create a file named .zshrc that has this new path
-          information. One way to do this is to use the program nano. In the
-          terminal, enter:
-        </p>
-        <pre><code>nano ~/.zshrc</code></pre>
-        <p>
-          This will turn the terminal into a text editor. Go back to the path
-          you copied during the last step and use it to write the following
-          line:
-        </p>
-        <pre><code>export PATH="/Users/&lt;your_username&gt;/Library/Python/3.7/bin:$PATH"</code></pre>
-        <p>
-          Make sure to insert your path after the " character, and then add
-          :$PATH" to the end. There should be no spaces in this text.
-        </p>
-        <p>Hit Ctrl+o then enter to save the file. Then Ctrl+x to quit.</p>
-        <p>
-          Finally, quit the terminal (be sure to quit the program, not just
-          close the window).
-        </p>
-        <h4>Confirm Installation</h4>
-        <p>
-          Reopen the terminal and enter the command pipenv. If the command line
-          gives a list of options, then the install was successful!
-        </p>
-        <h3>Configure Git</h3>
-        <p>
-          In order to work with the BloomTech curriculum repos, you need to
-          configure Git on your machine. Open up the Terminal, and type out the
-          these commands, following each with ENTER.
-        </p>
-        <p>
-          While you can use any username, you should use the username that's
-          associated with your GitHub profile.
-        </p>
-        <pre><code>git config --global user.name &lt;your username&gt;</code></pre>
-        <p>
-          Be sure that this email is the same one associated with your GitHub
-          account.
-        </p>
-        <pre><code>git config --global user.email &lt;your email address&gt;</code></pre>
-        <p>
-          If you'd like to continue using nano to write commit messages, use:
-        </p>
-        <pre><code>git config --global core.editor "nano"</code></pre>
-        <p>Alternatively, you can use VS Code:</p>
-        <pre><code>git config --global core.editor "code --wait"</code></pre>
-        <h3>Build a Virtual Enviroment</h3>
-        <h4>Build Environment on the Fly</h4>
-        <a
-          href="https://youtu.be/_oGiIumVMsM"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Video: Building a Virtual Environment from a requirements.txt file</a
-        >
-        <p>
-          In the Terminal, use the cd command to navigate to the folder where
-          you want to build your environment. For example,
-        </p>
-        <pre><code>cd Documents/GitHub/testenv</code></pre>
-        <p>Once you're in the correct directory, execute the command:</p>
-        <pre><code>pipenv shell</code></pre>
-        <p>
-          You'll know that your virtual environment is active if your command
-          line starts with the name of the environment in parentheses.
-        </p>
-        <pre><code>(testenv) &lt;...&gt; %</code></pre>
-        <p>
-          Use <code>pipenv install &lt;packages&gt;</code> to install the
-          packages that you'll use for the project, separated by spaces. For
-          example,
-        </p>
-        <pre><code>pipenv install pandas sklearn matplotlib notebook</code></pre>
-        <p>
-          You can also specify package versions using ==. For example,
-          <code>pipenv install numpy==1.17.*</code> would install version 1.17
-          of numpy.
-        </p>
-        <p>
-          Note that if you want to use Jupyter notebooks, you always need to
-          install the notebook package.
-        </p>
-        <h4>Build Enviroment from requirements.txt File</h4>
-        <a
-          href="https://youtu.be/_oGiIumVMsM"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Video: Building a Virtual Environment from a requirements.txt file</a
-        >
-        <p>
-          In the Terminal, use the cd command to navigate to the folder where
-          the requirements.txt file is located. For example,
-        </p>
-        <pre><code>cd Documents/GitHub/testenv</code></pre>
-        <p>Once you're in the correct directory, execute the command:</p>
-        <pre><code>pipenv shell</code></pre>
-        <p>
-          Once your virtual environment is activated, use the following command
-          to install all the dependencies listed in the requirements.txt file:
-        </p>
-        <pre><code>pipenv install -r requirements.txt</code></pre>
-      </section>
+    <section class="content-box">
+      <h2>RESOURCE - Local Installation (mac)</h2>
+      <h3>Before You Begin</h3>
+      <ul>
+        <li>
+          Make sure you're running the latest version of the the MacOS
+          (Catalina, 10.15 or later).
+        </li>
+        <li>Make sure that your default shell in the terminal is z-shell.</li>
+      </ul>
+      <h3>Common Commands</h3>
+      <p>You should be familiar with the following terminal commands:</p>
+      <ul>
+        <li>pwd</li>
+        <li>cd</li>
+        <li>ls</li>
+        <li>mkdir</li>
+        <li>clear</li>
+        <li>nano</li>
+      </ul>
+      <h3>Installation</h3>
+      <h4>Install Xcode</h4>
+      <p>
+        In order to work locally on your Mac, you need to install Python 3 and
+        pip3 on your machine. Fortunately, both of these come as part of
+        Apple's Xcode. If you haven't already installed Xcode, open the
+        Terminal and enter the following command:
+      </p>
+      <pre><code>xcode-select --install</code></pre>
+      <p>
+        A popup window will appear. Click Install, and accept the user
+        agreement.
+      </p>
+      <p>
+        To make sure that the latest version of pip3 has been installed,
+        enter:
+      </p>
+      <pre><code>pip3 install --upgrade pip --user</code></pre>
+      <h4>Install pipenv</h4>
+      <p>Once, pip3 is installed, you can use it to install pipenv:</p>
+      <pre><code>pip3 install pipenv --user</code></pre>
+      <p>
+        During installation, you may get a warning that looks something like
+        this:
+      </p>
+      <pre><code>WARNING: The script virtualenv-clone is installed in 'Users/&lt;your_username&gt;/Library/Python/3.7/bin' which is not on PATH</code></pre>
+      <p>
+        Note that the name of your path will a little look different: Your
+        username will appear after User/, and you might have a different
+        version number after Python/.
+      </p>
+      <p>
+        You will need to use this path later in the installation, so copy the
+        Users/&lt;your_username&gt;/Library/Python/3.7/bin text and paste it
+        somewhere where you can access it later.
+      </p>
+      <p>
+        Below the warning message, you should see a message saying that pipenv
+        has been successfully installed.
+      </p>
+      <h4>Add Directory to Your PATH</h4>
+      <p>Note: You only need to do this step if you got the warning above.</p>
+      <p>
+        You now need to create a file named .zshrc that has this new path
+        information. One way to do this is to use the program nano. In the
+        terminal, enter:
+      </p>
+      <pre><code>nano ~/.zshrc</code></pre>
+      <p>
+        This will turn the terminal into a text editor. Go back to the path
+        you copied during the last step and use it to write the following
+        line:
+      </p>
+      <pre><code>export PATH="/Users/&lt;your_username&gt;/Library/Python/3.7/bin:$PATH"</code></pre>
+      <p>
+        Make sure to insert your path after the " character, and then add
+        :$PATH" to the end. There should be no spaces in this text.
+      </p>
+      <p>Hit Ctrl+o then enter to save the file. Then Ctrl+x to quit.</p>
+      <p>
+        Finally, quit the terminal (be sure to quit the program, not just
+        close the window).
+      </p>
+      <h4>Confirm Installation</h4>
+      <p>
+        Reopen the terminal and enter the command pipenv. If the command line
+        gives a list of options, then the install was successful!
+      </p>
+      <h3>Configure Git</h3>
+      <p>
+        In order to work with the BloomTech curriculum repos, you need to
+        configure Git on your machine. Open up the Terminal, and type out the
+        these commands, following each with ENTER.
+      </p>
+      <p>
+        While you can use any username, you should use the username that's
+        associated with your GitHub profile.
+      </p>
+      <pre><code>git config --global user.name &lt;your username&gt;</code></pre>
+      <p>
+        Be sure that this email is the same one associated with your GitHub
+        account.
+      </p>
+      <pre><code>git config --global user.email &lt;your email address&gt;</code></pre>
+      <p>
+        If you'd like to continue using nano to write commit messages, use:
+      </p>
+      <pre><code>git config --global core.editor "nano"</code></pre>
+      <p>Alternatively, you can use VS Code:</p>
+      <pre><code>git config --global core.editor "code --wait"</code></pre>
+      <h3>Build a Virtual Enviroment</h3>
+      <h4>Build Environment on the Fly</h4>
+      <a href="https://youtu.be/_oGiIumVMsM" target="_blank" rel="noopener noreferrer">Video: Building a Virtual
+        Environment from a requirements.txt file</a>
+      <p>
+        In the Terminal, use the cd command to navigate to the folder where
+        you want to build your environment. For example,
+      </p>
+      <pre><code>cd Documents/GitHub/testenv</code></pre>
+      <p>Once you're in the correct directory, execute the command:</p>
+      <pre><code>pipenv shell</code></pre>
+      <p>
+        You'll know that your virtual environment is active if your command
+        line starts with the name of the environment in parentheses.
+      </p>
+      <pre><code>(testenv) &lt;...&gt; %</code></pre>
+      <p>
+        Use <code>pipenv install &lt;packages&gt;</code> to install the
+        packages that you'll use for the project, separated by spaces. For
+        example,
+      </p>
+      <pre><code>pipenv install pandas sklearn matplotlib notebook</code></pre>
+      <p>
+        You can also specify package versions using ==. For example,
+        <code>pipenv install numpy==1.17.*</code> would install version 1.17
+        of numpy.
+      </p>
+      <p>
+        Note that if you want to use Jupyter notebooks, you always need to
+        install the notebook package.
+      </p>
+      <h4>Build Enviroment from requirements.txt File</h4>
+      <a href="https://youtu.be/_oGiIumVMsM" target="_blank" rel="noopener noreferrer">Video: Building a Virtual
+        Environment from a requirements.txt file</a>
+      <p>
+        In the Terminal, use the cd command to navigate to the folder where
+        the requirements.txt file is located. For example,
+      </p>
+      <pre><code>cd Documents/GitHub/testenv</code></pre>
+      <p>Once you're in the correct directory, execute the command:</p>
+      <pre><code>pipenv shell</code></pre>
+      <p>
+        Once your virtual environment is activated, use the following command
+        to install all the dependencies listed in the requirements.txt file:
+      </p>
+      <pre><code>pipenv install -r requirements.txt</code></pre>
+    </section>
 
-      <section class="content-box">
-        <h2>Guided Project</h2>
-        <p>
-          Open <strong>JDS_SHR_214_guided_project_notes.ipynb</strong> in the
-          GitHub repository below to follow along with the guided project:
-        </p>
-        <div class="resource-links">
-          <a
-            href="https://github.com/bloominstituteoftechnology/DS-Unit-2-Linear-Models/tree/master/module4-logistic-regression"
-            class="resource-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            >GitHub: Logistic Regression</a
-          >
-          <a
-            href="https://docs.google.com/presentation/d/1VWvH9jKBj63sirqUsQuNxdNme97rEO5uElH8AlBdbcM/present?slide=id.g125f5691cb9_0_0"
-            class="resource-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Slides</a
-          >
-        </div>
+    <section class="content-box">
+      <h2>Guided Project</h2>
+      <p>
+        Open <strong>JDS_SHR_214_guided_project_notes.ipynb</strong> in the
+        GitHub repository below to follow along with the guided project:
+      </p>
+      <div class="resource-links">
+        <a href="https://github.com/bloominstituteoftechnology/DS-Unit-2-Linear-Models/tree/master/module4-logistic-regression"
+          class="resource-link" target="_blank" rel="noopener noreferrer">GitHub: Logistic Regression</a>
+        <a href="https://docs.google.com/presentation/d/1VWvH9jKBj63sirqUsQuNxdNme97rEO5uElH8AlBdbcM/present?slide=id.g125f5691cb9_0_0"
+          class="resource-link" target="_blank" rel="noopener noreferrer">Slides</a>
+      </div>
 
-        <h2>Guided Project Video</h2>
-        <div class="video-container">
-          <iframe
-            class="wistia_embed"
-            title="Sprint 5 Logistic Regression Video"
-            src="https://fast.wistia.net/embed/iframe/rlh3upen6m"
-            width="640"
-            height="360"
-            allow="fullscreen"
-            loading="lazy"
-          ></iframe>
-        </div>
-      </section>
+      <h2>Guided Project Video</h2>
+      <div class="video-container">
+        <iframe class="wistia_embed" title="Sprint 5 Logistic Regression Video"
+          src="https://fast.wistia.net/embed/iframe/rlh3upen6m" width="640" height="360" allow="fullscreen"
+          loading="lazy"></iframe>
+      </div>
+    </section>
 
-      <section class="content-box">
-        <h2>Module Assignment</h2>
-        <p>
-          Complete the Module 4 assignment to practice logistic regression
-          techniques you've learned.
-        </p>
-        <div class="resource-links">
-          <a
-            href="https://github.com/bloominstituteoftechnology/DS-Unit-2-Linear-Models/blob/master/module4-logistic-regression/LS_DS_214_assignment.ipynb"
-            class="resource-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Module 4 Assignment</a
-          >
-          <a
-            href="https://srcole.github.io/100burritos/"
-            class="resource-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Dataset: Burritos of San Diego</a
-          >
-        </div>
+    <section class="content-box">
+      <h2>Module Assignment</h2>
+      <p>
+        Complete the Module 4 assignment to practice logistic regression
+        techniques you've learned.
+      </p>
+      <div class="resource-links">
+        <a href="https://github.com/bloominstituteoftechnology/DS-Unit-2-Linear-Models/blob/master/module4-logistic-regression/LS_DS_214_assignment.ipynb"
+          class="resource-link" target="_blank" rel="noopener noreferrer">Module 4 Assignment</a>
+        <a href="https://srcole.github.io/100burritos/" class="resource-link" target="_blank"
+          rel="noopener noreferrer">Dataset: Burritos of San Diego</a>
+      </div>
 
-        <h2>Assignment Solution Video</h2>
-        <div class="video-container">
-          <iframe
-            class="wistia_embed"
-            title="Logistic Regression - Module Project Solution Video"
-            src="https://fast.wistia.net/embed/iframe/8kq0iynda6"
-            width="640"
-            height="360"
-            allow="fullscreen"
-            loading="lazy"
-          ></iframe>
-        </div>
-      </section>
+      <h2>Assignment Solution Video</h2>
+      <div class="video-container">
+        <iframe class="wistia_embed" title="Logistic Regression - Module Project Solution Video"
+          src="https://fast.wistia.net/embed/iframe/8kq0iynda6" width="640" height="360" allow="fullscreen"
+          loading="lazy"></iframe>
+      </div>
+    </section>
 
-      <section class="content-box">
-        <h2>Resources</h2>
+    <section class="content-box">
+      <h2>Resources</h2>
 
-        <h3>Documentation and Tutorials</h3>
-        <ul>
-          <li>
-            <a
-              href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Scikit-learn: train_test_split</a
-            >
-          </li>
-          <li>
-            <a
-              href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Scikit-learn: LogisticRegression</a
-            >
-          </li>
-          <li>
-            <a
-              href="https://scikit-learn.org/stable/modules/compose.html#pipeline"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Scikit-learn: Pipelines</a
-            >
-          </li>
-          <li>
-            <a
-              href="https://scikit-learn.org/stable/modules/model_evaluation.html#classification-metrics"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Scikit-learn: Classification Metrics</a
-            >
-          </li>
-        </ul>
+      <h3>Documentation and Tutorials</h3>
+      <ul>
+        <li>
+          <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html"
+            target="_blank" rel="noopener noreferrer">Scikit-learn: train_test_split</a>
+        </li>
+        <li>
+          <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html"
+            target="_blank" rel="noopener noreferrer">Scikit-learn: LogisticRegression</a>
+        </li>
+        <li>
+          <a href="https://scikit-learn.org/stable/modules/compose.html#pipeline" target="_blank"
+            rel="noopener noreferrer">Scikit-learn: Pipelines</a>
+        </li>
+        <li>
+          <a href="https://scikit-learn.org/stable/modules/model_evaluation.html#classification-metrics" target="_blank"
+            rel="noopener noreferrer">Scikit-learn: Classification Metrics</a>
+        </li>
+      </ul>
 
-        <h3>Articles and Readings</h3>
-        <ul>
-          <li>
-            <a
-              href="https://machinelearningmastery.com/logistic-regression-for-machine-learning/"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Logistic Regression for Machine Learning</a
-            >
-          </li>
-          <li>
-            <a
-              href="https://towardsdatascience.com/train-validation-and-test-sets-72cb40cba9e7"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Your validation loss is lower than your training loss? This is
-              why!</a
-            >
-          </li>
-        </ul>
-      </section>
-    </main>
-  </body>
+      <h3>Articles and Readings</h3>
+      <ul>
+        <li>
+          <a href="https://machinelearningmastery.com/logistic-regression-for-machine-learning/" target="_blank"
+            rel="noopener noreferrer">Logistic Regression for Machine Learning</a>
+        </li>
+        <li>
+          <a href="https://towardsdatascience.com/train-validation-and-test-sets-72cb40cba9e7" target="_blank"
+            rel="noopener noreferrer">Your validation loss is lower than your training loss? This is
+            why!</a>
+        </li>
+      </ul>
+    </section>
+  </main>
+</body>
+
 </html>
