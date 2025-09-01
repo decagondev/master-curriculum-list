@@ -1,4 +1,5 @@
 # Web Curriculum List
+
 ## Unit 1
 
 - **Sprint 1**
@@ -34,7 +35,7 @@
 - **Sprint 8 (ACS 2)**
   - [Repository Link]([https://github.com](https://github.com/decagondev/web-acs-2))
   - [Deployed Link]([https://github.com](https://decagondev.github.io/web-acs-2/))
- 
+
 ## Unit 3
 
 - **Sprint 9**
@@ -52,7 +53,7 @@
 - **Sprint 12 (ACS 3)**
   - [Repository Link](https://github.com)
   - [Deployed Link](https://github.com)
-    
+
 ## Unit 4
 
 - **Sprint 13**
@@ -70,7 +71,7 @@
 - **Sprint 16 (ACS 4)**
   - [Repository Link](https://github.com)
   - [Deployed Link](https://github.com)
- 
+
 ## Applied Computer Science
 
 - **Sprint 17, 18, 19, 20 (ACS 5, 6, 7, 8)**
@@ -78,6 +79,7 @@
   - [Deployed Link](https://github.com)
 
 ## Labs
+
 - **Sprint 21,22,23 (LABS)**
   - [Repository Link](https://github.com)
   - [Deployed Link](https://github.com)

@@ -8,7 +8,7 @@ This guide provides instructions for consistently styling sprint folders contain
 
 Each sprint folder follows this general structure:
     ```
-    Sprint_Folder/
+Sprint_Folder/
     ├── objective-01-*.html
     ├── objective-02-*.html
     ├── objective-03-*.html
@@ -195,4 +195,4 @@ Each sprint folder follows this general structure:
 - Test on multiple browsers and devices
 - Ensure accessibility standards are met
 - Keep styles modular and reusable
-- Document any custom modifications needed for specific sprints 
+- Document any custom modifications needed for specific sprints
